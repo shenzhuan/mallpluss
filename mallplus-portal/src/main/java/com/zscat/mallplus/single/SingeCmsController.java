@@ -32,6 +32,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.ums.service.impl.UmsRewardLogServiceImpl;
+import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -169,7 +170,7 @@ public class SingeCmsController extends ApiBaseAction {
                     .map(CmsSubjectProductRelation::getProductId)
                     .collect(Collectors.toList());
             List<PmsProduct> products = (List<PmsProduct>) pmsProductService.listByIds(ids);
-            productResult.setProducts(products);
+            productResult.setProducts(GoodsUtils.sampleGoodsList(products));
         }
 
         //记录浏览量到redis,然后定时更新到数据库
