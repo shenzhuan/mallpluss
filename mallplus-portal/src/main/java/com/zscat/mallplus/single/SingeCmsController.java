@@ -13,9 +13,15 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.cms.service.ICmsTopicService;
+import com.zscat.mallplus.pms.entity.CmsPrefrenceAreaProductRelation;
+import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
+import com.zscat.mallplus.pms.entity.PmsBrand;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.mapper.CmsSubjectProductRelationMapper;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
+import com.zscat.mallplus.sms.entity.SmsHomeBrand;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
@@ -37,10 +43,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: shenzhuan
@@ -79,6 +83,9 @@ public class SingeCmsController extends ApiBaseAction {
     private IUmsRewardLogService rewardLogService;
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private  CmsSubjectProductRelationMapper subjectProductRelationMapper;
 
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
@@ -155,6 +162,15 @@ public class SingeCmsController extends ApiBaseAction {
     @ApiOperation(value = "查询文章详情信息")
     public Object subjectDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsSubject productResult = subjectService.getById(id);
+        List<CmsSubjectProductRelation> list = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("subject_id", id));
+
+        if(list!=null && list.size()>0){
+            List<Long> ids = list.stream()
+                    .map(CmsSubjectProductRelation::getProductId)
+                    .collect(Collectors.toList());
+            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.listByIds(ids);
+            productResult.setProducts(products);
+        }
 
         //记录浏览量到redis,然后定时更新到数据库
         String key= Rediskey.ARTICLE_VIEWCOUNT_CODE+id;
