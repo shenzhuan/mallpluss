@@ -13,9 +13,15 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.cms.service.ICmsTopicService;
+import com.zscat.mallplus.pms.entity.CmsPrefrenceAreaProductRelation;
+import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
+import com.zscat.mallplus.pms.entity.PmsBrand;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.mapper.CmsSubjectProductRelationMapper;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
+import com.zscat.mallplus.sms.entity.SmsHomeBrand;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
@@ -26,6 +32,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.ums.service.impl.UmsRewardLogServiceImpl;
+import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -37,8 +44,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: shenzhuan
@@ -78,6 +85,9 @@ public class SingeCmsController extends ApiBaseAction {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private  CmsSubjectProductRelationMapper subjectProductRelationMapper;
+
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
     @ApiOperation(value = "查询打赏列表")
@@ -115,7 +125,7 @@ public class SingeCmsController extends ApiBaseAction {
     public Object subjectList(CmsSubjectComment subjectComment,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(commentService.page(new Page<CmsSubjectComment>(pageNum, pageSize), new QueryWrapper<>(subjectComment)));
+        return new CommonResult().success(commentService.page(new Page<CmsSubjectComment>(pageNum, pageSize), new QueryWrapper<>(subjectComment).orderByDesc("create_time")));
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询首页推荐文章")
@@ -130,19 +140,21 @@ public class SingeCmsController extends ApiBaseAction {
     }
     @SysLog(MODULE = "cms", REMARK = "查询专题列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询专题列表")
+    @ApiOperation(value = "查询公益列表")
     @GetMapping(value = "/topic/list")
     public Object subjectList(CmsTopic topic,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(topicService.page(new Page<CmsTopic>(pageNum, pageSize), new QueryWrapper<>(topic)));
+        return new CommonResult().success(topicService.page(new Page<CmsTopic>(pageNum, pageSize), new QueryWrapper<>(topic).orderByDesc("create_time")));
     }
     @SysLog(MODULE = "pms", REMARK = "查询专题详情信息")
     @IgnoreAuth
     @GetMapping(value = "/topic/detail")
-    @ApiOperation(value = "查询专题详情信息")
+    @ApiOperation(value = "查询公益详情信息")
     public Object topicDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsTopic productResult = topicService.getById(id);
+        productResult.setReadCount(productResult.getReadCount()+1);
+        topicService.updateById(productResult);
         return new CommonResult().success(productResult);
     }
     @SysLog(MODULE = "pms", REMARK = "查询文章详情信息")
@@ -151,6 +163,15 @@ public class SingeCmsController extends ApiBaseAction {
     @ApiOperation(value = "查询文章详情信息")
     public Object subjectDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsSubject productResult = subjectService.getById(id);
+        List<CmsSubjectProductRelation> list = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("subject_id", id));
+
+        if(list!=null && list.size()>0){
+            List<Long> ids = list.stream()
+                    .map(CmsSubjectProductRelation::getProductId)
+                    .collect(Collectors.toList());
+            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.listByIds(ids);
+            productResult.setProducts(GoodsUtils.sampleGoodsList(products));
+        }
 
         //记录浏览量到redis,然后定时更新到数据库
         String key= Rediskey.ARTICLE_VIEWCOUNT_CODE+id;
@@ -178,6 +199,12 @@ public class SingeCmsController extends ApiBaseAction {
     public Object createSubject(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();
+        if (member!=null){
+            subject.setMemberId(member.getId());
+            subject.setMemberName(member.getNickname());
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
 
@@ -198,11 +225,145 @@ public class SingeCmsController extends ApiBaseAction {
             subject.setAreaId(member.getAreaId());
         }
 
-        subject.setMemberId(member.getId());
         subject.setReadCount(0);
         subject.setForwardCount(0);
         subject.setCollectCount(0);
+        subject.setCreateTime(new Date());
+
         boolean count = subjectService.save(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "创建公益")
+    @ApiOperation(value = "发布公益")
+    @PostMapping(value = "/createTopic")
+    public Object createTopic(CmsTopic subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+        if (member!=null){
+            subject.setMemberId(member.getId());
+            subject.setMemberName(member.getNickname());
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
+        /*if (member.getMemberLevelId() > 0) {
+            UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
+
+            int subjectCounts = subjectService.countByToday(member.getId());
+            if (ValidatorUtils.empty(subjectCounts)){
+                subjectCounts=0;
+            }
+            if (subjectCounts > memberLevel.getArticlecount()) {
+                commonResult = new CommonResult().failed("你今天已经有发" + memberLevel.getArticlecount() + "篇公益");
+                return commonResult;
+            }
+        }*/
+        if (subject.getQsType()==1){
+            subject.setSchoolName(member.getSchoolName());
+            subject.setSchoolId(member.getSchoolId());
+        }else {
+            subject.setAreaName(member.getAreaName());
+            subject.setAreaId(member.getAreaId());
+        }
+
+        subject.setReadCount(0);
+        subject.setAttendCount(0);
+        subject.setAttentionCount(0);
+        subject.setCreateTime(new Date());
+        boolean count = topicService.save(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "参加公益")
+    @ApiOperation(value = "参加公益 公益id")
+    @PostMapping(value = "/attendTopic")
+    public Object attendTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        CmsTopic subject = topicService.getById(id);
+        Date now = new Date();
+        if (now.getTime()>subject.getEndTime().getTime() || now.getTime()<subject.getStartTime().getTime()){
+            return new CommonResult().failed("未开始或者已过期");
+        }
+        if (member!=null){
+            if (ValidatorUtils.notEmpty(subject.getAtids())){
+                String[] values = subject.getAtids().split(",");
+                List<String> list = Arrays.asList(values);
+                if(list.contains(member.getId()+"")){
+                    return new CommonResult().failed("你已参加该活动");
+                }else{
+                    list.add(member.getId()+"");
+                    subject.setAtids(Arrays.toString(list.toArray()));
+                }
+            }
+
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
+        subject.setReadCount(subject.getReadCount()+1);
+        subject.setAttendCount(subject.getAttendCount()+1);
+
+        boolean count = topicService.updateById(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "参加公益")
+    @ApiOperation(value = "取消参加公益 公益id")
+    @PostMapping(value = "/canceTopic")
+    public Object canceTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+        CmsTopic subject = topicService.getById(id);
+
+        if (member!=null){
+            if (ValidatorUtils.notEmpty(subject.getAtids())){
+                String[] values = subject.getAtids().split(",");
+                List<String> list = Arrays.asList(values);
+                if(list.contains(member.getId()+"")){
+                    list.remove(member.getId()+"");
+                    subject.setAtids(Arrays.toString(list.toArray()));
+                }
+            }
+
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
+        subject.setReadCount(subject.getReadCount()-1);
+        subject.setAttendCount(subject.getAttendCount()-1);
+
+        boolean count = topicService.updateById(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "参加公益")
+    @ApiOperation(value = "关注公益 公益id，点一次关注按钮，记录一下关注数量，不去重 不需要登录")
+    @PostMapping(value = "/favoriteTopic")
+    public Object favoriteTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        CommonResult commonResult;
+        CmsTopic subject = topicService.getById(id);
+        subject.setAttentionCount(subject.getAttentionCount()+1);
+        boolean count = topicService.updateById(subject);
         if (count) {
             commonResult = new CommonResult().success(count);
         } else {
@@ -217,9 +378,14 @@ public class SingeCmsController extends ApiBaseAction {
     public Object addSubjectCom(CmsSubjectComment subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();
+        if (member!=null){
+            subject.setMemberIcon(member.getIcon());
+            subject.setMemberNickName(member.getNickname());
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
         subject.setCreateTime(new Date());
-        subject.setMemberIcon(member.getIcon());
-        subject.setMemberNickName(member.getNickname());
+
         boolean count = commentService.save(subject);
         if (count) {
             commonResult = new CommonResult().success(count);
