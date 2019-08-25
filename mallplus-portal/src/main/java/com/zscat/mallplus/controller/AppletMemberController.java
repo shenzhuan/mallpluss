@@ -235,7 +235,7 @@ public class AppletMemberController extends ApiBaseAction {
                 for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
                     PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
                     HomeProductAttr product = new HomeProductAttr();
-                    product.setProductId(tempproduct.getId());
+                    product.setId(tempproduct.getId());
                     product.setProductImg(tempproduct.getPic());
                     product.setProductName(tempproduct.getName());
                     product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
@@ -269,7 +269,7 @@ public class AppletMemberController extends ApiBaseAction {
                         for (PmsProduct pmsProduct : pmsProductList
                                 ) {
                             HomeProductAttr productAttr = new HomeProductAttr();
-                            productAttr.setProductId(pmsProduct.getId());
+                            productAttr.setId(pmsProduct.getId());
                             productAttr.setProductName(pmsProduct.getName());
                             productAttr.setProductImg(pmsProduct.getPic());
                             productAttr.setProductPrice(pmsProduct.getPrice() != null ? pmsProduct.getPrice() : BigDecimal.ZERO);

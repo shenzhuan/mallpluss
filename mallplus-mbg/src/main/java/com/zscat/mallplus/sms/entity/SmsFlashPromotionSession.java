@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Date;
  * @author zscat
  * @since 2019-04-19
  */
+@Data
 @TableName("sms_flash_promotion_session")
 public class SmsFlashPromotionSession extends BaseEntity implements Serializable {
 
@@ -37,13 +39,13 @@ public class SmsFlashPromotionSession extends BaseEntity implements Serializable
      * 每日开始时间
      */
     @TableField("start_time")
-    private Date startTime;
+    private String startTime;
 
     /**
      * 每日结束时间
      */
     @TableField("end_time")
-    private Date endTime;
+    private String endTime;
 
     /**
      * 启用状态：0->不启用；1->启用
@@ -57,63 +59,4 @@ public class SmsFlashPromotionSession extends BaseEntity implements Serializable
     private Date createTime;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "SmsFlashPromotionSession{" +
-                ", id=" + id +
-                ", name=" + name +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                "}";
-    }
 }

@@ -36,7 +36,6 @@ public class PmsFeightTemplateController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有运费模版列表")
     @ApiOperation("根据条件查询所有运费模版列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:read')")
     public Object getPmsFeightTemplateByPage(PmsFeightTemplate entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
@@ -103,7 +102,6 @@ public class PmsFeightTemplateController {
     @SysLog(MODULE = "pms", REMARK = "给运费模版分配运费模版")
     @ApiOperation("查询运费模版明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:read')")
     public Object getPmsFeightTemplateById(@ApiParam("运费模版id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {

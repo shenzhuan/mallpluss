@@ -35,7 +35,6 @@ public class PmsProductAttributeController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有商品属性参数表列表")
     @ApiOperation("根据条件查询所有商品属性参数表列表")
     @GetMapping(value = "/listAll")
-    @PreAuthorize("hasAuthority('pms:PmsProductAttribute:read')")
     public Object getPmsProductAttributeByPage(PmsProductAttribute entity,
                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
@@ -122,7 +121,6 @@ public class PmsProductAttributeController {
     @SysLog(MODULE = "pms", REMARK = "给商品属性参数表分配商品属性参数表")
     @ApiOperation("查询商品属性参数表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductAttribute:read')")
     public Object getPmsProductAttributeById(@ApiParam("商品属性参数表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {

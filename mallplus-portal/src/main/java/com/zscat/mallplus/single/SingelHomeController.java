@@ -8,6 +8,7 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
+import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -66,6 +67,14 @@ public class SingelHomeController {
         return new CommonResult().success(contentResult);
     }
 
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/homeFlashPromotionList", method = RequestMethod.GET)
+    public Object homeFlashPromotionList() {
+        List<HomeFlashPromotion> contentResult = advertiseService.homeFlashPromotionList();
+        return new CommonResult().success(contentResult);
+    }
 
     /**
      * banner
@@ -76,18 +85,7 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @GetMapping("/bannerList")
     public Object bannerList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = null;
-        String bannerJson = redisService.get(Rediskey.appletBannerKey + type);
-        if (bannerJson != null && bannerJson != "[]") {
-            bannerList = JsonUtils.jsonToList(bannerJson, SmsHomeAdvertise.class);
-        } else {
-            SmsHomeAdvertise advertise = new SmsHomeAdvertise();
-            advertise.setType(type);
-            bannerList = advertiseService.list(new QueryWrapper<>(advertise));
-            redisService.set(Rediskey.appletBannerKey + type, JsonUtils.objectToJson(bannerList));
-            redisService.expire(Rediskey.appletBannerKey + type, 24 * 60 * 60);
-        }
-        //  List<SmsHomeAdvertise> bannerList = advertiseService.list(null, type, null, 5, 1);
+        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
         return new CommonResult().success(bannerList);
     }
 

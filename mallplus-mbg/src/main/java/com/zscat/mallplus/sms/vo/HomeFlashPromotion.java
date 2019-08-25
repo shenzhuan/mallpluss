@@ -14,8 +14,8 @@ import java.util.List;
 @Setter
 public class HomeFlashPromotion {
     private Long id;
-    private Date startTime;
-    private Date endTime;
+    private String startTime;
+    private String endTime;
     private Date nextStartTime;
     private Date nextEndTime;
     private String flashName;

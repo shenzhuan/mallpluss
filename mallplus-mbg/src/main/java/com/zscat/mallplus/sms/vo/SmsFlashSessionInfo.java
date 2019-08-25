@@ -8,6 +8,6 @@ import java.util.Date;
 public class SmsFlashSessionInfo {
     private Long id;
     private String name;
-    private Date startTime;
-    private Date endTime;
+    private String startTime;
+    private String endTime;
 }

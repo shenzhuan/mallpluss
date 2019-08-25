@@ -37,7 +37,6 @@ public class PmsProductCategoryController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有产品分类列表")
     @ApiOperation("根据条件查询所有产品分类列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsProductCategory:read')")
     public Object getPmsProductCategoryByPage(PmsProductCategory entity,
                                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
@@ -115,7 +114,6 @@ public class PmsProductCategoryController {
     @SysLog(MODULE = "pms", REMARK = "给产品分类分配产品分类")
     @ApiOperation("查询产品分类明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductCategory:read')")
     public Object getPmsProductCategoryById(@ApiParam("产品分类id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
