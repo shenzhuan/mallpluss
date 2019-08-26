@@ -30,7 +30,7 @@
         and
         #{current_time} &gt; start_time
         and
-        #{current_time} &lt; end_time
+        #{current_time} &lt; end_time limit 1
     </select>
 
 </mapper>
