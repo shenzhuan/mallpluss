@@ -952,21 +952,41 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     /**
      * 锁定下单商品的所有库存
      */
-    private void lockStock(List<OmsCartItem> cartPromotionItemList) {
-        for (OmsCartItem cartPromotionItem : cartPromotionItemList) {
-            if (ValidatorUtils.notEmpty(cartPromotionItem.getProductSkuId())) {
-                PmsSkuStock skuStock = skuStockMapper.selectById(cartPromotionItem.getProductSkuId());
-                skuStock.setLockStock(skuStock.getLockStock() + cartPromotionItem.getQuantity());
-                skuStockMapper.updateById(skuStock);
-            } else {
-               /* PmsProduct skuStock = productService.getById(cartPromotionItem.getProductId());
-                skuStock.setLockStock(skuStock.getLockStock() + cartPromotionItem.getQuantity());
-                skuStockMapper.updateById(skuStock);*/
-            }
 
+    public void lockStock(List<OmsCartItem> cartPromotionItemList) {
+        for (OmsCartItem item : cartPromotionItemList) {
+            PmsProduct goods = productService.getById(item.getProductId());
+            if (goods != null && goods.getId() != null) {
+                if (true) {
+                    redisService.remove(String.format(Rediskey.GOODSDETAIL, goods.getId() + ""));
+                    PmsProduct newGoods = new PmsProduct();
+                    newGoods.setId(goods.getId());
+                    if (!ValidatorUtils.empty(item.getProductSkuId()) && item.getProductSkuId() > 0) {
+
+                        PmsSkuStock skuStock = skuStockMapper.selectById(item.getProductSkuId());
+                        if ((skuStock.getStock() - item.getQuantity()) < 0) {
+                            throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", skuId=" + item.getProductSkuId());
+                        } else {
+                            skuStock.setId(item.getProductSkuId());
+                            skuStock.setStock(skuStock.getStock() - item.getQuantity());
+                            skuStockMapper.updateById(skuStock);
+
+                            newGoods.setStock(goods.getStock() - item.getQuantity());
+                            productService.updateById(newGoods);
+                        }
+                    } else {
+
+                        if ((goods.getStock() - item.getQuantity()) < 0) {
+                            throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", goodsId=" + item.getProductSkuId());
+                        } else {
+                            newGoods.setStock(goods.getStock() - item.getQuantity());
+                            productService.updateById(newGoods);
+                        }
+                    }
+                }
+            }
         }
     }
-
     /**
      * 判断下单商品是否都有库存
      */
