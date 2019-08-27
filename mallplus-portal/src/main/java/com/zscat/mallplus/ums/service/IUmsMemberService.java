@@ -79,5 +79,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @param integration
      */
     void addIntegration(Long id, Integer integration);
+
+    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname);
 }
 

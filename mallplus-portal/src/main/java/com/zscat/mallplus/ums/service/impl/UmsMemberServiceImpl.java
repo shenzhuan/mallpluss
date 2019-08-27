@@ -340,6 +340,53 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
+    public  Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname){
+        Map<String, Object> resultObj = new HashMap<String, Object>();
+        UmsMember userVo = this.queryByOpenId(openid);
+        String token = null;
+        if (null == userVo) {
+            UmsMember umsMember = new UmsMember();
+            umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
+            umsMember.setSourceType(1);
+            umsMember.setPassword(passwordEncoder.encode("123456"));
+            umsMember.setCreateTime(new Date());
+            umsMember.setStatus(1);
+            umsMember.setBlance(new BigDecimal(10000));
+            umsMember.setIntegration(0);
+            umsMember.setMemberLevelId(4L);
+            umsMember.setAvatar(headimgurl);
+            umsMember.setGender(sex);
+            umsMember.setHistoryIntegration(0);
+            umsMember.setWeixinOpenid(openid);
+            if (StringUtils.isEmpty(headimgurl)) {
+                //会员头像(默认头像)
+                umsMember.setIcon("/upload/img/avatar/01.jpg");
+            } else {
+                umsMember.setIcon(headimgurl);
+            }
+
+            umsMember.setNickname(nickname);
+            umsMember.setPersonalizedSignature(unionid);
+            memberMapper.insert(umsMember);
+            token = jwtTokenUtil.generateToken(umsMember.getUsername());
+            resultObj.put("userId", umsMember.getId());
+            resultObj.put("userInfo", umsMember);
+        } else {
+            token = jwtTokenUtil.generateToken(userVo.getUsername());
+            resultObj.put("userId", userVo.getId());
+            resultObj.put("userInfo", userVo);
+        }
+        if (StringUtils.isEmpty(token)) {
+            return ApiBaseAction.toResponsFail("登录失败");
+        }
+        resultObj.put("tokenHead", tokenHead);
+        resultObj.put("token", token);
+        return resultObj;
+    }
+
+
+
+    @Override
     public Object loginByWeixin(AppletLoginParam req) {
         try {
             SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());

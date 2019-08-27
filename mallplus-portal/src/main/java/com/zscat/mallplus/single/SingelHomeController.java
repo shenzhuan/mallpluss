@@ -169,6 +169,35 @@ public class SingelHomeController {
     }
 
     @IgnoreAuth
+    @ApiOperation(value = "appLogin登录")
+    @PostMapping(value = "/appLogin")
+    public Object appLogin(@RequestParam String openid,
+                           @RequestParam Integer sex,
+                           @RequestParam String headimgurl,
+                           @RequestParam String unionid,
+                           @RequestParam boolean status,
+                          @RequestParam String nickname) {
+        if (!status){
+            return new CommonResult().validateFailed("status失败");
+        }
+        if (openid == null || "".equals(openid)) {
+            return new CommonResult().validateFailed("openid为空");
+        }
+        try {
+
+            Map<String, Object> token = memberService.appLogin(openid, sex,headimgurl,unionid,nickname);
+            if (token.get("token") == null) {
+                return new CommonResult().validateFailed("用户名或密码错误");
+            }
+            return new CommonResult().success(token);
+        } catch (AuthenticationException e) {
+            return new CommonResult().validateFailed("用户名或密码错误");
+        } catch (Exception e) {
+            return new CommonResult().validateFailed(e.getMessage());
+        }
+
+    }
+    @IgnoreAuth
     @ApiOperation(value = "手机号 密码登录")
     @PostMapping(value = "/login")
     public Object login(@RequestParam String phone,
