@@ -40,7 +40,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有首页轮播广告表列表")
     @ApiOperation("根据条件查询所有首页轮播广告表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:read')")
     public Object getSmsHomeAdvertiseByPage(SmsHomeAdvertise entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
@@ -56,7 +55,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "保存首页轮播广告表")
     @ApiOperation("保存首页轮播广告表")
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:create')")
     public Object saveSmsHomeAdvertise(@RequestBody SmsHomeAdvertise entity) {
         try {
             entity.setClickCount(0);
@@ -92,7 +90,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "删除首页轮播广告表")
     @ApiOperation("删除首页轮播广告表")
     @PostMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:delete')")
     public Object deleteSmsHomeAdvertise(@ApiParam("首页轮播广告表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -111,7 +108,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "给首页轮播广告表分配首页轮播广告表")
     @ApiOperation("查询首页轮播广告表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:read')")
     public Object getSmsHomeAdvertiseById(@ApiParam("首页轮播广告表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -130,7 +126,6 @@ public class SmsHomeAdvertiseController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除首页轮播广告表")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = ISmsHomeAdvertiseService.removeByIds(ids);
         if (count) {

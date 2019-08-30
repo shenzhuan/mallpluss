@@ -4,7 +4,7 @@
 39.106.212.32
 
 
-nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
+nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web1.log 2>&1 &
 
 nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
 
@@ -30,6 +30,8 @@ put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-
 put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.1-SNAPSHOT.jar  /root/jm
 
 put -r /Users/shenzhuan/zhuan/vue/mall-admin-web/dist  /root/jm
+
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
 
 
