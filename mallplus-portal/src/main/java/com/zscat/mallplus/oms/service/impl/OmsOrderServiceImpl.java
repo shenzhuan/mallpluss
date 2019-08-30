@@ -679,7 +679,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             try {
                 accessToken = wechatApiService.getAccessToken();
 
-                String templateId = appletSet.getTemplateId1();
+                String templateId = appletSet.getTemplateid1();
                 Map<String, TemplateData> param = new HashMap<String, TemplateData>();
                 param.put("keyword1", new TemplateData(DateUtils.format(order.getCreateTime(), "yyyy-MM-dd"), "#EE0000"));
 
@@ -789,7 +789,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             try {
                 accessToken = wechatApiService.getAccessToken();
 
-                String templateId = appletSet.getTemplateId1();
+                String templateId = appletSet.getTemplateid1();
                 Map<String, TemplateData> param = new HashMap<String, TemplateData>();
                 param.put("keyword1", new TemplateData(DateUtils.format(order.getCreateTime(), "yyyy-MM-dd"), "#EE0000"));
 

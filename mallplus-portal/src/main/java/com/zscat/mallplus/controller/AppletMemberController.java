@@ -219,33 +219,7 @@ public class AppletMemberController extends ApiBaseAction {
             Date now = new Date();
             String formatNow = DateFormatUtils.format(now, "HH:mm:ss");
 
-            SmsFlashSessionInfo smsFlashSessionInfo = smsFlashPromotionSessionMapper.getCurrentDang(formatNow);
-            if (smsFlashSessionInfo != null && flashPromotionId != 0L) {//当前时间有秒杀档，并且有秒杀活动时，获取数据
-                Long smsFlashSessionId = smsFlashSessionInfo.getId();
-                //秒杀活动点档信息存储
-                tempsmsFlashList.setId(smsFlashSessionId);
-                tempsmsFlashList.setFlashName(smsFlashSessionInfo.getName());
-                tempsmsFlashList.setStartTime(smsFlashSessionInfo.getStartTime());
-                tempsmsFlashList.setEndTime(smsFlashSessionInfo.getEndTime());
-                SmsFlashPromotionProductRelation querySMP = new SmsFlashPromotionProductRelation();
-                querySMP.setFlashPromotionId(flashPromotionId);
-                querySMP.setFlashPromotionSessionId(smsFlashSessionId);
-                List<SmsFlashPromotionProductRelation> smsFlashPromotionProductRelationlist = smsFlashPromotionProductRelationService.list(new QueryWrapper<>(querySMP));
-                List<HomeProductAttr> productAttrs = new ArrayList<>();
-                for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
-                    PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
-                    HomeProductAttr product = new HomeProductAttr();
-                    product.setId(tempproduct.getId());
-                    product.setProductImg(tempproduct.getPic());
-                    product.setProductName(tempproduct.getName());
-                    product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
-                    productAttrs.add(product);
-                }
-                tempsmsFlashList.setProductList(productAttrs);
-                homeFlashPromotion = tempsmsFlashList;
-//                    redisService.set(Rediskey.appletsmsFlashPromotionProductKey,JsonUtils.objectToJson(homeFlashPromotion));
-//                    redisService.expire(Rediskey.appletsmsFlashPromotionProductKey, 24 * 60 * 60);
-            }
+
 //            }
             //获取秒杀活动结束
             //获取首页分类商品列表

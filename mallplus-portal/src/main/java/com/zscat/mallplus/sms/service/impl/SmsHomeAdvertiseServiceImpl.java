@@ -152,9 +152,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     private HomeFlashPromotion getHomeFlashPromotion( SmsFlashPromotion indexFlashPromotion) {
         Long flashPromotionId = 0L;
-        HomeFlashPromotion homeFlashPromotion = new HomeFlashPromotion();
-        HomeFlashPromotion tempsmsFlashList = new HomeFlashPromotion();
 
+        HomeFlashPromotion tempsmsFlashList = new HomeFlashPromotion();
+        HomeFlashPromotion homeFlashPromotion = new HomeFlashPromotion();
         //数据库中有当前秒杀活动时赋值
         if (indexFlashPromotion != null) {
             flashPromotionId = indexFlashPromotion.getId();
@@ -165,33 +165,40 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Date now = new Date();
         String formatNow = DateFormatUtils.format(now, "HH:mm:ss");
 
-        SmsFlashSessionInfo smsFlashSessionInfo = smsFlashPromotionSessionMapper.getCurrentDang(formatNow);
-        if (smsFlashSessionInfo != null && flashPromotionId != 0L) {//当前时间有秒杀档，并且有秒杀活动时，获取数据
-            Long smsFlashSessionId = smsFlashSessionInfo.getId();
-            //秒杀活动点档信息存储
-            tempsmsFlashList.setId(smsFlashSessionId);
-            tempsmsFlashList.setFlashName(indexFlashPromotion.getTitle());
-            tempsmsFlashList.setStartTime(smsFlashSessionInfo.getStartTime());
-            tempsmsFlashList.setEndTime(smsFlashSessionInfo.getEndTime());
-            SmsFlashPromotionProductRelation querySMP = new SmsFlashPromotionProductRelation();
-            querySMP.setFlashPromotionId(flashPromotionId);
-            querySMP.setFlashPromotionSessionId(smsFlashSessionId);
-            List<SmsFlashPromotionProductRelation> smsFlashPromotionProductRelationlist = smsFlashPromotionProductRelationService.list(new QueryWrapper<>(querySMP));
-            List<HomeProductAttr> productAttrs = new ArrayList<>();
-            for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
-                PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
-                if (tempproduct != null) {
-                    HomeProductAttr product = new HomeProductAttr();
-                    product.setId(tempproduct.getId());
-                    product.setProductImg(tempproduct.getPic());
-                    product.setProductName(tempproduct.getName());
-                    product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
-                    productAttrs.add(product);
+        List<SmsFlashSessionInfo> smsFlashSessionInfos = smsFlashPromotionSessionMapper.getCurrentDang(formatNow);
+
+        for (SmsFlashSessionInfo smsFlashSessionInfo : smsFlashSessionInfos){
+            if (smsFlashSessionInfo != null && flashPromotionId != 0L) {//当前时间有秒杀档，并且有秒杀活动时，获取数据
+
+                Long smsFlashSessionId = smsFlashSessionInfo.getId();
+                //秒杀活动点档信息存储
+                tempsmsFlashList.setId(smsFlashSessionId);
+                tempsmsFlashList.setFlashName(indexFlashPromotion.getTitle());
+                tempsmsFlashList.setStartTime(smsFlashSessionInfo.getStartTime());
+                tempsmsFlashList.setEndTime(smsFlashSessionInfo.getEndTime());
+                SmsFlashPromotionProductRelation querySMP = new SmsFlashPromotionProductRelation();
+                querySMP.setFlashPromotionId(flashPromotionId);
+                querySMP.setFlashPromotionSessionId(smsFlashSessionId);
+                List<SmsFlashPromotionProductRelation> smsFlashPromotionProductRelationlist = smsFlashPromotionProductRelationService.list(new QueryWrapper<>(querySMP));
+                List<HomeProductAttr> productAttrs = new ArrayList<>();
+                for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
+                    PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
+                    if (tempproduct != null) {
+                        HomeProductAttr product = new HomeProductAttr();
+                        product.setId(tempproduct.getId());
+                        product.setProductImg(tempproduct.getPic());
+                        product.setProductName(tempproduct.getName());
+                        product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
+                        productAttrs.add(product);
+                    }
                 }
+                smsFlashSessionInfo.setProductList(productAttrs);
+                homeFlashPromotion = tempsmsFlashList;
+
             }
-            tempsmsFlashList.setProductList(productAttrs);
-            homeFlashPromotion = tempsmsFlashList;
         }
+        homeFlashPromotion.setFlashSessionInfoList(smsFlashSessionInfos);
+
         return homeFlashPromotion;
     }
 
