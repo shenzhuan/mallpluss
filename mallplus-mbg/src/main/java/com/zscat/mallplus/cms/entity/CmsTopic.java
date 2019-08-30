@@ -38,6 +38,8 @@ public class CmsTopic extends BaseEntity implements Serializable {
      */
     private String name;
 
+    private String pic;
+
     /**
      * 创建时间
      */
