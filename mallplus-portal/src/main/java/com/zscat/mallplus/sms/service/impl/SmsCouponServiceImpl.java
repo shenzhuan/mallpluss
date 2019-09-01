@@ -17,6 +17,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -57,12 +58,27 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     public List<SmsCoupon> selectNotRecive() {
         SmsCoupon coupon = new SmsCoupon();
         coupon.setType(0);
-        return couponMapper.selectList(new QueryWrapper<>(coupon).gt("end_time", new Date()));
+        return couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
     }
 
+
+
+    @Override
+    public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
+        UmsMember currentMember = UserUtils.getCurrentMember();
+        if (currentMember == null) {
+
+        }
+        return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()).eq("use_status",useStatus));
+    }
+
+    @Transactional
     @Override
     public CommonResult add(Long couponId) {
         UmsMember currentMember = UserUtils.getCurrentMember();
+        if (currentMember == null) {
+            return new CommonResult().failed("优惠券不存在");
+        }
         //获取优惠券信息，判断数量
         SmsCoupon coupon = couponMapper.selectById(couponId);
         if (coupon == null) {

@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -95,23 +96,62 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     @Resource
     private SmsGroupMemberMapper groupMemberMapper;
 
+    @Resource
+    private ISmsCouponService couponService;
     @Override
     public HomeContentResult singelContent() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
         HomeContentResult result = new HomeContentResult();
-        //获取首页广告
-        result.setAdvertiseList(getHomeAdvertiseList());
-        //获取推荐品牌
-        result.setBrandList(this.getRecommendBrandList(0, 4));
-        //获取秒杀信息
-        result.setHomeFlashPromotion(getHomeFlashPromotion());
-        //获取新品推荐
-        result.setNewProductList(sampleGoodsList(this.getNewProductList(0, 4)));
-        //获取人气推荐
-        result.setHotProductList(sampleGoodsList(this.getHotProductList(0, 4)));
-        //获取推荐专题
-        result.setSubjectList(this.getRecommendSubjectList(0, 4));
-        List<PmsProductAttributeCategory> productAttributeCategoryList = getPmsProductAttributeCategories();
-        result.setCat_list(productAttributeCategoryList);
+
+        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+        Callable<List> recomBrandCallable = () -> this.getRecommendBrandList(0, 4);
+        Callable<HomeFlashPromotion> homeFlashCallable = () -> getHomeFlashPromotion();
+        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
+        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
+        Callable<List> cateProductCallable = () -> getPmsProductAttributeCategories();
+        Callable<List> advListCallable = this::getHomeAdvertiseList;
+
+        FutureTask<List> recomBrandTask = new FutureTask<>(recomBrandCallable);
+        FutureTask<HomeFlashPromotion> homeFlashTask = new FutureTask<>(homeFlashCallable);
+        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
+        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
+        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+        FutureTask<List> cateProductTask = new FutureTask<>(cateProductCallable);
+        FutureTask<List> advListTask = new FutureTask<>(advListCallable);
+
+        executorService.submit(recomBrandTask);
+        executorService.submit(homeFlashTask);
+        executorService.submit(couponListTask);
+        executorService.submit(newGoodsListTask);
+        executorService.submit(newHotListTask);
+        executorService.submit(recomSubListTask);
+        executorService.submit(cateProductTask);
+        executorService.submit(advListTask);
+
+        try {
+            result.setCouponList(couponListTask.get());
+            //获取首页广告
+            result.setAdvertiseList(advListTask.get());
+            //获取推荐品牌
+            result.setBrandList(recomBrandTask.get());
+            //获取秒杀信息
+            result.setHomeFlashPromotion(homeFlashTask.get());
+            //获取新品推荐
+            result.setNewProductList(newGoodsListTask.get());
+            //获取人气推荐
+            result.setHotProductList(newHotListTask.get());
+            //获取推荐专题
+            result.setSubjectList(recomSubListTask.get());
+            result.setCat_list(cateProductTask.get());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

@@ -6,6 +6,7 @@ import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import lombok.Getter;
@@ -35,4 +36,6 @@ public class HomeContentResult {
     private List<CmsSubject> subjectList;
 
     private List<PmsProductAttributeCategory> cat_list;
+
+    private List<SmsCoupon> couponList;
 }

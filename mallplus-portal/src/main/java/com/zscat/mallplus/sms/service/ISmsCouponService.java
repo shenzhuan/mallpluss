@@ -45,4 +45,7 @@ public interface ISmsCouponService extends IService<SmsCoupon> {
     List<SmsCoupon> selectRecive(Long memberId);
 
     List<SmsCoupon> selectNotRecive();
+
+
+    List<SmsCouponHistory> listMemberCoupon(Integer useStatus);
 }
