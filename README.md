@@ -1,5 +1,7 @@
 # mall
 
+[文档blog]( http://yjlive.cn:8084/#/)
+
 ## 说明
 
 > 基于SpringBoot+MyBatis-plus的电商系统，包括前台商城系统及后台管理系统。
