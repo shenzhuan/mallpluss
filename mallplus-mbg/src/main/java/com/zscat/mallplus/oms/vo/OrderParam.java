@@ -16,6 +16,7 @@ public class OrderParam {
     private Long addressId;
     //优惠券id
     private Long couponId;
+    private Long  memberCouponId;
     private Long memberId;
     //使用的积分数
     private Integer useIntegration;

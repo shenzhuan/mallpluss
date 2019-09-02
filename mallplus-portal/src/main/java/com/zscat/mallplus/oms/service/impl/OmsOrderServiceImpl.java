@@ -136,7 +136,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (tbOrder == null) {
             throw new ApiMallPlusException("订单不存在");
         }
-        tbOrder.setStatus(2);
+        tbOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
         tbOrder.setPayType(tbThanks.getPayType());
         tbOrder.setPaymentTime(new Date());
         tbOrder.setModifyTime(new Date());
@@ -316,10 +316,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderItemList.add(orderItem);
             name = cartPromotionItem.getProductName();
         }
+        SmsCouponHistory couponHistory = null;
+        SmsCoupon coupon = null;
+        if (orderParam.getCouponId() != null) {
+             couponHistory = couponHistoryService.getById(orderParam.getMemberCouponId());
+             coupon = couponService.getById(orderParam.getCouponId());
 
+        }
         UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
+
         //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
         OmsOrder order = createOrderObj(orderParam, currentMember, orderItemList, address);
+        if (orderParam.getCouponId() == null) {
+            order.setCouponAmount(new BigDecimal(0));
+        } else {
+            order.setCouponId(orderParam.getCouponId());
+            order.setCouponAmount(coupon.getAmount());
+        }
+        order.setPayAmount(calcPayAmount(order));
+
         // TODO: 2018/9/3 bill_*,delivery_*
         //插入order表和order_item表
         orderService.save(order);
@@ -330,7 +345,11 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         orderItemService.saveBatch(orderItemList);
         //如使用优惠券更新优惠券使用状态
         if (orderParam.getCouponId() != null) {
-            updateCouponStatus(orderParam.getCouponId(), currentMember.getId(), 1);
+            couponHistory.setUseStatus(1);
+            couponHistory.setUseTime(new Date());
+            couponHistory.setOrderId(order.getId());
+            couponHistory.setOrderSn(order.getOrderSn());
+            couponHistoryService.updateById(couponHistory);
         }
         //如使用积分需要扣除积分
         if (orderParam.getUseIntegration() != null) {
@@ -532,12 +551,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (ValidatorUtils.notEmpty(orderParam.getGroupId())) {
             order.setGroupId(orderParam.getGroupId());
         }
-        if (orderParam.getCouponId() == null) {
-            order.setCouponAmount(new BigDecimal(0));
-        } else {
-            order.setCouponId(orderParam.getCouponId());
-            order.setCouponAmount(calcCouponAmount(orderItemList));
-        }
+
         if (orderParam.getUseIntegration() == null) {
             order.setIntegration(0);
             order.setIntegrationAmount(new BigDecimal(0));
@@ -545,7 +559,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             order.setIntegration(orderParam.getUseIntegration());
             order.setIntegrationAmount(calcIntegrationAmount(orderItemList));
         }
-        order.setPayAmount(calcPayAmount(order));
+
         //转化为订单信息并插入数据库
         order.setCreateTime(new Date());
         order.setMemberUsername(currentMember.getUsername());
@@ -554,7 +568,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //订单来源：0->PC订单；1->app订单
         order.setSourceType(1);
         //订单状态：订单状态：1->待付款；2->待发货；3->已发货；4->已完成；5->售后订单 6->已关闭；
-        order.setStatus(1);
+        order.setStatus(OrderStatus.INIT.getValue());
         //订单类型：0->正常订单；1->秒杀订单
         order.setOrderType(0);
         //收货人信息：姓名、电话、邮编、地址
@@ -648,7 +662,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //修改订单支付状态
         OmsOrder order = new OmsOrder();
         order.setId(orderId);
-        order.setStatus(2);
+        order.setStatus(OrderStatus.TO_DELIVER.getValue());
         order.setPaymentTime(new Date());
         orderService.updateById(order);
         //恢复所有下单商品的锁定库存，扣减真实库存
@@ -736,7 +750,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         OmsOrder cancelOrder = orderMapper.selectById(orderId);
         if (cancelOrder != null) {
             //修改订单状态为取消
-            cancelOrder.setStatus(4);
+            cancelOrder.setStatus(OrderStatus.CLOSED.getValue());
             orderMapper.updateById(cancelOrder);
             OmsOrderItem queryO = new OmsOrderItem();
             queryO.setOrderId(orderId);
@@ -848,7 +862,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //订单来源：0->PC订单；1->app订单
         order.setSourceType(orderParam.getSourceType());
         //订单状态：1->待付款；2->待发货；3->已发货；4->已完成；5->售后订单 6->已关闭；
-        order.setStatus(1);
+        order.setStatus(OrderStatus.INIT.getValue());
         //订单类型：0->正常订单；1->秒杀订单
         order.setOrderType(orderParam.getOrderType());
         //收货人信息：姓名、电话、邮编、地址
