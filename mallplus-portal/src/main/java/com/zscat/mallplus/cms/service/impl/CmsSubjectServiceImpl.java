@@ -14,11 +14,17 @@ import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.vo.timeline.Timeline;
+import com.zscat.mallplus.vo.timeline.TimelineMonth;
+import com.zscat.mallplus.vo.timeline.TimelinePost;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +52,39 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     private UmsRewardLogMapper rewardLogMapper;
     @Resource
     private CmsSubjectCategoryMapper subjectCategoryMapper;
+
+
+
+    /**timelineMapper
+     * 获取timeLine数据
+     *
+     * @return
+     */
+    @Override
+    public List<Timeline> listTimeLine() {
+        List<Timeline> timelineList = subjectMapper.listTimeline();
+        genTimelineMonth(timelineList);
+        return timelineList;
+    }
+
+    private List<Timeline> genTimelineMonth(List<Timeline> timelineList) {
+        for(Timeline timeline : timelineList) {
+            List<TimelineMonth> timelineMonthList = new ArrayList<>();
+            for (int i = Calendar.DECEMBER + 1; i > 0; i--) {
+                List<TimelinePost> postList = subjectMapper.listTimelinePost(timeline.getYear(), i);
+                if(CollectionUtils.isEmpty(postList)) {
+                    continue;
+                }
+                TimelineMonth month = new TimelineMonth();
+                month.setCount(postList.size());
+                month.setMonth(i);
+                month.setPosts(postList);
+                timelineMonthList.add(month);
+            }
+            timeline.setMonths(timelineMonthList);
+        }
+        return timelineList;
+    }
 
 
     @Override

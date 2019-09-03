@@ -403,4 +403,8 @@ public class SingeCmsController extends ApiBaseAction {
         return subjectService.reward(articlelId,coin);
     }
 
+    @GetMapping("/listTimeline")
+    public Object listTimeline() {
+        return new CommonResult().success(subjectService.listTimeLine());
+    }
 }

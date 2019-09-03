@@ -34,6 +34,7 @@ put -r /Users/shenzhuan/zhuan/vue/mall-admin-web/dist  /root/jm
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
 
+put -r  /Users/java/test/git/logs/dbblog/dbblog-frontend/cms /root/jm/cms
 
 
 

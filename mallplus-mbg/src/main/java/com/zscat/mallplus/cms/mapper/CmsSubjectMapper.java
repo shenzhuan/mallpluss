@@ -2,6 +2,11 @@ package com.zscat.mallplus.cms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zscat.mallplus.cms.entity.CmsSubject;
+import com.zscat.mallplus.vo.timeline.Timeline;
+import com.zscat.mallplus.vo.timeline.TimelinePost;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +19,8 @@ import com.zscat.mallplus.cms.entity.CmsSubject;
 public interface CmsSubjectMapper extends BaseMapper<CmsSubject> {
 
     int countByToday(Long memberId);
+
+    List<TimelinePost> listTimelinePost(@Param("year") Integer year, @Param("month") Integer month);
+
+    List<Timeline> listTimeline();
 }
