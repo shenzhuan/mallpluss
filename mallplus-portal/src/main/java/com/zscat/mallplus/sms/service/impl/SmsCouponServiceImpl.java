@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.vo.CartPromotionItem;
-import com.zscat.mallplus.sms.entity.SmsCoupon;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
-import com.zscat.mallplus.sms.entity.SmsCouponProductCategoryRelation;
-import com.zscat.mallplus.sms.entity.SmsCouponProductRelation;
+import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.mapper.SmsCouponMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
@@ -25,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -56,9 +54,24 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCoupon> selectNotRecive() {
+        UmsMember currentMember = UserUtils.getCurrentMember();
         SmsCoupon coupon = new SmsCoupon();
         coupon.setType(0);
-        return couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
+        List<SmsCoupon> list = new ArrayList<>();
+        if (currentMember != null && currentMember.getId()!=null) {
+            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()));
+            if (histories != null && histories.size() > 0) {
+                List<Long> ids = histories.stream()
+                        .map(SmsCouponHistory::getCouponId)
+                        .collect(Collectors.toList());
+                list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()).notIn("id",ids));
+            }
+
+        }else {
+            list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
+        }
+        return list;
+
     }
 
 

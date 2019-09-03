@@ -32,10 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JWT登录授权过滤器
@@ -62,11 +59,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         long startTime, endTime;
-        String storeId = request.getParameter("storeId");
+        String storeId = request.getParameter("storeid");
         if (ValidatorUtils.notEmpty(storeId)) {
             apiContext.setCurrentProviderId(Long.valueOf(storeId));
         } else {
-            storeId = request.getHeader("storeId");
+            storeId = request.getHeader("storeid");
             if (ValidatorUtils.notEmpty(storeId)) {
                 apiContext.setCurrentProviderId(Long.valueOf(storeId));
             }
@@ -91,7 +88,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } else {
             sysLog.setParams(getBodyString(request));
         }
-
 
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
         String username = null;

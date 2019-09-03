@@ -4,14 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.config.WxAppletProperties;
 import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
+import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.ums.entity.Sms;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.SmsService;
@@ -20,6 +24,7 @@ import com.zscat.mallplus.util.CommonUtil;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.MemberDetails;
 import com.zscat.mallplus.vo.SmsCode;
@@ -93,6 +98,32 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Resource
     private SysAppletSetMapper appletSetMapper;
 
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
+    @Resource
+    private OmsOrderMapper omsOrderMapper;
+
+
+    @Override
+    public void updataMemberOrderInfo() {
+        List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
+        List<UmsMemberLevel> levelList = memberLevelService.list(new QueryWrapper<UmsMemberLevel>().orderByDesc("price"));
+        for (OrderStstic o : orders){
+            System.out.println(o.toString());
+            UmsMember member = new UmsMember();
+            member.setId(o.getMemberId());
+            member.setBuyMoney(o.getTotalPayAmount());
+            for (UmsMemberLevel level: levelList){
+                if (member.getBuyMoney().compareTo(level.getPrice())>=0){
+                    member.setMemberLevelId(level.getId());
+                    member.setMemberLevelName(level.getName());
+                    break;
+                }
+            }
+            member.setBuyCount(o.getTotalCount());
+            memberMapper.updateById(member);
+        }
+    }
 
     /**
      * 添加积分
@@ -234,6 +265,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
         UmsMember umsMember = new UmsMember();
         umsMember.setMemberLevelId(4L);
+        umsMember.setMemberLevelName("普通会员");
         umsMember.setUsername(user.getUsername());
         umsMember.setPhone(user.getPhone());
         umsMember.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -241,6 +273,9 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setStatus(1);
         umsMember.setBlance(new BigDecimal(10000));
 
+        String defaultIcon ="http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+        umsMember.setIcon(defaultIcon);
+        umsMember.setAvatar(defaultIcon);
         memberMapper.insert(umsMember);
         umsMember.setPassword(null);
         return new CommonResult().success("注册成功", null);

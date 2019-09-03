@@ -31,6 +31,8 @@ public class UmsMember extends BaseEntity implements Serializable {
 
     @TableField("member_level_id")
     private Long memberLevelId;
+    @TableField("member_level_name")
+    private String memberLevelName;
     @TableField("area_id")
     private Long areaId;
     @TableField("area_name")

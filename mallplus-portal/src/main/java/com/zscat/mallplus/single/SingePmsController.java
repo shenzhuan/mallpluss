@@ -582,7 +582,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation("添加商品浏览记录")
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/addView")
-    public void addView(@RequestParam Long memberId,@RequestParam  Long goodsId) {
+    public Object addView(@RequestParam Long memberId,@RequestParam  Long goodsId) {
 
         String key = String.format(Rediskey.GOODSHISTORY, memberId);
 
@@ -595,6 +595,7 @@ public class SingePmsController extends ApiBaseAction {
         redisUtil.lTrim(key,0,59);
         //设置缓存时间为一个月
         redisUtil.expire(key,60*60*24*30, TimeUnit.SECONDS);
+        return new CommonResult().success();
     }
     @SysLog(MODULE = "pms", REMARK = "查询用户浏览记录列表")
     @IgnoreAuth

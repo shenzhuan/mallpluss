@@ -19,6 +19,8 @@ import java.util.Map;
  */
 public interface IUmsMemberService extends IService<UmsMember> {
 
+    void updataMemberOrderInfo();
+
     Object loginByWeixin(AppletLoginParam req);
 
 

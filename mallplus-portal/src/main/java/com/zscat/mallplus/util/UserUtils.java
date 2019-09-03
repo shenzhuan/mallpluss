@@ -17,14 +17,11 @@ public class UserUtils {
         try {
             SecurityContext ctx = SecurityContextHolder.getContext();
             Authentication auth = ctx.getAuthentication();
-            if ("anonymousUser".equals(auth.getPrincipal())){
-                return new UmsMember();
-            }
-            System.out.println( auth.getPrincipal());
+          if (auth==null){
+              return new UmsMember();
+          }
             MemberDetails memberDetails = (MemberDetails) auth.getPrincipal();
-            System.out.println(memberDetails);
-            System.out.println(memberDetails.getUmsMember());
-            System.out.println(memberDetails.getUsername());
+            System.out.println(memberDetails.toString());
             return memberDetails.getUmsMember();
         } catch (Exception e) {
             e.printStackTrace();

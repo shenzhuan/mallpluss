@@ -3,9 +3,11 @@ package com.zscat.mallplus.component;
 
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
@@ -33,6 +35,10 @@ public class OrderTimeOutCancelTask {
     private PmsProductMapper productMapper;
     @Resource
     private ICmsSubjectService subjectService;
+    @Resource
+    private OmsOrderMapper orderMapper;
+    @Resource
+    private IUmsMemberService IUmsMemberService;
     /**
      * cron表达式：Seconds Minutes Hours DayofMonth Month DayofWeek [Year]
      * 每10分钟扫描一次，扫描设定超时时间之前下的订单，如果没支付则取消该订单
@@ -43,6 +49,15 @@ public class OrderTimeOutCancelTask {
         logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
     }
 
+
+    /**
+     * 会员等级计算
+     */
+    @Scheduled(cron = "0 0/15 * ? * ?")
+    private void memberlevelCalator() {
+        IUmsMemberService.updataMemberOrderInfo();
+        logger.info("会员等级计算");
+    }
     /**
      * 文章浏览量
      */

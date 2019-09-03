@@ -6,7 +6,11 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.sms.entity.SmsCoupon;
+import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
+import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
+import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -14,10 +18,12 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.OssAliyunUtil;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
+import com.zscat.mallplus.vo.UmsMemberInfoDetail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +32,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +62,28 @@ public class SingelHomeController {
     private ISmsHomeAdvertiseService advertiseService;
     @Autowired
     private IOmsOrderService orderService;
+    @Resource
+    private ISmsCouponService couponService;
 
+    @Resource
+    private SmsCouponHistoryMapper couponHistoryMapper;
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
+    public Object userInfo() {
+        UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
+       UmsMember umsMember = UserUtils.getCurrentMember();
+       if (umsMember!=null && umsMember.getId()!=null){
+           umsMember = memberService.getById(umsMember.getId());
+           List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));
+           detail.setHistories(histories);
+           detail.setMember(umsMember);
+           return new CommonResult().success(detail);
+       }
+        return new CommonResult().failed();
+    }
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
@@ -68,11 +96,20 @@ public class SingelHomeController {
     }
 
     @IgnoreAuth
-    @ApiOperation("首页内容页信息展示")
-    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @ApiOperation("首页秒杀活动")
+    @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
     @RequestMapping(value = "/homeFlashPromotionList", method = RequestMethod.GET)
     public Object homeFlashPromotionList() {
         List<HomeFlashPromotion> contentResult = advertiseService.homeFlashPromotionList();
+        return new CommonResult().success(contentResult);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("优惠券")
+    @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
+    @RequestMapping(value = "/couponList", method = RequestMethod.GET)
+    public Object couponList() {
+        List<SmsCoupon> contentResult = couponService.selectNotRecive();
         return new CommonResult().success(contentResult);
     }
 

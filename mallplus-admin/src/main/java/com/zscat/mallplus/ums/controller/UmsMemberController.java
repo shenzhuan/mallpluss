@@ -7,6 +7,8 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -36,6 +38,8 @@ import java.util.List;
 public class UmsMemberController {
     @Resource
     private IUmsMemberService IUmsMemberService;
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
     @Resource
     private OmsOrderMapper omsOrderMapper;
     @SysLog(MODULE = "ums", REMARK = "根据条件查询所有会员表列表")
@@ -140,14 +144,7 @@ public class UmsMemberController {
     @PostMapping(value = "/updateMemberOrderInfo")
     public Object updateMemberOrderInfo() {
         try {
-            List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
-            for (OrderStstic o : orders){
-                UmsMember member = new UmsMember();
-                member.setId(o.getMemberId());
-                member.setBuyMoney(o.getTotalPayAmount());
-                member.setBuyCount(o.getTotalCount());
-                IUmsMemberService.updateById(member);
-            }
+           IUmsMemberService.updataMemberOrderInfo();
             return  new CommonResult().success();
         } catch (Exception e) {
             log.error("更新会员的订单信息：%s", e.getMessage(),e);
