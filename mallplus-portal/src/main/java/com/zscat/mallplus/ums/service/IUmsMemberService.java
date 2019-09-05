@@ -82,6 +82,6 @@ public interface IUmsMemberService extends IService<UmsMember> {
      */
     void addIntegration(Long id, Integer integration);
 
-    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname);
+    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
 }
 

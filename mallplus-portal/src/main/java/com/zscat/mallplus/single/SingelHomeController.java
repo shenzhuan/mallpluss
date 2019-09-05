@@ -26,6 +26,7 @@ import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
@@ -44,6 +45,7 @@ import java.util.Map;
  * 首页内容管理Controller
  * https://github.com/shenzhuan/mallplus on 2019/1/28.
  */
+@Slf4j
 @RestController
 @Api(tags = "HomeController", description = "首页内容管理")
 @RequestMapping("/api/single/home")
@@ -213,16 +215,16 @@ public class SingelHomeController {
                            @RequestParam String headimgurl,
                            @RequestParam String unionid,
                            @RequestParam boolean status,
-                          @RequestParam String nickname) {
-        if (!status){
-            return new CommonResult().validateFailed("status失败");
-        }
+                          @RequestParam String nickname,
+                           @RequestParam String city,
+                           @RequestParam Integer source) {
+
         if (openid == null || "".equals(openid)) {
             return new CommonResult().validateFailed("openid为空");
         }
         try {
 
-            Map<String, Object> token = memberService.appLogin(openid, sex,headimgurl,unionid,nickname);
+            Map<String, Object> token = memberService.appLogin(openid, sex,headimgurl,unionid,nickname,city,source);
             if (token.get("token") == null) {
                 return new CommonResult().validateFailed("用户名或密码错误");
             }
@@ -399,5 +401,16 @@ public class SingelHomeController {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    @IgnoreAuth
+    @ApiOperation(value = "登录以后返回token")
+    @GetMapping(value = "/logs")
+    public Object log(@RequestParam("logs") String logs) {
+        System.out.println(logs);
+        log.error(logs);
+        return new CommonResult().success();
+
     }
 }

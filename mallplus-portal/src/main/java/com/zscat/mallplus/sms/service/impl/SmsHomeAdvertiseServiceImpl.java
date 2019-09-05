@@ -132,7 +132,12 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         executorService.submit(advListTask);
 
         try {
-            result.setCouponList(couponListTask.get());
+            List<SmsCoupon> couponList = couponListTask.get();
+            if (couponList!=null && couponList.size()>2){
+                couponList = couponList.subList(0,2);
+            }
+            result.setCouponList(couponList);
+
             //获取首页广告
             result.setAdvertiseList(advListTask.get());
             //获取推荐品牌

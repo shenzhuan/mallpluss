@@ -156,6 +156,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         UmsMember umsMember = new UmsMember();
         umsMember.setUsername(phone);
         umsMember.setPhone(phone);
+        umsMember.setSourceType(3);
         umsMember.setPassword(password);
         umsMember.setConfimpassword(confim);
         umsMember.setPhonecode(authCode);
@@ -267,6 +268,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setMemberLevelId(4L);
         umsMember.setMemberLevelName("普通会员");
         umsMember.setUsername(user.getUsername());
+        umsMember.setSourceType(user.getSourceType());
         umsMember.setPhone(user.getPhone());
         umsMember.setPassword(passwordEncoder.encode(user.getPassword()));
         umsMember.setCreateTime(new Date());
@@ -375,20 +377,21 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public  Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname){
+    public  Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source){
         Map<String, Object> resultObj = new HashMap<String, Object>();
         UmsMember userVo = this.queryByOpenId(openid);
         String token = null;
         if (null == userVo) {
             UmsMember umsMember = new UmsMember();
             umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
-            umsMember.setSourceType(1);
+            umsMember.setSourceType(source);
             umsMember.setPassword(passwordEncoder.encode("123456"));
             umsMember.setCreateTime(new Date());
             umsMember.setStatus(1);
             umsMember.setBlance(new BigDecimal(10000));
             umsMember.setIntegration(0);
             umsMember.setMemberLevelId(4L);
+            umsMember.setCity(city);
             umsMember.setAvatar(headimgurl);
             umsMember.setGender(sex);
             umsMember.setHistoryIntegration(0);
@@ -469,7 +472,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if (null == userVo) {
                 UmsMember umsMember = new UmsMember();
                 umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
-                umsMember.setSourceType(1);
+                umsMember.setSourceType(2);
                 umsMember.setPassword(passwordEncoder.encode("123456"));
                 umsMember.setCreateTime(new Date());
                 umsMember.setStatus(1);
