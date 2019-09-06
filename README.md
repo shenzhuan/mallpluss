@@ -35,13 +35,26 @@
   
 ![后台管理系统功能演示.gif](/document/resource/mall-admin.gif)
 
->   发布页面 http://m3w.cn/mallcloud  
->   h5地址  http://www.yjlive.cn:8082/#/ 
->  后台管理地址 http://www.yjlive.cn:8090 
->  小程序体验码
->  ![输入图片说明](https://images.gitee.com/uploads/images/2019/0621/100856_b901ecef_134431.png "屏幕截图.png")
->  app体验 加群下载
->  apk下载 链接: https://pan.baidu.com/s/1UiFtg3AQ2-muNjfQjsjXPw 提取码: nda2
+
+#### 项目演示
+- H5体验地址：http://www.yjlive.cn:8082
+- 后台体验地址：http://www.yjlive.cn:8090/#/login
+- QQ交流群：895616401（开发手册、接口文档、操作手册请进群查看哦~）
+- 交流社区：[https://bbs.jihainet.com/](https://bbs.jihainet.com/)
+
+- 微信小程序体验码
+
+![输入图片说明](https://images.gitee.com/uploads/images/2019/0906/120657_8459b6d0_134431.png "applet.png")
+
+- qq小程序体验二维码
+
+![输入图片说明](https://images.gitee.com/uploads/images/2019/0906/101552_d7930b7f_134431.png "qqapplet.png")
+
+- 支付宝小程序体验二维码
+
+![输入图片说明](https://images.gitee.com/uploads/images/2019/0906/101538_bc52f965_134431.jpeg "alpayApplet.jpg")
+
+- apk体验二维码  加群下载 895616401
 
 ### 组织结构
 
