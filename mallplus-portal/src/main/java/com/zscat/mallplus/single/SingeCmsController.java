@@ -5,14 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.cms.entity.CmsSubject;
-import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
-import com.zscat.mallplus.cms.entity.CmsSubjectComment;
-import com.zscat.mallplus.cms.entity.CmsTopic;
-import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
-import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
-import com.zscat.mallplus.cms.service.ICmsSubjectService;
-import com.zscat.mallplus.cms.service.ICmsTopicService;
+import com.zscat.mallplus.cms.entity.*;
+import com.zscat.mallplus.cms.service.*;
 import com.zscat.mallplus.pms.entity.CmsPrefrenceAreaProductRelation;
 import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
 import com.zscat.mallplus.pms.entity.PmsBrand;
@@ -76,6 +70,8 @@ public class SingeCmsController extends ApiBaseAction {
     private ICmsSubjectService subjectService;
     @Resource
     private ICmsSubjectCommentService commentService;
+    @Resource
+    private ICmsTopicCommentService topicCommentService;
     @Resource
     private UmsMemberMapper memberMapper;
     @Resource
@@ -147,6 +143,16 @@ public class SingeCmsController extends ApiBaseAction {
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(topicService.page(new Page<CmsTopic>(pageNum, pageSize), new QueryWrapper<>(topic).orderByDesc("create_time")));
     }
+    @SysLog(MODULE = "cms", REMARK = "查询专题列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询公益评论列表")
+    @GetMapping(value = "/topicComment/list")
+    public Object subjectList(CmsTopicComment topic,
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(topicCommentService.page(new Page<CmsTopicComment>(pageNum, pageSize), new QueryWrapper<>(topic).orderByDesc("create_time")));
+    }
+
     @SysLog(MODULE = "pms", REMARK = "查询专题详情信息")
     @IgnoreAuth
     @GetMapping(value = "/topic/detail")
@@ -251,18 +257,7 @@ public class SingeCmsController extends ApiBaseAction {
         }else {
             return new CommonResult().failed("请先登录");
         }
-        /*if (member.getMemberLevelId() > 0) {
-            UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
 
-            int subjectCounts = subjectService.countByToday(member.getId());
-            if (ValidatorUtils.empty(subjectCounts)){
-                subjectCounts=0;
-            }
-            if (subjectCounts > memberLevel.getArticlecount()) {
-                commonResult = new CommonResult().failed("你今天已经有发" + memberLevel.getArticlecount() + "篇公益");
-                return commonResult;
-            }
-        }*/
         if (subject.getQsType()==1){
             subject.setSchoolName(member.getSchoolName());
             subject.setSchoolId(member.getSchoolId());
@@ -373,7 +368,7 @@ public class SingeCmsController extends ApiBaseAction {
     }
 
     @SysLog(MODULE = "cms", REMARK = "创建文章")
-    @ApiOperation(value = "添加评论")
+    @ApiOperation(value = "添加文章评论")
     @PostMapping(value = "/addSubjectCom")
     public Object addSubjectCom(CmsSubjectComment subject, BindingResult result) {
         CommonResult commonResult;
@@ -387,6 +382,28 @@ public class SingeCmsController extends ApiBaseAction {
         subject.setCreateTime(new Date());
 
         boolean count = commentService.save(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+    @SysLog(MODULE = "cms", REMARK = "创建文章")
+    @ApiOperation(value = "添加公益评论")
+    @PostMapping(value = "/addTopicCom")
+    public Object addTopicCom(CmsTopicComment subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+        if (member!=null){
+            subject.setMemberIcon(member.getIcon());
+            subject.setMemberNickName(member.getNickname());
+        }else {
+            return new CommonResult().failed("请先登录");
+        }
+        subject.setCreateTime(new Date());
+
+        boolean count = topicCommentService.save(subject);
         if (count) {
             commonResult = new CommonResult().success(count);
         } else {
