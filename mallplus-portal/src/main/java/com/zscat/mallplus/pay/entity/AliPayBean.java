@@ -5,7 +5,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:/production/alipay.properties")
 @ConfigurationProperties(prefix = "alipay")
 public class AliPayBean {
     private String appId;
@@ -46,7 +45,7 @@ public class AliPayBean {
         this.serverUrl = serverUrl;
     }
 
-    
+
 
 	public String getDomain() {
 		return domain;
@@ -62,5 +61,5 @@ public class AliPayBean {
 				+ serverUrl + ", domain=" + domain + "]";
 	}
 
-	
+
 }

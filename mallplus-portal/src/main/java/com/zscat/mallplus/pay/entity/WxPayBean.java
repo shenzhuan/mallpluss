@@ -5,7 +5,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:/production/wxpay.properties")
 @ConfigurationProperties(prefix = "wxpay")
 public class WxPayBean {
     private String appId;
@@ -14,7 +13,7 @@ public class WxPayBean {
     private String partnerKey;
     private String certPath;
     private String domain;
-    
+
 	public String getAppId() {
 		return appId;
 	}

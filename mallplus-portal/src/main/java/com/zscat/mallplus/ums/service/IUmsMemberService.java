@@ -19,6 +19,8 @@ import java.util.Map;
  */
 public interface IUmsMemberService extends IService<UmsMember> {
 
+    void updataMemberOrderInfo();
+
     Object loginByWeixin(AppletLoginParam req);
 
 
@@ -79,5 +81,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @param integration
      */
     void addIntegration(Long id, Integer integration);
+
+    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
 }
 

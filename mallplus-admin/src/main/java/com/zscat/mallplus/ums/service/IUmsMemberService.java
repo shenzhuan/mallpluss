@@ -13,4 +13,5 @@ import com.zscat.mallplus.ums.entity.UmsMember;
  */
 public interface IUmsMemberService extends IService<UmsMember> {
 
+    void updataMemberOrderInfo();
 }

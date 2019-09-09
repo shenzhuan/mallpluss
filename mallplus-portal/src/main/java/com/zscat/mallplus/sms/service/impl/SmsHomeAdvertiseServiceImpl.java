@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -95,23 +96,67 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     @Resource
     private SmsGroupMemberMapper groupMemberMapper;
 
+    @Resource
+    private ISmsCouponService couponService;
     @Override
     public HomeContentResult singelContent() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
         HomeContentResult result = new HomeContentResult();
-        //获取首页广告
-        result.setAdvertiseList(getHomeAdvertiseList());
-        //获取推荐品牌
-        result.setBrandList(this.getRecommendBrandList(0, 4));
-        //获取秒杀信息
-        result.setHomeFlashPromotion(getHomeFlashPromotion());
-        //获取新品推荐
-        result.setNewProductList(sampleGoodsList(this.getNewProductList(0, 4)));
-        //获取人气推荐
-        result.setHotProductList(sampleGoodsList(this.getHotProductList(0, 4)));
-        //获取推荐专题
-        result.setSubjectList(this.getRecommendSubjectList(0, 4));
-        List<PmsProductAttributeCategory> productAttributeCategoryList = getPmsProductAttributeCategories();
-        result.setCat_list(productAttributeCategoryList);
+
+        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+        Callable<List> recomBrandCallable = () -> this.getRecommendBrandList(0, 4);
+        Callable<HomeFlashPromotion> homeFlashCallable = () -> getHomeFlashPromotion();
+        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
+        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
+        Callable<List> cateProductCallable = () -> getPmsProductAttributeCategories();
+        Callable<List> advListCallable = this::getHomeAdvertiseList;
+
+        FutureTask<List> recomBrandTask = new FutureTask<>(recomBrandCallable);
+        FutureTask<HomeFlashPromotion> homeFlashTask = new FutureTask<>(homeFlashCallable);
+        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
+        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
+        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+        FutureTask<List> cateProductTask = new FutureTask<>(cateProductCallable);
+        FutureTask<List> advListTask = new FutureTask<>(advListCallable);
+
+        executorService.submit(recomBrandTask);
+        executorService.submit(homeFlashTask);
+        executorService.submit(couponListTask);
+        executorService.submit(newGoodsListTask);
+        executorService.submit(newHotListTask);
+        executorService.submit(recomSubListTask);
+        executorService.submit(cateProductTask);
+        executorService.submit(advListTask);
+
+        try {
+            List<SmsCoupon> couponList = couponListTask.get();
+            if (couponList!=null && couponList.size()>2){
+                couponList = couponList.subList(0,2);
+            }
+            result.setCouponList(couponList);
+
+            //获取首页广告
+            result.setAdvertiseList(advListTask.get());
+            //获取推荐品牌
+            result.setBrandList(recomBrandTask.get());
+            //获取秒杀信息
+            result.setHomeFlashPromotion(homeFlashTask.get());
+            //获取新品推荐
+            result.setNewProductList(newGoodsListTask.get());
+            //获取人气推荐
+            result.setHotProductList(newHotListTask.get());
+            //获取推荐专题
+            result.setSubjectList(recomSubListTask.get());
+            result.setCat_list(cateProductTask.get());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
@@ -152,9 +197,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     private HomeFlashPromotion getHomeFlashPromotion( SmsFlashPromotion indexFlashPromotion) {
         Long flashPromotionId = 0L;
-        HomeFlashPromotion homeFlashPromotion = new HomeFlashPromotion();
-        HomeFlashPromotion tempsmsFlashList = new HomeFlashPromotion();
 
+        HomeFlashPromotion tempsmsFlashList = new HomeFlashPromotion();
+        HomeFlashPromotion homeFlashPromotion = new HomeFlashPromotion();
         //数据库中有当前秒杀活动时赋值
         if (indexFlashPromotion != null) {
             flashPromotionId = indexFlashPromotion.getId();
@@ -165,33 +210,40 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Date now = new Date();
         String formatNow = DateFormatUtils.format(now, "HH:mm:ss");
 
-        SmsFlashSessionInfo smsFlashSessionInfo = smsFlashPromotionSessionMapper.getCurrentDang(formatNow);
-        if (smsFlashSessionInfo != null && flashPromotionId != 0L) {//当前时间有秒杀档，并且有秒杀活动时，获取数据
-            Long smsFlashSessionId = smsFlashSessionInfo.getId();
-            //秒杀活动点档信息存储
-            tempsmsFlashList.setId(smsFlashSessionId);
-            tempsmsFlashList.setFlashName(indexFlashPromotion.getTitle());
-            tempsmsFlashList.setStartTime(smsFlashSessionInfo.getStartTime());
-            tempsmsFlashList.setEndTime(smsFlashSessionInfo.getEndTime());
-            SmsFlashPromotionProductRelation querySMP = new SmsFlashPromotionProductRelation();
-            querySMP.setFlashPromotionId(flashPromotionId);
-            querySMP.setFlashPromotionSessionId(smsFlashSessionId);
-            List<SmsFlashPromotionProductRelation> smsFlashPromotionProductRelationlist = smsFlashPromotionProductRelationService.list(new QueryWrapper<>(querySMP));
-            List<HomeProductAttr> productAttrs = new ArrayList<>();
-            for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
-                PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
-                if (tempproduct != null) {
-                    HomeProductAttr product = new HomeProductAttr();
-                    product.setId(tempproduct.getId());
-                    product.setProductImg(tempproduct.getPic());
-                    product.setProductName(tempproduct.getName());
-                    product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
-                    productAttrs.add(product);
+        List<SmsFlashSessionInfo> smsFlashSessionInfos = smsFlashPromotionSessionMapper.getCurrentDang(formatNow);
+
+        for (SmsFlashSessionInfo smsFlashSessionInfo : smsFlashSessionInfos){
+            if (smsFlashSessionInfo != null && flashPromotionId != 0L) {//当前时间有秒杀档，并且有秒杀活动时，获取数据
+
+                Long smsFlashSessionId = smsFlashSessionInfo.getId();
+                //秒杀活动点档信息存储
+                tempsmsFlashList.setId(smsFlashSessionId);
+                tempsmsFlashList.setFlashName(indexFlashPromotion.getTitle());
+                tempsmsFlashList.setStartTime(smsFlashSessionInfo.getStartTime());
+                tempsmsFlashList.setEndTime(smsFlashSessionInfo.getEndTime());
+                SmsFlashPromotionProductRelation querySMP = new SmsFlashPromotionProductRelation();
+                querySMP.setFlashPromotionId(flashPromotionId);
+                querySMP.setFlashPromotionSessionId(smsFlashSessionId);
+                List<SmsFlashPromotionProductRelation> smsFlashPromotionProductRelationlist = smsFlashPromotionProductRelationService.list(new QueryWrapper<>(querySMP));
+                List<HomeProductAttr> productAttrs = new ArrayList<>();
+                for (SmsFlashPromotionProductRelation item : smsFlashPromotionProductRelationlist) {
+                    PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
+                    if (tempproduct != null) {
+                        HomeProductAttr product = new HomeProductAttr();
+                        product.setId(tempproduct.getId());
+                        product.setProductImg(tempproduct.getPic());
+                        product.setProductName(tempproduct.getName());
+                        product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
+                        productAttrs.add(product);
+                    }
                 }
+                smsFlashSessionInfo.setProductList(productAttrs);
+                homeFlashPromotion = tempsmsFlashList;
+
             }
-            tempsmsFlashList.setProductList(productAttrs);
-            homeFlashPromotion = tempsmsFlashList;
         }
+        homeFlashPromotion.setFlashSessionInfoList(smsFlashSessionInfos);
+
         return homeFlashPromotion;
     }
 

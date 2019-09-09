@@ -4,7 +4,7 @@
 39.106.212.32
 
 
-nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
+nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web1.log 2>&1 &
 
 nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
 
@@ -31,8 +31,12 @@ put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.
 
 put -r /Users/shenzhuan/zhuan/vue/mall-admin-web/dist  /root/jm
 
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
 
+put -r  /Users/java/test/git/logs/dbblog/dbblog-frontend/cms /root/jm/cms
+
+put -r /Users/java/test/git/root.txt /root/jm/h5
 
 
 netstat -tunlp |grep 端口号，用于查看指定的端口号的进程情况，如查看8000端口的情况，netstat -tunlp |grep 8000
@@ -108,8 +112,10 @@ npm install
  wx8321531c6046c924
 #                                                                     #
 
-#                   北京智汇云端科技有限公司                          #
 
+https://s.click.taobao.com/sr2jc1w
+
+https://s.click.taobao.com/nyYgc1w
 #                                                                     #
 
 #  更多操作说明请参考以下网址：                                       #
@@ -118,12 +124,27 @@ npm install
 
 #                                                                     #
 
+https://openhome.alipay.com/mini/dev/list
+
+https://microapp.bytedance.com/homepage
+tt72d1046cedfb98b8
+da818e898b563b131d425bf63343ebbd045eecb5
+
+https://q.qq.com/#/authority
+1109850600
+D0CqH8BYLpjziOx2
+7bbcee85e2f74740e169a0381780b945
+
+
+https://pub.alimama.com/myunion.htm#!/promo/self/items
+
 #######################################################################
 
-
+https://www.it120.cc/
 
 请注意： 如需外网远程访问mysql 请参考以上网址 设置mysql及阿里云安全组
 
+https://www.kancloud.cn/thundersword/fire-shop-lite/936356
 
 
 ################################  Tomcat ###############################
@@ -198,3 +219,32 @@ npm install
           nginx -s reload
 
 
+项目地址 https://gitee.com/zscat/mallplus
+前端vue 项目路径下有一个zip包
+文档详情blog http://yjlive.cn:8084/
+后台演示  http://yjlive.cn:8090/
+h5演示  http://yjlive.cn:8082/
+部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
+
+
+项目地址 https://gitee.com/catshen/zscat_sw
+前端vue 项目路径下有一个zip包
+文档详情blog http://yjlive.cn:8084/
+后台演示  http://yjlive.cn:8090/
+h5演示  http://yjlive.cn:8082/
+部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
+
+
+单机版项目地址 https://gitee.com/zscat/mallplus
+前端vue 项目路径下有一个zip包
+文档详情blog http://yjlive.cn:8084/
+后台演示  http://yjlive.cn:8090/
+h5演示  http://yjlive.cn:8082/
+部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
+
+微服务版项目地址 https://gitee.com/catshen/zscat_sw
+前端vue 项目路径下有一个zip包
+部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
+
+
+https://pub.alimama.com/?spm=a2321.7393627.1998051820.1.98f118e2koGcdA

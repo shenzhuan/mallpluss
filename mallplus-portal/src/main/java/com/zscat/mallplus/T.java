@@ -9,10 +9,12 @@ import java.util.Map;
  */
 public class T {
     public static void main(String[] args) {
-        String a="124";
-        String b="453";
-        System.out.println(LocalDate.now().toString());
-        System.out.println(numJewelsInStones1(a,b));
+       for (int q=0;q<10;q++){
+           for (int w=0;w<5;w++){
+               System.out.println("qq");
+               break;
+           }
+       }
     }
     public static int numJewelsInStones(String J, String S) {
         return S.replaceAll("[^" + J + "]", "").length();

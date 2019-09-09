@@ -20,5 +20,5 @@ public class HomeFlashPromotion {
     private Date nextEndTime;
     private String flashName;
     //属于该秒杀活动的商品
-    private List<HomeProductAttr> productList;
+    List<SmsFlashSessionInfo> flashSessionInfoList;
 }

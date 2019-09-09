@@ -37,4 +37,16 @@
         select count(1) from cms_subject where member_id =#{memberId} and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
     </select>
 
+
+    <select id="listTimelinePost" resultType="com.zscat.mallplus.vo.timeline.TimelinePost">
+         select a.id,a.title,a.description,a.create_time from cms_subject a where DATE_FORMAT(a.create_time,'%Y')=#{year} and DATE_FORMAT(a.create_time,'%m')=#{month}
+               t order by t.create_time desc
+    </select>
+
+    <select id="listTimeline" resultType="com.zscat.mallplus.vo.timeline.Timeline">
+        select t.year,count(t.year) as count from (
+                      select a.id,a.title,a.description,a.create_time,DATE_FORMAT(a.create_time,'%Y') as year from cms_subject a
+                      ) t group by t.year order by t.year desc
+    </select>
+
 </mapper>

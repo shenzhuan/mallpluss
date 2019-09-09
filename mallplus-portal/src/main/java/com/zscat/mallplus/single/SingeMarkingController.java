@@ -8,8 +8,10 @@ import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
 import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 import com.zscat.mallplus.sms.entity.SmsBasicMarking;
+import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
+import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
@@ -22,7 +24,9 @@ import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,6 +49,26 @@ public class SingeMarkingController extends ApiBaseAction {
     private ISmsBasicMarkingService basicMarkingService;
     @Resource
     private RedisService redisService;
+
+    @Autowired
+    ISmsCouponService couponService;
+
+    @ApiOperation("领取指定优惠券")
+    @PostMapping(value = "/add")
+    public Object add(@RequestParam(value = "couponId", required = true) Long couponId) {
+        return couponService.add(couponId);
+    }
+
+    @ApiOperation("获取用户优惠券列表")
+    @ApiImplicitParam(name = "useStatus", value = "优惠券筛选类型:0->未使用；1->已使用；2->已过期",
+            allowableValues = "0,1,2", paramType = "query", dataType = "integer")
+    @RequestMapping(value = "/listMemberCoupon", method = RequestMethod.GET)
+    public Object list(@RequestParam(value = "useStatus", required = false) Integer useStatus) {
+        List<SmsCouponHistory> couponHistoryList = couponService.listMemberCoupon(useStatus);
+        return new CommonResult().success(couponHistoryList);
+    }
+
+
     @ApiOperation("获取单个商品得优惠详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -30,6 +31,8 @@ public class UmsMember extends BaseEntity implements Serializable {
 
     @TableField("member_level_id")
     private Long memberLevelId;
+    @TableField("member_level_name")
+    private String memberLevelName;
     @TableField("area_id")
     private Long areaId;
     @TableField("area_name")
@@ -80,6 +83,7 @@ public class UmsMember extends BaseEntity implements Serializable {
     /**
      * 生日
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date birthday;
 
     /**

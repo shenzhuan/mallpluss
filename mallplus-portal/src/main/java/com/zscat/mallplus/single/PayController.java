@@ -174,6 +174,9 @@ public class PayController extends ApiBaseAction {
             return toResponsObject(400, "订单已取消", "");
         }
 
+        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+            return toResponsObject(400, "订单已已关闭，请不要重复操作", "");
+        }
         if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
             return toResponsObject(400, "订单已支付，请不要重复操作", "");
         }
@@ -212,7 +215,7 @@ public class PayController extends ApiBaseAction {
             //支付金额
             parame.put("total_fee", orderInfo.getPayAmount().multiply(new BigDecimal(100)).intValue());
             // 回调地址
-            parame.put("notify_url", appletSet.getNotifyUrl());
+            parame.put("notify_url", appletSet.getNotifyurl());
             // 交易类型APP
             parame.put("trade_type", tradeType);
             parame.put("spbill_create_ip", getClientIp());
@@ -249,7 +252,7 @@ public class PayController extends ApiBaseAction {
                     // 业务处理
                     orderInfo.setPrepayId(prepay_id);
                     // 付款中
-                    orderInfo.setStatus(1);
+                    orderInfo.setStatus(OrderStatus.PayNotNotice.getValue());
                     orderService.updateById(orderInfo);
                     return toResponsObject(200, "微信统一订单下单成功", resultObj);
                 }
