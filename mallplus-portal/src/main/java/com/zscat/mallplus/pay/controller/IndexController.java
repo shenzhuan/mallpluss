@@ -14,19 +14,19 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IndexController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     @RequestMapping("")
     @ResponseBody
     public String index(){
-	    	logger.info("欢迎使用IJPay -By Javen <br/><br>  交流群：148540125");
-	    	return "欢迎使用IJPay -By Javen <br/><br>  交流群：148540125";
+	    	logger.info("欢迎使用IJPay -By Javen <br/><br>  交流群：895616401");
+	    	return "欢迎使用IJPay -By Javen <br/><br>  交流群：895616401";
     }
 
     @RequestMapping("/toWxH5Pay")
     public String toWxH5Pay(){
 		return "wxh5pay.html";
 	}
-    
+
     @RequestMapping("/towxpay")
     public String towxpay() {
 		return "wxpay.html";
@@ -35,33 +35,33 @@ public class IndexController {
 	public String towxsubpay() {
 		return "wxsubpay.html";
 	}
-    
-    
-    
+
+
+
     @RequestMapping(value = "/pay_input_money")
     public ModelAndView pay_input_money(){
     	 ModelAndView mav = new ModelAndView("pay_input_money.html");
          mav.addObject("content", "xxx");
          return mav;
     }
-    
+
     @RequestMapping(value = "/pay_keyboard")
     public String pay_keyboard(){
     	return "pay_keyboard.html";
     }
-    
+
     @RequestMapping(value = "/pay_select_money")
     public String pay_select_money(){
     	return "pay_select_money.html";
     }
-    
+
 
     @RequestMapping("/success")
 	public String success() {
 		return "success.html";
 	}
-    
-    
+
+
     @RequestMapping(value = "/ss/{id}",method = RequestMethod.GET)
     @ResponseBody
     public String pa(@PathVariable("id") Integer id){

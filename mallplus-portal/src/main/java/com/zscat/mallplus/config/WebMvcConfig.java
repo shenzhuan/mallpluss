@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2018. 951449465 All Rights Reserved.
+ * 项目名称：mallcloud快速搭建企业级分布式微服务平台
  * 类名称：MdcWebMvcConfig.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：mallcloud
+ * 联系方式：951449465@gmail.com
+ * 开源地址: https://github.com/mallcloud
+ * 博客地址: http://blog.951449465
+ * 项目官网: http://951449465
  */
 
 package com.zscat.mallplus.config;
@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 /**
  * The class Mdc web mvc config.
  *
- * @author paascloud.net @gmail.com
+ * @author 951449465 @gmail.com
  */
 @Configuration
 @EnableWebMvc
