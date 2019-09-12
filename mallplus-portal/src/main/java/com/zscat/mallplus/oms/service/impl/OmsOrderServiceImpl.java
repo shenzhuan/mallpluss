@@ -56,6 +56,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>
@@ -622,6 +623,29 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
             }
         }
+    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Object confimDelivery(Long id) {
+        OmsOrder order = this.orderMapper.selectById(id);
+        if (order.getStatus() != OrderStatus.DELIVERED.getValue()) {
+            return new CommonResult().paramFailed("已发货订单才能确认收货");
+        }
+        order.setStatus(OrderStatus.TRADE_SUCCESS.getValue());
+        orderMapper.updateById(order);
+        return new CommonResult().success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int cancleDelivery(OmsOrder order, String remark) {
+        /*EsShopOrderBatchSendDetail query = new EsShopOrderBatchSendDetail();
+        query.setOrderId(order.getId());
+        query.setExpressSn(order.getExpressSn());
+
+        orderBatchSendDetailMapper.delete(new EntityWrapper<>(query));*/
+        order.setStatus(OrderStatus.TO_DELIVER.getValue());
+        return orderMapper.updateById(order);
     }
 
     @Override

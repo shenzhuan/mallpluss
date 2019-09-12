@@ -74,4 +74,8 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     boolean closeOrder(OmsOrder newE);
     void releaseStock(OmsOrder newE);
+
+    int cancleDelivery(OmsOrder order, String remark);
+
+    Object confimDelivery(Long id);
 }

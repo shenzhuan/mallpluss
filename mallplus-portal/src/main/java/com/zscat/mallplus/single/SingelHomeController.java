@@ -24,6 +24,9 @@ import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
+import com.zscat.mallplus.vo.home.Pages;
+import com.zscat.mallplus.vo.home.PagesItems;
+import com.zscat.mallplus.vo.home.Params;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -413,4 +416,6 @@ public class SingelHomeController {
         return new CommonResult().success();
 
     }
+
+
 }

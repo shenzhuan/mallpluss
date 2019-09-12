@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.vo.SamplePmsProduct;
 import com.zscat.mallplus.utils.BaseEntity;
+import com.zscat.mallplus.vo.timeline.TimeSecound;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -99,4 +100,14 @@ public class SmsGroup extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private SamplePmsProduct goods;
 
+    @TableField(exist = false)
+    private TimeSecound timeSecound;
+
+    /**
+     * 1 开始
+     * 3已结束
+     * 2即将开团
+     */
+    @TableField(exist = false)
+    private Integer pintuan_start_status;
 }

@@ -17,9 +17,10 @@ public class UserUtils {
         try {
             SecurityContext ctx = SecurityContextHolder.getContext();
             Authentication auth = ctx.getAuthentication();
-          if (auth==null){
+          if (auth==null || auth.getPrincipal()==null){
               return new UmsMember();
           }
+            System.out.println(auth.getPrincipal());
             MemberDetails memberDetails = (MemberDetails) auth.getPrincipal();
             System.out.println(memberDetails.toString());
             return memberDetails.getUmsMember();

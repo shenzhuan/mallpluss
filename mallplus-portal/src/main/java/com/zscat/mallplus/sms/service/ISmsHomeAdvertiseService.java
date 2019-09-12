@@ -6,8 +6,11 @@ import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
+import com.zscat.mallplus.pms.entity.PmsSmallNaviconCategory;
+import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
+import com.zscat.mallplus.vo.home.Pages;
 
 import java.util.List;
 
@@ -35,4 +38,10 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
     public List<PmsProductAttributeCategory> getPmsProductAttributeCategories();
 
     List<HomeFlashPromotion> homeFlashPromotionList();
+
+    List<PmsSmallNaviconCategory> getNav();
+
+    List<SmsGroup> lastGroupGoods(Integer pageNum);
+
+    Pages contentNew();
 }

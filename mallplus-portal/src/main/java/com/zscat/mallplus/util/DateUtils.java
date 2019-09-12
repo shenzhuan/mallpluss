@@ -3,6 +3,7 @@ package com.zscat.mallplus.util;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -171,9 +172,30 @@ public class DateUtils {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // 获取当前时间
         Date date = new Date();
-        String str = "20170818223629599";
-        System.out.println(DateUtils.getDateFormat(str));
+        String nowtime = df.format(date);
+        // System.out.println(nowtime);
+        Date d2 = df.parse("2019-09-10 10:07:00");  //86400000  1728
+        Date d1 = df.parse(nowtime);
+
+        long diff = d1.getTime() - d2.getTime();// 这样得到的差值是微秒级别
+        System.out.println(d1.getTime());
+        System.out.println(diff);
+        System.out.println(1000 * 60 * 60 * 24);
+        long days = diff / (1000 * 60 * 60 * 24);//天
+
+        long hours = (diff - days * (1000 * 60 * 60 * 24))
+                / (1000 * 60 * 60);    //小时
+        long mins = (diff - days * (1000 * 60 * 60 * 24)-hours * (1000 * 60 * 60))/(1000 * 60 );    //小时
+        long sc = (diff - days * (1000 * 60 * 60 * 24) - hours
+                * (1000 * 60 * 60)-mins*(1000*60)) / (1000); // 秒
+
+        System.out.println(days);
+        System.out.println(hours);
+        System.out.println(mins);
+        System.out.println(sc);
     }
 }
