@@ -52,7 +52,13 @@ public class CommonResult {
         this.data = data;
         return this;
     }
-
+    /**
+     * 普通成功返回
+     */
+    public CommonResult fail(int code) {
+        this.code = code;
+        return this;
+    }
 
     /**
      * 普通失败提示信息

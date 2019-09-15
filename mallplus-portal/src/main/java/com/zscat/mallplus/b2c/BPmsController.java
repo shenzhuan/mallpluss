@@ -11,14 +11,14 @@ import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.OrderStatus;
+import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.*;
-import com.zscat.mallplus.pms.vo.ConsultTypeCount;
-import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.pms.vo.ProductTypeVo;
-import com.zscat.mallplus.pms.vo.PromotionProduct;
+import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
@@ -26,8 +26,11 @@ import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
+import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
@@ -41,6 +44,7 @@ import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.StoreManager;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -105,8 +109,10 @@ public class BPmsController extends ApiBaseAction {
     private IPmsGiftsService giftsService;
     @Resource
     private IPmsGiftsCategoryService giftsCategoryService;
-
-
+    @Resource
+    private SysStoreMapper storeMapper;
+    @Resource
+    private OmsOrderMapper omsOrderMapper;
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @PostMapping(value = "/goods.getdetial")
@@ -114,7 +120,8 @@ public class BPmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = pmsProductService.getGoodsRedisById(id);
+                    //JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -180,7 +187,7 @@ public class BPmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品分类列表")
-    @PostMapping(value = "/categories.getallcat")
+    @PostMapping(value = "/productCategoryList")
     public Object productCategoryList(PmsProductCategory productCategory,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
@@ -242,21 +249,35 @@ public class BPmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "cms", REMARK = "添加商品评论")
     @ApiOperation(value = "添加商品评论")
-    @PostMapping(value = "/addGoodsConsult")
-    public Object addGoodsConsult(PmsProductConsult subject, BindingResult result) {
+    @PostMapping(value = "/user.orderevaluate")
+    public Object addGoodsConsult( @RequestParam(value = "orderId", defaultValue = "1") Long orderId,
+                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
         CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();
-        if (member!=null){
-            subject.setPic(member.getIcon());
-            subject.setMemberName(member.getNickname());
-            subject.setMemberId(member.getId());
-        }else {
-            return new CommonResult().failed("请先登录");
+
+        List<ProductConsultParam> itemss = JsonUtils.json2list(items,ProductConsultParam.class);
+        for (ProductConsultParam param : itemss){
+            PmsProductConsult productConsult = new PmsProductConsult();
+            if (member!=null){
+                productConsult.setPic(member.getIcon());
+                productConsult.setMemberName(member.getNickname());
+                productConsult.setMemberId(member.getId());
+            }else {
+                return new CommonResult().failed("请先登录");
+            }
+            productConsult.setGoodsId(param.getGoodsId());
+            productConsult.setConsultContent(param.getTextarea());
+            productConsult.setStars(param.getScore());
+            productConsult.setEmail(Arrays.toString(param.getImages()));
+            productConsult.setConsultAddtime(new Date());
+            pmsProductConsultService.save(productConsult);
         }
-        subject.setConsultAddtime(new Date());
-        boolean count = pmsProductConsultService.save(subject);
-        if (count) {
-            commonResult = new CommonResult().success(count);
+        OmsOrder omsOrder = new OmsOrder();
+        omsOrder.setId(orderId);
+        omsOrder.setIsComment(2);
+        omsOrder.setStatus(OrderStatus.TRADE_SUCCESS.getValue());
+        if ( omsOrderMapper.updateById(omsOrder)>0) {
+            commonResult = new CommonResult().success(1);
         } else {
             commonResult = new CommonResult().failed();
         }
@@ -378,7 +399,8 @@ public class BPmsController extends ApiBaseAction {
         }
         GoodsDetailResult goods = null;
         try {
-              goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods =pmsProductService.getGoodsRedisById(id);
+                      //JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -464,7 +486,7 @@ public class BPmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品分类列表")
-    @PostMapping(value = "/categoryAndGoodsList/list")
+    @PostMapping(value = "/categories.getallcat")
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) {
         List<PmsProductAttributeCategory> productAttributeCategoryList = productAttributeCategoryService.list(new QueryWrapper<>());
         for (PmsProductAttributeCategory gt : productAttributeCategoryList) {
@@ -587,9 +609,9 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加商品浏览记录")
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/user.addgoodsbrowsing")
-    public Object addView(@RequestParam Long memberId,@RequestParam  Long goodsId) {
+    public Object addView(@RequestParam  Long goodsId) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberId);
+        String key = String.format(Rediskey.GOODSHISTORY, UserUtils.getCurrentMember().getId());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
@@ -606,10 +628,10 @@ public class BPmsController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation(value = "查询用户浏览记录列表")
     @PostMapping(value = "/user.goodsbrowsing")
-    public Object viewList(@RequestParam Long memberId,
+    public Object viewList(
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        String key = String.format(Rediskey.GOODSHISTORY, memberId);
+        String key = String.format(Rediskey.GOODSHISTORY, UserUtils.getCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
@@ -662,13 +684,13 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("显示收藏列表")
     @PostMapping(value = "/user.goodscollectionlist")
     public Object listCollectByType( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(productCollection.getMemberId(),productCollection.getType());
+        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(UserUtils.getCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示收藏列表")
     @PostMapping(value = "/listCollect")
     public Object listCollect( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(productCollection.getMemberId());
+        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(UserUtils.getCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 
@@ -704,13 +726,13 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLikeByType")
     public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(productCollection.getMemberId(),productCollection.getType());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(UserUtils.getCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLike")
     public Object listLike( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(productCollection.getMemberId());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(UserUtils.getCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 
@@ -722,7 +744,14 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(product.getPic());
     }
 
-
+    @IgnoreAuth
+    @ApiOperation("显示默认收货地址")
+    @RequestMapping(value = "/store.getdefaultstore", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getItemDefautl( @RequestParam Long id) {
+        SysStore address = storeMapper.selectById(id);
+        return new CommonResult().success(address);
+    }
 
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth

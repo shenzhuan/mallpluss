@@ -26,12 +26,10 @@ import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsGroupMemberService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
-import com.zscat.mallplus.ums.entity.SysAppletSet;
-import com.zscat.mallplus.ums.entity.UmsIntegrationConsumeSetting;
-import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
+import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.mapper.UmsIntegrationConsumeSettingMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -41,6 +39,7 @@ import com.zscat.mallplus.util.applet.TemplateData;
 import com.zscat.mallplus.util.applet.WX_TemplateMsgUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.BalancePayParam;
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +77,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private IPmsProductService productService;
     @Resource
     private IUmsMemberReceiveAddressService addressService;
-
+    @Resource
+    private IUmsMemberBlanceLogService memberBlanceLogService;
 
     @Resource
     private WechatApiService wechatApiService;
@@ -409,7 +409,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
         OmsOrder order = createOrderObj(orderParam, currentMember, orderItemList, address);
 
-        order.setMemberId(orderParam.getMemberId());
+        order.setMemberId(UserUtils.getCurrentMember().getId());
         SmsGroup group = groupMapper.getByGoodsId(orderParam.getGoodsId());
         Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
 
@@ -421,7 +421,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             SmsGroupMember groupMember = new SmsGroupMember();
 
             if (orderParam.getGroupType() == 1) {
-                groupMember.setMainId(orderParam.getMemberId());
+                groupMember.setMainId(UserUtils.getCurrentMember().getId());
                 groupMember.setGoodsId(orderParam.getGoodsId());
                 SmsGroupMember exist = groupMemberMapper.selectOne(new QueryWrapper<>(groupMember));
                 if (exist != null) {
@@ -430,18 +430,18 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 groupMember.setName(currentMember.getIcon());
                 groupMember.setStatus(2);
                 groupMember.setOrderId(order.getId() + "");
-                groupMember.setMainId(orderParam.getMemberId());
+                groupMember.setMainId(UserUtils.getCurrentMember().getId());
                 groupMember.setCreateTime(new Date());
                 groupMember.setGroupId(group.getId());
 
-                groupMember.setMemberId(orderParam.getMemberId() + "");
+                groupMember.setMemberId(UserUtils.getCurrentMember().getId() + "");
                 groupMember.setExipreTime(System.currentTimeMillis() + (group.getHours() * 60 * 60 * 60));
                 groupMemberMapper.insert(groupMember);
             } else {
                 groupMember = groupMemberMapper.selectById(orderParam.getMgId());
                 String[] mids = groupMember.getMemberId().split(",");
                 for (int i = 0; i < mids.length; i++) {
-                    if (orderParam.getMemberId().toString().equals(mids[i])) {
+                    if (UserUtils.getCurrentMember().getId().toString().equals(mids[i])) {
                         return new CommonResult().failed("你已经参加过此活动");
                     }
                 }
@@ -487,7 +487,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             checkGoods(pmsProduct, false, 1);
             checkSkuGoods(pmsSkuStock, 1);
             cartItem.setProductId(pmsSkuStock.getProductId());
-            cartItem.setMemberId(orderParam.getMemberId());
+            cartItem.setMemberId(UserUtils.getCurrentMember().getId());
             cartItem.setProductSkuId(pmsSkuStock.getId());
             cartItem.setChecked(1);
             cartItem.setPrice(pmsSkuStock.getPrice());
@@ -506,14 +506,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         } else {
             checkGoods(pmsProduct, true, orderParam.getTotal());
             cartItem.setProductId(orderParam.getGoodsId());
-            cartItem.setMemberId(orderParam.getMemberId());
+            cartItem.setMemberId(UserUtils.getCurrentMember().getId());
             cartItem.setChecked(1);
             cartItem.setPrice(pmsProduct.getPrice());
             cartItem.setProductName(pmsProduct.getName());
             cartItem.setQuantity(orderParam.getTotal());
             cartItem.setProductPic(pmsProduct.getPic());
             cartItem.setCreateDate(new Date());
-            cartItem.setMemberId(orderParam.getMemberId());
+            cartItem.setMemberId(UserUtils.getCurrentMember().getId());
             cartItem.setProductCategoryId(pmsProduct.getProductCategoryId());
             cartItem.setProductBrand(pmsProduct.getBrandName());
 
@@ -544,6 +544,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     private OmsOrder createOrderObj(OrderParam orderParam, UmsMember currentMember, List<OmsOrderItem> orderItemList, UmsMemberReceiveAddress address) {
         OmsOrder order = new OmsOrder();
+        order.setIsComment(1);
+        order.setTaxType(1);
         order.setDiscountAmount(new BigDecimal(0));
         order.setTotalAmount(calcTotalAmount(orderItemList));
         order.setFreightAmount(new BigDecimal(0));
@@ -564,10 +566,11 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //转化为订单信息并插入数据库
         order.setCreateTime(new Date());
         order.setMemberUsername(currentMember.getUsername());
+        order.setMemberId(currentMember.getId());
         //支付方式：0->未支付；1->支付宝；2->微信
         order.setPayType(orderParam.getPayType());
-        //订单来源：0->PC订单；1->app订单
-        order.setSourceType(1);
+        //订单来源：0->PC订单；5->app订单 2 h5 3微信小程序 4 支付宝小程序
+        order.setSourceType(orderParam.getSource());
         //订单状态：订单状态：1->待付款；2->待发货；3->已发货；4->已完成；5->售后订单 6->已关闭；
         order.setStatus(OrderStatus.INIT.getValue());
         //订单类型：0->正常订单；1->秒杀订单
@@ -587,7 +590,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //0->未确认；1->已确认
         order.setConfirmStatus(0);
         order.setDeleteStatus(0);
-        order.setMemberId(orderParam.getMemberId());
+        order.setMemberId(UserUtils.getCurrentMember().getId());
         //生成订单号
         order.setOrderSn(generateOrderSn(order));
         return order;
@@ -631,9 +634,35 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (order.getStatus() != OrderStatus.DELIVERED.getValue()) {
             return new CommonResult().paramFailed("已发货订单才能确认收货");
         }
-        order.setStatus(OrderStatus.TRADE_SUCCESS.getValue());
+        order.setStatus(OrderStatus.TO_COMMENT.getValue());
         orderMapper.updateById(order);
         return new CommonResult().success();
+    }
+
+    @Transactional
+    @Override
+    public OmsOrder blancePay(OmsOrder order) {
+        UmsMember userDO = UserUtils.getCurrentMember();
+        order.setStatus(OrderStatus.TO_DELIVER.getValue());
+        order.setPayType(3);
+        order.setPaymentTime(new Date());
+        orderService.updateById(order);
+        if (ValidatorUtils.notEmpty(order.getGroupId())){
+            SmsGroup group = new SmsGroup();
+            group.setId(order.getGroupId());
+            group.setPeoples(group.getPeoples()-1);
+            groupMapper.updateById(group);
+        }
+        userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
+        memberService.updateById(userDO);
+        UmsMemberBlanceLog  blog = new UmsMemberBlanceLog();
+        blog.setMemberId(userDO.getId());
+        blog.setCreateTime(new Date());
+        blog.setNote("支付订单："+order.getId());
+        blog.setPrice(order.getPayAmount());
+        blog.setType(1);
+        memberBlanceLogService.save(blog);
+        return order;
     }
 
     @Override
@@ -651,7 +680,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     @Transactional
     public Object jifenPay(OrderParam orderParam) {
-        UmsMember member = memberService.getById(orderParam.getMemberId());
+        UmsMember member = memberService.getById(UserUtils.getCurrentMember().getId());
         PmsGifts gifts = giftsService.getById(orderParam.getGoodsId());
         if (gifts.getPrice().intValue() > member.getIntegration()) {
             return new CommonResult().failed("积分不足！");
@@ -878,7 +907,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setGoodsId(goods.getId());
         order.setGoodsName(order.getGoodsName());
         //转化为订单信息并插入数据库
-        order.setMemberId(Long.parseLong(orderParam.getMemberId()));
+        order.setMemberId(UserUtils.getCurrentMember().getId());
         order.setCreateTime(new Date());
         order.setMemberUsername(member.getUsername());
         //支付方式：0->未支付；1->支付宝；2->微信
@@ -921,7 +950,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if ("1".equals(type)) {
             SmsGroupMember sm = new SmsGroupMember();
             sm.setGroupId(orderParam.getGroupId());
-            sm.setMemberId(orderParam.getMemberId());
+            sm.setMemberId(UserUtils.getCurrentMember().getId()+"");
             List<SmsGroupMember> smsGroupMemberList = groupMemberService.list(new QueryWrapper<>(sm));
             if (smsGroupMemberList != null && smsGroupMemberList.size() > 0) {
                 return new CommonResult().failed("你已经参加此拼团");
@@ -1309,14 +1338,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         result.setCartPromotionItemList(list);
         //获取用户收货地址列表
         UmsMemberReceiveAddress queryU = new UmsMemberReceiveAddress();
-        queryU.setMemberId(orderParam.getMemberId());
+        queryU.setMemberId(UserUtils.getCurrentMember().getId());
         List<UmsMemberReceiveAddress> memberReceiveAddressList = addressService.list(new QueryWrapper<>(queryU));
         result.setMemberReceiveAddressList(memberReceiveAddressList);
         UmsMemberReceiveAddress address = addressService.getDefaultItem();
         //获取用户可用优惠券列表
         List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(list, 1);
         result.setCouponHistoryDetailList(couponHistoryDetailList);
-        UmsMember member = memberService.getById(orderParam.getMemberId());
+        UmsMember member = memberService.getById(UserUtils.getCurrentMember().getId());
         //获取用户积分
         result.setMemberIntegration(member.getIntegration());
         //获取积分使用规则
@@ -1341,12 +1370,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             checkGoods(pmsProduct, false, cartParam.getTotal());
             checkSkuGoods(pmsSkuStock, cartParam.getTotal());
             cartItem.setProductId(pmsSkuStock.getProductId());
-            cartItem.setMemberId(cartParam.getMemberId());
+            cartItem.setMemberId(UserUtils.getCurrentMember().getId());
             cartItem.setProductSkuId(pmsSkuStock.getId());
             OmsCartItem existCartItem = cartItemMapper.selectOne(new QueryWrapper<>(cartItem));
             if (existCartItem == null) {
                 cartItem.setChecked(1);
-                cartItem.setMemberId(cartParam.getMemberId());
+                cartItem.setMemberId(UserUtils.getCurrentMember().getId());
                 cartItem.setPrice(pmsSkuStock.getPrice());
                 cartItem.setProductSkuCode(pmsSkuStock.getSkuCode());
                 cartItem.setQuantity(cartParam.getTotal());
@@ -1370,7 +1399,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         } else {
             checkGoods(pmsProduct, true, cartParam.getTotal());
             cartItem.setProductId(cartParam.getGoodsId());
-            cartItem.setMemberId(cartParam.getMemberId());
+            cartItem.setMemberId(UserUtils.getCurrentMember().getId());
             OmsCartItem existCartItem = cartItemMapper.selectOne(new QueryWrapper<>(cartItem));
             if (existCartItem == null) {
                 cartItem.setChecked(1);
@@ -1379,7 +1408,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItem.setQuantity(cartParam.getTotal());
                 cartItem.setProductPic(pmsProduct.getPic());
                 cartItem.setCreateDate(new Date());
-                cartItem.setMemberId(cartParam.getMemberId());
+                cartItem.setMemberId(UserUtils.getCurrentMember().getId());
                 cartItem.setProductCategoryId(pmsProduct.getProductCategoryId());
                 cartItem.setProductBrand(pmsProduct.getBrandName());
                 cartItemMapper.insert(cartItem);

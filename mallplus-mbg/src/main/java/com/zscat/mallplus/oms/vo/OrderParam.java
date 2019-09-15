@@ -27,6 +27,7 @@ public class OrderParam {
     private String cartId;
     private String cartIds;
     private String type; // 1 商品详情 2 勾选购物车 3全部购物车的商品
+    private Integer source =1; ////订单来源：0->PC订单；5->app订单 2 h5 3微信小程序 4 支付宝小程序
 
     private Long skuId;
     private Long goodsId;

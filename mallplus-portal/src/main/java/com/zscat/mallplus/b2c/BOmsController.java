@@ -10,12 +10,16 @@ import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
@@ -63,12 +67,14 @@ public class BOmsController extends ApiBaseAction {
     private IOmsCartItemService cartItemService;
     @Autowired
     private IUmsMemberService memberService;
-
+    @Autowired
+    private IOmsPaymentsService paymentsService;
     @Autowired
     private IPmsSkuStockService pmsSkuStockService;
     @Autowired
     private IUmsMemberReceiveAddressService memberReceiveAddressService;
-
+    @Autowired
+    private PmsProductMapper productMapper;
     @Resource
     private UmsMemberReceiveAddressMapper addressMapper;
 
@@ -95,6 +101,13 @@ public class BOmsController extends ApiBaseAction {
         UmsMember umsMember = UserUtils.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
+            for (OmsCartItem item : cartItemList){
+                if (ValidatorUtils.notEmpty(item.getProductSkuId())){
+                    item.setSkuStock(pmsSkuStockService.getById(item.getProductSkuId()));
+                }else {
+                    item.setProduct(productMapper.selectById(item.getProductId()));
+                }
+            }
             return new CommonResult().success(cartItemList);
         }
         return new ArrayList<OmsCartItem>();
@@ -117,8 +130,8 @@ public class BOmsController extends ApiBaseAction {
     @ApiOperation("修改购物车中某个商品的数量")
     @RequestMapping(value = "/cart.getnumber", method = RequestMethod.POST)
     @ResponseBody
-    public Object getnumber(@RequestParam Long memberId) {
-        int count = cartItemService.count(new QueryWrapper<OmsCartItem>().eq("memberId",memberId));
+    public Object getnumber() {
+        int count = cartItemService.count(new QueryWrapper<OmsCartItem>().eq("member_id",UserUtils.getCurrentMember().getId()));
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -146,14 +159,14 @@ public class BOmsController extends ApiBaseAction {
     }
 
     @ApiOperation("删除购物车中的某个商品")
-    @RequestMapping(value = "/delete")
+    @RequestMapping(value = "/cart.del")
     @ResponseBody
-    public Object delete(String cart_id_list) {
-        if (StringUtils.isEmpty(cart_id_list)) {
+    public Object delete(String ids) {
+        if (StringUtils.isEmpty(ids)) {
             return new CommonResult().failed("参数为空");
         }
-        List<Long> resultList = new ArrayList<>(cart_id_list.split(",").length);
-        for (String s : cart_id_list.split(",")) {
+        List<Long> resultList = new ArrayList<>(ids.split(",").length);
+        for (String s : ids.split(",")) {
             resultList.add(Long.valueOf(s));
         }
         int count = cartItemService.delete(UserUtils.getCurrentMember().getId(), resultList);
@@ -192,7 +205,7 @@ public class BOmsController extends ApiBaseAction {
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
         if (address.getDefaultStatus()==1){
-            addressMapper.updateStatusByMember(address.getMemberId());
+            addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
         }
         if (address != null && address.getId() != null) {
             count = memberReceiveAddressService.updateById(address);
@@ -211,7 +224,7 @@ public class BOmsController extends ApiBaseAction {
     public Object saveusership(UmsMemberReceiveAddress address) {
         boolean count = false;
         if (address.getDefaultStatus()==1){
-            addressMapper.updateStatusByMember(address.getMemberId());
+            addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
         }
         if (address != null && address.getId() != null) {
             count = memberReceiveAddressService.updateById(address);
@@ -226,7 +239,7 @@ public class BOmsController extends ApiBaseAction {
 
     @IgnoreAuth
     @ApiOperation("显示所有收货地址")
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/user.getusership", method = RequestMethod.POST)
     @ResponseBody
     public Object list() {
         UmsMember umsMember = UserUtils.getCurrentMember();
@@ -245,7 +258,21 @@ public class BOmsController extends ApiBaseAction {
         UmsMemberReceiveAddress address = memberReceiveAddressService.getById(id);
         return new CommonResult().success(address);
     }
-
+    @IgnoreAuth
+    @ApiOperation("显示所有收货地址")
+    @RequestMapping(value = "/payments.getlist", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getPayments() {
+       List<OmsPayments> paymentss = paymentsService.list(new QueryWrapper<OmsPayments>().eq("status",1));
+        return new CommonResult().success(paymentss);
+    }
+    @IgnoreAuth
+    @ApiOperation("显示所有收货地址")
+    @RequestMapping(value = "/payments.getinfo", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getPaymentsInfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        return new CommonResult().success(paymentsService.getById(id));
+    }
     @IgnoreAuth
     @ApiOperation("显示默认收货地址")
     @RequestMapping(value = "/user.getuserdefaultship", method = RequestMethod.POST)
@@ -254,14 +281,7 @@ public class BOmsController extends ApiBaseAction {
         UmsMemberReceiveAddress address = memberReceiveAddressService.getDefaultItem();
         return new CommonResult().success(address);
     }
-    @IgnoreAuth
-    @ApiOperation("获取区域ID")
-    @RequestMapping(value = "/user.getareaid", method = RequestMethod.POST)
-    @ResponseBody
-    public Object getAreaId() {
-        UmsMemberReceiveAddress address = memberReceiveAddressService.getDefaultItem();
-        return new CommonResult().success(address);
-    }
+
 
     /**
      * @param id
@@ -281,14 +301,14 @@ public class BOmsController extends ApiBaseAction {
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
     @ApiOperation(value = "查询订单列表")
-    @PostMapping(value = "/order.getlist")
+    @PostMapping(value = "/order.getorderlist")
     public Object orderList(OmsOrder order,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",order.getMemberId()).orderByDesc("create_time")) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time")) ;
         }else {
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time")) ;
 
@@ -371,7 +391,31 @@ public class BOmsController extends ApiBaseAction {
         }
 
     }
+    /**
+     * 查看物流
+     */
+    @ApiOperation("查看物流")
+    @ResponseBody
+    @RequestMapping("/order.logisticbyapi")
+    public Object getWayBillInfo(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws Exception {
+        try {
+            UmsMember member = UserUtils.getCurrentMember();
+            OmsOrder order = orderService.getById(orderId);
+            if (order == null) {
+                return null;
+            }
+            if (!order.getMemberId().equals(member.getId())) {
+                return new CommonResult().success("非当前用户订单");
+            }
 
+            //    ExpressInfoModel expressInfoModel = orderService.queryExpressInfo(orderId);
+            return new CommonResult().success(null);
+        } catch (Exception e) {
+            log.error("get waybillInfo error. error=" + e.getMessage(), e);
+            return new CommonResult().failed("获取物流信息失败，请稍后重试");
+        }
+
+    }
     @SysLog(MODULE = "订单管理", REMARK = "取消发货")
     @ApiOperation("取消发货")
     @RequestMapping(value = "/cancleDelivery", method = RequestMethod.POST)

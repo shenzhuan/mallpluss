@@ -13,11 +13,13 @@ package com.zscat.mallplus.config;
 
 
 
+import com.zscat.mallplus.pay.interceptor.AliPayInterceptor;
+import com.zscat.mallplus.pay.interceptor.CharacterEncodInterceptor;
+import com.zscat.mallplus.pay.interceptor.WxPayInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -29,7 +31,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableWebMvc
-public class WebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfig extends WebMvcConfigurationSupport {
 
 
 
@@ -41,4 +43,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+    @Bean
+     public HandlerInterceptor getMyInterceptor(){
+                return new WxPayInterceptor();
+            }
 }

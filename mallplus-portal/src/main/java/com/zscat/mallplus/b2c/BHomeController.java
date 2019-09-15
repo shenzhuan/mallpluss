@@ -323,5 +323,27 @@ public class BHomeController {
         return new CommonResult().success(productResult);
     }
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
+
+    @IgnoreAuth
+    @PostMapping("/upload")
+    @ApiOperation("上传文件")
+    public Object upload(@RequestParam("file") MultipartFile file) throws Exception {
+        return new CommonResult().success(aliyunOSSUtil.upload(file));
+    }
+
+    @IgnoreAuth
+    @PostMapping("/uploads")
+    @ApiOperation("多文件上传文件")
+    public Object uploads(@RequestPart("file") MultipartFile[] file) throws Exception {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (file != null && file.length > 0) {
+            for (int i = 0; i < file.length; i++) {
+                stringBuffer.append(aliyunOSSUtil.upload(file[i]) + ",");
+            }
+        }
+        return new CommonResult().success(stringBuffer);
+    }
 
 }

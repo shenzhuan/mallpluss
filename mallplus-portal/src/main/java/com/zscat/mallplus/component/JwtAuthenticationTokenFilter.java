@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -92,6 +93,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
         String username = null;
         String authHeader = request.getHeader(this.tokenHeader);
+        System.out.println(requestType);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
 
             String authToken = authHeader.substring(this.tokenHead.length());
@@ -104,8 +106,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     LOGGER.info("authenticated user:{}", username);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                }else{
+                    System.out.println("token================"+request.getRequestURI());
+                    throw new MemberNotExitException("token");
                 }
             }
+        }else {
+            logger.info("no token"+request.getRequestURI());
         }
         startTime = System.currentTimeMillis();
         chain.doFilter(request, response);

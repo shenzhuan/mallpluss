@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.entity.PmsSkuStock;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
@@ -129,6 +131,12 @@ public class OmsCartItem extends BaseEntity implements Serializable {
     private String productAttr;
 
     private Integer checked;
+    @TableField(exist = false)
+    private PmsProduct product;
+
+    @TableField(exist = false)
+    private PmsSkuStock skuStock;
+
 
     public Long getId() {
         return id;
@@ -297,6 +305,7 @@ public class OmsCartItem extends BaseEntity implements Serializable {
     public void setProductAttr(String productAttr) {
         this.productAttr = productAttr;
     }
+
 
     @Override
     public String toString() {

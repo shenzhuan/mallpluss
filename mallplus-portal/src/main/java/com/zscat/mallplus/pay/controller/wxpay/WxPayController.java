@@ -15,18 +15,25 @@ import javax.servlet.http.HttpServletResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.service.IOmsPaymentsService;
+import com.zscat.mallplus.oms.vo.PayParam;
+import com.zscat.mallplus.oms.vo.PaymentParam;
 import com.zscat.mallplus.pay.entity.H5ScencInfo;
 import com.zscat.mallplus.pay.entity.WxPayBean;
+import com.zscat.mallplus.sms.entity.SmsGroup;
+import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
+import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 import com.google.zxing.BarcodeFormat;
@@ -45,7 +52,7 @@ import com.jpay.weixin.api.WxPayApiConfig;
 import com.jpay.weixin.api.WxPayApiConfig.PayModel;
 import com.jpay.weixin.api.WxPayApiConfigKit;
 
-@Controller
+@RestController
 @RequestMapping("/api/wxpay")
 public class WxPayController extends WxPayApiController {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -58,7 +65,12 @@ public class WxPayController extends WxPayApiController {
 
     @Resource
     private IOmsOrderService orderService;
-
+    @Resource
+    private IUmsMemberService memberService;
+    @Resource
+    private SmsGroupMapper groupMapper;
+    @Resource
+    private IOmsPaymentsService paymentsService;
     @Override
     public WxPayApiConfig getApiConfig() {
         notify_url = wxPayBean.getDomain().concat("/wxpay/pay_notify");
@@ -94,6 +106,85 @@ public class WxPayController extends WxPayApiController {
     public String ctp(HttpServletRequest request) {
         return request.getSession().getServletContext().getRealPath("/");
     }
+
+    /**
+     * 微信H5 支付 注意：必须再web页面中发起支付且域名已添加到开发配置中
+     */
+    @PostMapping(value = "/user.pay")
+    public Object userPay(HttpServletRequest request, HttpServletResponse response,PayParam payParam) {
+        OmsOrder order = orderService.getById(payParam.getOrderId());
+        order.setPayCode(payParam.getPayment_code());
+        UmsMember currentMember = UserUtils.getCurrentMember();
+        PaymentParam paymentParam = payParam.getParams();
+        if ("balancepay".equals(payParam.getPayment_code())){
+            UmsMember member = memberService.getById(currentMember.getId());
+            if(order.getPayAmount().compareTo(member.getBlance())>0){
+                return new CommonResult().failed("余额不足！");
+            }else {
+                OmsOrder orders = orderService.blancePay(order);
+                return new CommonResult().success(orders);
+            }
+        }
+        String ip = IpKit.getRealIp(request);
+        if (StrKit.isBlank(ip)) {
+            ip = "127.0.0.1";
+        }
+
+        H5ScencInfo sceneInfo = new H5ScencInfo();
+
+        H5ScencInfo.H5 h5_info = new H5ScencInfo.H5();
+        h5_info.setType("Wap");
+        // 此域名必须在商户平台--"产品中心"--"开发配置"中添加
+
+        h5_info.setWap_url("http://www.yjlive.cn");
+        h5_info.setWap_name("腾讯充值");
+        sceneInfo.setH5_info(h5_info);
+
+        Map<String, String> params = WxPayApiConfigKit
+                .getWxPayApiConfig()
+                .setAttach("IJPay H5支付测试  -By Javen")
+                .setBody("IJPay H5支付测试  -By Javen")
+                .setSpbillCreateIp(ip).setTotalFee(order.getPayAmount().multiply(new BigDecimal(100)).toString())
+                .setTradeType(TradeType.MWEB)
+                .setNotifyUrl(notify_url)
+                .setOutTradeNo(String.valueOf(System.currentTimeMillis()))
+                .setSceneInfo(h5_info.toString())
+                .build();
+
+        String xmlResult = WxPayApi.pushOrder(false, params);
+        log.info(xmlResult);
+        Map<String, String> result = PaymentKit.xmlToMap(xmlResult);
+
+        String return_code = result.get("return_code");
+        String return_msg = result.get("return_msg");
+        if (!PaymentKit.codeIsOK(return_code)) {
+            log.error("return_code>" + return_code + " return_msg>" + return_msg);
+            throw new RuntimeException(return_msg);
+        }
+        String result_code = result.get("result_code");
+        if (!PaymentKit.codeIsOK(result_code)) {
+            log.error("result_code>" + result_code + " return_msg>" + return_msg);
+            throw new RuntimeException(return_msg);
+        }
+        // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
+
+        String prepay_id = result.get("prepay_id");
+        String mweb_url = result.get("mweb_url");
+
+        log.info("prepay_id:" + prepay_id + " mweb_url:" + mweb_url);
+        try {
+            // 业务处理
+            order.setPrepayId(prepay_id);
+            // 付款中
+            order.setStatus(OrderStatus.PayNotNotice.getValue());
+            orderService.updateById(order);
+            response.sendRedirect(mweb_url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new CommonResult().success();
+    }
+
 
     /**
      * 微信H5 支付 注意：必须再web页面中发起支付且域名已添加到开发配置中

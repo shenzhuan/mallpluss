@@ -9,11 +9,13 @@ import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.oms.vo.PayParam;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.util.applet.WechatRefundApiResult;
@@ -55,7 +57,8 @@ public class PayController extends ApiBaseAction {
     private IOmsOrderService orderService;
     @Resource
     private IUmsMemberService umsMemberService;
-
+    @Resource
+    private IUmsMemberBlanceLogService blanceLogService;
 
     @Resource
     private IOmsOrderItemService orderItemService;
@@ -123,26 +126,14 @@ public class PayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "余额支付")
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
-    public Object balancePay(BalancePayParam payParam){
+    public Object balancePay(PayParam payParam){
 
         if(payParam.getPayAmount().compareTo(payParam.getBalance())>0){
             return new CommonResult().failed("余额不足！");
         }else {
-            OmsOrder order =orderService.getById(payParam.getOrderId());
-            UmsMember userDO = UserUtils.getCurrentMember();
-            order.setStatus(OrderStatus.TO_DELIVER.getValue());
-            order.setPayType(3);
-            orderService.updateById(order);
-            if (ValidatorUtils.notEmpty(order.getGroupId())){
-                SmsGroup group = new SmsGroup();
-                group.setId(order.getGroupId());
-                group.setPeoples(group.getPeoples()-1);
-                groupMapper.updateById(group);
-            }
-            userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
-            umsMemberService.updateById(userDO);
+            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+            return new CommonResult().success(order);
         }
-        return new CommonResult().success();
     }
 
     /**
