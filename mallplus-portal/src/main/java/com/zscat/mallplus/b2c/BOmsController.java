@@ -5,6 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.bill.entity.BillAftersales;
+import com.zscat.mallplus.bill.entity.BillAftersalesItems;
+import com.zscat.mallplus.bill.service.IBillAftersalesItemsService;
+import com.zscat.mallplus.bill.service.IBillAftersalesService;
+import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
@@ -23,27 +28,33 @@ import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
+import com.zscat.mallplus.ums.entity.OmsShip;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberReceiveAddressMapper;
+import com.zscat.mallplus.ums.service.IOmsShipService;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.CartParam;
+import com.zscat.mallplus.vo.OrderStatusCount;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -73,7 +84,7 @@ public class BOmsController extends ApiBaseAction {
     private IPmsSkuStockService pmsSkuStockService;
     @Autowired
     private IUmsMemberReceiveAddressService memberReceiveAddressService;
-    @Autowired
+    @Resource
     private PmsProductMapper productMapper;
     @Resource
     private UmsMemberReceiveAddressMapper addressMapper;
@@ -185,6 +196,18 @@ public class BOmsController extends ApiBaseAction {
             return new CommonResult().success(count);
         }
         return new CommonResult().failed();
+    }
+
+    IOmsShipService omsShipService;
+
+
+    @IgnoreAuth
+    @ApiOperation("获取配送方式")
+    @RequestMapping(value = "/user.getship", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getship() {
+        List<OmsShip> addressList = omsShipService.list(new QueryWrapper<OmsShip>());
+        return new CommonResult().success(addressList);
     }
 
 
@@ -319,6 +342,8 @@ public class BOmsController extends ApiBaseAction {
         }
         return new CommonResult().success(page);
     }
+
+
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/order.details", method = RequestMethod.POST)
     @ResponseBody
@@ -501,5 +526,118 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
+    @Resource
+    private IBillAftersalesService billAftersalesService;
+    @Resource
+    private IBillAftersalesItemsService billAftersalesItemsService;
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单列表")
+    @ApiOperation(value = "售后单列表")
+    @PostMapping(value = "/order.afterSalesList")
+    public Object afterSalesList(BillAftersales order,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<BillAftersales> page = billAftersalesService.page(new Page<BillAftersales>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("ctime")) ;
+        for (BillAftersales omsOrder : page.getRecords()){
+            List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",omsOrder.getAftersalesId()));
+            omsOrder.setItemList(itemList);
+        }
+        return new CommonResult().success(page);
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单详情")
+    @ApiOperation(value = "售后单详情")
+    @PostMapping(value = "/order.afterSalesInfo")
+    public Object afterSalesInfo(@RequestParam Long id) {
+        BillAftersales aftersales = billAftersalesService.getById(id);
+        List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",aftersales.getAftersalesId()));
+        aftersales.setItemList(itemList);
+        return new CommonResult().success(aftersales);
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "订单售后状态")
+    @ApiOperation(value = "订单售后状态")
+    @PostMapping(value = "/order.afterSalesStatus")
+    public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        return null;
+    }
+
+
+    @SysLog(MODULE = "cms", REMARK = "添加售后单")
+    @ApiOperation(value = "添加售后单")
+    @PostMapping(value = "/order.addAfterSales")
+    public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
+        UmsMember member = UserUtils.getCurrentMember();
+        aftersales.setUserId(member.getId());
+
+        return new CommonResult().success( billAftersalesService.save(aftersales));
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
+    @ApiOperation(value = "用户发送退货包裹")
+    @PostMapping(value = "/order.sendShip")
+    public Object sendShip(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        return null;
+    }
+
+    @IgnoreAuth
+    @ApiOperation("获取订单不同状态的数量")
+    @SysLog(MODULE = "applet", REMARK = "获取订单不同状态的数量")
+    @GetMapping("/order.getorderstatusnum")
+    public Object getOrderStatusSum() {
+        UmsMember umsMember = UserUtils.getCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            OmsOrder param = new OmsOrder();
+            param.setMemberId(umsMember.getId());
+            List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+            int status0 = 0;
+            int status1 = 0;
+            int status2 = 0;
+            int status3 = 0;
+            int status4 = 0;
+            int status5 = 0;
+            OrderStatusCount count = new OrderStatusCount();
+            for (OmsOrder consult : list) {
+                if (consult.getStatus() == OrderStatus.INIT.getValue()) {
+                    status0++;
+                }
+                if (consult.getStatus() == OrderStatus.TO_DELIVER.getValue()) {
+                    status1++;
+                }
+                if (consult.getStatus() == OrderStatus.DELIVERED.getValue()) {
+                    status2++;
+                }
+                if (consult.getStatus() == OrderStatus.TO_COMMENT.getValue()) {
+                    status2++;
+                }
+                if (consult.getStatus() == OrderStatus.TRADE_SUCCESS.getValue()) {
+                    status4++;
+                }
+                if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
+                    status5++;
+                }
+            }
+            count.setStatus0(status0);
+            count.setStatus1(status1);
+            count.setStatus2(status2);
+            count.setStatus3(status3);
+            count.setStatus4(status4);
+            count.setStatus5(status5);
+            Map<String, Object> objectMap = new HashMap<>();
+            objectMap.put("user", umsMember);
+            objectMap.put("count", count);
+            return new CommonResult().success(objectMap);
+        }
+        return new CommonResult().failed();
+
+    }
 }

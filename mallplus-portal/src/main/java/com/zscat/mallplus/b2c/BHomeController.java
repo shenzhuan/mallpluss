@@ -2,8 +2,10 @@ package com.zscat.mallplus.b2c;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.bill.entity.BillAftersales;
 import com.zscat.mallplus.cms.entity.CmsTopic;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
@@ -14,7 +16,10 @@ import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
+import com.zscat.mallplus.ums.entity.SysNotice;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.service.ISysMessageService;
+import com.zscat.mallplus.ums.service.ISysNoticeService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.OssAliyunUtil;
@@ -70,6 +75,10 @@ public class BHomeController {
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
 
+    @Resource
+    private ISysNoticeService noticeService;
+    @Resource
+    private ISysMessageService messageService;
 
 
     @IgnoreAuth
@@ -308,18 +317,19 @@ public class BHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "获取公告列表")
     @PostMapping("/notice.noticeList")
-    public Object notice(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
-        return new CommonResult().success(bannerList);
+    public Object notice(SysNotice order,
+                         @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                         @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        return new CommonResult().success(noticeService.page(new Page<SysNotice>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("ctime")));
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询专题详情信息")
+    @SysLog(MODULE = "pms", REMARK = "查询公告详情信息")
     @IgnoreAuth
     @PostMapping(value = "/notice.noticeInfo")
     @ApiOperation(value = "查询公益详情信息")
     public Object noticeInfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        SmsHomeAdvertise productResult = advertiseService.getById(id);
-
+        SysNotice productResult = noticeService.getById(id);
         return new CommonResult().success(productResult);
     }
 

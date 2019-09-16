@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -14,6 +17,7 @@ import java.io.Serializable;
  * @author zscat
  * @since 2019-09-16
  */
+@Data
 @TableName("bill_aftersales")
 public class BillAftersales implements Serializable {
 
@@ -35,7 +39,7 @@ public class BillAftersales implements Serializable {
      * 用户ID 关联user.id
      */
     @TableField("user_id")
-    private Integer userId;
+    private Long userId;
 
     /**
      * 售后类型，1=只退款，2退款退货
@@ -72,100 +76,8 @@ public class BillAftersales implements Serializable {
      */
     private Long utime;
 
+    @TableField(exist = false)
+    List<BillAftersalesItems> itemList ;
 
-    public String getAftersalesId() {
-        return aftersalesId;
-    }
 
-    public void setAftersalesId(String aftersalesId) {
-        this.aftersalesId = aftersalesId;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Boolean getType() {
-        return type;
-    }
-
-    public void setType(Boolean type) {
-        this.type = type;
-    }
-
-    public BigDecimal getRefund() {
-        return refund;
-    }
-
-    public void setRefund(BigDecimal refund) {
-        this.refund = refund;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public String getMark() {
-        return mark;
-    }
-
-    public void setMark(String mark) {
-        this.mark = mark;
-    }
-
-    public Long getCtime() {
-        return ctime;
-    }
-
-    public void setCtime(Long ctime) {
-        this.ctime = ctime;
-    }
-
-    public Long getUtime() {
-        return utime;
-    }
-
-    public void setUtime(Long utime) {
-        this.utime = utime;
-    }
-
-    @Override
-    public String toString() {
-        return "BillAftersales{" +
-        ", aftersalesId=" + aftersalesId +
-        ", orderId=" + orderId +
-        ", userId=" + userId +
-        ", type=" + type +
-        ", refund=" + refund +
-        ", status=" + status +
-        ", reason=" + reason +
-        ", mark=" + mark +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
-    }
 }

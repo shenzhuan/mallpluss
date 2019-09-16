@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.cms.entity.CmsSubject;
+import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
@@ -12,13 +14,8 @@ import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
-import com.zscat.mallplus.ums.entity.UmsIntegrationChangeHistory;
-import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
-import com.zscat.mallplus.ums.service.IUmsIntegrationChangeHistoryService;
-import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.entity.*;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -30,9 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +70,8 @@ public class BUmsController {
     @Resource
     private SysAreaMapper areaMapper;
 
+    @Resource
+    private IUserBankcardsService bankcardsService;
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/user.editinfo")
@@ -151,5 +152,174 @@ public class BUmsController {
         }
         redisService.set("areaList",JsonUtils.objectToJson(list));
         return new CommonResult().success(list);
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "判断是否签到")
+    @ApiOperation(value = "判断是否签到")
+    @PostMapping(value = "/user.issign")
+    public Object issign(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+        return new CommonResult().success();
+
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "签到接口")
+    @ApiOperation(value = "签到接口")
+    @PostMapping(value = "/user.sign")
+    public Object sign(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        return new CommonResult().success();
+    }
+
+
+
+    @ApiOperation("添加银行卡")
+    @RequestMapping(value = "/user.addbankcard")
+    @ResponseBody
+    public Object saveusership(UserBankcards address) {
+        boolean count = false;
+        UmsMember umsMember =  UserUtils.getCurrentMember();
+        if (address.getIsDefault()==1){
+            UserBankcards query =new UserBankcards();
+            query.setIsDefault(2);
+            bankcardsService.update(query,new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
+        }
+        address.setUserId(umsMember.getId());
+        if (address != null && address.getId() != null) {
+            count = bankcardsService.updateById(address);
+        } else {
+            count = bankcardsService.save(address);
+        }
+        if (count) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+    @IgnoreAuth
+    @ApiOperation("获取我的银行卡列表")
+    @RequestMapping(value = "/user.getbankcardlist", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getbankcardlist() {
+        UmsMember umsMember = UserUtils.getCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
+            return new CommonResult().success(addressList);
+        }
+        return new ArrayList<UmsMemberReceiveAddress>();
+    }
+
+
+
+    @IgnoreAuth
+    @ApiOperation("获取银行卡信息")
+    @RequestMapping(value = "/user.getbankcardinfo", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getbankcardinfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        return new CommonResult().success(bankcardsService.getById(id));
+    }
+    @IgnoreAuth
+    @ApiOperation("获取默认的银行卡")
+    @RequestMapping(value = "/user.getdefaultbankcard", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getItemDefautl() {
+        UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id",UserUtils.getCurrentMember().getId()).eq("is_default",1));
+        return new CommonResult().success(address);
+    }
+
+
+    /**
+     * @param id
+     * @return
+     */
+    @ApiOperation("设置默认银行卡")
+    @RequestMapping(value = "/user.setdefaultbankcard")
+    @ResponseBody
+    public Object setDefault(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+
+
+    @ApiOperation("用户推荐列表")
+    @PostMapping(value = "/user.recommend")
+    @ResponseBody
+    public Object distrecommendList(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+    @ApiOperation("邀请码")
+    @PostMapping(value = "/user.sharecode")
+    @ResponseBody
+    public Object shareCode(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+    @ApiOperation("获取分销商进度状态")
+    @PostMapping(value = "/distribution_center-api-info")
+    @ResponseBody
+    public Object getDistributioninfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+    @ApiOperation("申请分销商")
+    @PostMapping(value = "/distribution_center-api-applydistribution")
+    @ResponseBody
+    public Object applyDistribution(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+    @ApiOperation("店铺设置")
+    @PostMapping(value = "/distribution_center-api-setstore")
+    @ResponseBody
+    public Object setStore(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+
+    @ApiOperation("我的分销订单")
+    @PostMapping(value = "/distribution_center-api-getstoreinfo")
+    @ResponseBody
+    public Object distribution_centerApiGetstoreinfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
+    @ApiOperation("我的分销订单")
+    @PostMapping(value = "/distribution_center-api-myorder")
+    @ResponseBody
+    public Object getDistributionOrder(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        int count = bankcardsService.setDefault(id);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
     }
 }

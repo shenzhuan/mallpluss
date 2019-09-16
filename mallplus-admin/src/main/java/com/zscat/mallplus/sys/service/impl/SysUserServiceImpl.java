@@ -202,8 +202,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         umsAdmin.setStatus(1);
         //查询是否有相同用户名的用户
 
-        List<SysUser> umsAdminList = adminMapper.selectList(new QueryWrapper<SysUser>().eq("username", umsAdmin.getUsername()));
-        if (umsAdminList.size() > 0) {
+        SysUser umsAdminList = adminMapper.selectByUserName(umsAdmin.getUsername());
+        if (umsAdminList!=null) {
             return false;
         }
         //将密码进行加密操作
@@ -282,8 +282,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         umsAdmin.setStatus(1);
         //查询是否有相同用户名的用户
 
-        List<SysUser> umsAdminList = adminMapper.selectList(new QueryWrapper<SysUser>().eq("username", umsAdmin.getUsername()));
-        if (umsAdminList.size() > 0) {
+        SysUser umsAdminList = adminMapper.selectByUserName(umsAdmin.getUsername());
+        if (umsAdminList!=null) {
             return new CommonResult().failed("手机号已注册");
         }
         //将密码进行加密操作

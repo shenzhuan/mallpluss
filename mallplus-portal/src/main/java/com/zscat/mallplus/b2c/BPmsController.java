@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsFavorite;
+import com.zscat.mallplus.cms.entity.CmsTopicComment;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
@@ -629,7 +630,7 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询用户浏览记录列表")
     @PostMapping(value = "/user.goodsbrowsing")
     public Object viewList(
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         String key = String.format(Rediskey.GOODSHISTORY, UserUtils.getCurrentMember().getId());
 
@@ -643,6 +644,7 @@ public class BPmsController extends ApiBaseAction {
             List<PmsProduct> list = (List<PmsProduct>) pmsProductService.listByIds(result);
 
             map.put("result",list);
+            map.put("total",pageCount);
             map.put("pageCount",(pageCount%pageSize == 0 ? pageCount/pageSize : pageCount/pageSize+1));
         }
 
@@ -683,9 +685,11 @@ public class BPmsController extends ApiBaseAction {
 
     @ApiOperation("显示收藏列表")
     @PostMapping(value = "/user.goodscollectionlist")
-    public Object listCollectByType( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(UserUtils.getCurrentMember().getId(),productCollection.getType());
-        return new CommonResult().success(memberProductCollectionList);
+    public Object listCollectByType( PmsFavorite productCollection,
+                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                     @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        productCollection.setMemberId(UserUtils.getCurrentMember().getId());
+        return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
     }
     @ApiOperation("显示收藏列表")
     @PostMapping(value = "/listCollect")
