@@ -534,7 +534,7 @@ public class BOmsController extends ApiBaseAction {
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "售后单列表")
     @ApiOperation(value = "售后单列表")
-    @PostMapping(value = "/order.afterSalesList")
+    @PostMapping(value = "/order.aftersaleslist")
     public Object afterSalesList(BillAftersales order,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
@@ -550,7 +550,7 @@ public class BOmsController extends ApiBaseAction {
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "售后单详情")
     @ApiOperation(value = "售后单详情")
-    @PostMapping(value = "/order.afterSalesInfo")
+    @PostMapping(value = "/order.aftersalesinfo")
     public Object afterSalesInfo(@RequestParam Long id) {
         BillAftersales aftersales = billAftersalesService.getById(id);
         List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",aftersales.getAftersalesId()));
@@ -560,7 +560,7 @@ public class BOmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "cms", REMARK = "订单售后状态")
     @ApiOperation(value = "订单售后状态")
-    @PostMapping(value = "/order.afterSalesStatus")
+    @PostMapping(value = "/order.aftersalesstatus")
     public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();
@@ -571,7 +571,7 @@ public class BOmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "cms", REMARK = "添加售后单")
     @ApiOperation(value = "添加售后单")
-    @PostMapping(value = "/order.addAfterSales")
+    @PostMapping(value = "/order.addaftersales")
     public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
         UmsMember member = UserUtils.getCurrentMember();
         aftersales.setUserId(member.getId());
@@ -581,7 +581,7 @@ public class BOmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
     @ApiOperation(value = "用户发送退货包裹")
-    @PostMapping(value = "/order.sendShip")
+    @PostMapping(value = "/order.sendreship")
     public Object sendShip(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();

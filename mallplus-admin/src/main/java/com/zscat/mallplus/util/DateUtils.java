@@ -1,5 +1,6 @@
 package com.zscat.mallplus.util;
 
+import com.zscat.mallplus.vo.timeline.TimeSecound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,6 +229,7 @@ public class DateUtils {
 
         return cal.getTime();
     }
+
 
     public static void main(String[] args) throws Exception {
         System.out.println(DateUtils.addDay(new Date(), -7));

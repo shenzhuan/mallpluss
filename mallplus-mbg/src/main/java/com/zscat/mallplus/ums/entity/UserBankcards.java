@@ -26,7 +26,7 @@ public class UserBankcards implements Serializable {
      * ID号
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
      * 用户ID

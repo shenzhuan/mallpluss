@@ -138,7 +138,7 @@ public class BUmsController {
                 if (area.getId().equals(one.getPid())){
                     area.getChildren().add(one);
                 }
-                for (SysArea two : twolist){
+                /*for (SysArea two : twolist){
                     if (one.getId().equals(two.getPid())){
                         one.getChildren().add(one);
                     }
@@ -147,7 +147,7 @@ public class BUmsController {
                             two.getChildren().add(one);
                         }
                     }
-                }
+                }*/
             }
         }
         redisService.set("areaList",JsonUtils.objectToJson(list));

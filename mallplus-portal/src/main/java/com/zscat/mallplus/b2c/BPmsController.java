@@ -33,6 +33,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
@@ -68,7 +69,8 @@ import java.util.stream.Collectors;
 @Api(tags = "SingePmsController", description = "商品关系管理")
 public class BPmsController extends ApiBaseAction {
 
-
+    @Resource
+    private IUmsMemberService memberService;
     @Resource
     private RedisUtil redisUtil;
     @Resource
@@ -358,8 +360,8 @@ public class BPmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询团购商品列表")
-    @PostMapping(value = "/groupGoods/list")
-    public Object groupGoodsList(PmsProduct product,
+    @PostMapping(value = "/pintuan.list")
+    public Object pintuanList(PmsProduct product,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
        List<SmsGroup> groupList =  groupService.list(new QueryWrapper<>());
@@ -376,10 +378,10 @@ public class BPmsController extends ApiBaseAction {
         return null;
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @SysLog(MODULE = "pms", REMARK = "拼团商品详情")
     @IgnoreAuth
-    @PostMapping(value = "/goodsGroup/detail")
-    @ApiOperation(value = "查询商品详情信息")
+    @PostMapping(value = "/pintuan.goodsinfo")
+    @ApiOperation(value = "拼团商品详情")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
@@ -429,7 +431,31 @@ public class BPmsController extends ApiBaseAction {
             }
         }
         if (group!=null){
-            map.put("memberGroupList",groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id",group.getId())));
+            group.setPintuan_start_status(1);
+            group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
+            Long nowT = System.currentTimeMillis();
+            Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
+            if (nowT < group.getStartTime().getTime() ) {
+                group.setPintuan_start_status(2);
+            }
+            if ( nowT > endTime.getTime()) {
+                group.setPintuan_start_status(3);
+            }
+            List<SmsGroupMember> list = new ArrayList<>();
+            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id",group.getId()));
+            for (SmsGroupMember groupMember : groupMembers){
+                if (ValidatorUtils.notEmpty(groupMember.getMemberId()) ){
+                    List<String> ids = Arrays.asList(groupMember.getMemberId().split(","));
+                    if (group.getMaxPeople()>ids.size()){
+                        groupMember.setList((List<UmsMember>) memberService.listByIds(ids));
+                    }else {
+                        continue;
+                    }
+                    list.add(groupMember);
+
+                }
+            }
+            map.put("memberGroupList",list);
             map.put("group", group);
         }
 

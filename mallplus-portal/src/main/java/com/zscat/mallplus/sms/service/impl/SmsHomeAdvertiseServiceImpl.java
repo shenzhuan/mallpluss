@@ -195,7 +195,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
         Params navBarPa = new Params(); navBarPa.setLimit(4);
         navBarPa.setList(getNav());
-        PagesItems navBarItems = new PagesItems(3,"navBa","mobile_home",3,3,navBarPa);
+        PagesItems navBarItems = new PagesItems(3,"navBar","mobile_home",3,3,navBarPa);
 
         Params pintuanPa = new Params(); navBarPa.setLimit(4);
         pintuanPa.setList(lastGroupGoods(10));pintuanPa.setTitle("最新拼团");
@@ -273,7 +273,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
                 continue;
             }
             group.setPintuan_start_status(1);
-            group.setTimeSecound(getTimeSecound(group.getEndTime()));
+            group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
             Long nowT = System.currentTimeMillis();
             Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
             if (nowT < group.getStartTime().getTime() ) {
@@ -294,25 +294,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         return result;
     }
 
-    /**
-     * 获取结束时间与当前的时间差
-     * @param endTime
-     * @return
-     */
-    private TimeSecound getTimeSecound(Date endTime) {
 
-        long diff = endTime.getTime() - System.currentTimeMillis();// 这样得到的差值是微秒级别
-
-        long days = diff / (1000 * 60 * 60 * 24);//天
-
-        long hours = (diff - days * (1000 * 60 * 60 * 24))
-                / (1000 * 60 * 60);    //小时
-        long mins = (diff - days * (1000 * 60 * 60 * 24)-hours * (1000 * 60 * 60))/(1000 * 60 );    //小时
-        long sc = (diff - days * (1000 * 60 * 60 * 24) - hours
-                * (1000 * 60 * 60)-mins*(1000*60)) / (1000); // 秒
-
-        return new TimeSecound(days,  hours,  mins,  sc);
-    }
 
     @Override
     public List<HomeFlashPromotion> homeFlashPromotionList() {

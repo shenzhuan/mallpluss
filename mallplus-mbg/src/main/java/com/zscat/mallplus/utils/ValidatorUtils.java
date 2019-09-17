@@ -1,7 +1,10 @@
 package com.zscat.mallplus.utils;
 
+import com.zscat.mallplus.vo.timeline.TimeSecound;
+
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -173,5 +176,24 @@ public class ValidatorUtils {
             return String.valueOf((long) d);
         }
         return String.valueOf(d);
+    }
+    /**
+     * 获取结束时间与当前的时间差
+     * @param endTime
+     * @return
+     */
+    public static TimeSecound getTimeSecound(Date endTime) {
+
+        long diff = endTime.getTime() - System.currentTimeMillis();// 这样得到的差值是微秒级别
+
+        long days = diff / (1000 * 60 * 60 * 24);//天
+
+        long hours = (diff - days * (1000 * 60 * 60 * 24))
+                / (1000 * 60 * 60);    //小时
+        long mins = (diff - days * (1000 * 60 * 60 * 24)-hours * (1000 * 60 * 60))/(1000 * 60 );    //小时
+        long sc = (diff - days * (1000 * 60 * 60 * 24) - hours
+                * (1000 * 60 * 60)-mins*(1000*60)) / (1000); // 秒
+
+        return new TimeSecound(days,  hours,  mins,  sc);
     }
 }

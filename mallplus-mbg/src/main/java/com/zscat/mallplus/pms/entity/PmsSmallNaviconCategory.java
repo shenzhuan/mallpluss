@@ -35,6 +35,7 @@ public class PmsSmallNaviconCategory extends BaseEntity implements Serializable 
     @TableField("icon")
     private String icon;
 
+    // 1 h5 url 其他 /pages/classify/classify   2 商品详情 3文章详情  4文章列表 5 智能表单
     @ApiModelProperty(value = "跳转页面")
     @TableField("summary")
     private String summary;

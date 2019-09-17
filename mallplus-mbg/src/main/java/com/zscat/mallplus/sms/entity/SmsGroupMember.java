@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.BaseEntity;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -20,6 +22,7 @@ import java.util.List;
  * @author zscat
  * @since 2019-04-19
  */
+@Data
 @TableName("sms_group_member")
 public class SmsGroupMember extends BaseEntity implements Serializable {
 
@@ -55,6 +58,9 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     private String orderId;
     @TableField(exist = false)
     private List pics;
+
+    @TableField(exist = false)
+    private List<UmsMember> list;
 
     public Long getId() {
         return id;
