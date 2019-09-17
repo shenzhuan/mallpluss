@@ -96,9 +96,9 @@ public class SysUserController extends ApiController {
     @PostMapping(value = "/update/{id}")
     public Object updateUser(@RequestBody SysUser entity) {
         try {
-            if (sysUserService.updates(entity.getId(), entity)) {
+            /*if (sysUserService.updates(entity.getId(), entity)) {
                 return new CommonResult().success();
-            }
+            }*/
         } catch (Exception e) {
             log.error("更新用户：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -118,9 +118,9 @@ public class SysUserController extends ApiController {
             if (user.getSupplyId()!=null && user.getSupplyId()==1){
                 return new CommonResult().paramFailed("管理员账号不能删除");
             }
-            if (sysUserService.removeById(id)) {
+            /*if (sysUserService.removeById(id)) {
                 return new CommonResult().success();
-            }
+            }*/
         } catch (Exception e) {
             log.error("删除用户：%s", e.getMessage(), e);
             return new CommonResult().failed();
