@@ -2,6 +2,21 @@
 
 [文档blog]( http://yjlive.cn:8084/#/)
 
+
+
+- 商户入驻流程  https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1634420&doc_id=326093
+- 单机版项目地址 https://gitee.com/zscat/mallplus
+- 前端vue 项目路径下有一个zip包
+- 文档详情blog http://yjlive.cn:8084/
+- 后台端 http://yjlive.cn:8086/index
+- 商户端演示  http://yjlive.cn:8090/
+- h5演示  http://yjlive.cn:8082/
+- 部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
+- 微服务版项目地址 https://gitee.com/catshen/zscat_sw
+- 前端vue 项目路径下有一个zip包
+- 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
+
+
 ## 说明
 
 > 基于SpringBoot+MyBatis-plus的电商系统，包括前台商城系统及后台管理系统。
