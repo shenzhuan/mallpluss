@@ -46,6 +46,10 @@ public class Rediskey {
 
     public static String GOODSHISTORY = "GOODSHISTORY:%s";
 
+    public static String HOMEPAGE = "HOMEPAGE";
+
+    public static String HOMEPAGE1 = "HOMEPAGE1";
+
     private static String SPLIT = ":";
     private static String BIZ_LIKE = "LIKE";
     private static String BIZ_DISLIKE = "DISLIKE";

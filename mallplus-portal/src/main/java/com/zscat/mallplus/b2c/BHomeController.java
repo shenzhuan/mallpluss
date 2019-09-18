@@ -9,6 +9,7 @@ import com.zscat.mallplus.bill.entity.BillAftersales;
 import com.zscat.mallplus.cms.entity.CmsTopic;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.vo.GoodsDetailResult;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
@@ -22,10 +23,13 @@ import com.zscat.mallplus.ums.service.ISysMessageService;
 import com.zscat.mallplus.ums.service.ISysNoticeService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
+import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
 import com.zscat.mallplus.vo.home.Configs;
@@ -86,7 +90,15 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/pages.getpageconfig", method = RequestMethod.POST)
     public Object contentNew() {
-        Pages contentResult = advertiseService.contentNew();
+       String json = redisService.get(Rediskey.HOMEPAGE);
+        Pages contentResult = null;
+       if (ValidatorUtils.empty(json)){
+           contentResult = advertiseService.contentNew();
+           redisService.set(Rediskey.HOMEPAGE,JsonUtils.objectToJson(contentResult));
+           redisService.expire(Rediskey.HOMEPAGE,3600*5);
+       }else{
+           contentResult = JsonUtils.jsonToPojo(redisService.get(Rediskey.HOMEPAGE), Pages.class);
+       }
         return new CommonResult().success(contentResult);
     }
 

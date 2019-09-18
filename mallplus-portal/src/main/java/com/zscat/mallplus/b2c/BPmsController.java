@@ -123,8 +123,7 @@ public class BPmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = pmsProductService.getGoodsRedisById(id);
-                    //JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -402,8 +401,7 @@ public class BPmsController extends ApiBaseAction {
         }
         GoodsDetailResult goods = null;
         try {
-              goods =pmsProductService.getGoodsRedisById(id);
-                      //JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods =JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
