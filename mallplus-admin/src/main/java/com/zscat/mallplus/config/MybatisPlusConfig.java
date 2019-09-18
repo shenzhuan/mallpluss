@@ -71,6 +71,9 @@ public class MybatisPlusConfig {
 
             @Override
             public boolean doTableFilter(String tableName) {
+                if (tableName.startsWith("admin_") || tableName.startsWith("QRTZ_")){
+                    return true;
+                }
                 return IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(tableName));
 
             }

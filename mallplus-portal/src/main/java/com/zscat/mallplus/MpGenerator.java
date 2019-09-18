@@ -31,8 +31,8 @@ public class MpGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-       // gc.setOutputDir("/Users/java/gen");
-        gc.setOutputDir("F:\\home");
+        gc.setOutputDir("/Users/java/gen");
+      //  gc.setOutputDir("F:\\home");
         gc.setFileOverride(true);
         gc.setActiveRecord(false);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存
@@ -112,8 +112,8 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"bill_aftersales","bill_aftersales_items","bill_delivery","bill_delivery_items","bill_lading","bill_payments",
-        "bill_payments_rel","bill_refund","bill_reship","bill_reship_items"});        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
+        strategy.setInclude(new String[]{"bak_brand"});
+        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
         // 自定义实体，公共字段

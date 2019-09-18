@@ -320,11 +320,13 @@ public class HomeController extends BaseController {
             g.setOriginalPrice(new BigDecimal(gg.getOriginprice().substring(1)));
         }
 
+
         g.setSale(0);
         g.setStock(0);
         g.setLowStock(0);
         g.setGiftPoint(0);
         g.setGiftGrowth(0);
+        g.setPublishStatus(1);
         g.setPromotionType(0);
         g.setVerifyStatus(1);
         g.setProductSn("X"+System.currentTimeMillis());

@@ -322,4 +322,11 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
+    @ApiOperation("判断是否是店员")
+    @PostMapping(value = "/store.isclerk")
+    @ResponseBody
+    public Object ischeck(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+
+        return new CommonResult().failed();
+    }
 }

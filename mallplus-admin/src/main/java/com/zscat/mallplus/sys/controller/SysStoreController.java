@@ -3,6 +3,8 @@ package com.zscat.mallplus.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.bill.entity.BakCategory;
+import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -144,4 +146,21 @@ public class SysStoreController {
         }
     }
 
+    @Resource
+    private BakCategoryMapper bakCategoryMapper;
+
+    @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
+    @ApiOperation("根据条件查询所有列表")
+    @GetMapping(value = "/listBakCate")
+    public Object listCate(BakCategory entity,
+                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                    @RequestParam(value = "pageSize", defaultValue = "30") Integer pageSize
+    ) {
+        try {
+            return new CommonResult().success(bakCategoryMapper.selectList(new QueryWrapper<BakCategory>().eq("pid",0)));
+        } catch (Exception e) {
+            log.error("根据条件查询所有列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
 }
