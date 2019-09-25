@@ -30,10 +30,7 @@ import javax.annotation.Resource;
  * @author 951449465 @gmail.com
  */
 @Configuration
-@EnableWebMvc
 public class WebMvcConfig extends WebMvcConfigurationSupport {
-
-
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

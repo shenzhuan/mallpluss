@@ -357,6 +357,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             order.setUseIntegration(orderParam.getUseIntegration());
             memberService.updateIntegration(currentMember.getId(), currentMember.getIntegration() - orderParam.getUseIntegration());
         }
+        lockStock(cartPromotionItemList);
         //删除购物车中的下单商品
         deleteCartItemList(cartPromotionItemList, currentMember);
         Map<String, Object> result = new HashMap<>();

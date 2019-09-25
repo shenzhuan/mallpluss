@@ -75,6 +75,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {
+        entity.setTryTime(new Date());
         storeMapper.insert(entity);
         SysUser user = new SysUser();
         user.setUsername(entity.getName());

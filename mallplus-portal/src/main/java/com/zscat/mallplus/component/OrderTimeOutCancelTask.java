@@ -53,7 +53,7 @@ public class OrderTimeOutCancelTask {
     /**
      * 会员等级计算
      */
-    @Scheduled(cron = "0 0/15 * ? * ?")
+    @Scheduled(cron = "0 0/55 * ? * ?")
     private void memberlevelCalator() {
         IUmsMemberService.updataMemberOrderInfo();
         logger.info("会员等级计算");
@@ -61,7 +61,7 @@ public class OrderTimeOutCancelTask {
     /**
      * 文章浏览量
      */
-    @Scheduled(cron = "0 0/10 * * * ? ")//每1分钟
+    @Scheduled(cron = "0 0/50 * * * ? ")//每1分钟
     public void SyncNodesAndShips() {
         logger.info("开始保存点赞数 、浏览数SyncNodesAndShips");
         try {
@@ -93,7 +93,7 @@ public class OrderTimeOutCancelTask {
     /**
      * 商品浏览量
      */
-    @Scheduled(cron = "0 0/10 * * * ? ")//每1分钟
+    @Scheduled(cron = "0 0/50 * * * ? ")//每1分钟
     public void SyncGoodsView() {
         logger.info("开始保存点赞数 、浏览数SyncGoodsView");
         try {
