@@ -39,11 +39,13 @@ import com.zscat.mallplus.util.applet.TemplateData;
 import com.zscat.mallplus.util.applet.WX_TemplateMsgUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.BalancePayParam;
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,6 +120,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Resource
     private SysAppletSetMapper appletSetMapper;
 
+    @Autowired
+    private ApiContext apiContext;
+
     @Override
     public int payOrder(TbThanks tbThanks) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -178,7 +183,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         UmsMember currentMember = UserUtils.getCurrentMember();
         List<OmsCartItem> list = new ArrayList<>();
         if ("3".equals(type)) { // 1 商品详情 2 勾选购物车 3全部购物车的商品
-            // cartPromotionItemList = cartItemService.listPromotion(currentMember.getId(), null);
+            list = cartItemService.list(currentMember.getId(), null);
         }
         if ("1".equals(type)) {
 
@@ -635,6 +640,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (order.getStatus() != OrderStatus.DELIVERED.getValue()) {
             return new CommonResult().paramFailed("已发货订单才能确认收货");
         }
+        String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+id;
+        redisService.remove(key);
         order.setStatus(OrderStatus.TO_COMMENT.getValue());
         orderMapper.updateById(order);
         return new CommonResult().success();
@@ -674,6 +681,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         query.setExpressSn(order.getExpressSn());
 
         orderBatchSendDetailMapper.delete(new EntityWrapper<>(query));*/
+        String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+order.getId();
+        redisService.remove(key);
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
         return orderMapper.updateById(order);
     }
@@ -706,6 +715,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderItemService.save(orderItem);
             member.setIntegration(member.getIntegration() - gifts.getPrice().intValue());
             memberService.updateById(member);
+            String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+order.getId();
+            redisService.remove(key);
 
         }
         return new CommonResult().success("兑换成功");
@@ -722,6 +733,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //恢复所有下单商品的锁定库存，扣减真实库存
         OmsOrderItem queryO = new OmsOrderItem();
         queryO.setOrderId(orderId);
+        String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+orderId;
+        redisService.remove(key);
         List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
         int count = orderMapper.updateSkuStock(list);
         return new CommonResult().success("支付成功", count);
@@ -1361,6 +1374,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Override
     public Object addCart(CartParam cartParam) {
+        if (ValidatorUtils.empty(UserUtils.getCurrentMember().getId())) {
+            return new CommonResult().fail(100);
+        }
         if (ValidatorUtils.empty(cartParam.getTotal())) {
             cartParam.setTotal(1);
         }

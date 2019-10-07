@@ -2,6 +2,7 @@ package com.zscat.mallplus.pms.vo;
 
 
 import com.zscat.mallplus.pms.entity.*;
+import com.zscat.mallplus.sys.entity.SysStore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -33,4 +34,5 @@ public class GoodsDetailResult implements Serializable {
     private List<SamplePmsProduct> typeGoodsList;
 
     private  PmsProduct goods;
+    private SysStore storeInfo;
 }

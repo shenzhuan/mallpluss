@@ -48,4 +48,6 @@ public interface ISmsCouponService extends IService<SmsCoupon> {
 
 
     List<SmsCouponHistory> listMemberCoupon(Integer useStatus);
+
+    CommonResult addbatch(String couponIds);
 }

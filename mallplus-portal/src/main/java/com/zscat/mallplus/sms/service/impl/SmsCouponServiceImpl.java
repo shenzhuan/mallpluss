@@ -13,6 +13,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,11 +81,70 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
         UmsMember currentMember = UserUtils.getCurrentMember();
         if (currentMember == null) {
-
+            return  new ArrayList<>();
+        }
+        if (ValidatorUtils.empty(useStatus)){
+            return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()));
         }
         return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()).eq("use_status",useStatus));
     }
 
+    @Transactional
+    @Override
+    public CommonResult addbatch(String couponIds){
+        UmsMember currentMember = UserUtils.getCurrentMember();
+        if (currentMember == null) {
+            return new CommonResult().failed("优惠券不存在");
+        }
+        if (ValidatorUtils.empty(couponIds)){
+            return new CommonResult().failed("优惠券不存在");
+        }
+        String []ids= couponIds.split(",");
+        for (String couponId : ids){
+            //获取优惠券信息，判断数量
+            SmsCoupon coupon = couponMapper.selectById(Long.valueOf(couponId));
+            if (coupon == null) {
+                return new CommonResult().failed("优惠券不存在");
+            }
+            if (coupon.getCount() <= 0) {
+                return new CommonResult().failed("优惠券已经领完了");
+            }
+            Date now = new Date();
+            if (now.after(coupon.getEndTime())) {
+                return new CommonResult().failed("优惠券已过期");
+            }
+            //判断用户领取的优惠券数量是否超过限制
+            SmsCouponHistory queryH = new SmsCouponHistory();
+            queryH.setMemberId(currentMember.getId());
+            queryH.setCouponId(Long.valueOf(couponId));
+
+            int count = couponHistoryMapper.selectCount(new QueryWrapper<>(queryH));
+            if (count >= coupon.getPerLimit()) {
+                return new CommonResult().failed("您已经领取过该优惠券");
+            }
+            //生成领取优惠券历史
+            SmsCouponHistory couponHistory = new SmsCouponHistory();
+            couponHistory.setCouponId(Long.valueOf(couponId));
+            couponHistory.setCouponCode(generateCouponCode(currentMember.getId()));
+            couponHistory.setCreateTime(now);
+            couponHistory.setMemberId(currentMember.getId());
+            couponHistory.setMemberNickname(currentMember.getNickname());
+            //主动领取
+            couponHistory.setGetType(1);
+            //未使用
+            couponHistory.setUseStatus(0);
+            couponHistory.setAmount(coupon.getAmount());
+            couponHistory.setStartTime(coupon.getStartTime());
+            couponHistory.setEndTime(coupon.getEndTime());
+            couponHistory.setNote(coupon.getName() + ":满" + coupon.getMinPoint() + "减" + coupon.getAmount());
+            couponHistoryMapper.insert(couponHistory);
+            //修改优惠券表的数量、领取数量
+            coupon.setCount(coupon.getCount() - 1);
+            coupon.setReceiveCount(coupon.getReceiveCount() == null ? 1 : coupon.getReceiveCount() + 1);
+            couponMapper.updateById(coupon);
+        }
+        return new CommonResult().success("领取成功", null);
+    }
     @Transactional
     @Override
     public CommonResult add(Long couponId) {
@@ -127,6 +187,8 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         couponHistory.setStartTime(coupon.getStartTime());
         couponHistory.setEndTime(coupon.getEndTime());
         couponHistory.setNote(coupon.getName() + ":满" + coupon.getMinPoint() + "减" + coupon.getAmount());
+        couponHistory.setAmount(coupon.getAmount());
+
         couponHistoryMapper.insert(couponHistory);
         //修改优惠券表的数量、领取数量
         coupon.setCount(coupon.getCount() - 1);

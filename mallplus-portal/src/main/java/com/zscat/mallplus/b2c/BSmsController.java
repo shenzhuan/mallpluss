@@ -3,6 +3,7 @@ package com.zscat.mallplus.b2c;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 import com.zscat.mallplus.sms.entity.SmsBasicMarking;
+import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
@@ -42,7 +43,11 @@ public class BSmsController extends ApiBaseAction {
     public Object add(@RequestParam(value = "couponId", required = true) Long couponId) {
         return couponService.add(couponId);
     }
-
+    @ApiOperation("批量领取指定优惠券")
+    @PostMapping(value = "/batch.getcoupon")
+    public Object addbatch(@RequestParam(value = "couponIds", required = true) String couponIds) {
+        return couponService.addbatch(couponIds);
+    }
     @ApiOperation("获取用户优惠券列表")
     @ApiImplicitParam(name = "useStatus", value = "优惠券筛选类型:0->未使用；1->已使用；2->已过期",
             allowableValues = "0,1,2", paramType = "query", dataType = "integer")
@@ -52,6 +57,11 @@ public class BSmsController extends ApiBaseAction {
         return new CommonResult().success(couponHistoryList);
     }
 
+    @RequestMapping(value = "/coupon.couponlist", method = RequestMethod.POST)
+    public Object couponlist() {
+        List<SmsCoupon> couponHistoryList = couponService.selectNotRecive();
+        return new CommonResult().success(couponHistoryList);
+    }
 
     @ApiOperation("获取单个商品得优惠详情")
     @RequestMapping(value = "/detail", method = RequestMethod.POST)

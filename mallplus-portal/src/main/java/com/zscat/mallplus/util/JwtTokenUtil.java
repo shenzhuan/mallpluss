@@ -1,5 +1,6 @@
 package com.zscat.mallplus.util;
 
+import com.zscat.mallplus.utils.ValidatorUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -89,8 +90,11 @@ public class JwtTokenUtil {
      * @param userDetails 从数据库中查询出来的用户信息
      */
     public boolean validateToken(String token, UserDetails userDetails) {
-        String username = getUserNameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        if (userDetails!=null && ValidatorUtils.notEmpty(userDetails.getUsername())){
+            String username = getUserNameFromToken(token);
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        }
+       return false;
     }
 
     /**

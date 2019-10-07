@@ -34,6 +34,7 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,6 +72,8 @@ public class SingePmsController extends ApiBaseAction {
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private IPmsProductService pmsProductService;
+    @Autowired
+    private ApiContext apiContext;
     @Resource
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
@@ -517,14 +520,19 @@ public class SingePmsController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation(value = "查询商品类型下的商品列表")
     @GetMapping(value = "/typeGoodsList")
-    public Object typeGoodsList(PmsProductCategory productCategory) {
+    public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
+        List<ProductTypeVo> relList = new ArrayList<>();
+        String json = redisService.get(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId());
+        if (ValidatorUtils.notEmpty(json)){
+            relList = JsonUtils.json2list(json,ProductTypeVo.class);
+            return   new CommonResult().success(relList);
+        }
         PmsProduct productQueryParam = new PmsProduct();
 
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
-        List<PmsProduct> list = pmsProductService.list(new QueryWrapper<>(productQueryParam));
+        List<PmsProduct>  list = pmsProductService.page(new Page<PmsProduct>(1, 8), new QueryWrapper<>(productQueryParam)).getRecords();
 
-        List<ProductTypeVo> relList = new ArrayList<>();
         for (PmsProduct l : list){
             ProductTypeVo vo = new ProductTypeVo();
             vo.setGoodsId(l.getId());
@@ -550,7 +558,8 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-
+        redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
         return new CommonResult().success(relList);
     }
 

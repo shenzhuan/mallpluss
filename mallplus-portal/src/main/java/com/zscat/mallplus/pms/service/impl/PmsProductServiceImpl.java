@@ -7,22 +7,22 @@ import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
-import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.pms.vo.PmsProductAndGroup;
-import com.zscat.mallplus.pms.vo.PmsProductParam;
-import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
 import com.zscat.mallplus.sms.service.ISmsHomeBrandService;
 import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.JsonUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -91,7 +91,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private SmsGroupMemberMapper groupMemberMapper;
     @Resource
     private RedisService redisService;
-
+    @Resource
+    private SysStoreMapper storeMapper;
+    @Autowired
+    private ApiContext apiContext;
     @Override
     public PmsProductAndGroup getProductAndGroup(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -229,7 +232,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         param.setSkuStockList(skuStockList);
         param.setSubjectProductRelationList(subjectProductRelationList);
-
+        param.setStoreInfo(storeMapper.selectById(apiContext.getCurrentProviderId()));
         List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()));
         param.setTypeGoodsList(GoodsUtils.sampleGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size())));
         redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
@@ -238,28 +241,45 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     }
     @Override
     public List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) {
+
         List<SmsHomeBrand> brands = homeBrandService.list(new QueryWrapper<>());
-        List<Long> ids = brands.stream()
-                .map(SmsHomeBrand::getId)
-                .collect(Collectors.toList());
-        return (List<PmsBrand>) brandService.listByIds(ids);
+        if (brands!=null && brands.size()>0){
+            List<Long> ids = brands.stream()
+                    .map(SmsHomeBrand::getBrandId)
+                    .collect(Collectors.toList());
+            if (ids!=null && ids.size()>0) {
+                return (List<PmsBrand>) brandService.listByIds(ids);
+            }
+        }
+        return  new ArrayList<>();
 
     }
     @Override
-    public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
+    public List<SamplePmsProduct> getNewProductList(int pageNum, int pageSize) {
+
         List<SmsHomeNewProduct> brands = homeNewProductService.list(new QueryWrapper<>());
-        List<Long> ids = brands.stream()
-                .map(SmsHomeNewProduct::getId)
-                .collect(Collectors.toList());
-        return (List<PmsProduct>) productMapper.selectBatchIds(ids);
+        if (brands!=null && brands.size()>0){
+            List<Long> ids = brands.stream()
+                    .map(SmsHomeNewProduct::getProductId)
+                    .collect(Collectors.toList());
+            if (ids!=null && ids.size()>0) {
+                return  GoodsUtils.sampleGoodsList(productMapper.selectBatchIds(ids));
+            }
+        }
+        return  new ArrayList<>();
     }
     @Override
-    public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
+    public List<SamplePmsProduct> getHotProductList(int pageNum, int pageSize) {
         List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
-        List<Long> ids = brands.stream()
-                .map(SmsHomeRecommendProduct::getId)
-                .collect(Collectors.toList());
-        return (List<PmsProduct>)productMapper.selectBatchIds(ids);
+        if (brands!=null && brands.size()>0){
+            List<Long> ids = brands.stream()
+                    .map(SmsHomeRecommendProduct::getProductId)
+                    .collect(Collectors.toList());
+            if (ids!=null && ids.size()>0) {
+                return  GoodsUtils.sampleGoodsList(productMapper.selectBatchIds(ids));
+            }
+        }
+       return  new ArrayList<>();
     }
 
     @Override

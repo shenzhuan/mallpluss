@@ -79,6 +79,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         storeMapper.insert(entity);
         SysUser user = new SysUser();
         user.setUsername(entity.getName());
+        SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
+        if (umsAdminList!=null) {
+            return false;
+        }
         user.setStatus(1);
         user.setSupplyId(1L);
         user.setPassword(passwordEncoder.encode(entity.getSupportName()));

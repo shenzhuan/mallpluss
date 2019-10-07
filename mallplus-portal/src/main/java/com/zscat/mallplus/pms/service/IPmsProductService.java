@@ -3,10 +3,7 @@ package com.zscat.mallplus.pms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.pms.vo.PmsProductAndGroup;
-import com.zscat.mallplus.pms.vo.PmsProductParam;
-import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.pms.vo.*;
 
 import java.util.List;
 
@@ -28,8 +25,8 @@ public interface IPmsProductService extends IService<PmsProduct> {
     GoodsDetailResult getGoodsRedisById(Long id) ;
 
     List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) ;
-    List<PmsProduct> getNewProductList(int pageNum, int pageSize) ;
-    List<PmsProduct> getHotProductList(int pageNum, int pageSize) ;
+    List<SamplePmsProduct> getNewProductList(int pageNum, int pageSize) ;
+    List<SamplePmsProduct> getHotProductList(int pageNum, int pageSize) ;
 
     Integer countGoodsByToday(Long id);
 }

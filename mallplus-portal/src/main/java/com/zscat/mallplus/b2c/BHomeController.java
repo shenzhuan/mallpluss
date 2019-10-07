@@ -9,6 +9,8 @@ import com.zscat.mallplus.bill.entity.BillAftersales;
 import com.zscat.mallplus.cms.entity.CmsTopic;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.entity.PmsSmallNaviconCategory;
+import com.zscat.mallplus.pms.service.IPmsSmallNaviconCategoryService;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -29,6 +31,7 @@ import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -37,8 +40,10 @@ import com.zscat.mallplus.vo.home.Pages;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,23 +88,93 @@ public class BHomeController {
     private ISysNoticeService noticeService;
     @Resource
     private ISysMessageService messageService;
+    @Autowired
+    private ApiContext apiContext;
 
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/pc.getpageconfig", method = RequestMethod.POST)
+    public Object pc_home() {
+        HomeContentResult contentResult = null;
+        String key = Rediskey.HOMEPAGEPC + apiContext.getCurrentProviderId();
+        try {
+            String json = redisService.get(key);
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.contentPc();
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
+            }
+        }catch (Exception e){
+            contentResult = advertiseService.contentNew1();
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
+        }
+        return new CommonResult().success(contentResult);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/crmeb.getpageconfig", method = RequestMethod.POST)
+    public Object contentNew1() {
+
+        HomeContentResult contentResult = null;
+        String key = Rediskey.HOMEPAGE2 + apiContext.getCurrentProviderId();
+        try {
+            String json = redisService.get(key);
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.contentNew1();
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
+            }
+        }catch (Exception e){
+            contentResult = advertiseService.contentNew1();
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
+        }
+        return new CommonResult().success(contentResult);
+    }
 
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/pages.getpageconfig", method = RequestMethod.POST)
     public Object contentNew() {
-       String json = redisService.get(Rediskey.HOMEPAGE);
+        String key = Rediskey.HOMEPAGE + apiContext.getCurrentProviderId();
+        String json = redisService.get(key);
         Pages contentResult = null;
-       if (ValidatorUtils.empty(json)){
-           contentResult = advertiseService.contentNew();
-           redisService.set(Rediskey.HOMEPAGE,JsonUtils.objectToJson(contentResult));
-           redisService.expire(Rediskey.HOMEPAGE,3600*5);
-       }else{
-           contentResult = JsonUtils.jsonToPojo(redisService.get(Rediskey.HOMEPAGE), Pages.class);
-       }
+        try {
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.contentNew();
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(json, Pages.class);
+            }
+        }catch (Exception e){
+            contentResult = advertiseService.contentNew();
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
+        }
+
         return new CommonResult().success(contentResult);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/share", method = RequestMethod.POST)
+    public Object share() {
+        Map<String,String> data = new HashedMap();
+        data.put("img","http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
+        data.put("title","mallplus");
+        data.put("synopsis","mallplus");
+        return new CommonResult().success(data);
     }
 
     @IgnoreAuth
@@ -269,7 +344,7 @@ public class BHomeController {
             detail.setMember(umsMember);
             return new CommonResult().success(detail);
         }
-        return new CommonResult().failed();
+        return new CommonResult().success();
     }
 
     /**
@@ -368,4 +443,28 @@ public class BHomeController {
         return new CommonResult().success(stringBuffer);
     }
 
+
+    @IgnoreAuth
+    @ApiOperation("首页秒杀活动")
+    @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
+    @RequestMapping(value = "/seckill/index", method = RequestMethod.POST)
+    public Object getHomeFlashPromotion() {
+        HomeFlashPromotion contentResult = advertiseService.getHomeFlashPromotion();
+        return new CommonResult().success(contentResult);
+
+    }
+    @Resource
+    private IPmsSmallNaviconCategoryService IPmsSmallNaviconCategoryService;
+
+    @SysLog(MODULE = "pms", REMARK = "查询pms_small_navicon_category表")
+    @ApiOperation("查询pms_small_navicon_category表")
+    @PostMapping(value = "/home.navlist")
+    public Object navlist() {
+        try {
+            return new CommonResult().success(IPmsSmallNaviconCategoryService.list( new QueryWrapper<>()));
+        } catch (Exception e) {
+            log.error("分页获取pms_small_navicon_category列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
 }

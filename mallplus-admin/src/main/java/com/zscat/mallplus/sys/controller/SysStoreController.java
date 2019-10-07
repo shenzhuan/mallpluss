@@ -80,7 +80,7 @@ public class SysStoreController {
             log.error("保存：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
-        return new CommonResult().failed();
+        return new CommonResult().failed("此用户已存在");
     }
 
     @SysLog(MODULE = "sys", REMARK = "更新")

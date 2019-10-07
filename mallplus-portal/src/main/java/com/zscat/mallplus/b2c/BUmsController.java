@@ -62,7 +62,8 @@ public class BUmsController {
 
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
-
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
     @Resource
     private IUmsMemberBlanceLogService blanceLogService;
     @Resource
@@ -95,7 +96,24 @@ public class BUmsController {
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setMemberId(UserUtils.getCurrentMember().getId());
+        if (entity.getType()==0){
+            return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>()));
+        }
         return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>(entity)));
+    }
+    @IgnoreAuth
+    @ApiOperation(value = "查询学校列表")
+    @PostMapping(value = "/user.levellist")
+    @SysLog(MODULE = "ums", REMARK = "查询学校列表")
+    public Object levellist() {
+        return new CommonResult().success(memberLevelService.list(new QueryWrapper<>()));
+    }
+    @IgnoreAuth
+    @ApiOperation("获取银行卡信息")
+    @RequestMapping(value = "/user.leveldetail", method = RequestMethod.POST)
+    @ResponseBody
+    public Object leveldetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        return new CommonResult().success(memberLevelService.getById(id));
     }
 
     @IgnoreAuth
@@ -182,7 +200,7 @@ public class BUmsController {
     public Object saveusership(UserBankcards address) {
         boolean count = false;
         UmsMember umsMember =  UserUtils.getCurrentMember();
-        if (address.getIsDefault()==1){
+        if (ValidatorUtils.notEmpty(address.getIsDefault()) && address.getIsDefault()==1){
             UserBankcards query =new UserBankcards();
             query.setIsDefault(2);
             bankcardsService.update(query,new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));

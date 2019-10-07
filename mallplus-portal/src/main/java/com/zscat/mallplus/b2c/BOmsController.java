@@ -26,6 +26,7 @@ import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
+import com.zscat.mallplus.pms.vo.ProductTypeVo;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.OmsShip;
@@ -36,11 +37,16 @@ import com.zscat.mallplus.ums.mapper.UmsMemberReceiveAddressMapper;
 import com.zscat.mallplus.ums.service.IOmsShipService;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.OrderStatusCount;
+import com.zscat.mallplus.vo.Rediskey;
+import com.zscat.mallplus.vo.home.ServiceMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -51,6 +57,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +95,10 @@ public class BOmsController extends ApiBaseAction {
     private PmsProductMapper productMapper;
     @Resource
     private UmsMemberReceiveAddressMapper addressMapper;
+    @Resource
+    private RedisService redisService;
+    @Autowired
+    private ApiContext apiContext;
 
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.add")
@@ -227,8 +238,14 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
+        Long memberId = UserUtils.getCurrentMember().getId();
+        if (ValidatorUtils.empty(memberId)){
+            return new CommonResult().fail(100);
+
+        }
+        address.setMemberId(memberId);
         if (address.getDefaultStatus()==1){
-            addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
+            addressMapper.updateStatusByMember(memberId);
         }
         if (address != null && address.getId() != null) {
             count = memberReceiveAddressService.updateById(address);
@@ -330,7 +347,7 @@ public class BOmsController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
-        if (order.getStatus()==0){
+        if (ValidatorUtils.empty(order.getStatus()) || order.getStatus()==0){
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time")) ;
         }else {
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time")) ;
@@ -349,6 +366,12 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         OmsOrder orderDetailResult = null;
+        String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+id;
+        String json = redisService.get(key);
+        if (ValidatorUtils.notEmpty(json)){
+            orderDetailResult = JsonUtils.jsonToPojo(json,OmsOrder.class);
+            return   new CommonResult().success(orderDetailResult);
+        }
             orderDetailResult = orderService.getById(id);
             OmsOrderItem query = new OmsOrderItem();
             query.setOrderId(id);
@@ -358,6 +381,8 @@ public class BOmsController extends ApiBaseAction {
             if(member!=null){
                 orderDetailResult.setBlance(member.getBlance());
             }
+        redisService.set(key,JsonUtils.objectToJson(orderDetailResult));
+        redisService.expire(key,3600*5);
         return new CommonResult().success(orderDetailResult);
     }
 
@@ -374,6 +399,8 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能关闭");
             }
             if (orderService.closeOrder(newE)) {
+                String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+orderId;
+                redisService.remove(key);
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -395,6 +422,8 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能删除");
             }
             if (orderService.removeById(orderId)) {
+                String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+orderId;
+                redisService.remove(key);
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -592,9 +621,19 @@ public class BOmsController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation("获取订单不同状态的数量")
     @SysLog(MODULE = "applet", REMARK = "获取订单不同状态的数量")
-    @GetMapping("/order.getorderstatusnum")
+    @PostMapping("/order.getorderstatusnum")
     public Object getOrderStatusSum() {
+        Map<String, Object> objectMap = new HashMap<>();
+
+        String key = Rediskey.getorderstatusnum+apiContext.getCurrentProviderId();
+        String json = redisService.get(key);
+        if (ValidatorUtils.notEmpty(json)){
+            objectMap = JsonUtils.readJsonToMap1(json);
+            return   new CommonResult().success(objectMap);
+        }
+
         UmsMember umsMember = UserUtils.getCurrentMember();
+        OrderStatusCount count = new OrderStatusCount();
         if (umsMember != null && umsMember.getId() != null) {
             OmsOrder param = new OmsOrder();
             param.setMemberId(umsMember.getId());
@@ -605,39 +644,69 @@ public class BOmsController extends ApiBaseAction {
             int status3 = 0;
             int status4 = 0;
             int status5 = 0;
-            OrderStatusCount count = new OrderStatusCount();
+            int status14 = 0;
+
+            int statusAll = 0;
+            BigDecimal payAmount = BigDecimal.ZERO;
             for (OmsOrder consult : list) {
                 if (consult.getStatus() == OrderStatus.INIT.getValue()) {
                     status0++;
                 }
+                if (consult.getStatus() == OrderStatus.REFUND.getValue()) {
+                    status14++;
+                }
                 if (consult.getStatus() == OrderStatus.TO_DELIVER.getValue()) {
                     status1++;
+                    payAmount=payAmount.add(consult.getPayAmount());
                 }
                 if (consult.getStatus() == OrderStatus.DELIVERED.getValue()) {
                     status2++;
+                    payAmount=payAmount.add(consult.getPayAmount());
+
                 }
                 if (consult.getStatus() == OrderStatus.TO_COMMENT.getValue()) {
-                    status2++;
+                    status3++;
+                    payAmount=payAmount.add(consult.getPayAmount());
+
                 }
                 if (consult.getStatus() == OrderStatus.TRADE_SUCCESS.getValue()) {
                     status4++;
+                    payAmount=payAmount.add(consult.getPayAmount());
+
                 }
                 if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
                     status5++;
+                    payAmount=payAmount.add(consult.getPayAmount());
+
                 }
             }
+            statusAll = status1+status2+status3+status4+status5;
+            count.setPayAmount(payAmount);
+            count.setStatusAll(statusAll);
             count.setStatus0(status0);
             count.setStatus1(status1);
             count.setStatus2(status2);
             count.setStatus3(status3);
             count.setStatus4(status4);
             count.setStatus5(status5);
-            Map<String, Object> objectMap = new HashMap<>();
-            objectMap.put("user", umsMember);
-            objectMap.put("count", count);
-            return new CommonResult().success(objectMap);
+            count.setStatus14(status14);
+
         }
-        return new CommonResult().failed();
+        objectMap.put("user", umsMember);
+        objectMap.put("count", count);
+        List<ServiceMenu> menuList = new ArrayList<>();
+        menuList.add(new ServiceMenu("会员中心","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9934a7c.png","/pages/user_vip/index","/user/vip"));
+        menuList.add(new ServiceMenu("砍价记录","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9918091.png","/pages/activity/user_goods_bargain_list/index","/activity/bargain/record"));
+        menuList.add(new ServiceMenu("我的推广","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9943575.png","/pages/user_spread_user/index","/user/user_promotion"));
+        menuList.add(new ServiceMenu("我的余额","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc992db31.png","/pages/user_money/index","/user/account"));
+        menuList.add(new ServiceMenu("地址信息","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99101a8.png","/pages/user_address_list/index","/user/add_manage"));
+        menuList.add(new ServiceMenu("我的收藏","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99269d1.png","/pages/user_goods_collection/index","/collection"));
+        menuList.add(new ServiceMenu("优惠券","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc991f394.png","/pages/user_coupon/index","/user/user_coupon"));
+        menuList.add(new ServiceMenu("联系客服","http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png","/pages/service/index","/customer/list"));
+        objectMap.put("menuList",menuList);
+        redisService.set(key,JsonUtils.objectToJson(objectMap));
+        redisService.expire(key,3600*5);
+        return new CommonResult().success(objectMap);
 
     }
 }

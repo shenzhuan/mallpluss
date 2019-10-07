@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.google.common.collect.Lists;
 import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
@@ -55,6 +56,84 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
     public SysWebLogMapper fopSystemOperationLogService;
 
+    public static final List<String> IGNORE_TENANT_TABLES = Lists.newArrayList(
+            "user.info",
+            "user.editinfo",
+            "user.changeavatar",
+            "user.logout",
+            "user.addgoodsbrowsing",
+            "user.delgoodsbrowsing",
+            "user.goodsbrowsing",
+            "user.goodscollection",
+            "user.goodscollectionlist",
+            "user.vuesaveusership",
+            "user.saveusership",
+            "user.getshipdetail",
+            "user.setdefship",
+            "user.editship",
+            "user.removeship",
+            "user.getusership",
+            "api/wxpay/user.pay",
+            "user.orderevaluate",
+            "user.getuserdefaultship",
+            "user.issign",
+            "user.sign",
+            "user.mypoint",
+            "user.userpointlog",
+            "user.getbankcardlist",
+            "user.getdefaultbankcard",
+            "user.addbankcard",
+            "user.removebankcard",
+            "user.setdefaultbankcard",
+            "user.getbankcardinfo",
+            "user.editpwd",
+            "user.forgotpwd",
+            "user.recommend",
+            "user.balancelist",
+            "user.sharecode",
+            "user.cash",
+            "user.cashlist",
+            "user.myinvite",
+            "user.activationinvite",
+            "coupon.getcoupon",
+            "coupon.usercoupon",
+            "cart.add",
+            "cart.del",
+            "cart.getlist",
+            "cart.setnums",
+            "cart.getnumber",
+            "order.cancel",
+            "order.del",
+            "order.details",
+            "order.confirm",
+            "order.getlist",
+            "order.create",
+            "submitPreview",
+            "order.getship",
+            "order.getorderlist",
+            "order.getorderstatusnum",
+            "order.aftersaleslist",
+            "order.aftersalesinfo",
+            "order.aftersalesstatus",
+            "order.addaftersales",
+            "order.sendreship",
+            "order.iscomment",
+            "payments.getinfo",
+            "user.getuserpoint",
+            "coupon.getcouponkey",
+            "store.isclerk",
+            "store.storeladinglist",
+            "store.ladinginfo",
+            "store.lading",
+            "store.ladingdel",
+            "distribution_center-api-info",
+            "distribution_center-api-applydistribution",
+            "distribution_center-api-setstore",
+            "distribution_center-api-myorder",
+            "pintuan.pintuanteam",
+            "lottery-api-getLotteryConfig",
+            "lottery-api-lottery",
+            "lottery-api-lotteryLog");
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -92,39 +171,37 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
         String username = null;
+        int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
+        String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         String authHeader = request.getHeader(this.tokenHeader);
-        System.out.println(requestType);
-        if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+        if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
-            String authToken = authHeader.substring(this.tokenHead.length());
-            username = jwtTokenUtil.getUserNameFromToken(authToken);
-            LOGGER.info("checking username:{}", username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    LOGGER.info("authenticated user:{}", username);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }else{
-                    System.out.println("token================"+request.getRequestURI());
-                    throw new MemberNotExitException("token");
+            if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+                String authToken = authHeader.substring(this.tokenHead.length());
+                username = jwtTokenUtil.getUserNameFromToken(authToken);
+                LOGGER.info("checking username:{}", username);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                    if (jwtTokenUtil.validateToken(authToken, userDetails)) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        LOGGER.info("authenticated user:{}", username);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }else{
+                        throw new RuntimeException();
+                    }
                 }
+            }else {
+                logger.info("no token"+request.getRequestURI());
             }
-        }else {
-            logger.info("no token"+request.getRequestURI());
         }
+
         startTime = System.currentTimeMillis();
         chain.doFilter(request, response);
         endTime = System.currentTimeMillis();
-
-
         logger.info(formMapKey(11, fullUrl, requestType,
                 IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), authHeader)
                 + ",\"cost\":\"" + (endTime - startTime) + "ms\"");
-        int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 1;
-
-        String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         sysLog.setCreateTime(new Date());
         sysLog.setIp(IpAddressUtil.getIpAddr(request));
         sysLog.setMethod(interfaceName);

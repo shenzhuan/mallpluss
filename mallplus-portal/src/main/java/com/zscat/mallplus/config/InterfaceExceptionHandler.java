@@ -36,7 +36,7 @@ public class InterfaceExceptionHandler {
 	public Object runtimeException(RuntimeException e) {
 		log.error(e.getMessage(), e);
 		// 返回 JOSN
-		return new CommonResult().fail(500);
+		return new CommonResult().fail(100);
 	}
  
 	/**
@@ -46,6 +46,6 @@ public class InterfaceExceptionHandler {
 	@ResponseBody
 	public Object exception(Exception e) {
 		log.error(e.getMessage(), e);
-		return new CommonResult().fail(500);
+		return new CommonResult().fail(100);
 	}
 }

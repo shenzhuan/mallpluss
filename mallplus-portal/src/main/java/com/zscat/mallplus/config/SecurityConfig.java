@@ -4,6 +4,7 @@ package com.zscat.mallplus.config;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
+import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.vo.MemberDetails;
@@ -99,11 +100,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                UmsMember member = memberService.getByUsername(username);
-                if (member != null) {
-                    return new MemberDetails(member);
+
+                try {
+                    UmsMember member = memberService.getByUsername(username);
+                    if (member != null) {
+                        return new MemberDetails(member);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                throw new UsernameNotFoundException("用户名或密码错误");
+                return null;
             }
         };
     }

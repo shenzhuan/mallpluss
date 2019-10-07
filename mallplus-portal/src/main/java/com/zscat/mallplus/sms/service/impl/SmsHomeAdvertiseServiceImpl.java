@@ -11,6 +11,7 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.vo.ActivityVo;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
@@ -28,12 +29,14 @@ import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.sms.vo.HomeProductAttr;
 import com.zscat.mallplus.sms.vo.SmsFlashSessionInfo;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.home.Pages;
 import com.zscat.mallplus.vo.home.PagesItems;
 import com.zscat.mallplus.vo.home.Params;
@@ -112,13 +115,24 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Resource
     private ISmsCouponService couponService;
-
+    @Autowired
+    private ApiContext apiContext;
     @Resource
     private PmsSmallNaviconCategoryMapper smallNaviconCategoryMapper;
-
+    @Resource
+    private SysStoreMapper storeMapper;
     @Override
     public   List<PmsSmallNaviconCategory> getNav(){
         return smallNaviconCategoryMapper.selectList(new QueryWrapper<>());
+    }
+    public   List<ActivityVo> getActivityList(){
+        List<ActivityVo> activityList = new ArrayList<>();
+        activityList.add(new ActivityVo("优惠多多","/pages/activity/goods_combination/index","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccf7e9f4d0.jpg","一起来拼团","/activity/group"));
+        activityList.add(new ActivityVo("新能源汽车火热销售","/pages/activity/goods_seckill/index","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccf7e97660.jpg","秒杀专区","/activity/goods_seckill"));
+
+        activityList.add(new ActivityVo("呼朋唤友来砍价~~~","/pages/activity/goods_bargain/index","http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccfc86a6c1.jpg","砍价活动","/activity/bargain"));
+
+        return activityList;
     }
     @Override
     public HomeContentResult singelContent() {
@@ -159,7 +173,6 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
                 couponList = couponList.subList(0,2);
             }
             result.setCouponList(couponList);
-
             //获取首页广告
             result.setAdvertiseList(advListTask.get());
             //获取推荐品牌
@@ -181,7 +194,101 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         }
         return result;
     }
+    @Override
+    public HomeContentResult contentPc(){
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        HomeContentResult result = new HomeContentResult();
+        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
+        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
+        Callable<List> advListCallable = this::getHomeAdvertiseList;
 
+        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
+        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
+        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+        FutureTask<List> advListTask = new FutureTask<>(advListCallable);
+
+        executorService.submit(couponListTask);
+        executorService.submit(newGoodsListTask);
+        executorService.submit(newHotListTask);
+        executorService.submit(recomSubListTask);
+        executorService.submit(advListTask);
+        try {
+            List<SmsCoupon> couponList = couponListTask.get();
+            if (couponList!=null && couponList.size()>2){
+                couponList = couponList.subList(0,2);
+            }
+            result.setCouponList(couponList);
+            //获取首页广告
+            result.setAdvertiseList(advListTask.get());
+            //获取新品推荐
+            result.setNewProductList(newGoodsListTask.get());
+            //获取人气推荐
+            result.setHotProductList(newHotListTask.get());
+            //获取推荐专题
+            result.setSubjectList(recomSubListTask.get());
+            result.setBrandList(getRecommendBrandList(1,8));
+            result.setNavList(getNav());
+            result.setActivityList(getActivityList());
+            result.setSaleProductList(getSaleProductList(1,3));
+            result.setStore(storeMapper.selectById(apiContext.getCurrentProviderId()));
+            result.setCat_list(getPmsProductAttributeCategories());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    @Override
+    public  HomeContentResult contentNew1(){
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        HomeContentResult result = new HomeContentResult();
+        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
+        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
+        Callable<List> advListCallable = this::getHomeAdvertiseList;
+
+        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
+        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
+        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+        FutureTask<List> advListTask = new FutureTask<>(advListCallable);
+
+        executorService.submit(couponListTask);
+        executorService.submit(newGoodsListTask);
+        executorService.submit(newHotListTask);
+        executorService.submit(recomSubListTask);
+        executorService.submit(advListTask);
+        try {
+            List<SmsCoupon> couponList = couponListTask.get();
+            if (couponList!=null && couponList.size()>2){
+                couponList = couponList.subList(0,2);
+            }
+            result.setCouponList(couponList);
+            //获取首页广告
+            result.setAdvertiseList(advListTask.get());
+            //获取新品推荐
+            result.setNewProductList(newGoodsListTask.get());
+            //获取人气推荐
+            result.setHotProductList(newHotListTask.get());
+            //获取推荐专题
+            result.setSubjectList(recomSubListTask.get());
+            result.setBrandList(getRecommendBrandList(1,8));
+            result.setNavList(getNav());
+            result.setActivityList(getActivityList());
+            result.setSaleProductList(getSaleProductList(1,3));
+            result.setStore(storeMapper.selectById(apiContext.getCurrentProviderId()));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     @Override
     public   Pages contentNew(){
 
@@ -241,20 +348,17 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     @Override
     public List<PmsProductAttributeCategory> getPmsProductAttributeCategories() {
         List<PmsProductAttributeCategory> productAttributeCategoryList = productAttributeCategoryService.list(new QueryWrapper<>());
-
         for (PmsProductAttributeCategory gt : productAttributeCategoryList) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam));
-
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(sampleGoodsList(goodsList.getRecords()));
             } else {
                 gt.setGoodsList(new ArrayList<>());
             }
-
         }
         return productAttributeCategoryList;
     }
@@ -362,7 +466,8 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         return homeFlashPromotion;
     }
 
-    private HomeFlashPromotion getHomeFlashPromotion() {
+    @Override
+    public HomeFlashPromotion getHomeFlashPromotion() {
         HomeFlashPromotion homeFlashPromotion = null;
         SmsFlashPromotion queryS = new SmsFlashPromotion();
         queryS.setIsIndex(1);
@@ -384,7 +489,13 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         return (List<PmsBrand>) brandService.listByIds(ids);
 
     }
-
+    @Override
+    public List<SamplePmsProduct> getSaleProductList(int pageNum, int pageSize) {
+        PmsProduct query = new PmsProduct();
+        query.setPublishStatus(1);
+        query.setVerifyStatus(1);
+        return GoodsUtils.sampleGoodsList(pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).orderByDesc("sale")).getRecords());
+    }
     @Override
     public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
         PmsProduct query = new PmsProduct();
@@ -440,6 +551,12 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         advertise.setStatus(1);
         return advertiseService.list(new QueryWrapper<>(advertise));
     }
-
+    @Override
+    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type) {
+        SmsHomeAdvertise advertise = new SmsHomeAdvertise();
+        advertise.setStatus(1);
+        advertise.setType(type);
+        return advertiseService.list(new QueryWrapper<>(advertise));
+    }
 
 }

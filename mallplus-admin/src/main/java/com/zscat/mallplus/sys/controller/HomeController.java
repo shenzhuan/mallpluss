@@ -113,7 +113,7 @@ public class HomeController extends BaseController {
                 weekOrderCount++;
                 weekOrderPay = weekOrderPay.add(order.getPayAmount());
             }
-            if (order.getStatus() == 0) {
+            if (order.getStatus() == 12) {
                 status0++;
             }
             if (order.getStatus() == 1) {

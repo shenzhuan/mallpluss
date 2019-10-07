@@ -22,6 +22,7 @@ import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -70,7 +71,8 @@ public class SingelHomeController {
     private IOmsOrderService orderService;
     @Resource
     private ISmsCouponService couponService;
-
+    @Autowired
+    private ApiContext apiContext;
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
 
@@ -96,17 +98,21 @@ public class SingelHomeController {
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
         // List<UmsMember> log =  memberService.list(new QueryWrapper<UmsMember>().between("create_time","2018-03-03 00:00:00","2018-09-03 23:59:59"));
-        String json = redisService.get(Rediskey.HOMEPAGE1);
+        String json = redisService.get(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId());
         HomeContentResult contentResult = null;
-        if (ValidatorUtils.empty(json)){
+        try {
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.singelContent();
+                redisService.set(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(contentResult));
+                redisService.expire(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(redisService.get(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId()), HomeContentResult.class);
+            }
+        }catch (Exception e){
             contentResult = advertiseService.singelContent();
-            redisService.set(Rediskey.HOMEPAGE1,JsonUtils.objectToJson(contentResult));
-            redisService.expire(Rediskey.HOMEPAGE1,3600*5);
-        }else{
-            contentResult = JsonUtils.jsonToPojo(redisService.get(Rediskey.HOMEPAGE1), HomeContentResult.class);
+            redisService.set(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(contentResult));
+            redisService.expire(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),3600*5);
         }
-
-
         return new CommonResult().success(contentResult);
     }
 

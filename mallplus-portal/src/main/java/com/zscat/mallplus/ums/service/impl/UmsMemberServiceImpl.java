@@ -110,15 +110,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
         List<UmsMemberLevel> levelList = memberLevelService.list(new QueryWrapper<UmsMemberLevel>().orderByDesc("price"));
         for (OrderStstic o : orders){
-            System.out.println(o.toString());
             UmsMember member = new UmsMember();
             member.setId(o.getMemberId());
             member.setBuyMoney(o.getTotalPayAmount());
             for (UmsMemberLevel level: levelList){
-                if (member.getBuyMoney().compareTo(level.getPrice())>=0){
-                    member.setMemberLevelId(level.getId());
-                    member.setMemberLevelName(level.getName());
-                    break;
+                if (member.getBuyMoney()!=null){
+                    if (member.getBuyMoney().compareTo(level.getPrice())>=0){
+                        member.setMemberLevelId(level.getId());
+                        member.setMemberLevelName(level.getName());
+                        break;
+                    }
                 }
             }
             member.setBuyCount(o.getTotalCount());

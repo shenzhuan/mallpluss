@@ -46,14 +46,25 @@ public class Rediskey {
 
     public static String GOODSHISTORY = "GOODSHISTORY:%s";
 
-    public static String HOMEPAGE = "HOMEPAGE";
+    public static String HOMEPAGE = "HOMEPAGEjsshop";
 
-    public static String HOMEPAGE1 = "HOMEPAGE1";
-
+    public static String HOMEPAGE1 = "HOMEPAGEmallplus";
+    public static String HOMEPAGE2 = "HOMEPAGECRMWEB";
+    public static String HOMEPAGEPC = "HOMEPAGEPC";
     private static String SPLIT = ":";
     private static String BIZ_LIKE = "LIKE";
     private static String BIZ_DISLIKE = "DISLIKE";
 
+    public static String categoryAndChilds = "categoryAndChilds";
+    public static String goodsConsult = "goodsConsult";
+    public static String categoryAndGoodsList = "categoryAndGoodsList";
+
+    public static String specialcategoryAndGoodsList = "specialcategoryAndGoodsList";
+
+
+
+    public static String orderDetail = "orderDetail";
+    public static String getorderstatusnum = "getorderstatusnum";
     /**
      * 产生key:如在newsId为2上的咨询点赞后会产生key: LIKE:ENTITY_NEWS:2
      * @param entityId
