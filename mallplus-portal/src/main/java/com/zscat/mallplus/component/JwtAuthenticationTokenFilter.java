@@ -174,7 +174,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         String authHeader = request.getHeader(this.tokenHeader);
-        if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
+      //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
             if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
                 String authToken = authHeader.substring(this.tokenHead.length());
@@ -194,7 +194,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             }else {
                 logger.info("no token"+request.getRequestURI());
             }
-        }
+     //   }
 
         startTime = System.currentTimeMillis();
         chain.doFilter(request, response);
