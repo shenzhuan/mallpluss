@@ -48,7 +48,8 @@ public class Rediskey {
 
     public static String HOMEPAGE = "HOMEPAGEjsshop";
 
-    public static String HOMEPAGE1 = "HOMEPAGEmallplus";
+    public static String HOMEPAGEmallplus1 = "HOMEPAGEmallplus1";
+    public static String HOMEPAGEmallplus2 = "HOMEPAGEmallplus2";
     public static String HOMEPAGE2 = "HOMEPAGECRMWEB";
     public static String HOMEPAGEPC = "HOMEPAGEPC";
     private static String SPLIT = ":";

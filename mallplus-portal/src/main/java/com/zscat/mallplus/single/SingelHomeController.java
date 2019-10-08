@@ -97,21 +97,45 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
-        // List<UmsMember> log =  memberService.list(new QueryWrapper<UmsMember>().between("create_time","2018-03-03 00:00:00","2018-09-03 23:59:59"));
-        String json = redisService.get(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId());
+        String key = Rediskey.HOMEPAGEmallplus1 + apiContext.getCurrentProviderId();
+        String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
             if (ValidatorUtils.empty(json)){
                 contentResult = advertiseService.singelContent();
-                redisService.set(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(contentResult));
-                redisService.expire(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),3600*5);
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
             }else{
-                contentResult = JsonUtils.jsonToPojo(redisService.get(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId()), HomeContentResult.class);
+                contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
         }catch (Exception e){
             contentResult = advertiseService.singelContent();
-            redisService.set(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(contentResult));
-            redisService.expire(Rediskey.HOMEPAGE1+apiContext.getCurrentProviderId(),3600*5);
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
+        }
+        return new CommonResult().success(contentResult);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/content1", method = RequestMethod.GET)
+    public Object content1() {
+        String key = Rediskey.HOMEPAGEmallplus2 + apiContext.getCurrentProviderId();
+        String json = redisService.get(key);
+        HomeContentResult contentResult = null;
+        try {
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.singelContent1();
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
+            }
+        }catch (Exception e){
+            contentResult = advertiseService.singelContent1();
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
         }
         return new CommonResult().success(contentResult);
     }

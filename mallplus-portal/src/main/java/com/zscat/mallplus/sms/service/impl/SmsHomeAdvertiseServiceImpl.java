@@ -140,39 +140,24 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
         HomeContentResult result = new HomeContentResult();
 
-        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+
         Callable<List> recomBrandCallable = () -> this.getRecommendBrandList(0, 4);
         Callable<HomeFlashPromotion> homeFlashCallable = () -> getHomeFlashPromotion();
-        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
-        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
-        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
         Callable<List> cateProductCallable = () -> getPmsProductAttributeCategories();
         Callable<List> advListCallable = this::getHomeAdvertiseList;
 
         FutureTask<List> recomBrandTask = new FutureTask<>(recomBrandCallable);
         FutureTask<HomeFlashPromotion> homeFlashTask = new FutureTask<>(homeFlashCallable);
-        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
-        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
-        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
-        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+
         FutureTask<List> cateProductTask = new FutureTask<>(cateProductCallable);
         FutureTask<List> advListTask = new FutureTask<>(advListCallable);
 
         executorService.submit(recomBrandTask);
         executorService.submit(homeFlashTask);
-        executorService.submit(couponListTask);
-        executorService.submit(newGoodsListTask);
-        executorService.submit(newHotListTask);
-        executorService.submit(recomSubListTask);
         executorService.submit(cateProductTask);
         executorService.submit(advListTask);
 
         try {
-            List<SmsCoupon> couponList = couponListTask.get();
-            if (couponList!=null && couponList.size()>2){
-                couponList = couponList.subList(0,2);
-            }
-            result.setCouponList(couponList);
             //获取首页广告
             result.setAdvertiseList(advListTask.get());
             //获取推荐品牌
@@ -180,12 +165,54 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             //获取秒杀信息
             result.setHomeFlashPromotion(homeFlashTask.get());
             //获取新品推荐
+            result.setCat_list(cateProductTask.get());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    @Override
+    public HomeContentResult singelContent1() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        HomeContentResult result = new HomeContentResult();
+
+        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
+
+
+        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
+        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
+
+
+        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
+        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
+        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
+
+
+        executorService.submit(couponListTask);
+        executorService.submit(newGoodsListTask);
+        executorService.submit(newHotListTask);
+        executorService.submit(recomSubListTask);
+
+
+        try {
+            List<SmsCoupon> couponList = couponListTask.get();
+            if (couponList!=null && couponList.size()>2){
+                couponList = couponList.subList(0,2);
+            }
+            result.setCouponList(couponList);
+
+            //获取新品推荐
             result.setNewProductList(newGoodsListTask.get());
             //获取人气推荐
             result.setHotProductList(newHotListTask.get());
             //获取推荐专题
             result.setSubjectList(recomSubListTask.get());
-            result.setCat_list(cateProductTask.get());
 
         } catch (InterruptedException e) {
             e.printStackTrace();

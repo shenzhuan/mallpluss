@@ -26,6 +26,7 @@ import java.util.List;
 public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
 
     HomeContentResult singelContent();
+    HomeContentResult singelContent1();
 
     List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize);
 
