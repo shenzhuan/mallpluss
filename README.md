@@ -10,7 +10,9 @@
 - 文档详情blog http://yjlive.cn:8084/
 - 后台端 http://yjlive.cn:8086/index
 - 商户端演示  http://yjlive.cn:8090/
-- h5演示  http://yjlive.cn:8082/
+- uniapp h5演示  http://yjlive.cn:8082/
+- pc演示  http://yjlive.cn:8084/
+- vue h5演示  http://yjlive.cn:8083/
 - 部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
 - 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 - 前端vue 项目路径下有一个zip包
