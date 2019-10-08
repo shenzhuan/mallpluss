@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
-import com.zscat.mallplus.cms.entity.CmsSubjectComment;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
@@ -34,23 +33,18 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.GoodsUtils;
-import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.home.Pages;
 import com.zscat.mallplus.vo.home.PagesItems;
 import com.zscat.mallplus.vo.home.Params;
-import com.zscat.mallplus.vo.timeline.TimeSecound;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -176,49 +170,20 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     }
     @Override
     public HomeContentResult singelContent1() {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
 
         HomeContentResult result = new HomeContentResult();
-
-        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
-
-
-        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
-        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
-        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
-
-
-        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
-        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
-        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
-        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
-
-
-        executorService.submit(couponListTask);
-        executorService.submit(newGoodsListTask);
-        executorService.submit(newHotListTask);
-        executorService.submit(recomSubListTask);
-
-
-        try {
-            List<SmsCoupon> couponList = couponListTask.get();
+        List<SmsCoupon> couponList = couponService.selectNotRecive();
             if (couponList!=null && couponList.size()>2){
                 couponList = couponList.subList(0,2);
             }
             result.setCouponList(couponList);
 
             //获取新品推荐
-            result.setNewProductList(newGoodsListTask.get());
+        result.setNewProductList(sampleGoodsList(this.getNewProductList(0, 4)));
             //获取人气推荐
-            result.setHotProductList(newHotListTask.get());
+        result.setHotProductList(sampleGoodsList(this.getHotProductList(0, 4)));
             //获取推荐专题
-            result.setSubjectList(recomSubListTask.get());
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
         return result;
     }
     @Override
