@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 public class UserUtils {
 
 
-    public static UmsMember getCurrentMember1() {
+    public static UmsMember getCurrentMember() {
         try {
             SecurityContext ctx = SecurityContextHolder.getContext();
             Authentication auth = ctx.getAuthentication();
