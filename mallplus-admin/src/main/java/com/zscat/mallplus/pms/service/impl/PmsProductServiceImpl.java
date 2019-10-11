@@ -12,6 +12,8 @@ import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
 import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.utils.IdWorker;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,11 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         PmsProduct product = productParam;
         product.setCreateTime(new Date());
         product.setId(null);
+        //处理sku的编码
+        handleSkuStockCode(productParam.getSkuStockList(), product);
+        if (ValidatorUtils.isEmpty(product.getProductSn())){
+            product.setProductSn(IdWorker.getId()+"");
+        }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();
@@ -92,8 +99,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
         //满减价格
         relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
-        //处理sku的编码
-        handleSkuStockCode(productParam.getSkuStockList(), product);
+
         //添加sku库存信息
         relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
         //添加商品参数,添加自定义商品规格
@@ -107,8 +113,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         return count;
     }
 
-    private void handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
-        if (CollectionUtils.isEmpty(skuStockList)) return;
+    private void  handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
+        if (CollectionUtils.isEmpty(skuStockList)) return ;
+        int stock = 0 ;
         for (int i = 0; i < skuStockList.size(); i++) {
             PmsSkuStock skuStock = skuStockList.get(i);
             skuStock.setProductName(product.getName());
@@ -118,12 +125,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 //日期
                 sb.append(sdf.format(new Date()));
                 //四位商品id
-                sb.append(String.format("%04d", product.getId()));
+                sb.append(String.format("%04d", product.getProductCategoryId()));
                 //三位索引id
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
+            stock =stock + skuStock.getStock();
         }
+        product.setStock(stock);
     }
 
     @Override
@@ -138,6 +147,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //更新商品信息
         PmsProduct product = productParam;
         product.setId(id);
+        if (ValidatorUtils.isEmpty(product.getProductSn())){
+            product.setProductSn(IdWorker.getId()+"");
+        }
+        handleSkuStockCode(productParam.getSkuStockList(), product);
         productMapper.updateById(product);
         redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         //会员价格
@@ -153,7 +166,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), id);
         //修改sku库存信息
         skuStockMapper.delete(new QueryWrapper<>(new PmsSkuStock()).eq("product_id", id));
-        handleSkuStockCode(productParam.getSkuStockList(), product);
+
         relateAndInsertList(skuStockDao, productParam.getSkuStockList(), id);
         //修改商品参数,添加自定义商品规格
 

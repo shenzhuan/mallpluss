@@ -797,7 +797,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderMapper.updateOrderStatus(ids, 4);
             for (OmsOrderDetail timeOutOrder : timeOutOrders) {
                 //解除订单商品库存锁定
-                orderMapper.releaseSkuStockLock(timeOutOrder.getOrderItemList());
+               // orderMapper.releaseSkuStockLock(timeOutOrder.getOrderItemList());
+                releaseStock(timeOutOrder.getOrderItemList());
                 //修改优惠券使用状态
                 updateCouponStatus(timeOutOrder.getCouponId(), timeOutOrder.getMemberId(), 0);
                 //返还使用积分
@@ -823,7 +824,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             queryO.setOrderId(orderId);
             List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
             //解除订单商品库存锁定
-            orderMapper.releaseSkuStockLock(list);
+          //  orderMapper.releaseSkuStockLock(list);
+            releaseStock(list);
             //修改优惠券使用状态
             updateCouponStatus(cancelOrder.getCouponId(), cancelOrder.getMemberId(), 0);
             //返还使用积分
@@ -1033,17 +1035,16 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     /**
      * 锁定下单商品的所有库存
      */
-
     public void lockStock(List<OmsCartItem> cartPromotionItemList) {
+        log.info("lockStock");
         for (OmsCartItem item : cartPromotionItemList) {
             PmsProduct goods = productService.getById(item.getProductId());
             if (goods != null && goods.getId() != null) {
+                PmsProduct newGoods = new PmsProduct();
+                newGoods.setId(goods.getId());
                 if (true) {
                     redisService.remove(String.format(Rediskey.GOODSDETAIL, goods.getId() + ""));
-                    PmsProduct newGoods = new PmsProduct();
-                    newGoods.setId(goods.getId());
                     if (!ValidatorUtils.empty(item.getProductSkuId()) && item.getProductSkuId() > 0) {
-
                         PmsSkuStock skuStock = skuStockMapper.selectById(item.getProductSkuId());
                         if ((skuStock.getStock() - item.getQuantity()) < 0) {
                             throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", skuId=" + item.getProductSkuId());
@@ -1051,20 +1052,47 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                             skuStock.setId(item.getProductSkuId());
                             skuStock.setStock(skuStock.getStock() - item.getQuantity());
                             skuStockMapper.updateById(skuStock);
-
-                            newGoods.setStock(goods.getStock() - item.getQuantity());
-                            productService.updateById(newGoods);
                         }
                     } else {
-
                         if ((goods.getStock() - item.getQuantity()) < 0) {
                             throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", goodsId=" + item.getProductSkuId());
-                        } else {
-                            newGoods.setStock(goods.getStock() - item.getQuantity());
-                            productService.updateById(newGoods);
                         }
                     }
                 }
+                newGoods.setStock(goods.getStock() - item.getQuantity());
+                productService.updateById(newGoods);
+            }
+        }
+    }
+    /**
+     * 解锁下单商品的所有库存
+     */
+    public void releaseStock(List<OmsOrderItem> orderItemList) {
+        log.info("releaseStock");
+        for (OmsOrderItem item : orderItemList) {
+            PmsProduct goods = productService.getById(item.getProductId());
+            if (goods != null && goods.getId() != null) {
+                PmsProduct newGoods = new PmsProduct();
+                newGoods.setId(goods.getId());
+                if (true) {
+                    redisService.remove(String.format(Rediskey.GOODSDETAIL, goods.getId() + ""));
+                    if (!ValidatorUtils.empty(item.getProductSkuId()) && item.getProductSkuId() > 0) {
+                        PmsSkuStock skuStock = skuStockMapper.selectById(item.getProductSkuId());
+                        if ((skuStock.getStock() + item.getProductQuantity()) < 0) {
+                            throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", skuId=" + item.getProductSkuId());
+                        } else {
+                            skuStock.setId(item.getProductSkuId());
+                            skuStock.setStock(skuStock.getStock() + item.getProductQuantity());
+                            skuStockMapper.updateById(skuStock);
+                        }
+                    } else {
+                        if ((goods.getStock() + item.getProductQuantity()) < 0) {
+                            throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", goodsId=" + item.getProductSkuId());
+                        }
+                    }
+                }
+                newGoods.setStock(goods.getStock() + item.getProductQuantity());
+                productService.updateById(newGoods);
             }
         }
     }

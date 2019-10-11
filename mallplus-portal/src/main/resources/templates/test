@@ -36,6 +36,7 @@ put -r /Users/java/test/git/mall-admin-web/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
+put -r /Users/java/test/git/pc/pc /root/jm
 
 put -r  /Users/java/test/git/logs/dbblog/dbblog-frontend/cms/static /root/jm/cms
 
@@ -289,3 +290,9 @@ HLS:http://播流域名/mallplus/StreamName.m3u8?鉴权串
 
 
 curl -X POST -H "Authorization: YWMtG03uONn7EemDUlWFrZwwwgAAAAAAAAAAAAAAAAAAAAEzM8s7fbFG5oFxSaQF1AQEAgMAAAFtQ9CvogBPGgCBX_SLjrC6Ob9kxbwq4OueIYgK1DgVcNafeyiuaA8Vew"  https://a1.easemob.com/1100190918157027/mallplus/super_admin -d'{"superadmin":"111"}'
+
+
+DELETE FROM admin_day_statics;
+DELETE FROM admin_sys_job_log;
+DELETE FROM sys_admin_log;
+DELETE FROM sys_web_log;
