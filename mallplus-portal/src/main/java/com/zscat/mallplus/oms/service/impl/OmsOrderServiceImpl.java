@@ -21,10 +21,7 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
-import com.zscat.mallplus.sms.service.ISmsCouponHistoryService;
-import com.zscat.mallplus.sms.service.ISmsCouponService;
-import com.zscat.mallplus.sms.service.ISmsGroupMemberService;
-import com.zscat.mallplus.sms.service.ISmsGroupService;
+import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
@@ -34,6 +31,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.util.applet.TemplateData;
 import com.zscat.mallplus.util.applet.WX_TemplateMsgUtil;
@@ -58,6 +56,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -71,6 +70,8 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> implements IOmsOrderService {
 
+    @Resource
+    private ISmsGroupActivityService smsGroupActivityService;
     @Resource
     private RedisService redisService;
     @Value("${redis.key.prefix.orderId}")
@@ -170,6 +171,45 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         long delayTimes = orderSetting.getNormalOrderOvertime() * 60 * 1000;
         //发送延迟消息
         //  cancelOrderSender.sendMessage(orderId, delayTimes);
+    }
+
+    @Override
+    public ConfirmOrderResult preGroupActivityOrder(OrderParam orderParam){
+        SmsGroupActivity smsGroupActivity = smsGroupActivityService.getById(orderParam.getGroupId());
+        if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
+            List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(
+                    Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList()));
+            if (productList != null && productList.size() > 0) {
+                smsGroupActivity.setProductList(GoodsUtils.sampleGoodsList(productList));
+            }
+        }
+
+        ConfirmOrderResult result = new ConfirmOrderResult();
+        //获取购物车信息
+        List<OmsCartItem> list = new ArrayList<>();
+        result.setCartPromotionItemList(list);
+        //获取用户收货地址列表
+        UmsMemberReceiveAddress queryU = new UmsMemberReceiveAddress();
+        queryU.setMemberId(currentMember.getId());
+        List<UmsMemberReceiveAddress> memberReceiveAddressList = addressService.list(new QueryWrapper<>(queryU));
+        result.setMemberReceiveAddressList(memberReceiveAddressList);
+        UmsMemberReceiveAddress address = addressService.getDefaultItem();
+        //获取用户可用优惠券列表
+        List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(list, 1);
+        result.setCouponHistoryDetailList(couponHistoryDetailList);
+        //获取用户积分
+        result.setMemberIntegration(currentMember.getIntegration());
+        //获取积分使用规则
+        UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectById(1L);
+        result.setIntegrationConsumeSetting(integrationConsumeSetting);
+        //计算总金额、活动优惠、应付金额
+        if (list != null && list.size() > 0) {
+            ConfirmOrderResult.CalcAmount calcAmount = calcCartAmount(list);
+            result.setCalcAmount(calcAmount);
+            result.setAddress(address);
+            return result;
+        }
+        return null;
     }
 
     /**

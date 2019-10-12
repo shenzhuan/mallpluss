@@ -121,6 +121,24 @@ public class SingeOmsController extends ApiBaseAction {
     }
 
     /**
+     * 团购商品订单预览
+     * @param orderParam
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/preGroupActivityOrder")
+    public Object preGroupActivityOrder(OrderParam orderParam) {
+        try {
+            ConfirmOrderResult result = orderService.preGroupActivityOrder(orderParam);
+            return new CommonResult().success(result);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
      * 提交订单
      *
      * @param orderParam

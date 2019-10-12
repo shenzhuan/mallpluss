@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.zscat.mallplus.pms.vo.SamplePmsProduct;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -32,26 +34,31 @@ public class SmsGroupActivity implements Serializable {
      * 活动名称
      */
     private String name;
+    private String pic;
 
     /**
      * 活动价格
      */
     private BigDecimal price;
+    /**
+     * 原格
+     */
+    private BigDecimal originprice;
 
     /**
      * 运费
      */
-    private BigDecimal fee;
+    private BigDecimal transfee;
 
     /**
      * 活动状态 1 开启 2 关闭
      */
-    private String status;
+    private Integer status;
 
     /**
      * 1 买家承担 2 卖家承担
      */
-    private String feestatus;
+    private Integer feestatus;
 
     /**
      * 创建时间
@@ -63,6 +70,10 @@ public class SmsGroupActivity implements Serializable {
 
     @TableField("goods_ids")
     private String goodsIds;
+
+
+    @TableField(exist = false)
+    List<SamplePmsProduct> productList;
 
 
 }

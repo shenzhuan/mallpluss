@@ -78,4 +78,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Object confimDelivery(Long id);
 
     OmsOrder blancePay(OmsOrder order);
+
+    /**
+     * 团购商品订单预览
+     * @param orderParam
+     * @return
+     */
+    ConfirmOrderResult preGroupActivityOrder(OrderParam orderParam);
 }

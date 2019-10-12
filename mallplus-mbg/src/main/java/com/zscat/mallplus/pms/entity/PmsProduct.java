@@ -225,7 +225,10 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField("brand_name")
     private String brandName;
-
+    /**
+     * 运费
+     */
+    private BigDecimal transfee;
     /**
      * 商品分类名称
      */
