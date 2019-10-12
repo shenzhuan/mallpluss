@@ -1,15 +1,23 @@
 package com.zscat.mallplus.b2c;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zscat.mallplus.annotation.IgnoreAuth;
+import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.single.ApiBaseAction;
-import com.zscat.mallplus.sms.entity.SmsBasicGifts;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
-import com.zscat.mallplus.sms.entity.SmsCoupon;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
+import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
+import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +42,10 @@ public class BSmsController extends ApiBaseAction {
     private ISmsBasicMarkingService basicMarkingService;
     @Resource
     private RedisService redisService;
-
+    @Resource
+    private ISmsGroupActivityService smsGroupActivityService;
+    @Resource
+    private IPmsProductService productService;
     @Autowired
     ISmsCouponService couponService;
 
@@ -72,5 +83,22 @@ public class BSmsController extends ApiBaseAction {
         return new CommonResult().success(1);
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "查询订单列表")
+    @ApiOperation(value = "查询订单列表")
+    @PostMapping(value = "/order.getorderlist")
+    public Object orderList(SmsGroupActivity groupActivity,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<SmsGroupActivity> page = null;
+            page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
+
+        for (SmsGroupActivity omsOrder : page.getRecords()){
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()));
+            omsOrder.setOrderItemList(itemList);
+        }
+        return new CommonResult().success(page);
+    }
 
 }
