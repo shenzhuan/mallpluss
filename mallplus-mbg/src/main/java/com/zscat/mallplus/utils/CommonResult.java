@@ -4,7 +4,7 @@ import org.springframework.validation.BindingResult;
 
 /**
  * 通用返回对象
- * Created by zscat on 2018/4/26.
+ * Created by zscat on 2018/4/28.
  */
 public class CommonResult {
     //操作成功

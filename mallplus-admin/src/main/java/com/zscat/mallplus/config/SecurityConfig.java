@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * SpringSecurity的配置
- * https://github.com/shenzhuan/mallplus on 2018/4/26.
+ * https://github.com/shenzhuan/mallplus on 2018/4/28.
  */
 @Configuration
 @EnableWebSecurity

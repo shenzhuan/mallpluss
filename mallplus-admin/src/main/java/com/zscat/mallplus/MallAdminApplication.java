@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 应用启动入口
- * https://github.com/shenzhuan/mallplus on 2018/4/26.
+ * https://github.com/shenzhuan/mallplus on 2018/4/28.
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @MapperScan({"com.zscat.mallplus.mapper", "com.zscat.mallplus.ums.mapper", "com.zscat.mallplus.sms.mapper", "com.zscat.mallplus.cms.mapper", "com.zscat.mallplus.sys.mapper", "com.zscat.mallplus.oms.mapper", "com.zscat.mallplus.pms.mapper"})

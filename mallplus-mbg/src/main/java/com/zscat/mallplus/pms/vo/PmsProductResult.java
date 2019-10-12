@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 查询单个产品进行修改时返回的结果
- * https://github.com/shenzhuan/mallplus on 2018/4/26.
+ * https://github.com/shenzhuan/mallplus on 2018/4/28.
  */
 @Data
 public class PmsProductResult extends PmsProductParam {
