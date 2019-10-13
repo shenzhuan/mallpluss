@@ -176,7 +176,7 @@ public class SingeMarkingController extends ApiBaseAction {
                             redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
                         }
 
-                        List<Long> newGoodIds = goodIds.subList(1, goodIds.size() - 1);
+                        List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                         if (newGoodIds != null && newGoodIds.size() > 0) {
                             List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(newGoodIds);
                             if (productList != null && productList.size() > 0) {

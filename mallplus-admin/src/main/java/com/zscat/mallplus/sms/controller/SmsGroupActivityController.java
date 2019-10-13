@@ -38,7 +38,6 @@ public class SmsGroupActivityController {
     @SysLog(MODULE = "cms", REMARK = "根据条件查询所有团购活动表列表")
     @ApiOperation("根据条件查询所有团购活动表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('sms:smsGroupActivity:read')")
     public Object getSmsGroupActivityByPage(SmsGroupActivity entity,
                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
@@ -123,6 +122,19 @@ public class SmsGroupActivityController {
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = smsGroupActivityService.removeByIds(ids);
         if (count) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("status") Integer status) {
+        int count = smsGroupActivityService.updateShowStatus(ids, status);
+        if (count > 0) {
             return new CommonResult().success(count);
         } else {
             return new CommonResult().failed();

@@ -3,6 +3,7 @@ package com.zscat.mallplus.oms.vo;
 
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.UmsIntegrationConsumeSetting;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
@@ -34,6 +35,7 @@ public class ConfirmOrderResult {
     private PmsProduct goods;
     private GroupAndOrderVo groupAndOrderVo;
 
+    SmsGroupActivity groupActivity;
 
     public static class CalcAmount {
         //订单商品总金额

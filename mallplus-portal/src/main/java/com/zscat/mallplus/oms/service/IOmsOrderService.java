@@ -84,5 +84,5 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmOrderResult preGroupActivityOrder(OrderParam orderParam);
+    Object preGroupActivityOrder(OrderParam orderParam);
 }

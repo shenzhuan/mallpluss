@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISmsGroupActivityService extends IService<SmsGroupActivity> {
 
+    int updateShowStatus(Long ids, Integer status);
 }

@@ -364,22 +364,23 @@ public class PayController extends ApiBaseAction {
 
             WechatRefundApiResult result = (WechatRefundApiResult) XmlUtil.xmlStrToBean(reponseXml, WechatRefundApiResult.class);
             String result_code = result.getResult_code();
+            //订单编号
+            String out_trade_no = result.getOut_trade_no();
+            log.error("订单" + out_trade_no + "支付成功");
+            // 业务处理
+            OmsOrder param = new OmsOrder();
+            param.setOrderSn(out_trade_no);
+            List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+            OmsOrder orderInfo = list.get(0);
+            orderInfo.setStatus(2);
+            orderInfo.setPaymentTime(new Date());
             if (result_code.equalsIgnoreCase("FAIL")) {
-                //订单编号
-                String out_trade_no = result.getOut_trade_no();
+
                 log.error("订单" + out_trade_no + "支付失败");
+                orderService.releaseStock(orderInfo);
                 response.getWriter().write(setXml("SUCCESS", "OK"));
             } else if (result_code.equalsIgnoreCase("SUCCESS")) {
-                //订单编号
-                String out_trade_no = result.getOut_trade_no();
-                log.error("订单" + out_trade_no + "支付成功");
-                // 业务处理
-                OmsOrder param = new OmsOrder();
-                param.setOrderSn(out_trade_no);
-                List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
-                OmsOrder orderInfo = list.get(0);
-                orderInfo.setStatus(2);
-                orderInfo.setPaymentTime(new Date());
+
                 orderService.updateById(orderInfo);
                 response.getWriter().write(setXml("SUCCESS", "OK"));
             }

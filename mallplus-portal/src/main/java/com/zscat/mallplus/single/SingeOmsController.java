@@ -129,8 +129,7 @@ public class SingeOmsController extends ApiBaseAction {
     @GetMapping("/preGroupActivityOrder")
     public Object preGroupActivityOrder(OrderParam orderParam) {
         try {
-            ConfirmOrderResult result = orderService.preGroupActivityOrder(orderParam);
-            return new CommonResult().success(result);
+            return orderService.preGroupActivityOrder(orderParam);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
         } catch (Exception e) {

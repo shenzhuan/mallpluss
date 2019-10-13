@@ -103,14 +103,15 @@ public class BSmsController extends ApiBaseAction {
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
     @ApiOperation(value = "查询订单列表")
-    @PostMapping(value = "/groupActivityList")
+    @ResponseBody
+    @RequestMapping(value = "/groupActivityList", method = RequestMethod.POST)
     public Object orderList(SmsGroupActivity groupActivity,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<SmsGroupActivity> page = null;
         groupActivity.setStatus(1);
-            page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
+        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
 
         for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
@@ -127,7 +128,8 @@ public class BSmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
-    @PostMapping(value = "/group.activity.getdetial")
+    @ResponseBody
+    @RequestMapping(value = "/group.activity.getdetial", method = RequestMethod.POST)
     @ApiOperation(value = "查询商品详情信息")
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         SmsGroupActivity groupActivity = smsGroupActivityService.getById(id);
@@ -136,6 +138,9 @@ public class BSmsController extends ApiBaseAction {
             if (ValidatorUtils.notEmpty(groupActivity.getGoodsIds())) {
                 List<Long> goodIds = Arrays.asList(groupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
                 GoodsDetailResult goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodIds.get(0) + "")), GoodsDetailResult.class);
+                if (goods == null || goods.getGoods() == null) {
+                    goods = productService.getGoodsRedisById(goodIds.get(0));
+                }
                 if (goods != null && goods.getGoods() != null) {
                     UmsMember umsMember = UserUtils.getCurrentMember();
                     if (umsMember != null && umsMember.getId() != null) {
@@ -167,7 +172,7 @@ public class BSmsController extends ApiBaseAction {
                         redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
                     }
 
-                    List<Long> newGoodIds = goodIds.subList(1, goodIds.size() - 1);
+                    List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                     if (newGoodIds != null && newGoodIds.size() > 0) {
                         List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(newGoodIds);
                         if (productList != null && productList.size() > 0) {
@@ -179,7 +184,9 @@ public class BSmsController extends ApiBaseAction {
                     return new CommonResult().success(map);
                 }
             }
+
         }
         return new CommonResult().failed();
     }
+
 }

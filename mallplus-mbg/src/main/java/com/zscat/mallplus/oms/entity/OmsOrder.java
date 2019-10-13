@@ -45,10 +45,6 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Long couponId;
 
     /**
-     * 运费
-     */
-    private BigDecimal transfee;
-    /**
      * 订单编号
      */
     @TableField("order_sn")

@@ -82,7 +82,6 @@ public class OmsOrderSettingController {
     @SysLog(MODULE = "oms", REMARK = "删除订单设置表")
     @ApiOperation("删除订单设置表")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('oms:OmsOrderSetting:delete')")
     public Object deleteOmsOrderSetting(@ApiParam("订单设置表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -101,7 +100,6 @@ public class OmsOrderSettingController {
     @SysLog(MODULE = "oms", REMARK = "给订单设置表分配订单设置表")
     @ApiOperation("查询订单设置表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('oms:OmsOrderSetting:read')")
     public Object getOmsOrderSettingById(@ApiParam("订单设置表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -120,7 +118,6 @@ public class OmsOrderSettingController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除订单设置表")
-    @PreAuthorize("hasAuthority('oms:OmsOrderSetting:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IOmsOrderSettingService.removeByIds(ids);
         if (count) {
