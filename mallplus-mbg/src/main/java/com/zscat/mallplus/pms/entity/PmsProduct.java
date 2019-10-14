@@ -46,6 +46,10 @@ public class PmsProduct extends BaseEntity implements Serializable {
 
     private String pic;
     private Integer type;// 1出售、2义卖、3免费
+    // 1普通 2拍卖
+    @TableField("is_paimai")
+    private Integer isPaiMai;//
+
     /**
      * 货号
      */

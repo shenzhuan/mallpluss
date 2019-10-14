@@ -4,6 +4,8 @@ package com.zscat.mallplus.sms.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.vo.SamplePmsProduct;
 import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -28,7 +31,7 @@ import java.util.List;
  * @since 2019-10-12
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/sms/smsGroupActivity")
 public class SmsGroupActivityController {
 
@@ -55,6 +58,15 @@ public class SmsGroupActivityController {
     @PostMapping(value = "/create")
     public Object saveSmsGroupActivity(@RequestBody SmsGroupActivity entity) {
         try {
+            List<SamplePmsProduct> list = entity.getProductList();
+            String goodsIs = "";
+            BigDecimal originPrice= BigDecimal.ZERO;
+            for (SamplePmsProduct p: list){
+                originPrice=originPrice.add(p.getPrice());
+                goodsIs=goodsIs+p.getId()+",";
+            }
+            entity.setOriginprice(originPrice);
+            entity.setGoodsIds(goodsIs.substring(0,goodsIs.length()-1));
             if (smsGroupActivityService.save(entity)) {
                 return new CommonResult().success();
             }
@@ -70,6 +82,15 @@ public class SmsGroupActivityController {
     @PostMapping(value = "/update/{id}")
     public Object updateSmsGroupActivity(@RequestBody SmsGroupActivity entity) {
         try {
+            List<SamplePmsProduct> list = entity.getProductList();
+            String goodsIs = "";
+            BigDecimal originPrice= BigDecimal.ZERO;
+            for (SamplePmsProduct p: list){
+                originPrice=originPrice.add(p.getPrice());
+                goodsIs=goodsIs+p.getId()+",";
+            }
+            entity.setOriginprice(originPrice);
+            entity.setGoodsIds(goodsIs.substring(0,goodsIs.length()-1));
             if (smsGroupActivityService.updateById(entity)) {
                 return new CommonResult().success();
             }
