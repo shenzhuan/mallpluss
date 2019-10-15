@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.IdWorker;
@@ -89,6 +90,12 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         handleSkuStockCode(productParam.getSkuStockList(), product);
         if (ValidatorUtils.isEmpty(product.getProductSn())){
             product.setProductSn(IdWorker.getId()+"");
+        }
+        if (ValidatorUtils.empty(product.getExpireTime())){
+            product.setExpireTime(DateUtils.strToDate(DateUtils.addDay(new Date(),5)));
+        }
+        if (ValidatorUtils.empty(product.getOriginalPrice())){
+            product.setOriginalPrice(product.getPrice());
         }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格

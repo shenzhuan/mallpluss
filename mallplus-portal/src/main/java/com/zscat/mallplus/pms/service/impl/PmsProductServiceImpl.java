@@ -11,19 +11,25 @@ import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsPaimaiLogMapper;
 import com.zscat.mallplus.sms.service.ISmsHomeBrandService;
 import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
+import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.RedisService;
-import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.ums.service.impl.RedisUtil;
+import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.util.GoodsUtils;
-import com.zscat.mallplus.util.JsonUtils;
+import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -37,6 +43,7 @@ import java.util.stream.Collectors;
  * @author zscat
  * @since 2019-04-19
  */
+@Slf4j
 @Service
 public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements IPmsProductService {
 
@@ -93,8 +100,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private RedisService redisService;
     @Resource
     private SysStoreMapper storeMapper;
+    @Resource
+    private RedisUtil redisUtil;
+    @Autowired
+    private IPmsFavoriteService favoriteService;
     @Autowired
     private ApiContext apiContext;
+    @Resource
+    private SmsPaimaiLogMapper paimaiLogMapper;
     @Override
     public PmsProductAndGroup getProductAndGroup(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -111,7 +124,6 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 Map<String, List<SmsGroupMember>> map = groupMemberByMainId(list, group);
                 vo.setMap(map);
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -285,5 +297,58 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Override
     public  Integer countGoodsByToday(Long id){
         return productMapper.countGoodsByToday(id);
+    }
+
+    @Override
+    public Map<String, Object> queryPaiMaigoodsDetail(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        PmsProduct goods = productMapper.selectById(id);
+        List<SmsPaimaiLog> paimaiLogList = paimaiLogMapper.selectList(new QueryWrapper<SmsPaimaiLog>().eq("goods_id",id).orderByDesc("create_time"));
+        map.put("paimaiLogList", paimaiLogList);
+        UmsMember umsMember = UserUtils.getCurrentMember();
+        map.put("favorite", false);
+        if (umsMember != null && umsMember.getId() != null) {
+            PmsFavorite query = new PmsFavorite();
+            query.setObjId(goods.getId());
+            query.setMemberId(umsMember.getId());
+            query.setType(1);
+            PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+            if(findCollection!=null){
+                map.put("favorite", true);
+            }
+        }
+        //记录浏览量到redis,然后定时更新到数据库
+        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
+        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount=0;
+        if(!viewCountItem.isEmpty()){
+            if(viewCountItem.containsKey(key)){
+                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
+            }else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+            }
+        }else{
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        }
+        goods.setTimeSecound(ValidatorUtils.getTimeSecound(goods.getExpireTime()));
+        map.put("goods", goods);
+        return map;
+    }
+
+    @Transactional
+    @Override
+    public Object updatePaiMai(PmsProduct goods) {
+        goods.setExpireTime(DateUtils.strToDate(DateUtils.addMins(goods.getExpireTime(),5)));
+        productMapper.updateById(goods);
+        SmsPaimaiLog log = new SmsPaimaiLog();
+        log.setCreateTime(new Date());
+        log.setGoodsId(goods.getId());
+        log.setMemberId(UserUtils.getCurrentMember().getId());
+        log.setPrice(goods.getOriginalPrice());
+        log.setPic(UserUtils.getCurrentMember().getIcon());
+        paimaiLogMapper.insert(log);
+        return new CommonResult().success();
     }
 }

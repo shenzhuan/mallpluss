@@ -171,8 +171,26 @@ public class DateUtils {
         return format.format(date);
 
     }
+    /**
+     * 添加分钟
+     *
+     * @param date
+     * @param min
+     * @return
+     */
+    public static String addMins(Date date, int min) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MINUTE, min);// 24小时制
+        date = cal.getTime();
+        cal = null;
+        return format.format(date);
+
+    }
 
     public static void main(String[] args) throws ParseException {
+        System.out.println(DateUtils.addMins(new Date(),10));
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // 获取当前时间
         Date date = new Date();

@@ -105,6 +105,30 @@ public class SingePmsController extends ApiBaseAction {
     private IPmsGiftsService giftsService;
     @Resource
     private IPmsGiftsCategoryService giftsCategoryService;
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @IgnoreAuth
+    @GetMapping(value = "/paimai/detail")
+    @ApiOperation(value = "查询商品详情信息")
+    public Object queryPaiMaiProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+
+        return new CommonResult().success(pmsProductService.queryPaiMaigoodsDetail(id));
+    }
+
+
+    @ApiOperation("创建商品")
+    @SysLog(MODULE = "pms", REMARK = "创建商品")
+    @PostMapping(value = "/updatePaiMai")
+    public Object updatePaiMai(PaiMaiParam paiMaiParam) {
+        PmsProduct goods = pmsProductService.getById(paiMaiParam.getId());
+        if(paiMaiParam.getPrice().compareTo(goods.getOriginalPrice())>0){
+            goods.setOriginalPrice(paiMaiParam.getPrice());
+            return pmsProductService.updatePaiMai(goods);
+        }else{
+            return new CommonResult().failed("出价低于上次价格");
+        }
+    }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/goods/detail")

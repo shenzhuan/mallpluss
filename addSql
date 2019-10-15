@@ -4,3 +4,5 @@ alter table ums_reward_log add member_icon varchar(36) not null  COMMENT '图像
 
 alter table oms_order add transfee decimal not null  COMMENT '运费'; 
 alter table pms_product add transfee decimal not null  COMMENT '运费'; 
+
+alter table pms_product add expire_time datetime   COMMENT '到期时间'; 

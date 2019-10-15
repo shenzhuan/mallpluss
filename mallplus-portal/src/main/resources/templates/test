@@ -176,6 +176,9 @@ https://www.kancloud.cn/thundersword/fire-shop-lite/936356
 
 ############################### mysql ##################################
 
+拍卖
+http://www.fishpai.com
+https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409a7d1201a5f95f7b9485b10ce3ac7e29e6a9a45a5a5c2fa005e7c23108cc
 
 
 安装目录  /usr/local/mysql
@@ -255,41 +258,8 @@ h5演示  http://yjlive.cn:8082/
 
 https://pub.alimama.com/?spm=a2321.7393627.1998051820.1.98f118e2koGcdA
 
-
-{"application":"3333cb3b-7db1-46e6-8171-49a405d40404","access_token":"YWMtG03uONn7EemDUlWFrZwwwgAAAAAAAAAAAAAAAAAAAAEzM8s7fbFG5oFxSaQF1AQEAgMAAAFtQ9CvogBPGgCBX_SLjrC6Ob9kxbwq4OueIYgK1DgVcNafeyiuaA8Vew","expires_in":5184000}
-
-
-AppKey:1100190918157027#mallplus
-Orgname:1100190918157027
-appname:mallplus
-
-Client ID:YXA6MzPLO32xRuaBcUmkBdQEBA
-Client Secret:YXA6ORPb2MQmsSUI1cfBTUvyW3YX4xI
-
-curl -X POST "https://a1.easemob.com/1100190918157027/mallplus/token" -d '{"grant_type":"client_credentials","client_id":"YXA6MzPLO32xRuaBcUmkBdQEBA","client_secret":"YXA6ORPb2MQmsSUI1cfBTUvyW3YX4xI"}'
-
-curl -X POST -H "Authorization: Bearer YWMtG03uONn7EemDUlWFrZwwwgAAAAAAAAAAAAAAAAAAAAEzM8s7fbFG5oFxSaQF1AQEAgMAAAFtQ9CvogBPGgCBX_SLjrC6Ob9kxbwq4OueIYgK1DgVcNafeyiuaA8Vew"  " https://a1.easemob.com/1100190918157027/mallplus/liverooms/stream_url -d '{"pc_pull":"//push.aliyunlive.com/mallplus/stream?auth_key=timestamp-rand-uid-md5hash","pc_push":"//push.aliyunlive.com/mallplus/stream?auth_key=timestamp-rand-uid-md5hash","mobile_pull":"//push.aliyunlive.com/mallplus/stream?auth_key=timestamp-rand-uid-md5hash","mobile_push":"//push.aliyunlive.com/mallplus/stream?auth_key=timestamp-rand-uid-md5hash"}'"
-
-
-如何拼接推流地址
-推流地址规则
-直播只支持RTMP格式推流。
-
-rtmp://26269.liveplay.myqcloud.com/live/26269_28dd5862746011e892905cb9018cf0d4_550
-
-推流地址格式为RTMP://推流域名/AppName/StreamName?鉴权串
-
-示例例如，推流域名是push.aliyunlive.com，AppName为app，StreamName为stream，鉴权key是123，则推流地址为RTMP:
-//push.aliyunlive.com/mallplus/stream?auth_key=timestamp-rand-uid-md5hash
-如何拼接播流地址
-播流地址规则
-播流地址支持RMTP、FLV、HLS格式。格式如下所示：
-RTMP:rtmp://push.aliyunlive.com/mallplus/StreamName?鉴权串
-FLV:http://播流域名/mallplus/StreamName.flv?鉴权串
-HLS:http://播流域名/mallplus/StreamName.m3u8?鉴权串
-
-
-curl -X POST -H "Authorization: YWMtG03uONn7EemDUlWFrZwwwgAAAAAAAAAAAAAAAAAAAAEzM8s7fbFG5oFxSaQF1AQEAgMAAAFtQ9CvogBPGgCBX_SLjrC6Ob9kxbwq4OueIYgK1DgVcNafeyiuaA8Vew"  https://a1.easemob.com/1100190918157027/mallplus/super_admin -d'{"superadmin":"111"}'
+单机版项目地址 https://gitee.com/zscat/mallplus
+微服务版项目地址 https://gitee.com/catshen/zscat_sw
 
 
 DELETE FROM admin_day_statics;
