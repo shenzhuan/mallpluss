@@ -555,7 +555,7 @@ public class SingePmsController extends ApiBaseAction {
 
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
-        List<PmsProduct>  list = pmsProductService.page(new Page<PmsProduct>(1, 8), new QueryWrapper<>(productQueryParam)).getRecords();
+        List<PmsProduct>  list = pmsProductService.page(new Page<PmsProduct>(1, 100), new QueryWrapper<>(productQueryParam)).getRecords();
 
         for (PmsProduct l : list){
             ProductTypeVo vo = new ProductTypeVo();
