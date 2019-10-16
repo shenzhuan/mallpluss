@@ -17,6 +17,7 @@
 - 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 - 前端vue 项目路径下有一个zip包
 - 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
+- 功能列表 https://www.processon.com/view/link/5da6a3d9e4b0ea86c2b2a817
 
 
 ## 说明
@@ -27,7 +28,7 @@
 
 > 或者您可以 "follow" 一下，该项目将持续更新，不断完善功能。
 
-> 项目交流人QQ群：[895616401(已满)] 171826977
+> 项目交流人QQ群：[895616401 ] 171826977
 
 > 如有问题或者好的建议可以在 Issues 中提。
 
@@ -247,4 +248,4 @@ nginx | 1.10 | http://nginx.org/en/download.html
 [MIT](https://github.com/zscatzheng/mall/blob/master/LICENSE)
 
 Copyright (c) 2018-2019 zscatzheng
-
+<iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:525px; height:245px;" src="https://www.processon.com/embed/mind/5d9f0933e4b06b7d6ec5b3ef"></iframe>
