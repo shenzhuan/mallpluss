@@ -164,7 +164,7 @@ nprogress | 进度条控件 | [https://github.com/rstacruz/nprogress](https://gi
 
 ##### 前台商城系统 `mall-portal`
 
-[功能结构图-前台.jpg](document/resource/mind_portal.jpg)
+![[功能结构图-前台.jpg](document/resource/mind_portal.jpg)](https://images.gitee.com/uploads/images/2019/1016/130621_b46303ee_134431.png "屏幕截图.png")
 
 #### 开发进度
 
