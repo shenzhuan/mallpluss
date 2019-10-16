@@ -47,9 +47,11 @@
 
 > 后台管理系统
 
-小程序下载 地址 https://gitee.com/catshen/mobile-mall
-后台管理下载地址 https://gitee.com/zscat/mallplus
-项目演示地址： [http://39.98.190.128/index.html](http://39.98.190.128/index.html)  
+
+1. 小程序下载 地址 https://gitee.com/catshen/mobile-mall
+1. 后台管理下载地址 https://gitee.com/zscat/mallplus
+1. 项目演示地址： [http://yjlive.cn:8090/](http://yjlive.cn:8090/)  
+
   
 ![后台管理系统功能演示.gif](/document/resource/mall-admin.gif)
 
