@@ -30,7 +30,7 @@ import java.util.List;
  * @since 2019-09-16
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/bill/billAftersales")
 public class BillAftersalesController {
 

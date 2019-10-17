@@ -45,9 +45,10 @@ import com.jpay.alipay.AliPayApiConfig;
 import com.jpay.alipay.AliPayApiConfigKit;
 import com.jpay.util.StringUtils;
 import com.jpay.vo.AjaxResult;
+import org.springframework.web.bind.annotation.RestController;
 
 
-@Controller
+@RestController
 @RequestMapping("/alipay")
 public class AliPayController extends AliPayApiController {
     private static final Logger log = LoggerFactory.getLogger(AliPayController.class);
@@ -68,13 +69,13 @@ public class AliPayController extends AliPayApiController {
 				.setSignType("RSA2")
 				.build();
 	}
-	
+
 	@RequestMapping("")
 	@ResponseBody
 	public String index() {
 		return "欢迎使用IJPay 中的支付宝支付 -By Javen";
 	}
-	
+
 	@RequestMapping("/test")
 	@ResponseBody
 	public String test(){
@@ -107,9 +108,9 @@ public class AliPayController extends AliPayApiController {
 		}
 		return result;
 	}
-	
-	
-	@RequestMapping(value = "/wapPay") 
+
+
+	@RequestMapping(value = "/wapPay")
 	@ResponseBody
 	public void wapPay(HttpServletResponse response) {
 		String body = "我是测试数据-By Javen";
@@ -135,23 +136,23 @@ public class AliPayController extends AliPayApiController {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/**
 	 * PC支付
 	 */
-	@RequestMapping(value = "/pcPay") 
+	@RequestMapping(value = "/pcPay")
 	@ResponseBody
 	public void pcPay(HttpServletResponse response){
 		try {
-			String totalAmount = "88.88"; 
+			String totalAmount = "88.88";
 			String outTradeNo =StringUtils.getOutTradeNo();
 			log.info("pc outTradeNo>"+outTradeNo);
-			
+
 			String returnUrl = aliPayBean.getDomain() + "/alipay/return_url";
 			String notifyUrl = aliPayBean.getDomain() + "/alipay/notify_url";
 			AlipayTradePagePayModel model = new AlipayTradePagePayModel();
-			
+
 			model.setOutTradeNo(outTradeNo);
 			model.setProductCode("FAST_INSTANT_TRADE_PAY");
 			model.setTotalAmount(totalAmount);
@@ -168,12 +169,12 @@ public class AliPayController extends AliPayApiController {
 //			extendParams.setHbFqNum("3");
 //			extendParams.setHbFqSellerPercent("0");
 //			model.setExtendParams(extendParams);
-			
+
 			AliPayApi.tradePage(response,model , notifyUrl, returnUrl);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 
@@ -281,7 +282,7 @@ public class AliPayController extends AliPayApiController {
 		}
 		return isSuccess;
 	}
-	
+
 	/**
 	 * 资金授权冻结接口
 	 */
@@ -298,7 +299,7 @@ public class AliPayController extends AliPayApiController {
 			model.setAmount("36");
 //			model.setPayTimeout("");
 			model.setProductCode("PRE_AUTH");
-			
+
 			AlipayFundAuthOrderFreezeResponse response = AliPayApi.authOrderFreezeToResponse(model);
 			return response;
 		} catch (Exception e) {
@@ -306,7 +307,7 @@ public class AliPayController extends AliPayApiController {
 		}
 		return null;
 	}
-	
+
 
 	/**
 	 * 红包协议支付接口
@@ -322,8 +323,8 @@ public class AliPayController extends AliPayApiController {
 			model.setOrderTitle("红包协议支付接口-By IJPay");
 			model.setAmount("36");
 			model.setPayerUserId("2088102180432465");
-			
-			
+
+
 			AlipayFundCouponOrderAgreementPayResponse response = AliPayApi.fundCouponOrderAgreementPayToResponse(model);
 			return response;
 		} catch (Exception e) {
@@ -483,7 +484,7 @@ public class AliPayController extends AliPayApiController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 获取应用授权URL并授权
 	 */
@@ -552,14 +553,14 @@ public class AliPayController extends AliPayApiController {
 			params.put("batch_num", 1+"");
 			params.put("batch_fee", 10.00+"");
 			params.put("email", "xx@xxx.com");
-			
+
 			AliPayApi.batchTrans(params, aliPayBean.getPrivateKey(), sign_type, response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/**
 	 * 地铁购票核销码发码
 	 */
@@ -569,7 +570,7 @@ public class AliPayController extends AliPayApiController {
 		try {
 			//需要支付成功的订单号
 //			String tradeNo = getPara("tradeNo");
-			
+
 			AlipayCommerceCityfacilitatorVoucherGenerateModel model = new AlipayCommerceCityfacilitatorVoucherGenerateModel();
 			model.setCityCode("440300");
 			model.setTradeNo(tradeNo);
@@ -585,7 +586,7 @@ public class AliPayController extends AliPayApiController {
 		}
 		return null;
 	}
-	
+
 	@RequestMapping(value = "/return_url")
 	@ResponseBody
 	public String return_url(HttpServletRequest request) {

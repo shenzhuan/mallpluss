@@ -33,7 +33,7 @@ import java.util.List;
  * https://github.com/shenzhuan/mallplus on 2018/8/30.
  */
 @Slf4j
-@Controller
+@RestController
 @Api(tags = "OmsPortalOrderController", description = "订单管理")
 @RequestMapping("/api/order")
 public class OmsPortalOrderController extends ApiBaseAction {

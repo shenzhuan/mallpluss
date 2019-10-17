@@ -25,7 +25,7 @@ import java.util.List;
  * @email 951449465@qq.com
  * @date 2019-04-05 16:20:35
  */
-@Controller
+@RestController
 @Api(tags = "RedPacketController", description = "红包管理")
 @RequestMapping("/api/redPacket")
 public class RedPacketController {

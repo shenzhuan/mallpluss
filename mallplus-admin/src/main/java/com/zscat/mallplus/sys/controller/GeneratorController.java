@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/gen")
-@Controller
+@RestController
 public class GeneratorController {
     String prefix = "common/generator";
     @Autowired

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * Oss相关操作接口
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
-@Controller
+@RestController
 @Api(tags = "OssController", description = "Oss管理")
 @RequestMapping("/aliyun/oss")
 public class OssController {

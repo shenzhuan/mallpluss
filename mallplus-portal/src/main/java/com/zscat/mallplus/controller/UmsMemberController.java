@@ -26,7 +26,7 @@ import java.util.Map;
  * 会员登录注册管理Controller
  * https://github.com/shenzhuan/mallplus on 2018/8/3.
  */
-@Controller
+@RestController
 @Api(tags = "UmsMemberController", description = "会员管理系统")
 @RequestMapping("/api/member")
 public class UmsMemberController extends ApiBaseAction {

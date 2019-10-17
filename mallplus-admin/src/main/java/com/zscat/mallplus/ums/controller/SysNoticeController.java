@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
  * @author zscat
  * @since 2019-09-16
  */
-@Controller
+@RestController
 @RequestMapping("/ums/sysNotice")
 public class SysNoticeController {
 

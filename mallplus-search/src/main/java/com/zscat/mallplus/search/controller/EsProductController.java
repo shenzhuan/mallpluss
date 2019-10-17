@@ -19,7 +19,7 @@ import java.util.List;
  * 搜索商品管理Controller
  * Created by mallplus on 2018/6/19.
  */
-@Controller
+@RestController
 @Api(tags = "EsProductController", description = "搜索商品管理")
 @RequestMapping("/esProduct")
 public class EsProductController {

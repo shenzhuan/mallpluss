@@ -28,7 +28,7 @@ import javax.annotation.Resource;
  * @since 2019-09-16
  */
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/bill/billPayments")
 public class BillPaymentsController {
 

@@ -28,7 +28,7 @@ import java.util.List;
  * 购物车管理Controller
  * https://github.com/shenzhuan/mallplus on 2018/8/2.
  */
-@Controller
+@RestController
 @Api(tags = "OmsCartItemController", description = "购物车管理")
 @RequestMapping("/api/cart")
 public class OmsCartItemController {
