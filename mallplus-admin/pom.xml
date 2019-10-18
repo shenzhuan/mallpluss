@@ -53,12 +53,14 @@
             <artifactId>commons-configuration</artifactId>
             <version>1.10</version>
         </dependency>
-        <!--velocity代码生成使用模板 -->
+
+        <!-- velocity支持   Spring 4.x ,SpringBoot 1.4之后就不再支持 -->
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-velocity</artifactId>
+            <version>1.4.2.RELEASE</version>    <!-- 由于本项目SpringBoot版本为2.1.3早已不支持velocity，这里如果不指定版本会找不到   -->
         </dependency>
+
 
         <dependency>
             <groupId>com.zscat.mallplus</groupId>

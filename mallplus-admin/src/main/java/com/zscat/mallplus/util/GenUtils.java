@@ -13,6 +13,7 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,13 +121,17 @@ public class GenUtils {
         map.put("email", config.getString("email"));
         map.put("datetime", DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
         VelocityContext context = new VelocityContext(map);
-
+        VelocityEngine velocityEngine = new VelocityEngine();
+        Properties properties = new Properties();
+        properties.setProperty("resource.loader","class");
+        properties.setProperty("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityEngine.init(properties);
         //获取模板列表
         List<String> templates = getTemplates();
         for (String template : templates) {
             //渲染模板
             StringWriter sw = new StringWriter();
-            Template tpl = Velocity.getTemplate(template, "UTF-8");
+            Template tpl = velocityEngine.getTemplate(template, "UTF-8");
             tpl.merge(context, sw);
 
             try {

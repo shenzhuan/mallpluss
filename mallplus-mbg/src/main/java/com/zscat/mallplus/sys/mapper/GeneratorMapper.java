@@ -7,7 +7,10 @@ import java.util.Map;
 
 public interface GeneratorMapper {
     @Select("select table_name tableName, engine, table_comment tableComment, create_time createTime from information_schema.tables"
-            + " where table_schema = (select database())")
+            + " where table_schema = (select database()) and table_name like '%#{tableName}%' ")
+    List<Map<String, Object>> list(String tableName);
+    @Select("select table_name tableName, engine, table_comment tableComment, create_time createTime from information_schema.tables"
+            + " where table_schema = (select database()) ")
     List<Map<String, Object>> list();
 
     @Select("select count(*) from information_schema.tables where table_schema = (select database())")

@@ -2,6 +2,7 @@ package com.zscat.mallplus.oms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.*;
@@ -25,6 +26,7 @@ import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
+import com.zscat.mallplus.ums.mapper.UmsIntegrationChangeHistoryMapper;
 import com.zscat.mallplus.ums.mapper.UmsIntegrationConsumeSettingMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
@@ -120,7 +122,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private IPmsGiftsService giftsService;
     @Resource
     private SysAppletSetMapper appletSetMapper;
-
+    @Resource
+    private UmsIntegrationChangeHistoryMapper integrationChangeHistoryMapper;
     @Autowired
     private ApiContext apiContext;
 
@@ -803,6 +806,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (gifts.getPrice().intValue() > member.getIntegration()) {
             return new CommonResult().failed("积分不足！");
         } else {
+            // 插入订单
             OmsOrderItem orderItem = new OmsOrderItem();
             orderItem.setProductId(orderParam.getGoodsId());
             orderItem.setProductName(gifts.getTitle());
@@ -821,8 +825,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderService.save(order);
             orderItem.setOrderId(order.getId());
             orderItemService.save(orderItem);
+            //修改会员积分
             member.setIntegration(member.getIntegration() - gifts.getPrice().intValue());
             memberService.updateById(member);
+            // 插入积分日志表
+            UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory(member.getId(),new Date(), AllEnum.ChangeType.Min.code(),gifts.getPrice().intValue()
+            ,member.getUsername(),order.getId()+"",AllEnum.ChangeSource.order.code());
+            integrationChangeHistoryMapper.insert(history);
+            // 删除订单缓存
             String key = Rediskey.orderDetail + apiContext.getCurrentProviderId() + "orderid" + order.getId();
             redisService.remove(key);
 

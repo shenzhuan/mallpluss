@@ -62,7 +62,7 @@ public class SmsBasicMarkingController {
     public Object saveSmsBasicMarking(@RequestBody SmsBasicMarking entity) {
         try {
             entity.setCreateTime(new Date());
-            entity.setStatus(2);
+            entity.setStatus(1);
             validateParam(entity);
 
             if (ISmsBasicMarkingService.save(entity)) {

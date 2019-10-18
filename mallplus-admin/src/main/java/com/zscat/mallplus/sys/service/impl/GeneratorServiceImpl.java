@@ -4,6 +4,7 @@ package com.zscat.mallplus.sys.service.impl;
 import com.zscat.mallplus.sys.mapper.GeneratorMapper;
 import com.zscat.mallplus.sys.service.GeneratorService;
 import com.zscat.mallplus.util.GenUtils;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,11 @@ public class GeneratorServiceImpl implements GeneratorService {
     GeneratorMapper generatorMapper;
 
     @Override
-    public List<Map<String, Object>> list() {
-        List<Map<String, Object>> list = generatorMapper.list();
+    public List<Map<String, Object>> list(String tableName) {
+        if (ValidatorUtils.empty(tableName)){
+            return generatorMapper.list();
+        }
+        List<Map<String, Object>> list = generatorMapper.list(tableName);
         return list;
     }
 

@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Service
 public interface GeneratorService {
-    List<Map<String, Object>> list();
+    List<Map<String, Object>> list(String tableName);
 
     byte[] generatorCode(String[] tableNames);
 }

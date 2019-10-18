@@ -35,13 +35,13 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
         SmsBasicMarking marking = new SmsBasicMarking();
         if (status==1){
             marking.setId(id);
-            marking.setStatus(0);
+            marking.setStatus(1);
             markingMapper.updateById(marking);
         }else {
-            marking.setStatus(0);
+            marking.setStatus(1);
             markingMapper.update(marking,new QueryWrapper<SmsBasicMarking>().eq("big_type",bigType));
             marking.setId(id);
-            marking.setStatus(1);
+            marking.setStatus(0);
             markingMapper.updateById(marking);
         }
         return 0;

@@ -112,8 +112,7 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"sms_bargain_config","sms_bargain_record","sms_draw_user","sms_experience","sms_detailed_commission","sms_sign_activity",
-                "sms_share","sms_sign_config","sms_sign_record","sms_draw","sms_draw_user"});
+        strategy.setInclude(new String[]{"sms_configure"});
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");

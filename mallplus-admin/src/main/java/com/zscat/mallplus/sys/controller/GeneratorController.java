@@ -34,8 +34,8 @@ public class GeneratorController {
 
     @ResponseBody
     @GetMapping("/list")
-    Object list() {
-        List<Map<String, Object>> list = generatorService.list();
+    Object list(String tableName) {
+        List<Map<String, Object>> list = generatorService.list(tableName);
         return new CommonResult().success(list);
     }
 

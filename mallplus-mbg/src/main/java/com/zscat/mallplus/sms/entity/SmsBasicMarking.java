@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  * 基本营销
  * @author zscat
@@ -37,7 +37,7 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 1 有效 0 无效
+     * 0 有效 1 无效
      */
     private Integer status;
 
