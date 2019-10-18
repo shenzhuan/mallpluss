@@ -50,6 +50,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -371,6 +372,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         OmsOrder order = new OmsOrder();
         // 1. 获取购物车商品
         List<OmsCartItem> cartPromotionItemList = new ArrayList<>();
+        StopWatch stopWatch = new StopWatch("下单orderType=" + orderParam.getOrderType());
+        stopWatch.start("1. 获取购物车商品");
         //团购订单
         if (orderParam.getOrderType() == 3) {
             SmsGroupActivity smsGroupActivity = smsGroupActivityService.getById(orderParam.getGroupId());
@@ -409,13 +412,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartPromotionItemList = cartItemService.listPromotion(currentMember.getId(), resultList);
             }
         }
-
+        stopWatch.stop();
 
         List<OmsOrderItem> orderItemList = new ArrayList<>();
         //获取购物车及优惠信息
         String name = "";
         BigDecimal transFee = BigDecimal.ZERO;
         List<OmsCartItem> newCartItemList = new ArrayList<>();
+        stopWatch.start("2. 校验商品库存，舍弃商品不存或没有库存 计算运费");
         // 2. 校验商品库存，舍弃商品不存或没有库存 计算运费
         for (OmsCartItem cartPromotionItem : cartPromotionItemList) {
             boolean flag = false;
@@ -443,6 +447,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 newCartItemList.add(cartPromotionItem);
             }
         }
+        stopWatch.stop();
+
+        stopWatch.start("3.计算优惠券 插入订单");
         //3.计算优惠券
         SmsCouponHistory couponHistory = null;
         SmsCoupon coupon = null;
@@ -481,22 +488,30 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             couponHistory.setOrderSn(order.getOrderSn());
             couponHistoryService.updateById(couponHistory);
         }
+        stopWatch.stop();
         //如使用积分需要扣除积分
         if (orderParam.getUseIntegration() != null) {
             order.setUseIntegration(orderParam.getUseIntegration());
             memberService.updateIntegration(currentMember.getId(), currentMember.getIntegration() - orderParam.getUseIntegration());
         }
+        stopWatch.start("4.锁库存 删除购物车");
         lockStock(newCartItemList);
         //删除购物车中的下单商品
         deleteCartItemList(cartPromotionItemList, currentMember);
         Map<String, Object> result = new HashMap<>();
         result.put("order", order);
         result.put("orderItemList", orderItemList);
+        stopWatch.stop();
+
 
         String platform = orderParam.getPlatform();
         if ("1".equals(platform)) {
+            stopWatch.start("5.小程序推送消息");
+            stopWatch.start("查询批量数据");
             push(currentMember, order, orderParam.getPage(), orderParam.getFormId(), name);
+            stopWatch.stop();
         }
+        log.info(stopWatch.prettyPrint());
         return new CommonResult().success("下单成功", result);
     }
 
