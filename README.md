@@ -4,7 +4,7 @@
 
 
 
-- 商户入驻流程  https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1634420&doc_id=326093
+- 商户入驻流程  https://gitee.com/zscat/mallplus/wikis/pages
 - 单机版项目地址 https://gitee.com/zscat/mallplus
 - 前端vue 项目路径下有一个zip包
 - 文档详情blog http://yjlive.cn:8084/
@@ -13,7 +13,6 @@
 - uniapp h5演示  http://yjlive.cn:8082/
 - pc演示  http://yjlive.cn:8084/
 - vue h5演示  http://yjlive.cn:8083/
-- 部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
 - 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 - 前端vue 项目路径下有一个zip包
 - 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
