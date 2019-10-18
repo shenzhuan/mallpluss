@@ -24,8 +24,11 @@ import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.entity.PmsProductConsult;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
+import com.zscat.mallplus.pms.vo.ProductConsultParam;
 import com.zscat.mallplus.pms.vo.ProductTypeVo;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
@@ -58,10 +61,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: shenzhuan
@@ -99,6 +99,9 @@ public class BOmsController extends ApiBaseAction {
     private RedisService redisService;
     @Autowired
     private ApiContext apiContext;
+
+    @Autowired
+    private IPmsProductConsultService pmsProductConsultService;
 
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.add")
@@ -616,6 +619,43 @@ public class BOmsController extends ApiBaseAction {
         UmsMember member = UserUtils.getCurrentMember();
 
         return null;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "添加订单评论")
+    @ApiOperation(value = "添加订单评论")
+    @PostMapping(value = "/user.orderevaluate")
+    public Object addGoodsConsult( @RequestParam(value = "orderId", defaultValue = "1") Long orderId,
+                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        List<ProductConsultParam> itemss = JsonUtils.json2list(items,ProductConsultParam.class);
+        for (ProductConsultParam param : itemss){
+            PmsProductConsult productConsult = new PmsProductConsult();
+            if (member!=null){
+                productConsult.setPic(member.getIcon());
+                productConsult.setMemberName(member.getNickname());
+                productConsult.setMemberId(member.getId());
+            }else {
+                return new CommonResult().failed("请先登录");
+            }
+            productConsult.setGoodsId(param.getGoodsId());
+            productConsult.setConsultContent(param.getTextarea());
+            productConsult.setStars(param.getScore());
+            productConsult.setEmail(Arrays.toString(param.getImages()));
+            productConsult.setConsultAddtime(new Date());
+            pmsProductConsultService.save(productConsult);
+        }
+        OmsOrder omsOrder = new OmsOrder();
+        omsOrder.setId(orderId);
+        omsOrder.setIsComment(2);
+        omsOrder.setStatus(OrderStatus.TRADE_SUCCESS.getValue());
+        if ( orderService.updateById(omsOrder)) {
+            commonResult = new CommonResult().success(1);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
     }
 
     @IgnoreAuth
