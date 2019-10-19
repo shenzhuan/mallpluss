@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.utils.BaseEntity;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import lombok.Data;
@@ -151,7 +151,7 @@ public class CmsSubject extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List pics;
     @TableField(exist = false)
-    List<SamplePmsProduct> products ;
+    List<PmsProduct> products ;
     public List getPics() {
         if (ValidatorUtils.notEmpty(albumPics)){
             this.pics = Arrays.asList(albumPics.split(",,"));

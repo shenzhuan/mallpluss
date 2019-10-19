@@ -7,6 +7,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.*;
 import com.zscat.mallplus.cms.service.*;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.CmsSubjectProductRelationMapper;
@@ -23,7 +24,7 @@ import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -176,8 +177,8 @@ public class BCmsController extends ApiBaseAction {
             List<Long> ids = list.stream()
                     .map(CmsSubjectProductRelation::getProductId)
                     .collect(Collectors.toList());
-            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.listByIds(ids);
-            productResult.setProducts(GoodsUtils.sampleGoodsList(products));
+            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
+            productResult.setProducts(products);
         }
 
         //记录浏览量到redis,然后定时更新到数据库

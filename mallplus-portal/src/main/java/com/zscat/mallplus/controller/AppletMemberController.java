@@ -30,7 +30,7 @@ import com.zscat.mallplus.sms.vo.SmsFlashSessionInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -313,7 +313,7 @@ public class AppletMemberController extends ApiBaseAction {
                     productQueryParam.setProductAttributeCategoryId(gt.getId());
                     productQueryParam.setPublishStatus(1);
                     productQueryParam.setVerifyStatus(1);
-                    gt.setGoodsList(GoodsUtils.sampleGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam))));
+                    gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam)));
                 }
                 redisService.set(Rediskey.appletCategoryKey, JsonUtils.objectToJson(productAttributeCategoryList));
                 redisService.expire(Rediskey.appletCategoryKey, 24 * 60 * 60);

@@ -7,6 +7,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
@@ -30,7 +31,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -119,10 +120,9 @@ public class SingeMarkingController extends ApiBaseAction {
 
         for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
-                List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(
-                        Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList()));
+                List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id",Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
                 if (productList != null && productList.size() > 0) {
-                    smsGroupActivity.setProductList(GoodsUtils.sampleGoodsList(productList));
+                    smsGroupActivity.setProductList(productList);
                 }
             }
 
@@ -178,9 +178,9 @@ public class SingeMarkingController extends ApiBaseAction {
 
                         List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                         if (newGoodIds != null && newGoodIds.size() > 0) {
-                            List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(newGoodIds);
+                            List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id",goodIds).select(ConstansValue.sampleGoodsList));
                             if (productList != null && productList.size() > 0) {
-                                groupActivity.setProductList(GoodsUtils.sampleGoodsList(productList));
+                                groupActivity.setProductList(productList);
                             }
                         }
                         map.put("groupActivity", groupActivity);

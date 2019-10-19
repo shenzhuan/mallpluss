@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
@@ -20,7 +21,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.*;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
@@ -245,8 +246,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setSkuStockList(skuStockList);
         param.setSubjectProductRelationList(subjectProductRelationList);
         param.setStoreInfo(storeMapper.selectById(apiContext.getCurrentProviderId()));
-        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()));
-        param.setTypeGoodsList(GoodsUtils.sampleGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size())));
+        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
+        param.setTypeGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size()));
         redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
@@ -267,7 +268,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
     }
     @Override
-    public List<SamplePmsProduct> getNewProductList(int pageNum, int pageSize) {
+    public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
 
         List<SmsHomeNewProduct> brands = homeNewProductService.list(new QueryWrapper<>());
         if (brands!=null && brands.size()>0){
@@ -275,20 +276,20 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                     .map(SmsHomeNewProduct::getProductId)
                     .collect(Collectors.toList());
             if (ids!=null && ids.size()>0) {
-                return  GoodsUtils.sampleGoodsList(productMapper.selectBatchIds(ids));
+                return  productMapper.selectList(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
             }
         }
         return  new ArrayList<>();
     }
     @Override
-    public List<SamplePmsProduct> getHotProductList(int pageNum, int pageSize) {
+    public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
         List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
         if (brands!=null && brands.size()>0){
             List<Long> ids = brands.stream()
                     .map(SmsHomeRecommendProduct::getProductId)
                     .collect(Collectors.toList());
             if (ids!=null && ids.size()>0) {
-                return  GoodsUtils.sampleGoodsList(productMapper.selectBatchIds(ids));
+                return  productMapper.selectList(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
             }
         }
        return  new ArrayList<>();

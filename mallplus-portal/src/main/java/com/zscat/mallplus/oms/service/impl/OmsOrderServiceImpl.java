@@ -33,7 +33,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.util.applet.TemplateData;
 import com.zscat.mallplus.util.applet.WX_TemplateMsgUtil;

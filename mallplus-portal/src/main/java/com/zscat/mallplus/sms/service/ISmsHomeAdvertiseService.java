@@ -7,7 +7,7 @@ import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.entity.PmsSmallNaviconCategory;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
@@ -34,7 +34,7 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
 
     List<PmsProduct> getNewProductList(int pageNum, int pageSize);
 
-    List<SamplePmsProduct> getSaleProductList(int pageNum, int pageSize);
+    List<PmsProduct> getSaleProductList(int pageNum, int pageSize);
 
     List<PmsProduct> getHotProductList(int pageNum, int pageSize);
 

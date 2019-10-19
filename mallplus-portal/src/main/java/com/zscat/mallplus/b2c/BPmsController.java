@@ -13,6 +13,7 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -40,7 +41,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -361,7 +362,7 @@ public class BPmsController extends ApiBaseAction {
             if (nowT > group.getStartTime().getTime() && nowT < endTime.getTime()) {
                 PmsProduct g =pmsProductService.getById(group.getGoodsId());
                 if(g!=null){
-                    group.setGoods(GoodsUtils.sampleGoods(g));
+                    group.setGoods(g);
                     result.add(group);
                 }
 
@@ -539,7 +540,7 @@ public class BPmsController extends ApiBaseAction {
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            gt.setGoodsList(GoodsUtils.sampleGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam))));
+            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
         redisService.set(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(productAttributeCategoryList));
         redisService.expire(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
@@ -566,7 +567,7 @@ public class BPmsController extends ApiBaseAction {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
         List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
-        List<SamplePmsProduct> list = new ArrayList<>();
+        List<PmsProduct> list = new ArrayList<>();
         if (type==1){
              list = pmsProductService.getHotProductList(1,100);
         }else  if (type==2){

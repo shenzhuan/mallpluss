@@ -31,7 +31,7 @@ public class GoodsDetailResult implements Serializable {
     private List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList;
 
     private List<PmsProductAttributeValue>  productCanShuValueList ;
-    private List<SamplePmsProduct> typeGoodsList;
+    private List<PmsProduct> typeGoodsList;
 
     private  PmsProduct goods;
     private SysStore storeInfo;

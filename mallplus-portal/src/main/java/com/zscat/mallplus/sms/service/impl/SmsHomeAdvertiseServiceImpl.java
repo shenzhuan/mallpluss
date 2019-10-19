@@ -9,6 +9,7 @@ import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.ActivityVo;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
@@ -21,7 +22,7 @@ import com.zscat.mallplus.pms.service.IPmsBrandService;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.*;
 import com.zscat.mallplus.sms.service.*;
@@ -32,7 +33,7 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.home.Pages;
@@ -179,9 +180,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             result.setCouponList(couponList);
 
             //获取新品推荐
-        result.setNewProductList(sampleGoodsList(this.getNewProductList(0, 4)));
+        result.setNewProductList(this.getNewProductList(0, 4));
             //获取人气推荐
-        result.setHotProductList(sampleGoodsList(this.getHotProductList(0, 4)));
+        result.setHotProductList(this.getHotProductList(0, 4));
             //获取推荐专题
 
         return result;
@@ -191,8 +192,8 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         HomeContentResult result = new HomeContentResult();
         Callable<List> couponListCallable = () -> couponService.selectNotRecive();
-        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
-        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> newGoodsListCallable = () -> this.getNewProductList(0, 4);
+        Callable<List> newHotListCallable = () -> this.getHotProductList(0, 4);
         Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
         Callable<List> advListCallable = this::getHomeAdvertiseList;
 
@@ -239,8 +240,8 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         HomeContentResult result = new HomeContentResult();
         Callable<List> couponListCallable = () -> couponService.selectNotRecive();
-        Callable<List> newGoodsListCallable = () -> sampleGoodsList(this.getNewProductList(0, 4));
-        Callable<List> newHotListCallable = () -> sampleGoodsList(this.getHotProductList(0, 4));
+        Callable<List> newGoodsListCallable = () -> this.getNewProductList(0, 4);
+        Callable<List> newHotListCallable = () -> this.getHotProductList(0, 4);
         Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
         Callable<List> advListCallable = this::getHomeAdvertiseList;
 
@@ -345,9 +346,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam));
+            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
-                gt.setGoodsList(sampleGoodsList(goodsList.getRecords()));
+                gt.setGoodsList(goodsList.getRecords());
             } else {
                 gt.setGoodsList(new ArrayList<>());
             }
@@ -380,7 +381,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             }
             PmsProduct g =pmsProductService.getById(group.getGoodsId());
             if(g!=null){
-                group.setGoods(GoodsUtils.sampleGoods(g));
+                group.setGoods(g);
                 result.add(group);
             }
             if (result!=null && result.size()>pageNum){
@@ -482,18 +483,18 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     }
     @Override
-    public List<SamplePmsProduct> getSaleProductList(int pageNum, int pageSize) {
+    public List<PmsProduct> getSaleProductList(int pageNum, int pageSize) {
         PmsProduct query = new PmsProduct();
         query.setPublishStatus(1);
         query.setVerifyStatus(1);
-        return GoodsUtils.sampleGoodsList(pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).orderByDesc("sale")).getRecords());
+        return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).select(ConstansValue.sampleGoodsList).orderByDesc("sale")).getRecords();
     }
     @Override
     public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
         PmsProduct query = new PmsProduct();
         query.setPublishStatus(1);
         query.setVerifyStatus(1);
-        return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).orderByDesc("create_time")).getRecords();
+        return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")).getRecords();
 
        /* List<SmsHomeNewProduct> brands = homeNewProductService.list(new QueryWrapper<>());
         List<Long> ids = brands.stream()
@@ -502,15 +503,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         return (List<PmsProduct>) pmsProductService.listByIds(ids);*/
     }
 
-    public List<SamplePmsProduct> sampleGoodsList(List<PmsProduct> list) {
-        List<SamplePmsProduct> products = new ArrayList<>();
-        for (PmsProduct product : list) {
-            SamplePmsProduct en = new SamplePmsProduct();
-            BeanUtils.copyProperties(product, en);
-            products.add(en);
-        }
-        return products;
-    }
+
 
     @Override
     public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
@@ -521,7 +514,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         List<Long> ids = brands.stream()
                 .map(SmsHomeRecommendProduct::getProductId)
                 .collect(Collectors.toList());
-        return (List<PmsProduct>) pmsProductService.listByIds(ids);
+        return (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
     }
 
     @Override

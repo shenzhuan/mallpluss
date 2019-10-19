@@ -10,6 +10,7 @@ import com.zscat.mallplus.cms.entity.CmsSubjectComment;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsGiftsMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
@@ -29,7 +30,6 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
-import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -346,7 +346,7 @@ public class SingePmsController extends ApiBaseAction {
             if (nowT > group.getStartTime().getTime() && nowT < endTime.getTime()) {
                 PmsProduct g =pmsProductService.getById(group.getGoodsId());
                 if(g!=null){
-                    group.setGoods(GoodsUtils.sampleGoods(g));
+                    group.setGoods(g);
                     result.add(group);
                 }
 
@@ -494,7 +494,7 @@ public class SingePmsController extends ApiBaseAction {
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            gt.setGoodsList(GoodsUtils.sampleGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam))));
+            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
         return new CommonResult().success(productAttributeCategoryList);
     }

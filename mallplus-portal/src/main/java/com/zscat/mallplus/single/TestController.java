@@ -18,7 +18,7 @@ import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
@@ -33,7 +33,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;

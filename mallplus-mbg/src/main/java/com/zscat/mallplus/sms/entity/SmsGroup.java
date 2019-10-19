@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.utils.BaseEntity;
 import com.zscat.mallplus.vo.timeline.TimeSecound;
 import lombok.Data;
@@ -98,7 +98,7 @@ public class SmsGroup extends BaseEntity implements Serializable {
     private Integer limitGoods;
 
     @TableField(exist = false)
-    private SamplePmsProduct goods;
+    private PmsProduct goods;
 
     @TableField(exist = false)
     private TimeSecound timeSecound;

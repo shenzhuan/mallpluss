@@ -7,6 +7,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -14,7 +15,7 @@ import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
@@ -28,7 +29,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.GoodsUtils;
+
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -108,9 +109,9 @@ public class SingeUmsController extends ApiBaseAction {
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8),new QueryWrapper<>(productQueryParam));
+            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8),new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList!=null&& goodsList.getRecords()!=null && goodsList.getRecords().size()>0){
-                gt.setGoodsList(GoodsUtils.sampleGoodsList(goodsList.getRecords()));
+                gt.setGoodsList(goodsList.getRecords());
             }else{
                 gt.setGoodsList(new ArrayList<>());
             }
@@ -166,7 +167,7 @@ public class SingeUmsController extends ApiBaseAction {
     @ResponseBody
     public Object schoolDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         SysSchool school = schoolService.getById(id);
-       List<SamplePmsProduct> list = GoodsUtils.sampleGoodsList(productMapper.selectList(new QueryWrapper<PmsProduct>().eq("school_id",id)));
+       List<PmsProduct> list = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("school_id",id).select(ConstansValue.sampleGoodsList));
        school.setGoodsList(list);
        school.setGoodsCount(list.size());
        return new CommonResult().success(school);

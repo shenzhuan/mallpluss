@@ -59,7 +59,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
      * @param pageSize
      * @return
      */
-    List<SamplePmsProduct> getNewProductList(int pageNum, int pageSize) ;
+    List<PmsProduct> getNewProductList(int pageNum, int pageSize) ;
 
     /**
      * 获取最热商品列表 按销量倒序
@@ -67,7 +67,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
      * @param pageSize
      * @return
      */
-    List<SamplePmsProduct> getHotProductList(int pageNum, int pageSize) ;
+    List<PmsProduct> getHotProductList(int pageNum, int pageSize) ;
 
     /**
      * 今日添加的商品
