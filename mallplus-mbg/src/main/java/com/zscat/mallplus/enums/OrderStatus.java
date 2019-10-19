@@ -19,6 +19,7 @@ public enum OrderStatus {
     RIGHT_APPLY(6), // 维权中
     RIGHT_APPLYF_SUCCESS(7), // 维权已完成
     TO_SHARE(8),  // 待分享
+    REFUNDING(13),  // 申请退款
     REFUND(14),  // 已退款
     //    CANCELED(7),
     CLOSED(15), // 已关闭 // 已取消 统一

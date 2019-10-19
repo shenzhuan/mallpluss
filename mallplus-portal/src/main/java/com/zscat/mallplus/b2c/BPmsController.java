@@ -157,20 +157,7 @@ public class BPmsController extends ApiBaseAction {
             }
         }
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
-        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-            }
-        }else{
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-        }
+        recordGoodsFoot(id);
 
         map.put("goods", goods);
         return new CommonResult().success(map);
@@ -912,7 +899,6 @@ public class BPmsController extends ApiBaseAction {
                         isCollectGoods(map, goods, umsMember);
                     }
                     recordGoodsFoot(id);
-
                     List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                     if (newGoodIds != null && newGoodIds.size() > 0) {
                         List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id",newGoodIds).select(ConstansValue.sampleGoodsList));
@@ -929,6 +915,27 @@ public class BPmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
+
+    private Integer recordGoodsFoot(Long id) {
+        //记录浏览量到redis,然后定时更新到数据库
+        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
+        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount=0;
+        if(!viewCountItem.isEmpty()){
+            if(viewCountItem.containsKey(key)){
+                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
+            }else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+            }
+        }else{
+            viewCount=1;
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        }
+        return viewCount;
+    }
+
     /**
      * 判断是否收藏商品
      * @param map

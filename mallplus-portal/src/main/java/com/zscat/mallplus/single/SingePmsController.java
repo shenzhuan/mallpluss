@@ -145,20 +145,10 @@ public class SingePmsController extends ApiBaseAction {
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = UserUtils.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
-            PmsProduct p = goods.getGoods();
-            PmsFavorite query = new PmsFavorite();
-            query.setObjId(p.getId());
-            query.setMemberId(umsMember.getId());
-            query.setType(1);
-            PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
-                map.put("favorite", true);
-            }else{
-                map.put("favorite", false);
-            }
+          isCollectGoods(map,goods,umsMember);
         }
         //记录浏览量到redis,然后定时更新到数据库
-       rec
+       recordGoodsFoot(id);
 
         map.put("goods", goods);
         return new CommonResult().success(map);
@@ -366,22 +356,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询商品详情信息")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
-        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                viewCount=1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-            }
-        }else{
-            viewCount=1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-        }
+
         GoodsDetailResult goods = null;
         try {
               goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
@@ -399,7 +374,7 @@ public class SingePmsController extends ApiBaseAction {
         UmsMember umsMember = UserUtils.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
-            p.setHit(viewCount);
+            p.setHit(recordGoodsFoot(id));
             PmsFavorite query = new PmsFavorite();
             query.setObjId(p.getId());
             query.setMemberId(umsMember.getId());
@@ -649,6 +624,44 @@ public class SingePmsController extends ApiBaseAction {
 
     }
 
+    private Integer recordGoodsFoot(Long id) {
+        //记录浏览量到redis,然后定时更新到数据库
+        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
+        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount=0;
+        if(!viewCountItem.isEmpty()){
+            if(viewCountItem.containsKey(key)){
+                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
+            }else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+            }
+        }else{
+            viewCount=1;
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        }
+        return viewCount;
+    }
 
+    /**
+     * 判断是否收藏商品
+     * @param map
+     * @param goods
+     * @param umsMember
+     */
+    private void isCollectGoods(Map<String, Object> map, GoodsDetailResult goods, UmsMember umsMember) {
+        PmsProduct p = goods.getGoods();
+        PmsFavorite query = new PmsFavorite();
+        query.setObjId(p.getId());
+        query.setMemberId(umsMember.getId());
+        query.setType(1);
+        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+        if (findCollection != null) {
+            map.put("favorite", true);
+        } else {
+            map.put("favorite", false);
+        }
+    }
 
 }

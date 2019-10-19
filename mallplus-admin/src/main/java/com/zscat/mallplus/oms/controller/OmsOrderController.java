@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
@@ -35,7 +37,8 @@ import java.util.List;
 public class OmsOrderController {
     @Resource
     private IOmsOrderService IOmsOrderService;
-
+    @Resource
+    private IOmsOrderItemService orderItemService;
     @SysLog(MODULE = "oms", REMARK = "根据条件查询所有订单表列表")
     @ApiOperation("根据条件查询所有订单表列表")
     @GetMapping(value = "/list")
@@ -82,6 +85,7 @@ public class OmsOrderController {
                 return new CommonResult().paramFailed("订单表id");
             }
             OmsOrder coupon = IOmsOrderService.getById(id);
+            coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",coupon.getId())));
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询订单表明细：%s", e.getMessage(), e);

@@ -249,8 +249,15 @@ public class BOmsController extends ApiBaseAction {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(memberId);
         }
-        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
-    }
+        if (address != null && address.getId() != null) {
+            count = memberReceiveAddressService.updateById(address);
+        } else {
+            count = memberReceiveAddressService.save(address);
+        }
+        if (count) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();    }
 
     @ApiOperation("微信存储收货地址")
     @RequestMapping(value = "/user.saveusership")
@@ -260,8 +267,15 @@ public class BOmsController extends ApiBaseAction {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
         }
-        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
-    }
+        if (address != null && address.getId() != null) {
+            count = memberReceiveAddressService.updateById(address);
+        } else {
+            count = memberReceiveAddressService.save(address);
+        }
+        if (count) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();    }
 
     @IgnoreAuth
     @ApiOperation("显示所有收货地址")

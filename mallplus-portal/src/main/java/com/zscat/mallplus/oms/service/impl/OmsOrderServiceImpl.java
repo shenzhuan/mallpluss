@@ -1192,6 +1192,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                         }
                     }
                 }
+                newGoods.setSale(newGoods.getSale()+item.getQuantity());
                 newGoods.setStock(goods.getStock() - item.getQuantity());
                 productService.updateById(newGoods);
             }
