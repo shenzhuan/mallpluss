@@ -1,10 +1,11 @@
 package com.zscat.mallplus;
 
-import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 public class JsoupTest {
     public static void main(String[] args) throws IOException {
@@ -35,6 +36,6 @@ public class JsoupTest {
                     +"\n"+"标题："+title.text()
                     +"\n"+"问题描述："+detail.text()
                     +"\n"+"回答："+answer.text());
-        }   
+        }
     }
 }

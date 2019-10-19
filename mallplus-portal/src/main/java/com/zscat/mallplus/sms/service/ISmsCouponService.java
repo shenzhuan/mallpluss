@@ -2,7 +2,6 @@ package com.zscat.mallplus.sms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.oms.vo.CartPromotionItem;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;

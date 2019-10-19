@@ -3,7 +3,6 @@ package com.zscat.mallplus.vo.home;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class PagesItems  implements Serializable {

@@ -1,51 +1,30 @@
 package com.zscat.mallplus.pay.controller.alipay;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.zscat.mallplus.pay.entity.AliPayBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.domain.AlipayCommerceCityfacilitatorVoucherGenerateModel;
-import com.alipay.api.domain.AlipayDataDataserviceBillDownloadurlQueryModel;
-import com.alipay.api.domain.AlipayFundAuthOrderFreezeModel;
-import com.alipay.api.domain.AlipayFundCouponOrderAgreementPayModel;
-import com.alipay.api.domain.AlipayFundTransToaccountTransferModel;
-import com.alipay.api.domain.AlipayOpenAuthTokenAppModel;
-import com.alipay.api.domain.AlipayOpenAuthTokenAppQueryModel;
-import com.alipay.api.domain.AlipayTradeAppPayModel;
-import com.alipay.api.domain.AlipayTradeCancelModel;
-import com.alipay.api.domain.AlipayTradeCloseModel;
-import com.alipay.api.domain.AlipayTradeCreateModel;
-import com.alipay.api.domain.AlipayTradeOrderSettleModel;
-import com.alipay.api.domain.AlipayTradePagePayModel;
-import com.alipay.api.domain.AlipayTradePayModel;
-import com.alipay.api.domain.AlipayTradePrecreateModel;
-import com.alipay.api.domain.AlipayTradeQueryModel;
-import com.alipay.api.domain.AlipayTradeRefundModel;
-import com.alipay.api.domain.AlipayTradeWapPayModel;
+import com.alipay.api.domain.*;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.response.AlipayFundAuthOrderFreezeResponse;
 import com.alipay.api.response.AlipayFundCouponOrderAgreementPayResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
-
 import com.jpay.alipay.AliPayApi;
 import com.jpay.alipay.AliPayApiConfig;
 import com.jpay.alipay.AliPayApiConfigKit;
 import com.jpay.util.StringUtils;
 import com.jpay.vo.AjaxResult;
+import com.zscat.mallplus.pay.entity.AliPayBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController

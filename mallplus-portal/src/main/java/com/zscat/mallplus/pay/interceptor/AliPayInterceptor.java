@@ -1,15 +1,14 @@
 package com.zscat.mallplus.pay.interceptor;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.jpay.alipay.AliPayApiConfigKit;
 import com.zscat.mallplus.pay.controller.alipay.AliPayApiController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jpay.alipay.AliPayApiConfigKit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AliPayInterceptor implements HandlerInterceptor {
 
@@ -22,7 +21,7 @@ public class AliPayInterceptor implements HandlerInterceptor {
 			if (controller instanceof AliPayApiController == false) {
 				throw new RuntimeException("控制器需要继承 AliPayApiController");
 			}
-			
+
 			try {
 				AliPayApiConfigKit.setThreadLocalAliPayApiConfig(((AliPayApiController)controller).getApiConfig());
 				return true;

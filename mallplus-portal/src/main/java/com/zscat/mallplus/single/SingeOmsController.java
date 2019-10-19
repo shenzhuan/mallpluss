@@ -12,7 +12,6 @@ import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
-import com.zscat.mallplus.oms.vo.GroupAndOrderVo;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;

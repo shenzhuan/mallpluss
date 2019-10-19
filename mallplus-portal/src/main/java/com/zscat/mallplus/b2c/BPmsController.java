@@ -7,41 +7,40 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsFavorite;
-import com.zscat.mallplus.cms.entity.CmsTopicComment;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.enums.OrderStatus;
-import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
-import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.*;
-import com.zscat.mallplus.pms.vo.*;
+import com.zscat.mallplus.pms.vo.ConsultTypeCount;
+import com.zscat.mallplus.pms.vo.GoodsDetailResult;
+import com.zscat.mallplus.pms.vo.ProductTypeVo;
+import com.zscat.mallplus.pms.vo.PromotionProduct;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsGroup;
+import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
-import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
-
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -51,7 +50,6 @@ import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.StoreManager;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +91,8 @@ public class BPmsController extends ApiBaseAction {
     private IPmsProductCategoryService productCategoryService;
     @Resource
     private IPmsBrandService IPmsBrandService;
-
+    @Resource
+    private ISmsGroupActivityService smsGroupActivityService;
     @Resource
     private ICmsSubjectCategoryService subjectCategoryService;
     @Resource
@@ -867,6 +866,88 @@ public class BPmsController extends ApiBaseAction {
 
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "查询团购列表")
+    @ApiOperation(value = "查询订单列表")
+    @ResponseBody
+    @RequestMapping(value = "/groupActivityList", method = RequestMethod.POST)
+    public Object orderList(SmsGroupActivity groupActivity,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<SmsGroupActivity> page = null;
+        groupActivity.setStatus(1);
+        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
+
+        for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
+            if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
+                List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id",Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
+                if (productList != null && productList.size() > 0) {
+                    smsGroupActivity.setProductList(productList);
+                }
+            }
+
+        }
+        return new CommonResult().success(page);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品团购详情信息")
+    @IgnoreAuth
+    @ResponseBody
+    @RequestMapping(value = "/group.activity.getdetial", method = RequestMethod.POST)
+    @ApiOperation(value = "查询商品团购详情信息")
+    public Object queryGroupProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        SmsGroupActivity groupActivity = smsGroupActivityService.getById(id);
+        Map<String, Object> map = new HashMap<>();
+        if (groupActivity != null) {
+            if (ValidatorUtils.notEmpty(groupActivity.getGoodsIds())) {
+                List<Long> goodIds = Arrays.asList(groupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+                GoodsDetailResult goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodIds.get(0) + "")), GoodsDetailResult.class);
+                if (goods == null || goods.getGoods() == null) {
+                    goods = pmsProductService.getGoodsRedisById(goodIds.get(0));
+                }
+                if (goods != null && goods.getGoods() != null) {
+                    UmsMember umsMember = UserUtils.getCurrentMember();
+                    if (umsMember != null && umsMember.getId() != null) {
+                        isCollectGoods(map, goods, umsMember);
+                    }
+                    recordGoodsFoot(id);
+
+                    List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
+                    if (newGoodIds != null && newGoodIds.size() > 0) {
+                        List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id",newGoodIds).select(ConstansValue.sampleGoodsList));
+                        if (productList != null && productList.size() > 0) {
+                            groupActivity.setProductList(productList);
+                        }
+                    }
+                    map.put("groupActivity", groupActivity);
+                    map.put("goods", goods);
+                    return new CommonResult().success(map);
+                }
+            }
+
+        }
+        return new CommonResult().failed();
+    }
+    /**
+     * 判断是否收藏商品
+     * @param map
+     * @param goods
+     * @param umsMember
+     */
+    private void isCollectGoods(Map<String, Object> map, GoodsDetailResult goods, UmsMember umsMember) {
+        PmsProduct p = goods.getGoods();
+        PmsFavorite query = new PmsFavorite();
+        query.setObjId(p.getId());
+        query.setMemberId(umsMember.getId());
+        query.setType(1);
+        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+        if (findCollection != null) {
+            map.put("favorite", true);
+        } else {
+            map.put("favorite", false);
+        }
+    }
 
 
 }

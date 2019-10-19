@@ -1,9 +1,8 @@
 package com.zscat.mallplus.pay.config;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.zscat.mallplus.pay.interceptor.AliPayInterceptor;
 import com.zscat.mallplus.pay.interceptor.CharacterEncodInterceptor;
 import com.zscat.mallplus.pay.interceptor.WxPayInterceptor;
@@ -16,9 +15,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Configuration

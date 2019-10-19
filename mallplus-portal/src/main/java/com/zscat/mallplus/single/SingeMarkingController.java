@@ -148,33 +148,9 @@ public class SingeMarkingController extends ApiBaseAction {
                     if (goods != null && goods.getGoods() != null) {
                         UmsMember umsMember = UserUtils.getCurrentMember();
                         if (umsMember != null && umsMember.getId() != null) {
-                            PmsProduct p = goods.getGoods();
-                            PmsFavorite query = new PmsFavorite();
-                            query.setObjId(p.getId());
-                            query.setMemberId(umsMember.getId());
-                            query.setType(1);
-                            PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-                            if (findCollection != null) {
-                                map.put("favorite", true);
-                            } else {
-                                map.put("favorite", false);
-                            }
+                            isCollectGoods(map, goods, umsMember);
                         }
-                        //记录浏览量到redis,然后定时更新到数据库
-                        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
-                        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-                        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-                        Integer viewCount = 0;
-                        if (!viewCountItem.isEmpty()) {
-                            if (viewCountItem.containsKey(key)) {
-                                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
-                                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
-                            } else {
-                                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-                            }
-                        } else {
-                            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-                        }
+                        recordGoodsFoot(id);
 
                         List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                         if (newGoodIds != null && newGoodIds.size() > 0) {
@@ -191,6 +167,48 @@ public class SingeMarkingController extends ApiBaseAction {
 
         }
         return new CommonResult().failed();
+    }
+
+    /**
+     * 判断是否收藏商品
+     * @param map
+     * @param goods
+     * @param umsMember
+     */
+    private void isCollectGoods(Map<String, Object> map, GoodsDetailResult goods, UmsMember umsMember) {
+        PmsProduct p = goods.getGoods();
+        PmsFavorite query = new PmsFavorite();
+        query.setObjId(p.getId());
+        query.setMemberId(umsMember.getId());
+        query.setType(1);
+        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+        if (findCollection != null) {
+            map.put("favorite", true);
+        } else {
+            map.put("favorite", false);
+        }
+    }
+
+    /**
+     * 记录商品浏览记录
+     * @param id
+     */
+    private void recordGoodsFoot(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        //记录浏览量到redis,然后定时更新到数据库
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
+        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
+            }
+        } else {
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 package com.zscat.mallplus.sms.mapper;
 
-import com.zscat.mallplus.sms.entity.SmsSignRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zscat.mallplus.sms.entity.SmsSignRecord;
 
 /**
  * <p>

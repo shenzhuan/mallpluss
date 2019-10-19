@@ -15,24 +15,20 @@ import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberMemberTagRelation;
 import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -187,15 +182,7 @@ public class SingeUmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/updateMember")
     public Object updateMember(UmsMember member) {
-        if (member==null){
-            return new CommonResult().paramFailed();
-        }
-        UmsMember member1 = UserUtils.getCurrentMember();
-        if(member1!=null&& member1.getId()!=null){
-            member.setId(member1.getId());
-            return new CommonResult().success(memberService.updateById(member));
-        }
-        return new CommonResult().failed();
+        return getObject(member, memberService);
     }
     @ApiOperation("添加招聘")
     @SysLog(MODULE = "ums", REMARK = "添加招聘")

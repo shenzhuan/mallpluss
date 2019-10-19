@@ -20,7 +20,6 @@ import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -61,7 +60,7 @@ public class BSmsController extends ApiBaseAction {
     @Resource
     private IPmsProductService productService;
     @Autowired
-    ISmsCouponService couponService;
+    private ISmsCouponService couponService;
     @Resource
     private RedisUtil redisUtil;
     @Autowired
@@ -86,107 +85,14 @@ public class BSmsController extends ApiBaseAction {
         return new CommonResult().success(couponHistoryList);
     }
 
+    @ApiOperation("获取没有领取的优惠券列表")
     @RequestMapping(value = "/coupon.couponlist", method = RequestMethod.POST)
     public Object couponlist() {
         List<SmsCoupon> couponHistoryList = couponService.selectNotRecive();
         return new CommonResult().success(couponHistoryList);
     }
 
-    @ApiOperation("获取单个商品得优惠详情")
-    @RequestMapping(value = "/detail", method = RequestMethod.POST)
-    @ResponseBody
-    public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        List<SmsBasicMarking> list1 = basicMarkingService.matchGoodsMk(id);
-        List<SmsBasicGifts> listg = basicGiftsService.matchGoodsMk(id);
-        return new CommonResult().success(1);
-    }
 
-    @IgnoreAuth
-    @SysLog(MODULE = "oms", REMARK = "查询订单列表")
-    @ApiOperation(value = "查询订单列表")
-    @ResponseBody
-    @RequestMapping(value = "/groupActivityList", method = RequestMethod.POST)
-    public Object orderList(SmsGroupActivity groupActivity,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        IPage<SmsGroupActivity> page = null;
-        groupActivity.setStatus(1);
-        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
-
-        for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
-            if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
-                List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().eq("id",Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
-                if (productList != null && productList.size() > 0) {
-                    smsGroupActivity.setProductList(productList);
-                }
-            }
-
-        }
-        return new CommonResult().success(page);
-    }
-
-    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
-    @IgnoreAuth
-    @ResponseBody
-    @RequestMapping(value = "/group.activity.getdetial", method = RequestMethod.POST)
-    @ApiOperation(value = "查询商品详情信息")
-    public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        SmsGroupActivity groupActivity = smsGroupActivityService.getById(id);
-        Map<String, Object> map = new HashMap<>();
-        if (groupActivity != null) {
-            if (ValidatorUtils.notEmpty(groupActivity.getGoodsIds())) {
-                List<Long> goodIds = Arrays.asList(groupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
-                GoodsDetailResult goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodIds.get(0) + "")), GoodsDetailResult.class);
-                if (goods == null || goods.getGoods() == null) {
-                    goods = productService.getGoodsRedisById(goodIds.get(0));
-                }
-                if (goods != null && goods.getGoods() != null) {
-                    UmsMember umsMember = UserUtils.getCurrentMember();
-                    if (umsMember != null && umsMember.getId() != null) {
-                        PmsProduct p = goods.getGoods();
-                        PmsFavorite query = new PmsFavorite();
-                        query.setObjId(p.getId());
-                        query.setMemberId(umsMember.getId());
-                        query.setType(1);
-                        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-                        if (findCollection != null) {
-                            map.put("favorite", true);
-                        } else {
-                            map.put("favorite", false);
-                        }
-                    }
-                    //记录浏览量到redis,然后定时更新到数据库
-                    String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
-                    //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-                    Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-                    Integer viewCount = 0;
-                    if (!viewCountItem.isEmpty()) {
-                        if (viewCountItem.containsKey(key)) {
-                            viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
-                            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
-                        } else {
-                            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-                        }
-                    } else {
-                        redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-                    }
-
-                    List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
-                    if (newGoodIds != null && newGoodIds.size() > 0) {
-                        List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().eq("id",newGoodIds).select(ConstansValue.sampleGoodsList));
-                        if (productList != null && productList.size() > 0) {
-                            groupActivity.setProductList(productList);
-                        }
-                    }
-                    map.put("groupActivity", groupActivity);
-                    map.put("goods", goods);
-                    return new CommonResult().success(map);
-                }
-            }
-
-        }
-        return new CommonResult().failed();
-    }
 
 }

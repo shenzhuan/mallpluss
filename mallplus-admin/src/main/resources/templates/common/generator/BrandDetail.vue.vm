@@ -14,9 +14,8 @@
     </el-card>
 </template>
 <script>
-    import {create${className}, get${className}, update${className}} from '@/api/${module}/${classname}'
+    import {create, get, update} from '@/api/'
     import SingleUpload from '@/components/Upload/singleUpload'
-    import {formatDate} from '@/utils/date';
 
     const default${className}= {
         name: ''

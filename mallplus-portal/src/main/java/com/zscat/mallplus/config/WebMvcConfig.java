@@ -12,16 +12,12 @@
 package com.zscat.mallplus.config;
 
 
-
-import com.zscat.mallplus.pay.interceptor.AliPayInterceptor;
-import com.zscat.mallplus.pay.interceptor.CharacterEncodInterceptor;
 import com.zscat.mallplus.pay.interceptor.WxPayInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.*;
-
-import javax.annotation.Resource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 
 /**

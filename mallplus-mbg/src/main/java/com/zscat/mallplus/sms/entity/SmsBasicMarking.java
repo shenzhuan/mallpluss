@@ -1,15 +1,11 @@
 package com.zscat.mallplus.sms.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductCategory;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.sms.vo.BasicRuls;
 import com.zscat.mallplus.sms.vo.BeanKv;
-import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 

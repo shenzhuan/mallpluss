@@ -6,7 +6,6 @@ import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.CartProduct;
-import com.zscat.mallplus.oms.vo.CartPromotionItem;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
@@ -16,7 +15,6 @@ import com.zscat.mallplus.vo.CartParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 

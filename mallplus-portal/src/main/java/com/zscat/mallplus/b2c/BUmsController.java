@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
-import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sys.entity.SysArea;
-import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.service.*;
@@ -20,7 +18,6 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.home.Pages;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -53,15 +50,7 @@ public class BUmsController {
     private RedisService redisService;
     @Autowired
     private IUmsMemberService memberService;
-    @Autowired
-    private ISmsHomeAdvertiseService advertiseService;
-    @Autowired
-    private IOmsOrderService orderService;
-    @Resource
-    private ISmsCouponService couponService;
 
-    @Resource
-    private SmsCouponHistoryMapper couponHistoryMapper;
     @Resource
     private IUmsMemberLevelService memberLevelService;
     @Resource
@@ -77,6 +66,10 @@ public class BUmsController {
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/user.editinfo")
     public Object updateMember(UmsMember member) {
+        return getObject(member, memberService);
+    }
+
+    public static Object getObject(UmsMember member, IUmsMemberService memberService) {
         if (member==null){
             return new CommonResult().paramFailed();
         }
@@ -89,10 +82,10 @@ public class BUmsController {
     }
 
     @IgnoreAuth
-    @ApiOperation(value = "查询学校列表")
+    @ApiOperation(value = "查询余额列表")
     @PostMapping(value = "/user.balancelist")
-    @SysLog(MODULE = "ums", REMARK = "查询学校列表")
-    public Object schoolList(UmsMemberBlanceLog entity,
+    @SysLog(MODULE = "ums", REMARK = "查询余额列表")
+    public Object balancelist(UmsMemberBlanceLog entity,
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setMemberId(UserUtils.getCurrentMember().getId());
@@ -102,14 +95,15 @@ public class BUmsController {
         return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>(entity)));
     }
     @IgnoreAuth
-    @ApiOperation(value = "查询学校列表")
+    @ApiOperation(value = "查询会员等级列表")
     @PostMapping(value = "/user.levellist")
-    @SysLog(MODULE = "ums", REMARK = "查询学校列表")
+    @SysLog(MODULE = "ums", REMARK = "查询会员等级列表")
     public Object levellist() {
         return new CommonResult().success(memberLevelService.list(new QueryWrapper<>()));
     }
+
     @IgnoreAuth
-    @ApiOperation("获取银行卡信息")
+    @ApiOperation("获取会员等级详情信息")
     @RequestMapping(value = "/user.leveldetail", method = RequestMethod.POST)
     @ResponseBody
     public Object leveldetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
@@ -117,9 +111,9 @@ public class BUmsController {
     }
 
     @IgnoreAuth
-    @ApiOperation(value = "查询学校列表")
+    @ApiOperation(value = "查询会员和积分消费记录列表")
     @PostMapping(value = "/user.userpointlog")
-    @SysLog(MODULE = "ums", REMARK = "查询学校列表")
+    @SysLog(MODULE = "ums", REMARK = "查询会员和积分消费记录")
     public Object userpointlog(UmsIntegrationChangeHistory entity,
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
@@ -131,52 +125,18 @@ public class BUmsController {
     }
 
     @IgnoreAuth
-    @ApiOperation(value = "查询学校列表")
+    @ApiOperation(value = "查询区域列表")
     @PostMapping(value = "/user.getareaid")
     @SysLog(MODULE = "ums", REMARK = "查询学校列表")
     public Object getareaid(SysArea entity) {
         return new CommonResult().success(areaMapper.selectOne(new QueryWrapper<>(entity)));
     }
-    @IgnoreAuth
-    @ApiOperation(value = "查询学校列表")
-    @PostMapping(value = "/user.getarealist")
-    @SysLog(MODULE = "ums", REMARK = "查询学校列表")
-    public Object getarealist() throws Exception {
-        String json = redisService.get("areaList");
-        if (ValidatorUtils.notEmpty(json)){
-            log.info("redis----areaList");
-            return   new CommonResult().success(JsonUtils.json2list(json,SysArea.class));
-        }
-        List<SysArea>  list =  areaMapper.selectList(new QueryWrapper<SysArea>().eq("deep",0));
-        List<SysArea>  onelist =  areaMapper.selectList(new QueryWrapper<SysArea>().eq("deep",1));
-        List<SysArea>  twolist =  areaMapper.selectList(new QueryWrapper<SysArea>().eq("deep",2));
-        List<SysArea>  threelist =  areaMapper.selectList(new QueryWrapper<SysArea>().eq("deep",3));
-        for (SysArea area: list){
-            for (SysArea one : onelist){
-                if (area.getId().equals(one.getPid())){
-                    area.getChildren().add(one);
-                }
-                /*for (SysArea two : twolist){
-                    if (one.getId().equals(two.getPid())){
-                        one.getChildren().add(one);
-                    }
-                    for (SysArea three : threelist){
-                        if (two.getId().equals(three.getPid())){
-                            two.getChildren().add(one);
-                        }
-                    }
-                }*/
-            }
-        }
-        redisService.set("areaList",JsonUtils.objectToJson(list));
-        return new CommonResult().success(list);
-    }
+
 
     @SysLog(MODULE = "cms", REMARK = "判断是否签到")
     @ApiOperation(value = "判断是否签到")
     @PostMapping(value = "/user.issign")
     public Object issign(CmsSubject subject, BindingResult result) {
-        CommonResult commonResult;
         UmsMember member = UserUtils.getCurrentMember();
         return new CommonResult().success();
 
@@ -206,10 +166,15 @@ public class BUmsController {
             bankcardsService.update(query,new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
         }
         address.setUserId(umsMember.getId());
-        if (address != null && address.getId() != null) {
-            count = bankcardsService.updateById(address);
+        return getObject(address != null, address.getId(), bankcardsService.updateById(address), bankcardsService.save(address), address);
+    }
+
+    public static Object getObject(boolean b, Long id, boolean b2, boolean save, UserBankcards address) {
+        boolean count;
+        if (b && id != null) {
+            count = b2;
         } else {
-            count = bankcardsService.save(address);
+            count = save;
         }
         if (count) {
             return new CommonResult().success(count);

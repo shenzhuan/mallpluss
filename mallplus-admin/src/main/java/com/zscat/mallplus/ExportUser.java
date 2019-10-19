@@ -4,11 +4,8 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

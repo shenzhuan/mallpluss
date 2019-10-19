@@ -1,16 +1,15 @@
 package com.zscat.mallplus.pay.interceptor;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.jpay.weixin.api.WxPayApiConfigKit;
 import com.zscat.mallplus.pay.controller.wxpay.WxPayApiController;
 import com.zscat.mallplus.pay.controller.wxpay.WxPayController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.jpay.weixin.api.WxPayApiConfigKit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class WxPayInterceptor implements HandlerInterceptor {
 
@@ -23,7 +22,7 @@ public class WxPayInterceptor implements HandlerInterceptor {
 			if (controller instanceof WxPayApiController == false) {
 				throw new RuntimeException("控制器需要继承 WxPayApiController");
 			}
-			
+
 			try {
 				WxPayApiConfigKit.setThreadLocalWxPayApiConfig(((WxPayController)controller).getApiConfig());
 				return true;

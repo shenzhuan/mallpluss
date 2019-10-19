@@ -1,13 +1,10 @@
 package com.zscat.mallplus.pms.vo;
 
 
-import com.zscat.mallplus.pms.entity.*;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 创建和修改商品时使用的参数

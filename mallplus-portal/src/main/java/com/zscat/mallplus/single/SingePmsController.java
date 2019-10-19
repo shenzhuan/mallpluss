@@ -6,20 +6,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.cms.entity.CmsSubjectComment;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.*;
-import com.zscat.mallplus.pms.mapper.PmsGiftsMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
-import com.zscat.mallplus.sms.entity.SmsHomeBrand;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
@@ -161,20 +158,7 @@ public class SingePmsController extends ApiBaseAction {
             }
         }
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
-        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-            }
-        }else{
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
-        }
+       rec
 
         map.put("goods", goods);
         return new CommonResult().success(map);

@@ -3,13 +3,9 @@ package com.zscat.mallplus.util;
 
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.vo.MemberDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Auther: shenzhuan

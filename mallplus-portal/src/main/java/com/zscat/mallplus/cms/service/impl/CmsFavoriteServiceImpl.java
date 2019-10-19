@@ -7,11 +7,8 @@ import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.mapper.CmsFavoriteMapper;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
-
 import com.zscat.mallplus.pms.entity.PmsProduct;
-
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
-
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

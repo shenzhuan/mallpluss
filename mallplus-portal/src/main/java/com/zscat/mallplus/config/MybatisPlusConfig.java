@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
-import com.google.common.collect.Lists;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.vo.ApiContext;
 import net.sf.jsqlparser.expression.Expression;

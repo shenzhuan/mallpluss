@@ -1,49 +1,39 @@
 package com.zscat.mallplus.single;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.annotation.IgnoreAuth;
-import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
 import com.zscat.mallplus.cms.mapper.CmsSubjectCategoryMapper;
 import com.zscat.mallplus.cms.mapper.CmsSubjectMapper;
 import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
-import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.sys.mapper.SysSchoolMapper;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
-import com.zscat.mallplus.ums.entity.UmsEmployInfo;
-import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @Auther: shenzhuan

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-
 import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -13,10 +12,7 @@ import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;

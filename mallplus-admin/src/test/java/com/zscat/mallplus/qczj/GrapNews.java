@@ -1,22 +1,22 @@
 package com.zscat.mallplus.qczj;
- 
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
- 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
- 
+
 /**
  * TODO
  * 2017年5月21日上午12:25:30
  */
 public class GrapNews {
-     
+
     public static boolean isContainChinese(String str) {
         Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
         Matcher m = p.matcher(str);
@@ -25,7 +25,7 @@ public class GrapNews {
         }
         return false;
     }
-     
+
     /**
      * 从笑话集抓取笑话
      * @param size
@@ -98,7 +98,7 @@ public class GrapNews {
         }
         return newsList;
     }
- 
+
     /**
      * 从汽车之家抓新闻
      * @param size
@@ -174,15 +174,15 @@ public class GrapNews {
         }
         return newsList;
     }
-     
-     
-     
+
+
+
     public static String getVideoFromMiaoPai(String baseUrl) throws Exception{
         Document doc= Jsoup.connect(baseUrl).timeout(10000).get();
         String html=doc.html().trim();
         return getUrlFromMiaoPaiHtml(html);
     }
-     
+
     public static String getUrlFromMiaoPaiHtml(String html){
         int startIndex=html.indexOf("videoSrc");
         int endIndex=html.indexOf("poster");
@@ -193,14 +193,14 @@ public class GrapNews {
         }
         return videoUrl;
     }
-     
+
     public static String getVideoPhotoFromMiaoPaiHtml(String html){
         System.out.println(html);
         int startIndex=html.indexOf("poster");
         int index=html.substring(startIndex).indexOf("jpg");
         return html.substring(startIndex+9,startIndex+index+3);
     }
-     
+
     public static void main(String[] args) throws Exception{
         getNewsFromCarHome(2,"http://m.autohome.com.cn/channel","http://m.autohome.com.cn","list","details","h4","time","汽车之家");
         getNewsFromJokeji(3,"http://www.jokeji.cn/list.htm","http://www.jokeji.cn","list_title",1,"text110","a","i");
@@ -250,7 +250,7 @@ public class GrapNews {
                      System.out.println("视频html======"+news.getContent());
                      newsList.add(news);
                 }
-                
+
                 }
             }
         } catch (Exception e) {
@@ -258,7 +258,7 @@ public class GrapNews {
         }
         return newsList;
     }
- 
+
     public static String createVideoHtml(String videoUrl,String videoPhotoUrl) {
         Document doc;
         StringBuffer textBuffer = new StringBuffer(5);
@@ -274,7 +274,7 @@ public class GrapNews {
                 .attr("controls", "controls").attr("src", videoUrl);
         return doc.toString();
     }
-     
+
     /**
      * 从搜狐抓新闻
      * @param size
@@ -295,7 +295,7 @@ public class GrapNews {
             doc = Jsoup.connect(baseUrl).timeout(10000).get();
             element =doc.getElementsByTag("section").get(2);
             element = element.getElementsByClass("headlines").get(0);
-             Elements elements=element.children(); 
+             Elements elements=element.children();
             if(elements!=null&&elements.size()>0){
                 for(Element ele:elements){
                     news = new News();
@@ -357,15 +357,15 @@ public class GrapNews {
         }
         return newsList;
     }
-     
+
     private static String deleteImg(String text) {
         return text.replaceAll("<img [^>]*>", "");
     }
-     
+
     private static String deleteA(String text) {
         return text.replaceAll("<a[^>]*>(.*?)</a>", "");
     }
-     
+
     private static String deleteSource(String text) {
         return text.replaceAll("\\(.*?\\)|\\[.*?]", "");
     }
@@ -374,16 +374,16 @@ public class GrapNews {
      * @param content
      * @return
      */
-    public static String removeHref(String content){  
-        Document document = Jsoup.parse(content);  
-        Elements elements = document.select("a[href]");  
-        for(Element el:elements){  
-            el.removeAttr("href");  
-        }  
-        return document.html();  
-    }  
-     
-     
+    public static String removeHref(String content){
+        Document document = Jsoup.parse(content);
+        Elements elements = document.select("a[href]");
+        for(Element el:elements){
+            el.removeAttr("href");
+        }
+        return document.html();
+    }
+
+
     /**
      * 将htmlBody中所有img标签中的src内容替换为原data-src的内容, <br/>
      * 如果不报含data-src,则src的内容不会被替换 <br/>
@@ -439,10 +439,10 @@ public class GrapNews {
             }
             return document.select("body>*").toString().replace("alt="+needDeleteAlt, "");
         }
-     
+
     }
-     
-     
+
+
     private static boolean isNotBlank(String str){
         if(str == null)
             return false;

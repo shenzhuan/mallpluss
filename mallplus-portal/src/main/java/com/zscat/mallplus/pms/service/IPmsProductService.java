@@ -3,7 +3,8 @@ package com.zscat.mallplus.pms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.vo.*;
+import com.zscat.mallplus.pms.vo.GoodsDetailResult;
+import com.zscat.mallplus.pms.vo.PmsProductAndGroup;
 
 import java.util.List;
 import java.util.Map;

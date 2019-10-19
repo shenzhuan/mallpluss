@@ -12,7 +12,6 @@ import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -54,15 +53,7 @@ public class UmsMemberReceiveAddressController {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(address.getMemberId());
         }
-        if (address != null && address.getId() != null) {
-            count = memberReceiveAddressService.updateById(address);
-        } else {
-            count = memberReceiveAddressService.save(address);
-        }
-        if (count) {
-            return new CommonResult().success(count);
-        }
-        return new CommonResult().failed();
+        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
     }
 
     @IgnoreAuth

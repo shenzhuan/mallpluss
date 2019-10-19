@@ -1,34 +1,30 @@
 package com.zscat.mallplus.qczj;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class newCrawl {
   public LinkedList ImgUrls=new LinkedList();//用于存放图片URL
   public LinkedList linkurls=new LinkedList();//用于存放url链接
 
-  public static void main(String[] args) throws IOException {  
-    newCrawl newCl = new newCrawl();   
+  public static void main(String[] args) throws IOException {
+    newCrawl newCl = new newCrawl();
 
     String url="http://mil.huanqiu.com/";
             Document doc = Jsoup.connect(url).get();
-            newCl.downloadPage(url);//下载网页 
+            newCl.downloadPage(url);//下载网页
             String title=newCl.getnewTitle(doc);//获取新闻标题
             String time=newCl.getTime(doc);//获取新闻发布时间
             String text=newCl.getNewtext(doc);//获取新闻内容
@@ -43,15 +39,15 @@ public class newCrawl {
     System.out.println("图片url链接");
     for (Object IU : newCl.ImgUrls) {
          System.out.println(IU);
-       } 
+       }
 
     System.out.println("*****************************************************************");
     System.out.println("url链接");
     for (Object LU : newCl.linkurls) {
          System.out.println(LU);
        }
-   }  
-   
+   }
+
    public String getnewTitle(Document doc){
     //获取网页的标题
     String title=doc.title();
@@ -103,14 +99,14 @@ public class newCrawl {
        out.close();
        is.close();
    }
-   
+
    public String getNewtext(Document doc){
     //获取新闻内容
-            String text = doc.select("div.text").text(); 
+            String text = doc.select("div.text").text();
             text=text.replace(Jsoup.parse("   ").text(), "");
             return text;
    }
-   
+
    public String getTime(Document doc){
     //获取新闻发布的时间
     String time=null;
@@ -127,13 +123,13 @@ public class newCrawl {
            }
            return time;
    }
-   
+
    public static void downloadPage(String str){
     //下载网页
     String filestr="D:/test";//设置网页的保存地址
     try {
             URL pageUrl = new URL(str);
-            URLConnection uc =pageUrl.openConnection(); // 打开连接     
+            URLConnection uc =pageUrl.openConnection(); // 打开连接
             String path = pageUrl.getPath();//获取网页的相对路径
           //  System.out.println(path);
             if (path.length() == 0) {//对网页的相对路径进行处理
@@ -154,10 +150,10 @@ public class newCrawl {
             //设置网页保存目录，当保存网页的文件夹不存在时，需要先创建文件夹，然后在保存网页
             int lastSlash2 = filestr.lastIndexOf("/");
             String filestrr=filestr.substring(0,lastSlash2);
-           // System.out.println(filestrr); 
+           // System.out.println(filestrr);
      File file2=new File(filestrr); //创建文件目录
      file2.mkdirs();
-   File file=new File(filestr); //创建文件 
+   File file=new File(filestr); //创建文件
    InputStream is=uc.getInputStream(); // 输入流
    FileOutputStream out=new FileOutputStream(file);  // 输出的文件流
     byte[] bs = new byte[1024];
@@ -165,13 +161,13 @@ public class newCrawl {
       int len;
       // 开始读取
       while ((len = is.read(bs)) != -1) {
-      
+
 out.write(bs, 0, len);
       }
       // 完毕，关闭所有链接
       out.close();
       is.close();
         } catch (Exception ex) {
-        }      
+        }
    }
-}  
+}

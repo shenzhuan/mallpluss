@@ -1,11 +1,11 @@
 package com.zscat.mallplus.pay.interceptor;
 
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class CharacterEncodInterceptor implements HandlerInterceptor {
 

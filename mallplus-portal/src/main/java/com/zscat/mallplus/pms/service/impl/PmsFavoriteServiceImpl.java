@@ -9,7 +9,6 @@ import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsFavoriteMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
-import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.util.UserUtils;
 import org.springframework.stereotype.Service;

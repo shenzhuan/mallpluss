@@ -8,15 +8,12 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.*;
 import com.zscat.mallplus.cms.service.*;
 import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.pms.entity.CmsPrefrenceAreaProductRelation;
 import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
-import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.CmsSubjectProductRelationMapper;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.sms.entity.SmsHomeBrand;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
@@ -26,8 +23,6 @@ import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.ums.service.impl.UmsRewardLogServiceImpl;
-
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -38,8 +33,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

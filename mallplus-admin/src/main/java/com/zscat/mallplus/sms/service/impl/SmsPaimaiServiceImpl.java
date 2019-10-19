@@ -1,9 +1,9 @@
 package com.zscat.mallplus.sms.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.sms.entity.SmsPaimai;
 import com.zscat.mallplus.sms.mapper.SmsPaimaiMapper;
 import com.zscat.mallplus.sms.service.ISmsPaimaiService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

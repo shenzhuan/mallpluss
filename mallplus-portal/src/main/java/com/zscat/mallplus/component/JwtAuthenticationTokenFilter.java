@@ -2,22 +2,17 @@ package com.zscat.mallplus.component;
 
 
 import com.google.common.collect.Lists;
-import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
-
 import com.zscat.mallplus.util.JwtTokenUtil;
-
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,7 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JWT登录授权过滤器

@@ -4,7 +4,6 @@ package com.zscat.mallplus.config;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
-import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.vo.MemberDetails;

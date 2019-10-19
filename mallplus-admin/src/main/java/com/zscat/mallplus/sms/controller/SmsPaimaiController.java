@@ -4,7 +4,6 @@ package com.zscat.mallplus.sms.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.sms.entity.SmsPaimai;
 import com.zscat.mallplus.sms.entity.SmsPaimaiLog;
 import com.zscat.mallplus.sms.service.ISmsPaimaiLogService;
@@ -15,8 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.util.Date;

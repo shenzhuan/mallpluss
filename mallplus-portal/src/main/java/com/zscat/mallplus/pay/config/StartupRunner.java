@@ -1,11 +1,10 @@
 package com.zscat.mallplus.pay.config;
 
+import com.jpay.unionpay.SDKConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-
-import com.jpay.unionpay.SDKConfig;
 
 @Order(1)
 public class StartupRunner implements CommandLineRunner {

@@ -1,10 +1,10 @@
 package com.zscat.mallplus.sms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 import com.zscat.mallplus.sms.mapper.SmsBasicMarkingMapper;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

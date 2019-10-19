@@ -2,7 +2,6 @@ package com.zscat.mallplus;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
@@ -16,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Demo2 {
- 
+
  public static void main(String[] args) {
- 
+
   // 需要爬的网页的文章列表
   String url = "https://www.toutiao.com/ch/news_tech/";
   //文章详情页的前缀(由于今日头条的文章都是在group这个目录下,所以定义了前缀,而且通过请求获取到的html页面)

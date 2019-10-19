@@ -1,7 +1,5 @@
 package com.zscat.mallplus.utils;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-
 import java.io.Serializable;
 
 /**

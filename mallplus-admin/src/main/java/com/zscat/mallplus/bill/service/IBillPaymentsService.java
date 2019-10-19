@@ -1,7 +1,7 @@
 package com.zscat.mallplus.bill.service;
 
-import com.zscat.mallplus.bill.entity.BillPayments;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.bill.entity.BillPayments;
 
 /**
  * <p>

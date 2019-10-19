@@ -1,14 +1,12 @@
 package com.zscat.mallplus.config;
- 
+
 import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.utils.CommonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
- 
-import lombok.extern.slf4j.Slf4j;
- 
 /**
  * 自定义异常处理器
  *
@@ -17,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class InterfaceExceptionHandler {
- 
+
 	/**
 	 * 接口 业务异常
 	 */
@@ -27,7 +25,7 @@ public class InterfaceExceptionHandler {
 		log.error(e.getMessage(), e);
 		return new CommonResult().fail(100);
 	}
- 
+
 	/**
 	 * 拦截所有运行时的全局异常   
 	 */
@@ -38,7 +36,7 @@ public class InterfaceExceptionHandler {
 		// 返回 JOSN
 		return new CommonResult().fail(100);
 	}
- 
+
 	/**
 	 * 系统异常捕获处理
 	 */

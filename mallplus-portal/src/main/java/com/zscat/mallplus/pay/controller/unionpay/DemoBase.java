@@ -1,36 +1,20 @@
 package com.zscat.mallplus.pay.controller.unionpay;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import com.jpay.unionpay.SDKConfig;
 import com.jpay.unionpay.SDKConstants;
 
-import java.util.TreeMap;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 /**
  * 名称： demo中用到的方法<br>
  * 日期： 2015-09<br>
- * 版本： 1.0.0 
+ * 版本： 1.0.0
  * 版权： 中国银联<br>
  * 声明：以下代码只是为了方便商户测试而提供的样例代码，商户可以根据自己需要，按照技术文档编写。该代码仅供参考，不提供编码，性能，规范性等方面的保障<br>
  */
@@ -38,10 +22,10 @@ public class DemoBase {
 
 	//默认配置的是UTF-8
 	public static String encoding = "UTF-8";
-	
+
 	//全渠道固定值
 	public static String version = SDKConfig.getConfig().getVersion();
-	
+
 	//后台服务对应的写法参照 FrontRcvResponse.java
 	public static String frontUrl = SDKConfig.getConfig().getFrontUrl();
 
@@ -52,12 +36,12 @@ public class DemoBase {
 	public static String getCurrentTime() {
 		return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	}
-	
+
 	// AN8..40 商户订单号，不能含"-"或"_"
 	public static String getOrderId() {
 		return new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
 	}
-	
+
    /**
 	 * 组装请求，返回报文字符串用于显示
 	 * @param data
@@ -75,7 +59,7 @@ public class DemoBase {
 		StringBuffer sf = new StringBuffer();
 		while (it.hasNext()) {
 			Entry<String, String> en = it.next();
-			String key = en.getKey(); 
+			String key = en.getKey();
 			String value =  en.getValue();
 			if("respCode".equals(key)){
 				sf.append("<b>"+key + SDKConstants.EQUAL + value+"</br></b>");
@@ -94,7 +78,7 @@ public class DemoBase {
 		int lengthArray[] = {3,11,11,6,10,19,12,4,2,21,2,32,2,6,10,13,13,4,15,2,2,6,2,4,32,1,21,15,1,15,32,13,13,8,32,13,13,12,2,1,32,98};
 		return parseFile(filePath,lengthArray);
 	}
-	
+
 	/**
 	 * 功能：解析全渠道商户对账文件中的ZME文件并以List<Map>方式返回
 	 * 适用交易：对账文件下载后对文件的查看
@@ -105,7 +89,7 @@ public class DemoBase {
 		int lengthArray[] = {3,11,11,6,10,19,12,4,2,2,6,10,4,12,13,13,15,15,1,12,2,135};
 		return parseFile(filePath,lengthArray);
 	}
-	
+
 	/**
 	 * 功能：解析全渠道商户 ZM,ZME对账文件
 	 * @param filePath
@@ -146,10 +130,10 @@ public class DemoBase {
             System.out.println("读取文件内容出错");
             e.printStackTrace();
         }
-	 	
-		return ZmDataList;	
+
+		return ZmDataList;
 	}
-	 
+
     public static String getFileContentTable(List<Map> dataList,String file){
     	StringBuffer  tableSb = new StringBuffer("对账文件的规范参考 https://open.unionpay.com/ajweb/help/file/ 产品接口规范->平台接口规范:文件接口</br> 文件【"+file + "】解析后内容如下：");
     	tableSb.append("<table border=\"1\">");
@@ -164,7 +148,7 @@ public class DemoBase {
 		 	}
 	 		tableSb.append("</tr>");
     	}
-    	
+
     	for(int i=0;i<dataList.size();i++){
 	 		System.out.println("行数: "+ (i+1));
 	 		Map<Integer,String> dataMapTmp = dataList.get(i);
@@ -181,32 +165,32 @@ public class DemoBase {
     	return tableSb.toString();
     }
 
-	
+
 	public static List<String> unzip(String zipFilePath,String outPutDirectory){
 		List<String> fileList = new ArrayList<String>();
 		try {
-            ZipInputStream zin = new ZipInputStream(new FileInputStream(zipFilePath));//输入源zip路径  
+            ZipInputStream zin = new ZipInputStream(new FileInputStream(zipFilePath));//输入源zip路径
             BufferedInputStream bin = new BufferedInputStream(zin);
             BufferedOutputStream bout = null;
-            File file=null;  
+            File file=null;
             ZipEntry entry;
             try {
                 while((entry = zin.getNextEntry())!=null && !entry.isDirectory()){
-                	file = new File(outPutDirectory,entry.getName());  
-                    if(!file.exists()){  
-                        (new File(file.getParent())).mkdirs();  
+                	file = new File(outPutDirectory,entry.getName());
+                    if(!file.exists()){
+                        (new File(file.getParent())).mkdirs();
                     }
-                    bout = new BufferedOutputStream(new FileOutputStream(file));  
+                    bout = new BufferedOutputStream(new FileOutputStream(file));
                     int b;
-                    while((b=bin.read())!=-1){  
-                    	bout.write(b);  
+                    while((b=bin.read())!=-1){
+                    	bout.write(b);
                     }
                     bout.flush();
                     fileList.add(file.getAbsolutePath());
                     System.out.println(file+"解压成功");
                 }
-            } catch (IOException e) {  
-                e.printStackTrace();  
+            } catch (IOException e) {
+                e.printStackTrace();
             }finally{
                 try {
 					bin.close();
@@ -216,10 +200,10 @@ public class DemoBase {
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
-				}  
+				}
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();  
+            e.printStackTrace();
         }
 		return fileList;
 	}

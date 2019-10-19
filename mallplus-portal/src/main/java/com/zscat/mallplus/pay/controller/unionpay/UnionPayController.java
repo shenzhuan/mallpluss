@@ -1,37 +1,24 @@
 package com.zscat.mallplus.pay.controller.unionpay;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.jpay.ext.kit.DateKit;
+import com.jpay.ext.kit.HttpKit;
+import com.jpay.unionpay.*;
+import com.jpay.vo.AjaxResult;
 import com.zscat.mallplus.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
-import com.jpay.ext.kit.DateKit;
-import com.jpay.ext.kit.HttpKit;
-import com.jpay.unionpay.AcpService;
-import com.jpay.unionpay.LogUtil;
-import com.jpay.unionpay.SDKConfig;
-import com.jpay.unionpay.UnionPayApi;
-import com.jpay.unionpay.UnionPayApiConfig;
-import com.jpay.vo.AjaxResult;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
+import java.util.Map.Entry;
 
 @RestController
 @RequestMapping("/unionpay")

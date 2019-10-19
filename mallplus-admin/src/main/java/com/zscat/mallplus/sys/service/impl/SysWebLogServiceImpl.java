@@ -2,7 +2,6 @@ package com.zscat.mallplus.sys.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.sys.entity.SysWebLog;
-import com.zscat.mallplus.sys.mapper.SysAdminLogMapper;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.sys.service.ISysWebLogService;
 import com.zscat.mallplus.vo.LogParam;

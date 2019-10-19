@@ -22,7 +22,6 @@ import com.zscat.mallplus.pms.service.IPmsBrandService;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-
 import com.zscat.mallplus.sms.entity.*;
 import com.zscat.mallplus.sms.mapper.*;
 import com.zscat.mallplus.sms.service.*;
@@ -33,14 +32,12 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
-
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.home.Pages;
 import com.zscat.mallplus.vo.home.PagesItems;
 import com.zscat.mallplus.vo.home.Params;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

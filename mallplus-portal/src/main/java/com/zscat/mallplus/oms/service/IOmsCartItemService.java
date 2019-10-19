@@ -3,7 +3,6 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.vo.CartProduct;
-import com.zscat.mallplus.oms.vo.CartPromotionItem;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

@@ -1,49 +1,10 @@
 package com.zscat.mallplus.pay.controller.wxpay;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zscat.mallplus.enums.OrderStatus;
-import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.entity.OmsPayments;
-import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.service.IOmsPaymentsService;
-import com.zscat.mallplus.oms.vo.PayParam;
-import com.zscat.mallplus.oms.vo.PaymentParam;
-import com.zscat.mallplus.pay.entity.H5ScencInfo;
-import com.zscat.mallplus.pay.entity.WxPayBean;
-import com.zscat.mallplus.sms.entity.SmsGroup;
-import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
-import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
-import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
-import com.jpay.ext.kit.HttpKit;
-import com.jpay.ext.kit.IpKit;
-import com.jpay.ext.kit.PaymentKit;
-import com.jpay.ext.kit.StrKit;
-import com.jpay.ext.kit.ZxingKit;
+import com.jpay.ext.kit.*;
 import com.jpay.secure.RSAUtils;
 import com.jpay.vo.AjaxResult;
 import com.jpay.weixin.api.WxPayApi;
@@ -51,6 +12,34 @@ import com.jpay.weixin.api.WxPayApi.TradeType;
 import com.jpay.weixin.api.WxPayApiConfig;
 import com.jpay.weixin.api.WxPayApiConfig.PayModel;
 import com.jpay.weixin.api.WxPayApiConfigKit;
+import com.zscat.mallplus.enums.OrderStatus;
+import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.service.IOmsPaymentsService;
+import com.zscat.mallplus.oms.vo.PayParam;
+import com.zscat.mallplus.oms.vo.PaymentParam;
+import com.zscat.mallplus.pay.entity.H5ScencInfo;
+import com.zscat.mallplus.pay.entity.WxPayBean;
+import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
+import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.utils.CommonResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/wxpay")

@@ -1,7 +1,7 @@
 package com.zscat.mallplus.bill.mapper;
 
-import com.zscat.mallplus.bill.entity.BillPaymentsRel;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zscat.mallplus.bill.entity.BillPaymentsRel;
 
 /**
  * <p>

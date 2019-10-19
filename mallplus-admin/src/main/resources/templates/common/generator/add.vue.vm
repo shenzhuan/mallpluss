@@ -3,7 +3,7 @@
 </${classname}-detail>
 </template>
 <script>
-    import ${className}Detail from './components/${className}Detail'
+    import ${className}Detail from './components/'
 
     export default {
         name: 'add${className}',

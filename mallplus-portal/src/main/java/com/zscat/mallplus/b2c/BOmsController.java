@@ -24,13 +24,11 @@ import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
-import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductConsult;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.pms.vo.ProductConsultParam;
-import com.zscat.mallplus.pms.vo.ProductTypeVo;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.OmsShip;
@@ -251,15 +249,7 @@ public class BOmsController extends ApiBaseAction {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(memberId);
         }
-        if (address != null && address.getId() != null) {
-            count = memberReceiveAddressService.updateById(address);
-        } else {
-            count = memberReceiveAddressService.save(address);
-        }
-        if (count) {
-            return new CommonResult().success(count);
-        }
-        return new CommonResult().failed();
+        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
     }
 
     @ApiOperation("微信存储收货地址")
@@ -270,15 +260,7 @@ public class BOmsController extends ApiBaseAction {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
         }
-        if (address != null && address.getId() != null) {
-            count = memberReceiveAddressService.updateById(address);
-        } else {
-            count = memberReceiveAddressService.save(address);
-        }
-        if (count) {
-            return new CommonResult().success(count);
-        }
-        return new CommonResult().failed();
+        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
     }
 
     @IgnoreAuth

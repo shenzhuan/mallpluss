@@ -1,9 +1,9 @@
 package com.zscat.mallplus.bill.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.bill.entity.BillLading;
 import com.zscat.mallplus.bill.mapper.BillLadingMapper;
 import com.zscat.mallplus.bill.service.IBillLadingService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

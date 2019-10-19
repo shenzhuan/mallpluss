@@ -8,7 +8,6 @@ import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

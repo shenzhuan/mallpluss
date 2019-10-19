@@ -3,7 +3,6 @@ package com.zscat.mallplus.pms.vo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by Administrator on 2019/9/15.
