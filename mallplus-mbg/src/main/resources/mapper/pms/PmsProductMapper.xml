@@ -49,6 +49,7 @@
         <result column="supply_id" property="supplyId"/>
         <result column="create_time" property="createTime"/>
         <result column="school_id" property="schoolId"/>
+        <result column="transfee" property="transfee"/>
     </resultMap>
 
     <resultMap id="cartProductMap" type="com.zscat.mallplus.oms.vo.CartProduct" autoMapping="true">

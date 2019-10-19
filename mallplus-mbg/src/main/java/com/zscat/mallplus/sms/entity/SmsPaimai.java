@@ -17,11 +17,11 @@ import java.util.Date;
  * </p>
  *
  * @author zscat
- * @since 2019-10-17
+ * @since 2019-10-19
  */
 @Data
-@TableName("sms_draw")
-public class SmsDraw implements Serializable {
+@TableName("sms_paimai")
+public class SmsPaimai implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,11 +35,7 @@ public class SmsDraw implements Serializable {
      * 活动名称
      */
     private String name;
-    /**
-     * 商品名称
-     */
-    @TableField("goods_name")
-    private String goodsName;
+
     /**
      * 该抽奖所参与商品ID
      */
@@ -49,8 +45,8 @@ public class SmsDraw implements Serializable {
     /**
      * 创建时间
      */
-    @TableField("found_time")
-    private Date foundTime;
+    @TableField("create_time")
+    private Date createTime;
 
     /**
      * 开始时间
@@ -65,42 +61,31 @@ public class SmsDraw implements Serializable {
     private Date endTime;
 
     /**
-     * 每个团所需人数
-     */
-    private Integer num;
-
-    /**
-     * 可抽中奖次数（默认为1）
-     */
-    @TableField("spelling_number")
-    private Integer spellingNumber;
-
-    /**
-     * 最少开奖团数（默认为1）
-     */
-    @TableField("collage_number")
-    private Integer collageNumber;
-
-    /**
      * 该团的状态（默认为0：未开始 ，1：进行中 ， 2：已结束）
      */
     private Integer state;
 
     /**
-     * 抽奖金额
+     * 起拍价
      */
     private BigDecimal price;
 
     /**
-     * 次数
+     * 加价的倍数
      */
-    private Integer cishu;
-
+    private BigDecimal addprice;
     /**
-     * 备注
+     * 保证金
      */
-    private String type;
+    private BigDecimal proprice;
 
+    @TableField("store_id")
+    private Integer storeId;
+
+    @TableField("goods_name")
+    private String goodsName;
+
+    private Integer status;
 
 
 }

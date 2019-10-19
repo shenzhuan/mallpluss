@@ -40,7 +40,7 @@ public class SmsDrawUserController {
                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(ISmsCouponService.page(new Page<SmsDrawUser>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(ISmsCouponService.page(new Page<SmsDrawUser>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("time")));
         } catch (Exception e) {
             log.error("根据条件查询所有抽奖与用户关联表列表：%s", e.getMessage(), e);
         }

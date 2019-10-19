@@ -10,6 +10,7 @@ import com.zscat.mallplus.bill.entity.BillAftersalesItems;
 import com.zscat.mallplus.bill.service.IBillAftersalesItemsService;
 import com.zscat.mallplus.bill.service.IBillAftersalesService;
 import com.zscat.mallplus.cms.entity.CmsSubject;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
@@ -644,6 +645,7 @@ public class BOmsController extends ApiBaseAction {
             productConsult.setStars(param.getScore());
             productConsult.setEmail(Arrays.toString(param.getImages()));
             productConsult.setConsultAddtime(new Date());
+            productConsult.setType(AllEnum.ConsultType.ORDER.code());
             pmsProductConsultService.save(productConsult);
         }
         OmsOrder omsOrder = new OmsOrder();

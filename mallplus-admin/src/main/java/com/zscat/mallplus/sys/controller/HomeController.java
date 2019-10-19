@@ -28,6 +28,8 @@ import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +43,7 @@ import java.util.*;
  * @Date: 2019/3/27 18:57
  * @Description:
  */
+@Slf4j
 @RestController
 @Api(tags = "HomeController", description = "首页管理")
 @RequestMapping("/home")
@@ -158,7 +161,12 @@ public class HomeController extends BaseController {
     @SysLog(MODULE = "home", REMARK = "首页商品统计")
     @RequestMapping(value = "/goodsStatic", method = RequestMethod.GET)
     public Object goodsStatic() throws Exception {
-        List<PmsProduct> goodsList = productService.list(new QueryWrapper<>(new PmsProduct()));
+        StopWatch stopWatch = new StopWatch("首页商品统计");
+        stopWatch.start("首页商品列表2");
+        List<PmsProduct> goodsList = productService.list(new QueryWrapper<>(new PmsProduct()).select("publish_status","create_time"));
+
+        stopWatch.stop();
+        stopWatch.start("首页商品");
         int onCount = 0;
         int offCount = 0;
         int nowCount = 0;
@@ -178,6 +186,8 @@ public class HomeController extends BaseController {
         map.put("offCount", offCount);
         map.put("nowCount", nowCount);
         map.put("allCount", goodsList.size());
+        stopWatch.stop();
+        log.info(stopWatch.prettyPrint());
         return new CommonResult().success(map);
     }
 

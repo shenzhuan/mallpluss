@@ -12,6 +12,7 @@ import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -306,6 +307,7 @@ public class BPmsController extends ApiBaseAction {
 
         PmsProductConsult productConsult = new PmsProductConsult();
         productConsult.setGoodsId(goodsId);
+        productConsult.setType(AllEnum.ConsultType.GOODS.code());
         List<PmsProductConsult> list =  pmsProductConsultService.list(new QueryWrapper<>(productConsult));
 
         int goods = 0;
@@ -681,6 +683,7 @@ public class BPmsController extends ApiBaseAction {
             return new CommonResult().failed("请先登录");
         }
         subject.setConsultAddtime(new Date());
+        subject.setType(AllEnum.ConsultType.GOODS.code());
         boolean count = pmsProductConsultService.save(subject);
         if (count) {
             commonResult = new CommonResult().success(count);

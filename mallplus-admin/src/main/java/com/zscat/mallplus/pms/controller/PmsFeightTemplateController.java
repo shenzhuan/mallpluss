@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class PmsFeightTemplateController {
                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsFeightTemplateService.page(new Page<PmsFeightTemplate>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IPmsFeightTemplateService.page(new Page<PmsFeightTemplate>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
         } catch (Exception e) {
             log.error("根据条件查询所有运费模版列表：%s", e.getMessage(), e);
         }
@@ -54,6 +55,7 @@ public class PmsFeightTemplateController {
     @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:create')")
     public Object savePmsFeightTemplate(@RequestBody PmsFeightTemplate entity) {
         try {
+            entity.setCreateTime(new Date());
             if (IPmsFeightTemplateService.save(entity)) {
                 return new CommonResult().success();
             }

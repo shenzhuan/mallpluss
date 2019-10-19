@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ public class SmsDrawController {
                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(ISmsCouponService.page(new Page<SmsDraw>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(ISmsCouponService.page(new Page<SmsDraw>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("found_time")));
         } catch (Exception e) {
             log.error("根据条件查询所有一分钱抽奖表列表：%s", e.getMessage(), e);
         }
@@ -53,6 +54,7 @@ public class SmsDrawController {
 
     public Object saveSmsCoupon(@RequestBody SmsDraw entity) {
         try {
+            entity.setFoundTime(new Date());
             if (ISmsCouponService.save(entity)) {
                 return new CommonResult().success();
             }

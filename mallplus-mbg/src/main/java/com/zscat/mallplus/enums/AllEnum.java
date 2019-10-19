@@ -91,4 +91,40 @@ public class AllEnum {
         }
     }
 
+    /**
+     * 评论类型：1->商品；2->订单
+     *
+     * @author dp
+     */
+    public enum ConsultType implements BaseEnum<Integer> {
+
+        /**
+         * 限价交易
+         */
+        GOODS(1, "goods"),
+
+        /**
+         * 市价交易
+         */
+        ORDER(2, "order"),
+        ;
+
+        private int code;
+        private String value;
+
+        ConsultType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
 }

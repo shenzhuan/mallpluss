@@ -3,7 +3,10 @@ package com.zscat.mallplus.sms.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -13,6 +16,7 @@ import java.io.Serializable;
  * @author zscat
  * @since 2019-10-17
  */
+@Data
 @TableName("sms_draw_user")
 public class SmsDrawUser implements Serializable {
 
@@ -38,7 +42,8 @@ public class SmsDrawUser implements Serializable {
     /**
      * 用户参团时间
      */
-    private LocalDateTime time;
+    private Date
+            time;
 
     /**
      * 用户角色（默认 0：团长  userid:该用户分享进来的用户）
@@ -52,63 +57,4 @@ public class SmsDrawUser implements Serializable {
     private Integer lotteryStatus;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getDrawId() {
-        return drawId;
-    }
-
-    public void setDrawId(Long drawId) {
-        this.drawId = drawId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalDateTime time) {
-        this.time = time;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Integer getLotteryStatus() {
-        return lotteryStatus;
-    }
-
-    public void setLotteryStatus(Integer lotteryStatus) {
-        this.lotteryStatus = lotteryStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "SmsDrawUser{" +
-        ", id=" + id +
-        ", drawId=" + drawId +
-        ", userId=" + userId +
-        ", time=" + time +
-        ", role=" + role +
-        ", lotteryStatus=" + lotteryStatus +
-        "}";
-    }
 }
