@@ -178,12 +178,7 @@ public class SingeUmsController extends ApiBaseAction {
         return new CommonResult().success(list);
     }
 
-    @ApiOperation("更新会员信息")
-    @SysLog(MODULE = "ums", REMARK = "更新会员信息")
-    @PostMapping(value = "/updateMember")
-    public Object updateMember(UmsMember member) {
-        return getObject(member, memberService);
-    }
+
     @ApiOperation("添加招聘")
     @SysLog(MODULE = "ums", REMARK = "添加招聘")
     @PostMapping(value = "/addJob")

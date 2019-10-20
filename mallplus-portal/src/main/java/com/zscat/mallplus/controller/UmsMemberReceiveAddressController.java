@@ -53,8 +53,15 @@ public class UmsMemberReceiveAddressController {
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(address.getMemberId());
         }
-        return getObject(address != null, address.getId(), memberReceiveAddressService.updateById(address), memberReceiveAddressService.save(address), address);
-    }
+        if (address != null && address.getId() != null) {
+            count = memberReceiveAddressService.updateById(address);
+        } else {
+            count = memberReceiveAddressService.save(address);
+        }
+        if (count) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();    }
 
     @IgnoreAuth
     @ApiOperation("显示所有收货地址")

@@ -1,6 +1,7 @@
 package com.zscat.mallplus.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
@@ -38,7 +39,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -104,12 +107,22 @@ public class AppletMemberController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
+    @PostMapping("login_by_weixin1")
+    public Object loginByWeixinNew(@RequestBody AppletLoginnewParam param) {
+        AppletLoginParam appletLoginParam = new AppletLoginParam();
+        BeanUtils.copyProperties(param,appletLoginParam);
+        appletLoginParam.setUserInfo(JSONObject.toJSONString(param.getUserInfo()));
+        return memberService.loginByWeixin(appletLoginParam);
+
+    }
+    @IgnoreAuth
+    @ApiOperation("注册")
+    @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin")
     public Object loginByWeixin(@RequestBody  AppletLoginParam param) {
         return memberService.loginByWeixin(param);
 
     }
-
     @Autowired
     private ApiContext apiContext;
 

@@ -5,6 +5,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.SmsCode;
+import org.springframework.http.HttpRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
@@ -83,5 +84,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
     void addIntegration(Long id, Integer integration);
 
     Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
+
+
 }
 

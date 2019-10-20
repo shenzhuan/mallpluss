@@ -777,12 +777,7 @@ public class BPmsController extends ApiBaseAction {
         productCollection.setMemberId(UserUtils.getCurrentMember().getId());
         return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
     }
-    @ApiOperation("显示收藏列表")
-    @PostMapping(value = "/listCollect")
-    public Object listCollect( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(UserUtils.getCurrentMember().getId());
-        return new CommonResult().success(memberProductCollectionList);
-    }
+
 
 
     @ApiOperation("添加和取消点赞 type 1 商品 2 文章")
