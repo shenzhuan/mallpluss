@@ -291,7 +291,7 @@ public class BOmsController extends ApiBaseAction {
     }
 
     @IgnoreAuth
-    @ApiOperation("显示所有收货地址")
+    @ApiOperation("收货地址详情")
     @RequestMapping(value = "/user.getshipdetail", method = RequestMethod.POST)
     @ResponseBody
     public Object getItem(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {

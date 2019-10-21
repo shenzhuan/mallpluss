@@ -267,3 +267,10 @@ DELETE FROM admin_day_statics;
 DELETE FROM admin_sys_job_log;
 DELETE FROM sys_admin_log;
 DELETE FROM sys_web_log;
+
+delete from pms_product where store_id>4 ;
+delete from pms_sku_stock where store_id>4 ;
+delete from ums_member where store_id>4 ;
+delete from sys_web_log  ;
+delete from admin_sys_job_log  ;
+delete from sys_admin_log  ;

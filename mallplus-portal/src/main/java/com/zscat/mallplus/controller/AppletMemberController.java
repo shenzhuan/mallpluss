@@ -108,11 +108,11 @@ public class AppletMemberController extends ApiBaseAction {
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin1")
-    public Object loginByWeixinNew(@RequestBody AppletLoginnewParam param) {
-        AppletLoginParam appletLoginParam = new AppletLoginParam();
+    public Object loginByWeixinNew(AppletLoginParam param) {
+       /* AppletLoginParam appletLoginParam = new AppletLoginParam();
         BeanUtils.copyProperties(param,appletLoginParam);
-        appletLoginParam.setUserInfo(JSONObject.toJSONString(param.getUserInfo()));
-        return memberService.loginByWeixin(appletLoginParam);
+        appletLoginParam.setUserInfo(JSONObject.toJSONString(param.getUserInfo()));*/
+        return memberService.loginByWeixin(param);
 
     }
     @IgnoreAuth

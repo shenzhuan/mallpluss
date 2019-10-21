@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.service.IPmsSmallNaviconCategoryService;
@@ -15,7 +16,9 @@ import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.ums.entity.SysNotice;
+import com.zscat.mallplus.ums.entity.TbUserFromId;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.mapper.TbUserFromIdMapper;
 import com.zscat.mallplus.ums.service.ISysMessageService;
 import com.zscat.mallplus.ums.service.ISysNoticeService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
@@ -43,6 +46,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +85,9 @@ public class BHomeController {
     private ISysMessageService messageService;
     @Autowired
     private ApiContext apiContext;
+
+    @Resource
+    private TbUserFromIdMapper fromIdMapper;
 
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
@@ -456,5 +464,47 @@ public class BHomeController {
             log.error("分页获取pms_small_navicon_category列表：%s", e.getMessage(), e);
         }
         return new CommonResult().failed();
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页推荐专题")
+    @SysLog(MODULE = "home", REMARK = "首页推荐专题")
+    @RequestMapping(value = "/recommendsubjectList", method = RequestMethod.POST)
+    public Object getSubjectList(
+            @RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        List<CmsSubject> subjectList = advertiseService.getRecommendSubjectList(pageSize, pageNum);
+        return new CommonResult().success(subjectList);
+    }
+    /**
+     * 提交小程序推送formid
+     *
+     * @param request
+     * @param response
+     * @param formId   小程序推送formId
+     * @return
+     */
+    @RequestMapping(value = "submitFormId")
+    @ApiOperation(value = "提交小程序推送formid")
+    @ResponseBody
+    public Object submitFormId(HttpServletRequest request, HttpServletResponse response, String formId) {
+
+        TbUserFromId entity = new TbUserFromId();
+
+        if (ValidatorUtils.empty(formId)) {
+            return new CommonResult().validateFailed("前置参数错误，formId不能为空");
+        }
+        if ("the formId is a mock one".equals(formId)){
+            return new CommonResult().success("添加成功");
+        }
+        entity.setFormId(formId);
+        entity.setUserId(UserUtils.getCurrentMember().getId());
+        //校验formId是否已经存在
+        if(fromIdMapper.selectCount(new QueryWrapper<>(entity))>0) {
+            return new CommonResult().validateFailed("前置参数错误，formId已经存在 formId：" + formId);
+        }
+        entity.setStatus(1);
+        fromIdMapper.insert(entity);
+        return new CommonResult().success("添加成功");
     }
 }
