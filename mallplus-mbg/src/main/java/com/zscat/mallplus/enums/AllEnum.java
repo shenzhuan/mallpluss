@@ -127,4 +127,54 @@ public class AllEnum {
             return value;
         }
     }
+
+
+    /**
+     * 订单类型：
+     *
+     * @author dp
+     */
+    public enum OrderType implements BaseEnum<Integer> {
+
+        /**
+         * 普通订单
+         */
+        COMMON(1, "common"),
+        /**
+         * 拼团订单
+         */
+        PIN_GROUP(2, "pingroup"),
+        /**
+         * 团购订单
+         */
+        GROUP_BUY(3, "groupbuy"),
+        /**
+         * 砍价订单
+         */
+        KNAN_JIA(4, "kanjia"),
+
+        /**
+         * 秒杀订单
+         */
+        SKILL(5, "skill"),
+        ;
+
+        private int code;
+        private String value;
+
+        OrderType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
 }

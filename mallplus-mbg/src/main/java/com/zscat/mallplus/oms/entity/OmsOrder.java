@@ -122,7 +122,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Integer status;
 
     /**
-     * 订单类型：0->正常订单；1->秒杀订单
+     * 订单类型：0->正常订单；1->秒杀订单 AllEnum
      */
     @TableField("order_type")
     private Integer orderType;
