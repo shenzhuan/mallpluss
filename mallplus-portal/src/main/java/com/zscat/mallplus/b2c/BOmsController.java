@@ -11,6 +11,7 @@ import com.zscat.mallplus.bill.service.IBillAftersalesItemsService;
 import com.zscat.mallplus.bill.service.IBillAftersalesService;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
@@ -40,9 +41,11 @@ import com.zscat.mallplus.ums.service.IOmsShipService;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.CartParam;
@@ -53,6 +56,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -102,6 +107,11 @@ public class BOmsController extends ApiBaseAction {
     @Autowired
     private IPmsProductConsultService pmsProductConsultService;
 
+    @Autowired
+    private IOmsShipService omsShipService;
+
+    @Autowired
+    private RedisUtil redisUtil;
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.add")
     @ResponseBody
@@ -114,8 +124,6 @@ public class BOmsController extends ApiBaseAction {
             e.printStackTrace();
         }
         return null;
-
-
     }
 
     @ApiOperation("获取某个会员的购物车列表")
@@ -136,8 +144,6 @@ public class BOmsController extends ApiBaseAction {
         }
         return new ArrayList<OmsCartItem>();
     }
-
-
 
     @ApiOperation("修改购物车中某个商品的数量")
     @RequestMapping(value = "/cart.setnums", method = RequestMethod.POST)
@@ -160,15 +166,6 @@ public class BOmsController extends ApiBaseAction {
             return new CommonResult().success(count);
         }
         return new CommonResult().success(0);
-    }
-
-
-    @ApiOperation("获取购物车中某个商品的规格,用于重选规格")
-    @RequestMapping(value = "/getProduct/{productId}", method = RequestMethod.POST)
-    @ResponseBody
-    public Object getCartProduct(@PathVariable Long productId) {
-        CartProduct cartProduct = cartItemService.getCartProduct(productId);
-        return new CommonResult().success(cartProduct);
     }
 
     @ApiOperation("修改购物车中商品的规格")
@@ -211,9 +208,6 @@ public class BOmsController extends ApiBaseAction {
         return new CommonResult().failed();
     }
 
-    IOmsShipService omsShipService;
-
-
     @IgnoreAuth
     @ApiOperation("获取配送方式")
     @RequestMapping(value = "/user.getship", method = RequestMethod.POST)
@@ -222,7 +216,6 @@ public class BOmsController extends ApiBaseAction {
         List<OmsShip> addressList = omsShipService.list(new QueryWrapper<OmsShip>());
         return new CommonResult().success(addressList);
     }
-
 
     @ApiOperation("删除收货地址")
     @RequestMapping(value = "/user.removeship")
@@ -299,7 +292,7 @@ public class BOmsController extends ApiBaseAction {
         return new CommonResult().success(address);
     }
     @IgnoreAuth
-    @ApiOperation("显示所有收货地址")
+    @ApiOperation("显示所有支付方式")
     @RequestMapping(value = "/payments.getlist", method = RequestMethod.POST)
     @ResponseBody
     public Object getPayments() {
@@ -307,7 +300,7 @@ public class BOmsController extends ApiBaseAction {
         return new CommonResult().success(paymentss);
     }
     @IgnoreAuth
-    @ApiOperation("显示所有收货地址")
+    @ApiOperation("显示支付方式详情")
     @RequestMapping(value = "/payments.getinfo", method = RequestMethod.POST)
     @ResponseBody
     public Object getPaymentsInfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
@@ -348,13 +341,13 @@ public class BOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (ValidatorUtils.empty(order.getStatus()) || order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time")) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time")) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
         for (OmsOrder omsOrder : page.getRecords()){
-            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()));
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()).eq("type",AllEnum.OrderItemType.GOODS.code()));
             omsOrder.setOrderItemList(itemList);
         }
         return new CommonResult().success(page);
@@ -443,27 +436,98 @@ public class BOmsController extends ApiBaseAction {
             log.error("订单确认收货：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
-
     }
+    // 物流信息缓存间隔暂定3个小时
+    private static final Long maxCacheTime = 1000 * 60 * 60 * 3L;
     /**
      * 查看物流
      */
     @ApiOperation("查看物流")
     @ResponseBody
     @RequestMapping("/order.logisticbyapi")
-    public Object getWayBillInfo(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws Exception {
+    public Object getWayBillInfo(String no, String type) throws Exception {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
-            OmsOrder order = orderService.getById(orderId);
-            if (order == null) {
-                return null;
+            no ="801132164062135036";
+            if (StringUtils.isEmpty(no)) {
+                throw new ApiMallPlusException("请传入运单号");
             }
-            if (!order.getMemberId().equals(member.getId())) {
-                return new CommonResult().success("非当前用户订单");
+            // String host = "http://kdwlcxf.market.alicloudapi.com";
+            // String path = "/kdwlcx";
+
+            // String host = "https://wdexpress.market.alicloudapi.com";
+            // String path = "/gxali";
+
+            String host = "https://wuliu.market.alicloudapi.com";
+            String path = "/kdi";
+
+            String method = "GET";
+
+            String appcode = "436e99b5b81044698cbaf100d164aa63";  // !!! 替换这里填写你自己的AppCode 请在买家中心查看
+
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Authorization", "APPCODE " + appcode); //格式为:Authorization:APPCODE 83359fd73fe11248385f570e3c139xxx
+            Map<String, String> querys = new HashMap<String, String>();
+            querys.put("no", no);  // !!! 请求参数  运单号
+            if (ValidatorUtils.notEmpty(type)) {
+                querys.put("type", type);// !!! 请求参数   快递公司
             }
 
-            //    ExpressInfoModel expressInfoModel = orderService.queryExpressInfo(orderId);
-            return new CommonResult().success(null);
+            // 物流信息
+            String returnStr = "";
+
+
+            Map<String, Object> returnMap = new HashMap<String, Object>();
+
+            try {
+                log.info("---------开始查询运单号为{}的物流信息", no);
+
+                // 只有当redis里面有缓存，且缓存时间不超过最大缓存时长，直接取缓存数据
+                if (redisUtil.hExists(Rediskey.KDWL_INFO_CACHE, no)) {
+
+                    // redis已经有缓存
+                    Object kdwlInfo = redisUtil.hGet(Rediskey.KDWL_INFO_CACHE, no);
+                    if (ValidatorUtils.notEmpty(kdwlInfo)) {
+                        Map<String, Object> kdwlInfoToMap =  JsonUtils.readJsonToMap(kdwlInfo.toString());
+                        Long cacheBeginTime = (Long) kdwlInfoToMap.get("queryTime");
+                        // 计算已经缓存时长
+                        if (System.currentTimeMillis() - cacheBeginTime < maxCacheTime) {
+                            // 直接取缓存
+                            // kdwlInfoToMap.remove("queryTime");
+                            log.info("---------此次查询的物流信息来至于Redis缓存");
+                            log.info("---------查询运单号为{}的物流信息结束,物流信息：{}", no, kdwlInfo);
+                            return kdwlInfoToMap;
+                        } else {
+                            // TODO: 2018/8/23 这里已经存过缓存时间 如果缓存数据得到的 物流的状态是已签收，是否需要重新查询？？还是直接返回
+
+                        }
+
+                    }
+                }
+
+                // 重新查询最新物流信息
+                HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+
+                // 从返回信息中拿到
+                returnStr = EntityUtils.toString(response.getEntity());
+
+                if (StringUtils.isEmpty(returnStr)) {
+                    throw new ApiMallPlusException( "查询物流信息失败");
+                }
+
+                // 重新缓存 [这里包含运单号输错 也缓存 避免有人故意调我们物流接口 次数用完]
+                returnMap = JsonUtils.readJsonToMap(returnStr);
+                if (returnMap != null) {
+                    returnMap.put("queryTime", System.currentTimeMillis());
+                }
+                redisUtil.hPut(Rediskey.KDWL_INFO_CACHE, no, JsonUtils.objectToJson(returnMap));
+
+                log.info("---------此次查询的物流信息来至于重新查询");
+                log.info("---------查询运单号为{}的物流信息结束,物流信息：{}", no, returnStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return returnMap;
         } catch (Exception e) {
             log.error("get waybillInfo error. error=" + e.getMessage(), e);
             return new CommonResult().failed("获取物流信息失败，请稍后重试");
@@ -555,68 +619,7 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
-    @Resource
-    private IBillAftersalesService billAftersalesService;
-    @Resource
-    private IBillAftersalesItemsService billAftersalesItemsService;
 
-    @IgnoreAuth
-    @SysLog(MODULE = "oms", REMARK = "售后单列表")
-    @ApiOperation(value = "售后单列表")
-    @PostMapping(value = "/order.aftersaleslist")
-    public Object afterSalesList(BillAftersales order,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-
-        IPage<BillAftersales> page = billAftersalesService.page(new Page<BillAftersales>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("ctime")) ;
-        for (BillAftersales omsOrder : page.getRecords()){
-            List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",omsOrder.getAftersalesId()));
-            omsOrder.setItemList(itemList);
-        }
-        return new CommonResult().success(page);
-    }
-
-    @IgnoreAuth
-    @SysLog(MODULE = "oms", REMARK = "售后单详情")
-    @ApiOperation(value = "售后单详情")
-    @PostMapping(value = "/order.aftersalesinfo")
-    public Object afterSalesInfo(@RequestParam Long id) {
-        BillAftersales aftersales = billAftersalesService.getById(id);
-        List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",aftersales.getAftersalesId()));
-        aftersales.setItemList(itemList);
-        return new CommonResult().success(aftersales);
-    }
-
-    @SysLog(MODULE = "cms", REMARK = "订单售后状态")
-    @ApiOperation(value = "订单售后状态")
-    @PostMapping(value = "/order.aftersalesstatus")
-    public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
-        CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
-
-        return null;
-    }
-
-
-    @SysLog(MODULE = "cms", REMARK = "添加售后单")
-    @ApiOperation(value = "添加售后单")
-    @PostMapping(value = "/order.addaftersales")
-    public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
-        UmsMember member = UserUtils.getCurrentMember();
-        aftersales.setUserId(member.getId());
-
-        return new CommonResult().success( billAftersalesService.save(aftersales));
-    }
-
-    @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
-    @ApiOperation(value = "用户发送退货包裹")
-    @PostMapping(value = "/order.sendreship")
-    public Object sendShip(CmsSubject subject, BindingResult result) {
-        CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
-
-        return null;
-    }
 
     @SysLog(MODULE = "cms", REMARK = "添加订单评论")
     @ApiOperation(value = "添加订单评论")
@@ -745,6 +748,67 @@ public class BOmsController extends ApiBaseAction {
         redisService.set(key,JsonUtils.objectToJson(objectMap));
         redisService.expire(key,3600*5);
         return new CommonResult().success(objectMap);
+    }
+    @Resource
+    private IBillAftersalesService billAftersalesService;
+    @Resource
+    private IBillAftersalesItemsService billAftersalesItemsService;
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单列表")
+    @ApiOperation(value = "售后单列表")
+    @PostMapping(value = "/order.aftersaleslist")
+    public Object afterSalesList(BillAftersales order,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<BillAftersales> page = billAftersalesService.page(new Page<BillAftersales>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("ctime")) ;
+        for (BillAftersales omsOrder : page.getRecords()){
+            List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",omsOrder.getAftersalesId()));
+            omsOrder.setItemList(itemList);
+        }
+        return new CommonResult().success(page);
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单详情")
+    @ApiOperation(value = "售后单详情")
+    @PostMapping(value = "/order.aftersalesinfo")
+    public Object afterSalesInfo(@RequestParam Long id) {
+        BillAftersales aftersales = billAftersalesService.getById(id);
+        List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id",aftersales.getAftersalesId()));
+        aftersales.setItemList(itemList);
+        return new CommonResult().success(aftersales);
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "订单售后状态")
+    @ApiOperation(value = "订单售后状态")
+    @PostMapping(value = "/order.aftersalesstatus")
+    public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        return null;
+    }
+
+
+    @SysLog(MODULE = "cms", REMARK = "添加售后单")
+    @ApiOperation(value = "添加售后单")
+    @PostMapping(value = "/order.addaftersales")
+    public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
+        UmsMember member = UserUtils.getCurrentMember();
+        aftersales.setUserId(member.getId());
+
+        return new CommonResult().success( billAftersalesService.save(aftersales));
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
+    @ApiOperation(value = "用户发送退货包裹")
+    @PostMapping(value = "/order.sendreship")
+    public Object sendShip(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+
+        return null;
     }
 }

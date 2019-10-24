@@ -193,7 +193,7 @@ public class BPmsController extends ApiBaseAction {
     }
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询商品分类列表")
+    @ApiOperation(value = "查询商品分类列表和子分类")
     @PostMapping(value = "/pidCategoryList")
     public Object pidCategoryList() throws Exception {
         String json = redisService.get(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId());
@@ -223,43 +223,6 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(list);
     }
 
-    @ApiOperation("创建商品")
-    @SysLog(MODULE = "pms", REMARK = "创建商品")
-    @PostMapping(value = "/createGoods")
-    public Object createGoods(PmsProduct productParam) {
-        CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
-        if (member.getMemberLevelId() > 0) {
-            UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
-            Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());
-            if (ValidatorUtils.empty(countGoodsByToday)){
-                countGoodsByToday=0;
-            }
-            if (countGoodsByToday > memberLevel.getGoodscount()) {
-                commonResult = new CommonResult().failed("你今天已经有发" + countGoodsByToday + "个商品");
-                return commonResult;
-            }
-        }else {
-            return new CommonResult().success("没有设置会员等级");
-        }
-        if (productParam.getQsType()==1){
-            productParam.setSchoolName(member.getSchoolName());
-            productParam.setSchoolId(member.getSchoolId());
-        }else {
-            productParam.setAreaName(member.getAreaName());
-            productParam.setAreaId(member.getAreaId());
-        }
-        productParam.setMemberId(member.getId());
-        productParam.setCreateTime(new Date());
-        boolean count = pmsProductService.save(productParam);
-        if (count) {
-            return new CommonResult().success(count);
-        } else {
-            return new CommonResult().failed();
-        }
-    }
-
-
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有品牌表列表")
     @ApiOperation("根据条件查询所有品牌表列表")
     @PostMapping(value = "/brand/list")
@@ -274,8 +237,6 @@ public class BPmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
-
-
 
     @IgnoreAuth
     @ApiOperation("获取某个商品的评价")
@@ -330,9 +291,10 @@ public class BPmsController extends ApiBaseAction {
         redisService.expire(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,3600*5);
         return new CommonResult().success(objectMap);
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询团购商品列表")
+    @ApiOperation(value = "查询拼团列表")
     @PostMapping(value = "/groupHotGoods/list")
     public Object groupHotGoods(PmsProduct product,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -359,7 +321,7 @@ public class BPmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询团购商品列表")
+    @ApiOperation(value = "查询拼团商品列表")
     @PostMapping(value = "/pintuan.list")
     public Object pintuanList(PmsProduct product,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -500,6 +462,7 @@ public class BPmsController extends ApiBaseAction {
         map.put("goods", goods);
         return new CommonResult().success(map);
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询积分商品类型")
@@ -511,7 +474,7 @@ public class BPmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询商品分类列表")
+    @ApiOperation(value = "查询商品分类和分类的商品列表")
     @PostMapping(value = "/categories.getallcat")
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) throws Exception {
         List<PmsProductAttributeCategory> productAttributeCategoryList = new ArrayList<>();
@@ -533,39 +496,8 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(productAttributeCategoryList);
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询首页推荐品牌")
-    @IgnoreAuth
-    @ApiOperation(value = "查询首页推荐品牌")
-    @PostMapping(value = "/recommendBrand/list")
-    public Object getRecommendBrandList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
-    }
 
-    @SysLog(MODULE = "pms", REMARK = "查询首页新品精品、热门、首发列表")
-    @IgnoreAuth
-    @ApiOperation(value = "查询首页新品")
-    @PostMapping(value = "/groom/list")
-    public Object getNewProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-            @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
-        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
-        List<PmsProduct> list = new ArrayList<>();
-        if (type==1){
-             list = pmsProductService.getHotProductList(1,100);
-        }else  if (type==2){
-            list = advertiseService.getSaleProductList(1,100);
-        }else  if (type==1){
-            list = pmsProductService.getNewProductList(1,100);
-        }
-        Map<String,Object> map = new HashedMap();
-        map.put("banner",banner);
-        map.put("list",list);
-        return new CommonResult().success(map);
-    }
 
     @SysLog(MODULE = "pms", REMARK = "查询首页热销商品")
     @IgnoreAuth
@@ -578,19 +510,12 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(pmsProductService.getHotProductList(pageNum,pageSize));
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
-    @IgnoreAuth
-    @ApiOperation(value = "查询商品优惠")
-    @PostMapping(value = "/getPromotionProductList")
-    public List<PromotionProduct> getPromotionProductList(@Param("ids") List<Long> ids){
-        return productMapper.getPromotionProductList(ids);
-    }
 
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品类型下的商品列表")
     @PostMapping(value = "/typeGoodsList")
-    public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
+    public Object typeGoodsList() throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
         String json = redisService.get(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId());
         if (ValidatorUtils.notEmpty(json)){
@@ -698,6 +623,7 @@ public class BPmsController extends ApiBaseAction {
         redisUtil.expire(key,60*60*24*30, TimeUnit.SECONDS);
         return new CommonResult().success();
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询用户浏览记录列表")
     @IgnoreAuth
     @ApiOperation(value = "查询用户浏览记录列表")
@@ -909,6 +835,42 @@ public class BPmsController extends ApiBaseAction {
 
         }
         return new CommonResult().failed();
+    }
+
+    @ApiOperation("创建商品")
+    @SysLog(MODULE = "pms", REMARK = "创建商品")
+    @PostMapping(value = "/createGoods")
+    public Object createGoods(PmsProduct productParam) {
+        CommonResult commonResult;
+        UmsMember member = UserUtils.getCurrentMember();
+        if (member.getMemberLevelId() > 0) {
+            UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
+            Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());
+            if (ValidatorUtils.empty(countGoodsByToday)){
+                countGoodsByToday=0;
+            }
+            if (countGoodsByToday > memberLevel.getGoodscount()) {
+                commonResult = new CommonResult().failed("你今天已经有发" + countGoodsByToday + "个商品");
+                return commonResult;
+            }
+        }else {
+            return new CommonResult().success("没有设置会员等级");
+        }
+        if (productParam.getQsType()==1){
+            productParam.setSchoolName(member.getSchoolName());
+            productParam.setSchoolId(member.getSchoolId());
+        }else {
+            productParam.setAreaName(member.getAreaName());
+            productParam.setAreaId(member.getAreaId());
+        }
+        productParam.setMemberId(member.getId());
+        productParam.setCreateTime(new Date());
+        boolean count = pmsProductService.save(productParam);
+        if (count) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
     }
 
     private Integer recordGoodsFoot(Long id) {

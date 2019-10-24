@@ -10,6 +10,7 @@ import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
     private Integer activiUser;
 
     /**
-     * 活动商品  1 按类别  2 部分商品
+     * 活动商品  1 按类别  2 部分商品 0 全部
      */
     @TableField("activi_goods")
     private Integer activiGoods;
@@ -106,6 +107,12 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private List<BeanKv> memberLevelList;
+
+    @TableField(exist = false)
+    private BigDecimal minAmount;
+
+    @TableField(exist = false)
+    private BasicRuls selectRule;
 
 
 

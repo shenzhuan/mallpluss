@@ -100,9 +100,12 @@ public class SingeMarkingController extends ApiBaseAction {
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        List<SmsBasicMarking> list1 = basicMarkingService.matchGoodsMk(id);
-        List<SmsBasicGifts> listg = basicGiftsService.matchGoodsMk(id);
-        return new CommonResult().success(1);
+        List<SmsBasicMarking> basicMarkingList = basicMarkingService.matchGoodsBasicMarking(id);
+        List<SmsBasicGifts> basicGiftsList = basicGiftsService.matchGoodsBasicGifts(id);
+        Map<String,Object> map = new HashMap<>();
+        map.put("basicMarkingList",basicMarkingList);
+        map.put("basicGiftsList",basicGiftsList);
+        return new CommonResult().success(map);
     }
 
     @IgnoreAuth

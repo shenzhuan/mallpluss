@@ -3,6 +3,8 @@ package com.zscat.mallplus.sms.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.pms.entity.PmsGifts;
+import com.zscat.mallplus.pms.service.IPmsGiftsService;
 import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.vo.BasicRuls;
@@ -18,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +39,8 @@ import java.util.List;
 public class SmsBasicGiftsController {
     @Resource
     private ISmsBasicGiftsService ISmsBasicGiftsService;
+    @Resource
+    private IPmsGiftsService IPmsGiftsService;
 
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
@@ -73,43 +78,51 @@ public class SmsBasicGiftsController {
     }
 
     private void validateParam(@RequestBody SmsBasicGifts entity) {
-        if (ValidatorUtils.empty(entity.getActiviGoods())){
+        if (ValidatorUtils.empty(entity.getActiviGoods())) {
             entity.setActiviGoods(0);
         }
-        if (ValidatorUtils.empty(entity.getActiviUser())){
+        if (ValidatorUtils.empty(entity.getActiviUser())) {
             entity.setActiviUser(1);
         }
-        if (ValidatorUtils.empty(entity.getSmallType())){
+        if (ValidatorUtils.empty(entity.getSmallType())) {
             entity.setSmallType(1);
         }
-        // 活动商品  1 按类别  2 部分商品
-        if (entity.getActiviGoods()==1){
-            if (ValidatorUtils.notEmpty(entity.getProductCategoryRelationList())){
+        // 活动商品  1 按类别  2 部分商品 0 全部
+        if (entity.getActiviGoods() == 1) {
+            if (ValidatorUtils.notEmpty(entity.getProductCategoryRelationList())) {
                 entity.setGoodsIds(JsonUtil.objectToJson(entity.getProductCategoryRelationList()));
             }
         }
-        if (entity.getActiviGoods()==2){
-            if (ValidatorUtils.notEmpty(entity.getProductRelationList())){
+        if (entity.getActiviGoods() == 2) {
+            if (ValidatorUtils.notEmpty(entity.getProductRelationList())) {
                 entity.setGoodsIds(JsonUtil.objectToJson(entity.getProductRelationList()));
             }
         }
-        if (entity.getActiviUser()==2){
-            if (ValidatorUtils.notEmpty(entity.getMemberLevelList())){
+        if (entity.getActiviUser() == 2) {
+            if (ValidatorUtils.notEmpty(entity.getMemberLevelList())) {
                 entity.setUserLevel(JsonUtil.objectToJson(entity.getMemberLevelList()));
             }
         }
-        if (entity.getSmallType()==1) {
+        if (entity.getSmallType() == 1) {
             if (ValidatorUtils.notEmpty(entity.getActrule())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule()));
             }
         }
-        if (entity.getSmallType()==2) {
+        if (entity.getSmallType() == 2) {
             if (ValidatorUtils.notEmpty(entity.getActrule1())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule1()));
             }
         }
         if (ValidatorUtils.notEmpty(entity.getGiftsList())) {
-            entity.setGiftIds(JsonUtil.objectToJson(entity.getGiftsList()));
+            List<BeanKv> giftsList = entity.getGiftsList();
+            List<BeanKv> list = new ArrayList<>();
+            for (BeanKv kv : giftsList) {
+                PmsGifts gifts = IPmsGiftsService.getById(kv.getId());
+                kv.setPic(gifts.getIcon());
+                kv.setPrice(gifts.getPrice().toPlainString());
+                list.add(kv);
+            }
+            entity.setGiftIds(JsonUtil.objectToJson(list));
         }
     }
 
@@ -159,34 +172,34 @@ public class SmsBasicGiftsController {
                 return new CommonResult().paramFailed("id");
             }
             SmsBasicGifts entity = ISmsBasicGiftsService.getById(id);            // 活动商品  1 按类别  2 部分商品
-            if (entity.getActiviGoods()==1){
-                if (ValidatorUtils.notEmpty(entity.getGoodsIds())){
+            if (entity.getActiviGoods() == 1) {
+                if (ValidatorUtils.notEmpty(entity.getGoodsIds())) {
                     entity.setProductCategoryRelationList(JsonUtil.jsonToList(entity.getGoodsIds(), BeanKv.class));
                 }
             }
-            if (entity.getActiviGoods()==2){
-                if (ValidatorUtils.notEmpty(entity.getGoodsIds())){
+            if (entity.getActiviGoods() == 2) {
+                if (ValidatorUtils.notEmpty(entity.getGoodsIds())) {
                     entity.setProductRelationList(JsonUtil.jsonToList(entity.getGoodsIds(), BeanKv.class));
 
                 }
             }
-            if (entity.getActiviUser()==2){
-                if (ValidatorUtils.notEmpty(entity.getUserLevel())){
+            if (entity.getActiviUser() == 2) {
+                if (ValidatorUtils.notEmpty(entity.getUserLevel())) {
                     entity.setMemberLevelList(JsonUtil.jsonToList(entity.getUserLevel(), BeanKv.class));
                 }
             }
-            if (entity.getSmallType()==1) {
+            if (entity.getSmallType() == 1) {
                 if (ValidatorUtils.notEmpty(entity.getRules())) {
-                    entity.setActrule(JsonUtil.jsonToList(entity.getRules(),BasicRuls.class));
+                    entity.setActrule(JsonUtil.jsonToList(entity.getRules(), BasicRuls.class));
                 }
             }
-            if (entity.getSmallType()==2) {
+            if (entity.getSmallType() == 2) {
                 if (ValidatorUtils.notEmpty(entity.getRules())) {
-                    entity.setActrule1(JsonUtil.jsonToList(entity.getRules(),BasicRuls.class));
+                    entity.setActrule1(JsonUtil.jsonToList(entity.getRules(), BasicRuls.class));
                 }
             }
             if (ValidatorUtils.notEmpty(entity.getGiftIds())) {
-                entity.setGiftsList(JsonUtil.jsonToList(entity.getGiftIds(),BeanKv.class));
+                entity.setGiftsList(JsonUtil.jsonToList(entity.getGiftIds(), BeanKv.class));
             }
             return new CommonResult().success(entity);
         } catch (Exception e) {
@@ -209,11 +222,12 @@ public class SmsBasicGiftsController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("批量上下架")
     @RequestMapping(value = "/publishStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量上下架")
-    public Object updatePublishStatus(@RequestParam("id") Long  id,
+    public Object updatePublishStatus(@RequestParam("id") Long id,
                                       @RequestParam("status") Integer status) {
         int count = ISmsBasicGiftsService.updateStatus(id, status);
         return new CommonResult().success(count);

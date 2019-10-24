@@ -9,5 +9,6 @@ import lombok.Data;
 public class BeanKv {
     private Long id;
             private String  name;
-            private String name1;
+            private String price;
+    private String pic;
 }

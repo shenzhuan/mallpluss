@@ -1,6 +1,9 @@
 package com.zscat.mallplus.oms.vo;
 
+import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 生成订单时传入的参数
@@ -35,6 +38,8 @@ public class OrderParam {
     // 1 发起拼团 2 参与拼团
     private Integer groupType;
     private Long mgId =0l;
+
+    String basicGiftsVar;
 
 
 }

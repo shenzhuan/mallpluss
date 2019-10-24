@@ -177,4 +177,41 @@ public class AllEnum {
             return value;
         }
     }
+
+    /**
+     * 评论类型：1->商品；2->订单
+     *
+     * @author dp
+     */
+    public enum OrderItemType implements BaseEnum<Integer> {
+
+        /**
+         * 商品
+         */
+        GOODS(1, "goods"),
+
+        /**
+         * 礼品
+         */
+        GIFT(2, "gift"),
+        ;
+
+        private int code;
+        private String value;
+
+        OrderItemType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
 }

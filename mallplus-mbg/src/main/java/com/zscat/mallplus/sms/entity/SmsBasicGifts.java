@@ -33,7 +33,7 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 1 有效0 无效
+     * 0 有效 1 无效
      */
     private Integer status;
 
@@ -44,7 +44,7 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     private Integer activiUser;
 
     /**
-     * 活动商品
+     * 活动商品  1 按类别  2 部分商品 0 全部
      */
     @TableField("activi_goods")
     private Integer activiGoods;
@@ -96,8 +96,10 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     @TableField("gift_ids")
     private String giftIds;
 
+    @TableField(exist = false)
+    private BasicRuls rule;
     /**
-     * 消费金额
+     *
      */
     @TableField(exist = false)
     private List<BasicRuls> actrule;

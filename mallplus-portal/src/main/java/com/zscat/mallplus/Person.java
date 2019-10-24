@@ -1,5 +1,7 @@
 package com.zscat.mallplus;
 
+import com.zscat.mallplus.sms.vo.BeanKv;
+
 /**
  * Created by qcl on 2018/3/26.
  */
@@ -49,5 +51,14 @@ public class Person {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    public static void main(String[] args) {
+        BeanKv kv=new BeanKv();
+        if (kv==null){
+            System.out.println("1");
+        }else {
+            System.out.println(2);
+        }
     }
 }

@@ -8,6 +8,8 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.service.IPmsSmallNaviconCategoryService;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
@@ -48,6 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,6 +91,8 @@ public class BHomeController {
 
     @Resource
     private TbUserFromIdMapper fromIdMapper;
+    @Resource
+    private IPmsProductService pmsProductService;
 
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
@@ -506,5 +511,39 @@ public class BHomeController {
         entity.setStatus(1);
         fromIdMapper.insert(entity);
         return new CommonResult().success("添加成功");
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询首页推荐品牌")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐品牌")
+    @PostMapping(value = "/recommendBrand/list")
+    public Object getRecommendBrandList(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询首页新品精品、热门、首发列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页新品")
+    @PostMapping(value = "/groom/list")
+    public Object getNewProductList(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
+        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
+        List<PmsProduct> list = new ArrayList<>();
+        if (type==1){
+            list = pmsProductService.getHotProductList(1,100);
+        }else  if (type==2){
+            list = advertiseService.getSaleProductList(1,100);
+        }else  if (type==1){
+            list = pmsProductService.getNewProductList(1,100);
+        }
+        Map<String,Object> map = new HashedMap();
+        map.put("banner",banner);
+        map.put("list",list);
+        return new CommonResult().success(map);
     }
 }

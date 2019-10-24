@@ -19,9 +19,9 @@ public class CartMarkingVo implements Serializable{
     private List<OmsCartItem> cartList ;
     private List<OmsOrderItem> shopOrderGoodsList ;
     /**
-     *
-     * 首购礼
-     * 类型1 第一单获取 2 所有订单获取
+     * 首购礼 1第一单获取 2所有订单获取 ；
+     * 满购礼1选赠礼 获取规则 2满赠礼；
+     * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
      */
     private int type ;
     /**

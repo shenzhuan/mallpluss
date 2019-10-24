@@ -2,6 +2,7 @@ package com.zscat.mallplus.oms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -48,7 +49,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     history.setOrderId(omsOrderDeliveryParam.getOrderId());
                     history.setCreateTime(new Date());
                     history.setOperateMan("后台管理员");
-                    history.setOrderStatus(2);
+                    history.setPreStatus(OrderStatus.TO_DELIVER.getValue());
+                    history.setOrderStatus(OrderStatus.DELIVERED.getValue());
                     history.setNote("完成发货");
                     return history;
                 }).collect(Collectors.toList());

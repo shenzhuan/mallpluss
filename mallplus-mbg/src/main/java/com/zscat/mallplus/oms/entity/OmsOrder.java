@@ -32,6 +32,9 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private BigDecimal blance;
     @TableField(exist = false)
     private List<OmsOrderItem> orderItemList;
+    @TableField(exist = false)
+    private List<OmsOrderOperateHistory> historyList;
+
     /**
      * 订单id
      */

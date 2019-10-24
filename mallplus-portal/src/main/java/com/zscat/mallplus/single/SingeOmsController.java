@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
@@ -50,18 +52,18 @@ public class SingeOmsController extends ApiBaseAction {
     @ApiOperation(value = "查询订单列表")
     @GetMapping(value = "/order/list")
     public Object orderList(OmsOrder order,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time")) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time")) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
         for (OmsOrder omsOrder : page.getRecords()){
-            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()));
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
             omsOrder.setOrderItemList(itemList);
         }
         return new CommonResult().success(page);
@@ -103,7 +105,18 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
+    @SysLog(MODULE = "订单管理", REMARK = "订单确认收货")
+    @ApiOperation("订单确认收货")
+    @RequestMapping(value = "/confimDelivery", method = RequestMethod.POST)
+    @ResponseBody
+    public Object confimDelivery(@ApiParam("订单id") @RequestParam Long id) {
+        try {
+            return new CommonResult().success(orderService.confimDelivery(id));
+        } catch (Exception e) {
+            return new CommonResult().failed();
+        }
 
+    }
 
     @ResponseBody
     @GetMapping("/submitPreview")

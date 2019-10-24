@@ -59,26 +59,81 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     void sendDelayMessageCancelOrder(Long orderId);
 
-
+    /**
+     * 预览订单
+     * @param orderParam
+     * @return
+     */
     ConfirmOrderResult submitPreview(OrderParam orderParam);
 
+    /**
+     * pc 支付
+     * @param tbThanks
+     * @return
+     */
     int payOrder(TbThanks tbThanks);
 
+    /**
+     * 添加购物车
+     * @param cartParam
+     * @return
+     */
     Object addCart(CartParam cartParam);
 
+    /**
+     * 开团
+     * @param orderParam
+     * @return
+     */
     ConfirmOrderResult addGroup(OrderParam orderParam);
 
+    /**
+     * 参团
+     * @param orderParam
+     * @return
+     */
     Object acceptGroup(OrderParam orderParam);
 
+    /**
+     * 积分兑换
+     * @param payParam
+     * @return
+     */
     Object jifenPay(OrderParam payParam);
 
+    /**
+     * 关闭订单
+     * @param newE
+     * @return
+     */
     boolean closeOrder(OmsOrder newE);
+
+    /**
+     * 释放库存和销量
+     * @param newE
+     */
     void releaseStock(OmsOrder newE);
 
+    /**
+     * 取消发货
+     * @param order
+     * @param remark
+     * @return
+     */
     int cancleDelivery(OmsOrder order, String remark);
 
+    /**
+     * 确认收货
+     * @param id
+     * @return
+     */
     Object confimDelivery(Long id);
 
+    /**
+     * 余额支付
+     * @param order
+     * @return
+     */
     OmsOrder blancePay(OmsOrder order);
 
     /**

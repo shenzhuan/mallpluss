@@ -124,19 +124,10 @@ public class BCmsController extends ApiBaseAction {
         return new CommonResult().success(commentService.page(new Page<CmsSubjectComment>(pageNum, pageSize), new QueryWrapper<>(subjectComment).orderByDesc("create_time")));
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询首页推荐文章")
-    @IgnoreAuth
-    @ApiOperation(value = "查询首页推荐文章")
-    @PostMapping(value = "/recommendSubjectList/list")
-    public Object getRecommendSubjectList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        return new CommonResult().success(subjectService.getRecommendSubjectList(1,1));
-    }
     @SysLog(MODULE = "cms", REMARK = "查询专题列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询公益列表")
+    @ApiOperation(value = "查询专题列表")
     @PostMapping(value = "/topic/list")
     public Object subjectList(CmsTopic topic,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -156,7 +147,7 @@ public class BCmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "查询专题详情信息")
     @IgnoreAuth
     @PostMapping(value = "/topic/detail")
-    @ApiOperation(value = "查询公益详情信息")
+    @ApiOperation(value = "查询专题详情信息")
     public Object topicDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsTopic productResult = topicService.getById(id);
         productResult.setReadCount(productResult.getReadCount()+1);
@@ -249,7 +240,7 @@ public class BCmsController extends ApiBaseAction {
     }
 
     @SysLog(MODULE = "cms", REMARK = "创建公益")
-    @ApiOperation(value = "发布公益")
+    @ApiOperation(value = "发布专题")
     @PostMapping(value = "/createTopic")
     public Object createTopic(CmsTopic subject, BindingResult result) {
         CommonResult commonResult;

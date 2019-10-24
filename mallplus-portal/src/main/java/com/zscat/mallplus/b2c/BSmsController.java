@@ -93,6 +93,18 @@ public class BSmsController extends ApiBaseAction {
     }
 
 
+    @ApiOperation("获取单个商品得优惠详情")
+    @RequestMapping(value = "/detail", method = RequestMethod.GET)
+    @ResponseBody
+    public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        List<SmsBasicMarking> basicMarkingList = basicMarkingService.matchGoodsBasicMarking(id);
+        List<SmsBasicGifts> basicGiftsList = basicGiftsService.matchGoodsBasicGifts(id);
+        Map<String,Object> map = new HashMap<>();
+        map.put("basicMarkingList",basicMarkingList);
+        map.put("basicGiftsList",basicGiftsList);
+        return new CommonResult().success(map);
+    }
+
 
 
 }

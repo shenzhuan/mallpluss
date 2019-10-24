@@ -6,7 +6,9 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
+import com.zscat.mallplus.oms.service.IOmsOrderOperateHistoryService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.single.ApiBaseAction;
@@ -27,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -64,7 +67,8 @@ public class BPayController extends ApiBaseAction {
 
     @Resource
     private SysAppletSetMapper appletSetMapper;
-
+    @Autowired
+    private IOmsOrderOperateHistoryService orderOperateHistoryService;
 
     String tradeType="JSAPI";
     String uniformorder="https://api.mch.weixin.qq.com/pay/unifiedorder";
@@ -254,6 +258,15 @@ public class BPayController extends ApiBaseAction {
                     // 付款中
                     orderInfo.setStatus(OrderStatus.PayNotNotice.getValue());
                     orderService.updateById(orderInfo);
+
+                    OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+                    history.setOrderId(orderInfo.getId());
+                    history.setCreateTime(new Date());
+                    history.setOperateMan("shop");
+                    history.setPreStatus(OrderStatus.INIT.getValue());
+                    history.setOrderStatus(OrderStatus.TO_DELIVER.getValue());
+                    history.setNote("小程序支付");
+                    orderOperateHistoryService.save(history);
                     return toResponsObject(200, "微信统一订单下单成功", resultObj);
                 }
             }

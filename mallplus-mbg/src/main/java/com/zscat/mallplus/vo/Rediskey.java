@@ -15,6 +15,7 @@ public class Rediskey {
 
     public static final String GOODS_VIEWCOUNT_CODE = "GOODSVIEWCOUNTCODE_";
     public static final String GOODS_VIEWCOUNT_KEY = "GOODS_VIEWCOUNT_KEY";
+    public static final String KDWL_INFO_CACHE = "KDWL_INFO_CACHE" ;
 
     public static String appletBannerKey = "appletBannerKey";
     public static String appletCategoryKey = "appletCategoryKey";

@@ -76,7 +76,7 @@ public class SmsBasicMarkingController {
     private void validateParam(@RequestBody SmsBasicMarking entity) {
         // 活动商品  1 按类别  2 部分商品
         if (ValidatorUtils.empty(entity.getActiviGoods())){
-            entity.setActiviGoods(0);
+            entity.setActiviGoods(3);
         }
         if (ValidatorUtils.empty(entity.getActiviUser())){
             entity.setActiviUser(1);
@@ -88,23 +88,26 @@ public class SmsBasicMarkingController {
             if (ValidatorUtils.notEmpty(entity.getProductCategoryRelationList())){
                 entity.setGoodsDs(JsonUtil.objectToJson(entity.getProductCategoryRelationList()));
             }
-        }
-        if (entity.getActiviGoods()==2){
+        }else if (entity.getActiviGoods()==2){
             if (ValidatorUtils.notEmpty(entity.getProductRelationList())){
                 entity.setGoodsDs(JsonUtil.objectToJson(entity.getProductRelationList()));
             }
+        }else {
+            entity.setGoodsDs(null);
         }
+
         if (entity.getActiviUser()==2){
             if (ValidatorUtils.notEmpty(entity.getMemberLevelList())){
                 entity.setUserLevel(JsonUtil.objectToJson(entity.getMemberLevelList()));
             }
+        }else {
+            entity.setUserLevel(null);
         }
         if (entity.getSmallType()==1) {
             if (ValidatorUtils.notEmpty(entity.getActrule())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule()));
             }
-        }
-        if (entity.getSmallType()==2) {
+        }else  {
             if (ValidatorUtils.notEmpty(entity.getActrule1())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule1()));
             }
