@@ -39,7 +39,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * 用户注册
      */
     @Transactional
-    CommonResult register(String phone, String password, String confim, String authCode);
+    CommonResult register(String phone, String password, String confim, String authCode,String invitecode);
 
     /**
      * 生成验证码
@@ -74,7 +74,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     Map<String, Object> loginByCode(String phone, String authCode);
 
-    Object simpleReg(String phone, String password, String confimpassword);
+    Object simpleReg(String phone, String password, String confimpassword,String invitecode);
 
     /**
      * 添加积分

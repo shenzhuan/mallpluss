@@ -135,7 +135,7 @@ public class UmsMember extends BaseEntity implements Serializable {
     @TableField("weixin_openid")
     private String weixinOpenid;
 
-    private Long invitecode;
+    private String invitecode;
 
     @TableField("buy_count")
     private Integer buyCount;

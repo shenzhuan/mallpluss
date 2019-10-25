@@ -20,11 +20,9 @@ import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.ums.entity.SysNotice;
 import com.zscat.mallplus.ums.entity.TbUserFromId;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberLocation;
 import com.zscat.mallplus.ums.mapper.TbUserFromIdMapper;
-import com.zscat.mallplus.ums.service.ISysMessageService;
-import com.zscat.mallplus.ums.service.ISysNoticeService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.util.UserUtils;
@@ -51,6 +49,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +67,8 @@ public class BHomeController {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+    @Autowired
+    private IUmsMemberLocationService memberLocationService;
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -194,7 +195,8 @@ public class BHomeController {
     public Object register(@RequestParam String phone,
                            @RequestParam String password,
                            @RequestParam String confimpassword,
-                           @RequestParam String authCode) {
+                           @RequestParam String authCode,
+                           @RequestParam String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
@@ -208,7 +210,7 @@ public class BHomeController {
             return new CommonResult().validateFailed("手机验证码为空");
         }
 
-        return memberService.register(phone, password, confimpassword, authCode);
+        return memberService.register(phone, password, confimpassword, authCode,invitecode);
     }
     @IgnoreAuth
     @ApiOperation(value = "登录以后返回token")
@@ -545,5 +547,14 @@ public class BHomeController {
         map.put("banner",banner);
         map.put("list",list);
         return new CommonResult().success(map);
+    }
+
+    @RequestMapping(value = "submitLocaltion")
+    @ApiOperation(value = "记录位置信息")
+    @ResponseBody
+    public Object submitLocaltion(HttpServletRequest request, HttpServletResponse response, UmsMemberLocation location) {
+        location.setCreateTime(new Date());
+        memberLocationService.save(location);
+        return new CommonResult().success("添加成功");
     }
 }

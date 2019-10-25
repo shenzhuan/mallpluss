@@ -156,7 +156,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public CommonResult register(String phone, String password, String confim, String authCode) {
+    public CommonResult register(String phone, String password, String confim, String authCode,String invitecode) {
 
         //没有该用户进行添加操作
         UmsMember umsMember = new UmsMember();
@@ -166,6 +166,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setPassword(password);
         umsMember.setConfimpassword(confim);
         umsMember.setPhonecode(authCode);
+        umsMember.setInvitecode(invitecode);
         return this.register(umsMember);
     }
 
@@ -284,7 +285,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         String defaultIcon ="http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
         //这是要生成二维码的url
-        String url = "http://www.yjlive.cn:8082/?username="+user.getUsername();
+        String url = "http://www.yjlive.cn:8082/?invitecode="+user.getUsername();
         //要添加到二维码下面的文字
         String words = user.getUsername()+"的二维码";
         //调用刚才的工具类
@@ -299,14 +300,14 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public Object simpleReg(String phone, String password, String confimpassword) {
+    public Object simpleReg(String phone, String password, String confimpassword,String invitecode) {
         //没有该用户进行添加操作
         UmsMember user = new UmsMember();
         user.setUsername(phone);
         user.setPhone(phone);
         user.setPassword(password);
         user.setConfimpassword(confimpassword);
-
+user.setInvitecode(invitecode);
         return this.register(user);
     }
 
