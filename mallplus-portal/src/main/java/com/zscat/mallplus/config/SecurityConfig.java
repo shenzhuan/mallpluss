@@ -6,7 +6,10 @@ import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.vo.MemberDetails;
+import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +42,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private IUmsMemberService memberService;
+    @Autowired
+    private RedisService redisService;
     @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
@@ -101,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 try {
-                    UmsMember member = memberService.getByUsername(username);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username));
                     if (member != null) {
                         return new MemberDetails(member);
                     }

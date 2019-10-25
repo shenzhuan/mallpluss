@@ -22,6 +22,7 @@ import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.vo.AppletLoginParam;
+import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -295,6 +296,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
         umsMember.setAvatar(aliyunOSSUtil.upload("png",inputStream));
         memberMapper.insert(umsMember);
+
+        redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()) ,JsonUtils.objectToJson(umsMember));
         umsMember.setPassword(null);
         return new CommonResult().success("注册成功", null);
     }

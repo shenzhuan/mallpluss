@@ -67,6 +67,12 @@ public class Rediskey {
 
     public static String orderDetail = "orderDetail";
     public static String getorderstatusnum = "getorderstatusnum";
+
+
+    /**
+     * 会员
+     */
+    public static String MEMBER = "MEMBER:%s";
     /**
      * 产生key:如在newsId为2上的咨询点赞后会产生key: LIKE:ENTITY_NEWS:2
      * @param entityId
