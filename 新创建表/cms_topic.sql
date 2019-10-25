@@ -4,7 +4,7 @@
  Source Server         : latest
  Source Server Type    : MySQL
  Source Server Version : 50722
- Source Host           : 39.106.214.32:3306
+ Source Host           : 39.106.212.32:3306
  Source Schema         : mallplus1
 
  Target Server Type    : MySQL
