@@ -18,18 +18,19 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.SmsService;
-import com.zscat.mallplus.util.CharUtil;
-import com.zscat.mallplus.util.CommonUtil;
-import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.JwtTokenUtil;
+import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.SmsCode;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,9 +41,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -61,6 +67,9 @@ import java.util.concurrent.CompletableFuture;
 public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember> implements IUmsMemberService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);
+
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
 
     @Resource
     private UmsMemberMapper memberMapper;
@@ -274,7 +283,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
         String defaultIcon ="http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
-        umsMember.setAvatar(defaultIcon);
+        //这是要生成二维码的url
+        String url = "http://www.yjlive.cn:8082/?username="+user.getUsername();
+        //要添加到二维码下面的文字
+        String words = user.getUsername()+"的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url,words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+
+
+        umsMember.setAvatar(aliyunOSSUtil.upload("png",inputStream));
         memberMapper.insert(umsMember);
         umsMember.setPassword(null);
         return new CommonResult().success("注册成功", null);
@@ -289,32 +307,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         user.setPassword(password);
         user.setConfimpassword(confimpassword);
 
-
-        if (!user.getPassword().equals(user.getConfimpassword())) {
-            return new CommonResult().failed("密码不一致");
-        }
-        //查询是否已有该用户
-
-        UmsMember queryM = new UmsMember();
-        queryM.setUsername(user.getUsername());
-
-        UmsMember umsMembers = memberMapper.selectOne(new QueryWrapper<>(queryM));
-        if (umsMembers != null) {
-            return new CommonResult().failed("该用户已经存在");
-        }
-        //没有该用户进行添加操作
-
-        UmsMember umsMember = new UmsMember();
-        umsMember.setMemberLevelId(4L);
-        umsMember.setUsername(user.getUsername());
-        umsMember.setPhone(user.getPhone());
-        umsMember.setPassword(passwordEncoder.encode(user.getPassword()));
-        umsMember.setCreateTime(new Date());
-        umsMember.setStatus(1);
-
-        memberMapper.insert(umsMember);
-        umsMember.setPassword(null);
-        return new CommonResult().success("注册成功", "注册成功");
+        return this.register(user);
     }
 
     @Override
