@@ -35,6 +35,7 @@ public class OrderParam {
     private Long skuId;
     private Long goodsId;
     private Long groupId;
+    private Long groupActivityId;
     // 1 发起拼团 2 参与拼团
     private Integer groupType;
     private Long mgId =0l;

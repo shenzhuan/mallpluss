@@ -432,7 +432,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
         //团购订单
         if (orderParam.getOrderType() == 3) {
-            SmsGroupActivity smsGroupActivity = smsGroupActivityService.getById(orderParam.getGroupId());
+            SmsGroupActivity smsGroupActivity = smsGroupActivityService.getById(orderParam.getGroupActivityId());
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
                 List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(
                         Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList()));

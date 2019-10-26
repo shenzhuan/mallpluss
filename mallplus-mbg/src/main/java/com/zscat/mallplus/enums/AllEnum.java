@@ -156,7 +156,7 @@ public class AllEnum {
         /**
          * 秒杀订单
          */
-        SKILL(5, "skill"),
+        SKILL(6, "skill"),
         ;
 
         private int code;
