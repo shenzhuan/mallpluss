@@ -1582,6 +1582,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (basicMarking!=null){
             promotionAmount = basicMarking.getMinAmount();
         }
+        if (promotionAmount==null){
+            promotionAmount=BigDecimal.ZERO;
+        }
         for (OmsCartItem cartPromotionItem : cartPromotionItemList) {
             totalAmount = totalAmount.add(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
             //  promotionAmount = promotionAmount.add(cartPromotionItem.getReduceAmount().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
@@ -1660,6 +1663,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      * 计算订单应付金额
      */
     private BigDecimal calcPayAmount(OmsOrder order) {
+        if (order.getPromotionAmount()==null){
+            order.setPromotionAmount(BigDecimal.ZERO);
+        }
+        if (order.getFreightAmount()==null){
+            order.setFreightAmount(BigDecimal.ZERO);
+        }
         //总金额+运费-促销优惠-优惠券优惠-积分抵扣
         BigDecimal payAmount = order.getTotalAmount()
                 .add(order.getFreightAmount())
