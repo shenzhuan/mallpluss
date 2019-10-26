@@ -439,11 +439,21 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
                     PmsProduct tempproduct = pmsProductService.getById(item.getProductId());
                     if (tempproduct != null) {
                         HomeProductAttr product = new HomeProductAttr();
-                        product.setId(tempproduct.getId());
+                        product.setId(item.getId());
+                        product.setProductId(tempproduct.getId());
                         product.setProductImg(tempproduct.getPic());
                         product.setProductName(tempproduct.getName());
-                        product.setProductPrice(tempproduct.getPromotionPrice() != null ? tempproduct.getPromotionPrice() : BigDecimal.ZERO);
-                        productAttrs.add(product);
+                        product.setProductPrice(tempproduct.getPrice() != null ? tempproduct.getPrice() : BigDecimal.ZERO);
+                        product.setFlashPromotionPrice(item.getFlashPromotionPrice());
+                        product.setFlashPromotionCount(item.getFlashPromotionCount());
+                        if (item.getFlashPromotionLimit()<1){
+                            product.setFlashPromotionLimit(1);
+                        }else {
+                            product.setFlashPromotionLimit(item.getFlashPromotionLimit());
+                        }
+                        if (product.getProductPrice().compareTo(BigDecimal.ZERO)>0 && item.getFlashPromotionCount()>0){
+                            productAttrs.add(product);
+                        }
                     }
                 }
                 smsFlashSessionInfo.setProductList(productAttrs);

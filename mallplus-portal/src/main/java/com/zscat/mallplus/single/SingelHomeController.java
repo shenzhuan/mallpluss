@@ -6,6 +6,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
@@ -63,6 +64,8 @@ public class SingelHomeController {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+    @Resource
+    private IPmsProductService pmsProductService;
     @Autowired
     private IUmsMemberLocationService memberLocationService;
     @Autowired
@@ -469,5 +472,26 @@ public class SingelHomeController {
         location.setCreateTime(new Date());
         memberLocationService.save(location);
         return new CommonResult().success("添加成功");
+    }
+
+
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐商品")
+    @GetMapping(value = "/initGoodsRedis")
+    public Object initGoodsRedis() {
+
+        return pmsProductService.initGoodsRedis();
+
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐商品")
+    @GetMapping(value = "/initMemberRedis")
+    public Object initMemberRedis() {
+
+        return new CommonResult().success(memberService.initMemberRedis());
+
     }
 }

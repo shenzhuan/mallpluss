@@ -86,5 +86,6 @@ public interface IUmsMemberService extends IService<UmsMember> {
     Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
 
 
+    Object initMemberRedis();
 }
 

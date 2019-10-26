@@ -15,18 +15,26 @@ import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.pms.entity.PmsProductConsult;
+import com.zscat.mallplus.pms.service.IPmsProductConsultService;
+import com.zscat.mallplus.pms.vo.ProductConsultParam;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +42,7 @@ import java.util.List;
  * @Date: 2019/4/2 15:02
  * @Description:
  */
+@Slf4j
 @RestController
 @Api(tags = "OmsController", description = "订单管理系统")
 @RequestMapping("/api/single/oms")
@@ -46,6 +55,8 @@ public class SingeOmsController extends ApiBaseAction {
     private IOmsOrderService orderService;
     @Resource
     private IOmsOrderItemService orderItemService;
+    @Autowired
+    private IPmsProductConsultService pmsProductConsultService;
 
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
@@ -56,10 +67,11 @@ public class SingeOmsController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
-        if (order.getStatus()==0){
+        if (order.getStatus()!=null && order.getStatus()==0){
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            order.setMemberId(UserUtils.getCurrentMember().getId());
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
         for (OmsOrder omsOrder : page.getRecords()){
@@ -111,13 +123,32 @@ public class SingeOmsController extends ApiBaseAction {
     @ResponseBody
     public Object confimDelivery(@ApiParam("订单id") @RequestParam Long id) {
         try {
-            return new CommonResult().success(orderService.confimDelivery(id));
+            return orderService.confimDelivery(id);
         } catch (Exception e) {
             return new CommonResult().failed();
         }
-
+    }
+    @SysLog(MODULE = "订单管理", REMARK = "订单申请退款")
+    @ApiOperation("申请退款")
+    @RequestMapping(value = "/applyRefund", method = RequestMethod.POST)
+    @ResponseBody
+    public Object applyRefund(@ApiParam("订单id") @RequestParam Long id) {
+        try {
+            return orderService.applyRefund(id);
+        } catch (Exception e) {
+            log.error("订单确认收货：%s", e.getMessage(), e);
+            return new CommonResult().failed();
+        }
     }
 
+    @SysLog(MODULE = "oms", REMARK = "添加订单评论")
+    @ApiOperation(value = "添加订单评论")
+    @PostMapping(value = "/orderevaluate")
+    public Object addGoodsConsult( @RequestParam(value = "orderId", defaultValue = "1") Long orderId,
+                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
+
+        return orderService.orderComment(orderId,items);
+    }
     @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {

@@ -38,7 +38,7 @@ public class OrderParam {
     // 1 发起拼团 2 参与拼团
     private Integer groupType;
     private Long mgId =0l;
-
+    private Long skillId =0l; // 秒杀ID
     String basicGiftsVar;
 
 

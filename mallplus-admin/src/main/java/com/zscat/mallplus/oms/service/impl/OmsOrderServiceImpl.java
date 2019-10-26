@@ -42,19 +42,21 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     public int delivery(List<OmsOrderDeliveryParam> deliveryParamList) {
         //批量发货
         int count = orderMapper.delivery(deliveryParamList);
-        //添加操作记录
-        List<OmsOrderOperateHistory> operateHistoryList = deliveryParamList.stream()
-                .map(omsOrderDeliveryParam -> {
-                    OmsOrderOperateHistory history = new OmsOrderOperateHistory();
-                    history.setOrderId(omsOrderDeliveryParam.getOrderId());
-                    history.setCreateTime(new Date());
-                    history.setOperateMan("后台管理员");
-                    history.setPreStatus(OrderStatus.TO_DELIVER.getValue());
-                    history.setOrderStatus(OrderStatus.DELIVERED.getValue());
-                    history.setNote("完成发货");
-                    return history;
-                }).collect(Collectors.toList());
-        orderOperateHistoryDao.saveBatch(operateHistoryList);
+        if (count>0){
+            //添加操作记录
+            List<OmsOrderOperateHistory> operateHistoryList = deliveryParamList.stream()
+                    .map(omsOrderDeliveryParam -> {
+                        OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+                        history.setOrderId(omsOrderDeliveryParam.getOrderId());
+                        history.setCreateTime(new Date());
+                        history.setOperateMan("后台管理员");
+                        history.setPreStatus(OrderStatus.TO_DELIVER.getValue());
+                        history.setOrderStatus(OrderStatus.DELIVERED.getValue());
+                        history.setNote("完成发货");
+                        return history;
+                    }).collect(Collectors.toList());
+            orderOperateHistoryDao.saveBatch(operateHistoryList);
+        }
         return count;
     }
 

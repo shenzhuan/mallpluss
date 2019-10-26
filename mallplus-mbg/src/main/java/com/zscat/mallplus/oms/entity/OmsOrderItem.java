@@ -123,6 +123,9 @@ public class OmsOrderItem extends BaseEntity implements Serializable {
     @TableField("real_amount")
     private BigDecimal realAmount;
 
+    /**
+     * 秒杀活动id
+     */
     @TableField("gift_integration")
     private Integer giftIntegration;
 

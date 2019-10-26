@@ -53,7 +53,7 @@ public class OmsOrderController {
                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
         } catch (Exception e) {
             log.error("根据条件查询所有订单表列表：%s", e.getMessage(), e);
         }

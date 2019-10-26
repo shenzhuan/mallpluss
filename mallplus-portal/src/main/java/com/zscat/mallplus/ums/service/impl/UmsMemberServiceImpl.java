@@ -588,5 +588,15 @@ user.setInvitecode(invitecode);
         return tokenMap;
 
     }
+
+    @Override
+    public Object initMemberRedis() {
+        List<UmsMember> list = memberMapper.selectList(new QueryWrapper<>());
+        for (UmsMember member: list){
+            redisService.set(String.format(Rediskey.MEMBER, member.getUsername()) ,JsonUtils.objectToJson(member));
+        }
+        return 1;
+    }
+
 }
 

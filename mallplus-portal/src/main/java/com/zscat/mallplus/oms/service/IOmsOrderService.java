@@ -142,4 +142,13 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return
      */
     Object preGroupActivityOrder(OrderParam orderParam);
+
+    /**
+     * 申请退款
+     * @param id
+     * @return
+     */
+    Object applyRefund(Long id);
+
+    Object orderComment(Long orderId, String items);
 }

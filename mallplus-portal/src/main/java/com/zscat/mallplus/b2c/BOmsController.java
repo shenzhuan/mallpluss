@@ -104,8 +104,7 @@ public class BOmsController extends ApiBaseAction {
     @Autowired
     private ApiContext apiContext;
 
-    @Autowired
-    private IPmsProductConsultService pmsProductConsultService;
+
 
     @Autowired
     private IOmsShipService omsShipService;
@@ -343,6 +342,7 @@ public class BOmsController extends ApiBaseAction {
         if (ValidatorUtils.empty(order.getStatus()) || order.getStatus()==0){
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
+            order.setMemberId(UserUtils.getCurrentMember().getId());
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
@@ -432,6 +432,18 @@ public class BOmsController extends ApiBaseAction {
     public Object confimDelivery(@ApiParam("订单id") @RequestParam Long id) {
         try {
             return new CommonResult().success(orderService.confimDelivery(id));
+        } catch (Exception e) {
+            log.error("订单确认收货：%s", e.getMessage(), e);
+            return new CommonResult().failed();
+        }
+    }
+    @SysLog(MODULE = "订单管理", REMARK = "订单申请退款")
+    @ApiOperation("申请退款")
+    @RequestMapping(value = "/order.applyRefund", method = RequestMethod.POST)
+    @ResponseBody
+    public Object applyRefund(@ApiParam("订单id") @RequestParam Long id) {
+        try {
+            return new CommonResult().success(orderService.applyRefund(id));
         } catch (Exception e) {
             log.error("订单确认收货：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -626,37 +638,8 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping(value = "/user.orderevaluate")
     public Object addGoodsConsult( @RequestParam(value = "orderId", defaultValue = "1") Long orderId,
                                    @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
-        CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
 
-        List<ProductConsultParam> itemss = JsonUtils.json2list(items,ProductConsultParam.class);
-        for (ProductConsultParam param : itemss){
-            PmsProductConsult productConsult = new PmsProductConsult();
-            if (member!=null){
-                productConsult.setPic(member.getIcon());
-                productConsult.setMemberName(member.getNickname());
-                productConsult.setMemberId(member.getId());
-            }else {
-                return new CommonResult().failed("请先登录");
-            }
-            productConsult.setGoodsId(param.getGoodsId());
-            productConsult.setConsultContent(param.getTextarea());
-            productConsult.setStars(param.getScore());
-            productConsult.setEmail(Arrays.toString(param.getImages()));
-            productConsult.setConsultAddtime(new Date());
-            productConsult.setType(AllEnum.ConsultType.ORDER.code());
-            pmsProductConsultService.save(productConsult);
-        }
-        OmsOrder omsOrder = new OmsOrder();
-        omsOrder.setId(orderId);
-        omsOrder.setIsComment(2);
-        omsOrder.setStatus(OrderStatus.TRADE_SUCCESS.getValue());
-        if ( orderService.updateById(omsOrder)) {
-            commonResult = new CommonResult().success(1);
-        } else {
-            commonResult = new CommonResult().failed();
-        }
-        return commonResult;
+        return orderService.orderComment(orderId,items);
     }
 
     @IgnoreAuth
