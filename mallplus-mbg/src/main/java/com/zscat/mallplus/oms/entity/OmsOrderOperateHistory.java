@@ -60,10 +60,7 @@ public class OmsOrderOperateHistory extends BaseEntity implements Serializable {
      * 备注
      */
     private String note;
-    /**
-     * 原订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单
-     */
-    private Integer status;
+
 
 
 }

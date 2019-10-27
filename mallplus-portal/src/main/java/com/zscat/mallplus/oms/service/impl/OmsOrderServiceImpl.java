@@ -1009,7 +1009,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     public OmsOrder blancePay(OmsOrder order) {
         UmsMember userDO = UserUtils.getCurrentMember();
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
-        order.setPayType(3);
+        order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
         orderService.updateById(order);
         if (ValidatorUtils.notEmpty(order.getGroupId())) {
@@ -1017,6 +1017,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             group.setId(order.getGroupId());
             group.setPeoples(group.getPeoples() - 1);
             groupMapper.updateById(group);
+        }
+        if (order.getPayAmount().compareTo(BigDecimal.ZERO)<0){
+            order.setPayAmount(new BigDecimal("0.01"));
         }
         userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
         memberService.updateById(userDO);
@@ -1076,11 +1079,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             List<OmsOrderItem> omsOrderItemList = new ArrayList<>();
             omsOrderItemList.add(orderItem);
             OmsOrder order = new OmsOrder();
-            order.setOrderType(5);
             createOrderObj(order, orderParam, member, omsOrderItemList, null);
-            order.setOrderType(2);
+            order.setOrderType(AllEnum.OrderType.JIFEN.code());
             order.setStatus(OrderStatus.TO_DELIVER.getValue());
-            order.setPayType(3);
+            order.setPayType(AllEnum.OrderPayType.jifenPay.code());
             orderService.save(order);
             orderItem.setOrderId(order.getId());
             orderItemService.save(orderItem);

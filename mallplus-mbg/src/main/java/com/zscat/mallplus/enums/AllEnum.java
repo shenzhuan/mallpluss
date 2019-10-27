@@ -152,7 +152,7 @@ public class AllEnum {
          * 砍价订单
          */
         KNAN_JIA(4, "kanjia"),
-
+        JIFEN(5, "jifen"),
         /**
          * 秒杀订单
          */
@@ -178,6 +178,47 @@ public class AllEnum {
         }
     }
 
+    /**
+     *
+     */
+    public enum OrderPayType implements BaseEnum<Integer> {
+
+        /**
+         *
+         */
+        weixinAppletPay(1, "weixinAppletPay"),
+        /**
+         *
+         */
+        alipay(2, "alipay"),
+        /**
+         * 余额支付
+         */
+        balancePay(3, "balancePay"),
+        /**
+         * 积分兑换
+         */
+        jifenPay(5, "jifenPay")
+        ;
+
+        private int code;
+        private String value;
+
+        OrderPayType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
     /**
      * 评论类型：1->商品；2->赠品
      *
