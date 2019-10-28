@@ -2,22 +2,17 @@ package com.zscat.mallplus.ums.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
-import com.zscat.mallplus.ums.entity.Sms;
-import com.zscat.mallplus.ums.entity.SysAppletSet;
-import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
-import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
-import com.zscat.mallplus.ums.service.SmsService;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
@@ -108,8 +103,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private OmsOrderMapper omsOrderMapper;
+    @Resource
+    private IUmsMemberBlanceLogService blanceLogService;
+    @Resource
+    private IUmsIntegrationChangeHistoryService umsIntegrationChangeHistoryService;
 
-
+    Integer regJifen = 100;
+    Integer logginJifen= 5;
     @Override
     public void updataMemberOrderInfo() {
         List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
@@ -133,16 +133,49 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     /**
-     * 添加积分
+     * 添加余额记录 并更新用户余额
      *
      * @param id
      * @param integration
      */
     @Override
-    public void addIntegration(Long id, Integer integration) {
+    public void addBlance(Long id, Integer integration,int type,String note) {
+
+        UmsMemberBlanceLog blanceLog = new UmsMemberBlanceLog();
+        blanceLog.setMemberId(id);
+        blanceLog.setPrice(new BigDecimal(integration));
+        blanceLog.setCreateTime(new Date());
+        blanceLog.setType(type);
+        blanceLog.setNote(note);
+        blanceLogService.save(blanceLog);
+        UmsMember member = memberMapper.selectById(id);
+        member.setBlance(member.getBlance().add(blanceLog.getPrice()));
+        memberMapper.updateById(member);
 
     }
 
+    /**
+     * 添加余额记录 并更新用户余额
+     *
+     * @param id
+     * @param integration
+     */
+    @Override
+    public void addIntegration(Long id, Integer integration,int changeType,String note,int sourceType,String operateMan) {
+        UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
+        history.setMemberId(id);
+        history.setChangeCount(integration);
+        history.setCreateTime(new Date());
+        history.setChangeType(changeType);
+        history.setOperateNote(note);
+        history.setSourceType(sourceType);
+        history.setOperateMan(operateMan);
+        umsIntegrationChangeHistoryService.save(history);
+        UmsMember member = memberMapper.selectById(id);
+        member.setIntegration(member.getIntegration()+integration);
+        memberMapper.updateById(member);
+
+    }
     @Override
     public UmsMember getByUsername(String username) {
         UmsMember umsMember = new UmsMember();
@@ -282,6 +315,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setCreateTime(new Date());
         umsMember.setStatus(1);
         umsMember.setBlance(new BigDecimal(10000));
+        umsMember.setIntegration(10000);
 
         String defaultIcon ="http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
@@ -298,6 +332,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         memberMapper.insert(umsMember);
 
         redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()) ,JsonUtils.objectToJson(umsMember));
+
+        addIntegration(umsMember.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),umsMember.getUsername());
         umsMember.setPassword(null);
         return new CommonResult().success("注册成功", null);
     }
@@ -403,7 +439,11 @@ user.setInvitecode(invitecode);
             token = jwtTokenUtil.generateToken(umsMember.getUsername());
             resultObj.put("userId", umsMember.getId());
             resultObj.put("userInfo", umsMember);
+            addIntegration(umsMember.getId(),logginJifen,1,"登录添加积分",AllEnum.ChangeSource.login.code(),umsMember.getUsername());
+
         } else {
+            addIntegration(userVo.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),userVo.getUsername());
+
             token = jwtTokenUtil.generateToken(userVo.getUsername());
             resultObj.put("userId", userVo.getId());
             resultObj.put("userInfo", userVo);
@@ -492,7 +532,11 @@ user.setInvitecode(invitecode);
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
+                addIntegration(umsMember.getId(),logginJifen,1,"登录添加积分",AllEnum.ChangeSource.login.code(),umsMember.getUsername());
+
             } else {
+                addIntegration(userVo.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),userVo.getUsername());
+
                 token = jwtTokenUtil.generateToken(userVo.getUsername());
                 resultObj.put("userId", userVo.getId());
                 resultObj.put("userInfo", userVo);

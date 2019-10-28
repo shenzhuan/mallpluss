@@ -1038,6 +1038,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setOrderStatus(OrderStatus.TO_DELIVER.getValue());
         history.setNote("余额支付");
         orderOperateHistoryService.save(history);
+        memberService.addIntegration(userDO.getId(),order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(),1,"余额支付添加积分",AllEnum.ChangeSource.order.code(),userDO.getUsername());
 
         return order;
     }

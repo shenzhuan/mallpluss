@@ -19,4 +19,6 @@ public class ConstansValue {
             "        product_category_name, supply_id, create_time, school_id";
 
     public static final String sampleOrderList = "id,member_id, order_sn, create_time, member_username, total_amount, pay_amount,status, order_type,pay_type,source_type,goods_id,goods_name" ;
+
+
 }
