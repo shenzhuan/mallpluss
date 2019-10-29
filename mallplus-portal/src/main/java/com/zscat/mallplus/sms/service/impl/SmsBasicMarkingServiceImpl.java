@@ -291,8 +291,8 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
             for (BasicRuls rule : actrule) {
                 if (totalAmount.compareTo(rule.getFullPrice()) >= 0) {
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
-                        lastAmount = rule.getReducePrice().multiply(totalAmount);
-                        newBasicGift.setMinAmount(lastAmount);
+                        lastAmount = rule.getReducePrice().multiply(totalAmount).divide(new BigDecimal(10),2);
+                        newBasicGift.setMinAmount(totalAmount.subtract(lastAmount));
                         break;
                     }
                 }
@@ -301,14 +301,14 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
             for (BasicRuls rule : actrule) {
                 if (totalCount >= rule.getFullPrice().intValue()) {
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
-                        lastAmount = rule.getReducePrice().multiply(totalAmount);
-                        newBasicGift.setMinAmount(lastAmount);
+                        lastAmount = rule.getReducePrice().multiply(totalAmount).divide(new BigDecimal(10),2);
+                        newBasicGift.setMinAmount(totalAmount.subtract(lastAmount));
                         break;
                     }
                 }
             }
         }
-        return lastAmount;
+        return newBasicGift.getMinAmount();
     }
 
     private BigDecimal getBigDecimal(BigDecimal lastAmount, SmsBasicMarking newBasicGift, SmsBasicMarking m, List<BasicRuls> actrule, BigDecimal totalAmount, int totalCount) {

@@ -2,34 +2,31 @@ package com.zscat.mallplus.ums.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
-import com.zscat.mallplus.ums.entity.Sms;
-import com.zscat.mallplus.ums.entity.SysAppletSet;
-import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
-import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
-import com.zscat.mallplus.ums.service.SmsService;
-import com.zscat.mallplus.util.CharUtil;
-import com.zscat.mallplus.util.CommonUtil;
-import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.JwtTokenUtil;
+import com.zscat.mallplus.ums.service.*;
+import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.vo.AppletLoginParam;
+import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,9 +37,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -61,6 +63,9 @@ import java.util.concurrent.CompletableFuture;
 public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember> implements IUmsMemberService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);
+
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
 
     @Resource
     private UmsMemberMapper memberMapper;
@@ -98,8 +103,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private OmsOrderMapper omsOrderMapper;
+    @Resource
+    private IUmsMemberBlanceLogService blanceLogService;
+    @Resource
+    private IUmsIntegrationChangeHistoryService umsIntegrationChangeHistoryService;
 
-
+    Integer regJifen = 100;
+    Integer logginJifen= 5;
     @Override
     public void updataMemberOrderInfo() {
         List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
@@ -123,16 +133,48 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     /**
-     * 添加积分
+     * 添加余额记录 并更新用户余额
      *
      * @param id
      * @param integration
      */
     @Override
-    public void addIntegration(Long id, Integer integration) {
+    public void addBlance(Long id, Integer integration,int type,String note) {
+
+        UmsMemberBlanceLog blanceLog = new UmsMemberBlanceLog();
+        blanceLog.setMemberId(id);
+        blanceLog.setPrice(new BigDecimal(integration));
+        blanceLog.setCreateTime(new Date());
+        blanceLog.setType(type);
+        blanceLog.setNote(note);
+        blanceLogService.save(blanceLog);
+        UmsMember member = memberMapper.selectById(id);
+        member.setBlance(member.getBlance().add(blanceLog.getPrice()));
+        memberMapper.updateById(member);
 
     }
 
+    /**
+     * 添加积分记录 并更新用户积分
+     * @param id
+     * @param integration
+     */
+    @Override
+    public void addIntegration(Long id, Integer integration,int changeType,String note,int sourceType,String operateMan) {
+        UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
+        history.setMemberId(id);
+        history.setChangeCount(integration);
+        history.setCreateTime(new Date());
+        history.setChangeType(changeType);
+        history.setOperateNote(note);
+        history.setSourceType(sourceType);
+        history.setOperateMan(operateMan);
+        umsIntegrationChangeHistoryService.save(history);
+        UmsMember member = memberMapper.selectById(id);
+        member.setIntegration(member.getIntegration()+integration);
+        memberMapper.updateById(member);
+
+    }
     @Override
     public UmsMember getByUsername(String username) {
         UmsMember umsMember = new UmsMember();
@@ -147,7 +189,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public CommonResult register(String phone, String password, String confim, String authCode) {
+    public CommonResult register(String phone, String password, String confim, String authCode,String invitecode) {
 
         //没有该用户进行添加操作
         UmsMember umsMember = new UmsMember();
@@ -157,6 +199,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setPassword(password);
         umsMember.setConfimpassword(confim);
         umsMember.setPhonecode(authCode);
+        umsMember.setInvitecode(invitecode);
         return this.register(umsMember);
     }
 
@@ -271,50 +314,39 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setCreateTime(new Date());
         umsMember.setStatus(1);
         umsMember.setBlance(new BigDecimal(10000));
+        umsMember.setIntegration(10000);
 
         String defaultIcon ="http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
-        umsMember.setAvatar(defaultIcon);
+        //这是要生成二维码的url
+        String url = "http://www.yjlive.cn:8082/?invitecode="+user.getUsername();
+        //要添加到二维码下面的文字
+        String words = user.getUsername()+"的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url,words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+
+
+        umsMember.setAvatar(aliyunOSSUtil.upload("png",inputStream));
         memberMapper.insert(umsMember);
+
+        redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()) ,JsonUtils.objectToJson(umsMember));
+
+        addIntegration(umsMember.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),umsMember.getUsername());
         umsMember.setPassword(null);
         return new CommonResult().success("注册成功", null);
     }
 
     @Override
-    public Object simpleReg(String phone, String password, String confimpassword) {
+    public Object simpleReg(String phone, String password, String confimpassword,String invitecode) {
         //没有该用户进行添加操作
         UmsMember user = new UmsMember();
         user.setUsername(phone);
         user.setPhone(phone);
         user.setPassword(password);
         user.setConfimpassword(confimpassword);
-
-
-        if (!user.getPassword().equals(user.getConfimpassword())) {
-            return new CommonResult().failed("密码不一致");
-        }
-        //查询是否已有该用户
-
-        UmsMember queryM = new UmsMember();
-        queryM.setUsername(user.getUsername());
-
-        UmsMember umsMembers = memberMapper.selectOne(new QueryWrapper<>(queryM));
-        if (umsMembers != null) {
-            return new CommonResult().failed("该用户已经存在");
-        }
-        //没有该用户进行添加操作
-
-        UmsMember umsMember = new UmsMember();
-        umsMember.setMemberLevelId(4L);
-        umsMember.setUsername(user.getUsername());
-        umsMember.setPhone(user.getPhone());
-        umsMember.setPassword(passwordEncoder.encode(user.getPassword()));
-        umsMember.setCreateTime(new Date());
-        umsMember.setStatus(1);
-
-        memberMapper.insert(umsMember);
-        umsMember.setPassword(null);
-        return new CommonResult().success("注册成功", "注册成功");
+user.setInvitecode(invitecode);
+        return this.register(user);
     }
 
     @Override
@@ -406,7 +438,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             token = jwtTokenUtil.generateToken(umsMember.getUsername());
             resultObj.put("userId", umsMember.getId());
             resultObj.put("userInfo", umsMember);
+            addIntegration(umsMember.getId(),logginJifen,1,"登录添加积分",AllEnum.ChangeSource.login.code(),umsMember.getUsername());
+
         } else {
+            addIntegration(userVo.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),userVo.getUsername());
+
             token = jwtTokenUtil.generateToken(userVo.getUsername());
             resultObj.put("userId", userVo.getId());
             resultObj.put("userInfo", userVo);
@@ -495,7 +531,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
+                addIntegration(umsMember.getId(),logginJifen,1,"登录添加积分",AllEnum.ChangeSource.login.code(),umsMember.getUsername());
+
             } else {
+                addIntegration(userVo.getId(),regJifen,1,"注册添加积分",AllEnum.ChangeSource.register.code(),userVo.getUsername());
+
                 token = jwtTokenUtil.generateToken(userVo.getUsername());
                 resultObj.put("userId", userVo.getId());
                 resultObj.put("userInfo", userVo);
@@ -591,5 +631,15 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         return tokenMap;
 
     }
+
+    @Override
+    public Object initMemberRedis() {
+        List<UmsMember> list = memberMapper.selectList(new QueryWrapper<>());
+        for (UmsMember member: list){
+            redisService.set(String.format(Rediskey.MEMBER, member.getUsername()) ,JsonUtils.objectToJson(member));
+        }
+        return 1;
+    }
+
 }
 

@@ -114,7 +114,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Integer payType;
 
     /**
-     * 订单来源：0->PC订单；1->app订单
+     * 订单来源：；1->小程序订单2 h5订单3PC订单  4 app
      */
     @TableField("source_type")
     private Integer sourceType;

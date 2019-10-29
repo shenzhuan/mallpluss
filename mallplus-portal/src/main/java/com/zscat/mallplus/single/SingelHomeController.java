@@ -6,6 +6,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
@@ -14,6 +15,8 @@ import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberLocation;
+import com.zscat.mallplus.ums.service.IUmsMemberLocationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
@@ -36,10 +39,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +64,10 @@ public class SingelHomeController {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+    @Resource
+    private IPmsProductService pmsProductService;
+    @Autowired
+    private IUmsMemberLocationService memberLocationService;
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -334,7 +344,8 @@ public class SingelHomeController {
     public Object register(@RequestParam String phone,
                            @RequestParam String password,
                            @RequestParam String confimpassword,
-                           @RequestParam String authCode) {
+                           @RequestParam String authCode,
+                           @RequestParam String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
@@ -348,7 +359,7 @@ public class SingelHomeController {
             return new CommonResult().validateFailed("手机验证码为空");
         }
 
-        return memberService.register(phone, password, confimpassword, authCode);
+        return memberService.register(phone, password, confimpassword, authCode,invitecode);
     }
 
     @IgnoreAuth
@@ -356,7 +367,7 @@ public class SingelHomeController {
     @PostMapping(value = "/simpleReg")
     public Object simpleReg(@RequestParam String phone,
                             @RequestParam String password,
-                            @RequestParam String confimpassword) {
+                            @RequestParam String confimpassword,@RequestParam String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
@@ -368,7 +379,7 @@ public class SingelHomeController {
         }
 
 
-        return memberService.simpleReg(phone, password, confimpassword);
+        return memberService.simpleReg(phone, password, confimpassword,invitecode);
     }
 
     /**
@@ -454,5 +465,33 @@ public class SingelHomeController {
 
     }
 
+    @RequestMapping(value = "submitLocaltion")
+    @ApiOperation(value = "记录位置信息")
+    @ResponseBody
+    public Object submitLocaltion(HttpServletRequest request, HttpServletResponse response, UmsMemberLocation location) {
+        location.setCreateTime(new Date());
+        memberLocationService.save(location);
+        return new CommonResult().success("添加成功");
+    }
 
+
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐商品")
+    @GetMapping(value = "/initGoodsRedis")
+    public Object initGoodsRedis() {
+
+        return pmsProductService.initGoodsRedis();
+
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐商品")
+    @GetMapping(value = "/initMemberRedis")
+    public Object initMemberRedis() {
+
+        return new CommonResult().success(memberService.initMemberRedis());
+
+    }
 }

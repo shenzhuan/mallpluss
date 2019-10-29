@@ -46,6 +46,15 @@ public class OssAliyunUtil {
 
     /**
      * 上传文件
+     * @param suffix
+     * @param inputStream
+     * @return
+     */
+    public String upload(String suffix, InputStream inputStream) {
+        return upload(defaultOssAliyunField, getKey(defaultOssAliyunField.getPrefix(), suffix), inputStream);
+    }
+    /**
+     * 上传文件
      *
      * @param ossAliyunField 配置类，不同的配置类上传的配置就不一样
      * @param file

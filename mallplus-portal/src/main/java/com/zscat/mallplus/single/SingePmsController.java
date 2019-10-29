@@ -15,10 +15,12 @@ import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.*;
+import com.zscat.mallplus.sms.entity.SmsFlashPromotionProductRelation;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.service.ISmsFlashPromotionProductRelationService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -58,7 +60,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/single/pms")
 public class SingePmsController extends ApiBaseAction {
 
-
+    @Autowired
+    private ISmsFlashPromotionProductRelationService smsFlashPromotionProductRelationService;
     @Resource
     private RedisUtil redisUtil;
     @Resource
@@ -412,6 +415,48 @@ public class SingePmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
+    @GetMapping(value = "/secskill/detail")
+    @ApiOperation(value = "查询商品详情信息")
+    public Object secskillDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        //记录浏览量到redis,然后定时更新到数据库
+
+        SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(id);
+
+        GoodsDetailResult goods = null;
+        try {
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, relation.getProductId()+"")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods)){
+                log.info("redis缓存失效："+relation.getProductId());
+                goods = pmsProductService.getGoodsRedisById(relation.getProductId());
+            }
+        } catch (Exception e) {
+            log.info("redis缓存失效："+relation.getProductId());
+            goods = pmsProductService.getGoodsRedisById(relation.getProductId());
+            e.printStackTrace();
+        }
+        Map<String, Object> map = new HashMap<>();
+        UmsMember umsMember = UserUtils.getCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            PmsProduct p = goods.getGoods();
+            p.setHit(recordGoodsFoot(id));
+            PmsFavorite query = new PmsFavorite();
+            query.setObjId(p.getId());
+            query.setMemberId(umsMember.getId());
+            query.setType(1);
+            PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+            if(findCollection!=null){
+                map.put("favorite", true);
+            }else{
+                map.put("favorite", false);
+            }
+        }
+        map.put("skillDetail", relation);
+        map.put("goods", goods);
+        return new CommonResult().success(map);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @IgnoreAuth
     @GetMapping(value = "/gift/detail")
     @ApiOperation(value = "查询礼物商品详情信息")
     public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
@@ -614,15 +659,7 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
-    @IgnoreAuth
-    @ApiOperation(value = "查询首页推荐商品")
-    @GetMapping(value = "/initGoodsRedis")
-    public Object initGoodsRedis() {
 
-        return pmsProductService.initGoodsRedis();
-
-    }
 
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库

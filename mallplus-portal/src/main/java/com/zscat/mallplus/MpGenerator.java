@@ -108,7 +108,7 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"tb_user_from_id"});
+        strategy.setInclude(new String[]{"ums_member_location"});
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");

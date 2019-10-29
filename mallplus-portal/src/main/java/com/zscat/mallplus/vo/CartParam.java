@@ -19,4 +19,5 @@ public class CartParam {
     private Integer isSelected;
     // 1sku 2spu
     private Integer type;
+    private Integer orderType;
 }

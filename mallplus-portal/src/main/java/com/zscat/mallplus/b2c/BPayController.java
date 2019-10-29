@@ -3,6 +3,7 @@ package com.zscat.mallplus.b2c;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
@@ -135,7 +136,7 @@ public class BPayController extends ApiBaseAction {
             OmsOrder order =orderService.getById(payParam.getOrderId());
             UmsMember userDO = UserUtils.getCurrentMember();
             order.setStatus(OrderStatus.TO_DELIVER.getValue());
-            order.setPayType(3);
+            order.setPayType(AllEnum.OrderPayType.balancePay.code());
             orderService.updateById(order);
             if (ValidatorUtils.notEmpty(order.getGroupId())){
                 SmsGroup group = new SmsGroup();
@@ -150,7 +151,7 @@ public class BPayController extends ApiBaseAction {
     }
 
     /**
-     * 余额支付
+     * 积分兑换
      */
     @SysLog(MODULE = "pay", REMARK = "积分兑换")
     @ApiOperation(value = "积分兑换")

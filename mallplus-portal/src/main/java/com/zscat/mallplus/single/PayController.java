@@ -3,6 +3,7 @@ package com.zscat.mallplus.single;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
@@ -255,6 +256,9 @@ public class PayController extends ApiBaseAction {
                     history.setOrderStatus(OrderStatus.TO_DELIVER.getValue());
                     history.setNote("小程序支付");
                     orderOperateHistoryService.save(history);
+
+                    umsMemberService.addIntegration(user.getId(),orderInfo.getPayAmount().multiply(new BigDecimal("0.1")).intValue(),1,"小程序支付添加积分", AllEnum.ChangeSource.order.code(),user.getUsername());
+
                     return toResponsObject(200, "微信统一订单下单成功", resultObj);
                 }
             }

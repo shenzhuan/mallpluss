@@ -2,12 +2,15 @@ package com.zscat.mallplus.ums.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.SmsCode;
 import org.springframework.http.HttpRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -39,7 +42,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * 用户注册
      */
     @Transactional
-    CommonResult register(String phone, String password, String confim, String authCode);
+    CommonResult register(String phone, String password, String confim, String authCode,String invitecode);
 
     /**
      * 生成验证码
@@ -74,17 +77,26 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     Map<String, Object> loginByCode(String phone, String authCode);
 
-    Object simpleReg(String phone, String password, String confimpassword);
+    Object simpleReg(String phone, String password, String confimpassword,String invitecode);
 
     /**
-     * 添加积分
+     * 添加余额记录 并更新用户余额
+     *
      * @param id
      * @param integration
      */
-    void addIntegration(Long id, Integer integration);
+     void addBlance(Long id, Integer integration,int type,String note);
+
+    /**
+     * 添加积分记录 并更新用户积分
+     * @param id
+     * @param integration
+     */
+     void addIntegration(Long id, Integer integration,int changeType,String note,int sourceType,String operateMan) ;
 
     Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
 
 
+    Object initMemberRedis();
 }
 

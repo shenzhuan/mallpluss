@@ -110,7 +110,7 @@
         END,
         `status` = CASE id
         <foreach collection="list" item="item">
-            WHEN #{item.orderId} THEN 2
+            WHEN #{item.orderId} THEN 3
         </foreach>
         END
         WHERE
@@ -118,7 +118,7 @@
         <foreach collection="list" item="item" separator="," open="(" close=")">
             #{item.orderId}
         </foreach>
-        AND `status` = 1
+        AND `status` = 2
     </update>
     <update id="updateSkuStock">
         UPDATE pms_sku_stock
