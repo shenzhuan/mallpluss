@@ -5,8 +5,11 @@ import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.vo.CartMarkingVo;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
+import com.zscat.mallplus.sms.entity.SmsBasicMarking;
+import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
@@ -20,7 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Handler;
 
 /**
  * 购物车管理Controller
@@ -40,7 +46,8 @@ public class OmsCartItemController {
 
     @Resource
     private IOmsOrderService orderService;
-
+    @Resource
+    private ISmsBasicMarkingService smsBasicMarkingService;
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/addCart")
     @ResponseBody
@@ -62,11 +69,22 @@ public class OmsCartItemController {
     @ResponseBody
     public Object list() {
         UmsMember umsMember = UserUtils.getCurrentMember();
+        Map<String,Object> map = new HashMap<>();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
-            return new CommonResult().success(cartItemList);
+            map.put("cartItemList",cartItemList);
+            CartMarkingVo vo = new CartMarkingVo();
+            vo.setCartList(cartItemList);
+            SmsBasicMarking marking =smsBasicMarkingService.matchOrderBasicMarking(vo) ;
+            if (marking!=null){
+                map.put("promoteAmount",marking.getMinAmount());
+            }else {
+                map.put("promoteAmount",0);
+            }
+
+            return new CommonResult().success(map);
         }
-        return new ArrayList<OmsCartItem>();
+        return new CommonResult().success(map);
     }
 
 

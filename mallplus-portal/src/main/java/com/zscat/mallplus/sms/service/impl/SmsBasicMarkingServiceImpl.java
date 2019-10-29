@@ -71,25 +71,27 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
     public List<SmsBasicMarking> matchGoodsBasicMarking(Long id) {
         List<SmsBasicMarking> newList = new ArrayList<>();
         PmsProduct product = goodsMapper.selectById(id);
-        List<SmsBasicMarking> list = markingMapper.selectList(new QueryWrapper<SmsBasicMarking>().eq("status", 0));
-        BigDecimal totalAmount = product.getPrice();//实付金额
-        int totalCount = 1;
-        for (SmsBasicMarking m : list) {
-            if (checkManjian(m)) {
-                SmsBasicMarking newBasicGift = new SmsBasicMarking();
-                newBasicGift.setName(m.getName());
-                newBasicGift.setSmallType(m.getSmallType());
-                newBasicGift.setBigType(m.getBigType());
-                newBasicGift.setId(m.getId());
-                List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
-                Collections.sort(actrule, Comparator.comparing(BasicRuls::getFullPrice).reversed());
-                if (m.getBigType() == 1) { // 1 满减 2 折扣
-                    getList(newList, product, totalAmount, totalCount, m, newBasicGift, actrule);
-                } else if (m.getBigType() == 2) {
-                    getList(newList, product, totalAmount, totalCount, m, newBasicGift, actrule);
-                }
-            }
-        }
+       if (product!=null){
+           List<SmsBasicMarking> list = markingMapper.selectList(new QueryWrapper<SmsBasicMarking>().eq("status", 0));
+           BigDecimal totalAmount = product.getPrice();//实付金额
+           int totalCount = 1;
+           for (SmsBasicMarking m : list) {
+               if (checkManjian(m)) {
+                   SmsBasicMarking newBasicGift = new SmsBasicMarking();
+                   newBasicGift.setName(m.getName());
+                   newBasicGift.setSmallType(m.getSmallType());
+                   newBasicGift.setBigType(m.getBigType());
+                   newBasicGift.setId(m.getId());
+                   List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
+                   Collections.sort(actrule, Comparator.comparing(BasicRuls::getFullPrice).reversed());
+                   if (m.getBigType() == 1) { // 1 满减 2 折扣
+                       getList(newList, product, totalAmount, totalCount, m, newBasicGift, actrule);
+                   } else if (m.getBigType() == 2) {
+                       getList(newList, product, totalAmount, totalCount, m, newBasicGift, actrule);
+                   }
+               }
+           }
+       }
         return newList;
     }
 
@@ -102,10 +104,6 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
         for (SmsBasicMarking m : list) {
             if (checkManjian(m)) {
                 newBasicGift = new SmsBasicMarking();
-                newBasicGift.setName(m.getName());
-                newBasicGift.setSmallType(m.getSmallType());
-                newBasicGift.setBigType(m.getBigType());
-                newBasicGift.setId(m.getId());
                 List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
                 Collections.sort(actrule, Comparator.comparing(BasicRuls::getFullPrice).reversed());
                 if (m.getBigType() == 1) { // 1 满减 2 折扣
@@ -256,7 +254,10 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
                 if (singleAmount.compareTo(rule.getFullPrice()) >= 0) {
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
                         lastAmount = rule.getReducePrice();
-                        newBasicGift.setMinAmount(lastAmount);
+                        newBasicGift.setName(m.getName());
+                        newBasicGift.setSmallType(m.getSmallType());
+                        newBasicGift.setBigType(m.getBigType());
+                        newBasicGift.setId(m.getId());
                         break;
                     }
                 }
@@ -266,7 +267,10 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
                 if (singleCount >= rule.getFullPrice().intValue()) {
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
                         lastAmount = rule.getReducePrice();
-                        newBasicGift.setMinAmount(lastAmount);
+                        newBasicGift.setName(m.getName());
+                        newBasicGift.setSmallType(m.getSmallType());
+                        newBasicGift.setBigType(m.getBigType());
+                        newBasicGift.setId(m.getId());
                         break;
                     }
                 }
@@ -293,6 +297,10 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
                         lastAmount = rule.getReducePrice().multiply(totalAmount).divide(new BigDecimal(10),2);
                         newBasicGift.setMinAmount(totalAmount.subtract(lastAmount));
+                        newBasicGift.setName(m.getName());
+                        newBasicGift.setSmallType(m.getSmallType());
+                        newBasicGift.setBigType(m.getBigType());
+                        newBasicGift.setId(m.getId());
                         break;
                     }
                 }
@@ -303,12 +311,16 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
                     if (rule.getReducePrice().compareTo(lastAmount) > 0) {
                         lastAmount = rule.getReducePrice().multiply(totalAmount).divide(new BigDecimal(10),2);
                         newBasicGift.setMinAmount(totalAmount.subtract(lastAmount));
+                        newBasicGift.setName(m.getName());
+                        newBasicGift.setSmallType(m.getSmallType());
+                        newBasicGift.setBigType(m.getBigType());
+                        newBasicGift.setId(m.getId());
                         break;
                     }
                 }
             }
         }
-        return newBasicGift.getMinAmount();
+        return lastAmount;
     }
 
     private BigDecimal getBigDecimal(BigDecimal lastAmount, SmsBasicMarking newBasicGift, SmsBasicMarking m, List<BasicRuls> actrule, BigDecimal totalAmount, int totalCount) {

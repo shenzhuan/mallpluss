@@ -7,7 +7,6 @@ import com.zscat.mallplus.oms.vo.CartMarkingVo;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.sms.entity.SmsBasicGifts;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 import com.zscat.mallplus.sms.mapper.SmsBasicGiftsMapper;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.vo.AmountAndCount;
@@ -52,71 +51,75 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
     @Override
     public List<SmsBasicGifts> matchGoodsBasicGifts(Long id) {
         PmsProduct product = goodsMapper.selectById(id);
-        List<SmsBasicGifts> list = giftsMapper.selectList(new QueryWrapper<SmsBasicGifts>().eq("status", 0));
         List<SmsBasicGifts> newList = new ArrayList<>();
-        for (SmsBasicGifts m : list) {
-            if (checkManjian(m)) {
-                SmsBasicGifts newBasicGift = new SmsBasicGifts();
-                newBasicGift.setName(m.getName());
-                newBasicGift.setId(m.getId());
-                // BeanUtils.copyProperties(m, newBasicGift);
-                if (m.getBigType() == 2) { // 1 首购礼 2 满 购礼 3 单品礼赠
-                    BigDecimal totalAmount = product.getPrice();//实付金额
-                    int totalCount = 1;
+        if (product != null) {
+            List<SmsBasicGifts> list = giftsMapper.selectList(new QueryWrapper<SmsBasicGifts>().eq("status", 0));
 
-                    if (m.getActiviGoods() == 3) { //1 按类别  2 部分商品  3 全部
-                        /**
-                         * 首购礼 1第一单获取 2所有订单获取 ；
-                         * 满购礼1选赠礼 获取规则 2满赠礼；
-                         * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
-                         */
-                        // 规则
-                        List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
-                        Collections.sort(actrule, Comparator.comparing(BasicRuls::getFullPrice).reversed());
+            for (SmsBasicGifts m : list) {
+                if (checkManjian(m)) {
+                    SmsBasicGifts newBasicGift = new SmsBasicGifts();
+                    newBasicGift.setName(m.getName());
+                    newBasicGift.setId(m.getId());
+                    // BeanUtils.copyProperties(m, newBasicGift);
+                    if (m.getBigType() == 2) { // 1 首购礼 2 满 购礼 3 单品礼赠
+                        BigDecimal totalAmount = product.getPrice();//实付金额
+                        int totalCount = 1;
 
-                        getList(m, newBasicGift, totalAmount, totalCount, actrule);
-                    } else { //1 按类别  2 部分商品  3 全部
-                        BigDecimal singAmount = getCondtionByGoodsId(product, m);
-                        List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
-                        getList(m, newBasicGift, singAmount, totalCount, actrule);
-                    }
-                } else {
-                    if (m.getActiviGoods() == 3) { //1 按类别  2 部分商品  3 全部
-                        /**
-                         * 首购礼 1第一单获取 2所有订单获取 ；
-                         * 满购礼1选赠礼 获取规则 2满赠礼；
-                         * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
-                         */
-                        get(m, newBasicGift);
-                    } else if (m.getActiviGoods() == 2) { //1 按类别  2 部分商品  3 全部
-                        List<BeanKv> productRelationList = JsonUtils.jsonToList(m.getGoodsIds(), BeanKv.class);
-                        boolean flag = false;
-                        for (BeanKv goods : productRelationList) {
-                            if (product.getId().equals(goods.getId())) {
-                                flag = true;
-                                break;
-                            }
-                        }
-                        if (flag) {
-                            get(m, newBasicGift);
+                        if (m.getActiviGoods() == 3) { //1 按类别  2 部分商品  3 全部
+                            /**
+                             * 首购礼 1第一单获取 2所有订单获取 ；
+                             * 满购礼1选赠礼 获取规则 2满赠礼；
+                             * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
+                             */
+                            // 规则
+                            List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
+                            Collections.sort(actrule, Comparator.comparing(BasicRuls::getFullPrice).reversed());
+
+                            getList(m, newBasicGift, totalAmount, totalCount, actrule);
+                        } else { //1 按类别  2 部分商品  3 全部
+                            BigDecimal singAmount = getCondtionByGoodsId(product, m);
+                            List<BasicRuls> actrule = JsonUtils.jsonToList(m.getRules(), BasicRuls.class);
+                            getList(m, newBasicGift, singAmount, totalCount, actrule);
                         }
                     } else {
-                        List<BeanKv> productCategoryRelationList = JsonUtils.jsonToList(m.getGoodsIds(), BeanKv.class);
-                        boolean flag = false;
-                        for (BeanKv goods : productCategoryRelationList) {
-                            if (product.getProductCategoryId().equals(goods.getId())) {
-                                flag = true;
-                                break;
+                        if (m.getActiviGoods() == 3) { //1 按类别  2 部分商品  3 全部
+                            /**
+                             * 首购礼 1第一单获取 2所有订单获取 ；
+                             * 满购礼1选赠礼 获取规则 2满赠礼；
+                             * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
+                             */
+                            get(m, newBasicGift);
+                        } else if (m.getActiviGoods() == 2) { //1 按类别  2 部分商品  3 全部
+                            List<BeanKv> productRelationList = JsonUtils.jsonToList(m.getGoodsIds(), BeanKv.class);
+                            boolean flag = false;
+                            for (BeanKv goods : productRelationList) {
+                                if (product.getId().equals(goods.getId())) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag) {
+                                get(m, newBasicGift);
+                            }
+                        } else {
+                            List<BeanKv> productCategoryRelationList = JsonUtils.jsonToList(m.getGoodsIds(), BeanKv.class);
+                            boolean flag = false;
+                            for (BeanKv goods : productCategoryRelationList) {
+                                if (product.getProductCategoryId().equals(goods.getId())) {
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if (flag) {
+                                get(m, newBasicGift);
                             }
                         }
-                        if (flag) {
-                            get(m, newBasicGift);
-                        }
                     }
+                    newList.add(newBasicGift);
                 }
-                newList.add(newBasicGift);
             }
         }
+
         return newList;
     }
 
