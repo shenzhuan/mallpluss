@@ -89,7 +89,6 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     /**
      * 添加积分记录 并更新用户积分
-     *
      * @param id
      * @param integration
      */

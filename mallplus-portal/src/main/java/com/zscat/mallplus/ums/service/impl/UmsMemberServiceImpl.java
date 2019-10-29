@@ -155,8 +155,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     /**
-     * 添加余额记录 并更新用户余额
-     *
+     * 添加积分记录 并更新用户积分
      * @param id
      * @param integration
      */

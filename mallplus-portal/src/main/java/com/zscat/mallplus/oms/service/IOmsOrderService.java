@@ -150,5 +150,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Object applyRefund(Long id);
 
+    /**
+     * 订单评论
+     * @param orderId
+     * @param items
+     * @return
+     */
     Object orderComment(Long orderId, String items);
 }
