@@ -12,7 +12,7 @@
 - 商户端演示  http://yjlive.cn:8090/
 - uniapp h5演示  http://yjlive.cn:8082/
 - pc演示  http://yjlive.cn:8084/
-- vue h5演示  http://yjlive.cn:8083/
+- 商户端 h5演示  http://yjlive.cn:8083/
 - 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 - 前端vue 项目路径下有一个zip包
 - 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
@@ -61,7 +61,10 @@
 - QQ交流群：895616401（开发手册、接口文档、操作手册请进群查看哦~）
 - 交流社区：[https://bbs.jihainet.com/](https://bbs.jihainet.com/)
 
-- 微信小程序体验码
+- 商户端 微信小程序体验码
+![输入图片说明](https://images.gitee.com/uploads/images/2019/1030/210756_3dcc803d_134431.png "屏幕截图.png")
+
+- 用户端 微信小程序体验码
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/0906/120657_8459b6d0_134431.png "applet.png")
 
