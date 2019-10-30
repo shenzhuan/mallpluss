@@ -1,9 +1,11 @@
 package com.zscat.mallplus.oms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.config.Constant;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
@@ -14,6 +16,7 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -52,7 +55,7 @@ public class OmsOrderController {
     @PreAuthorize("hasAuthority('oms:OmsOrder:read')")
     public Object getOmsOrderByPage(OmsOrder entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time").select(ConstansValue.sampleOrderList)));
@@ -127,6 +130,17 @@ public class OmsOrderController {
         }
         return new CommonResult().failed();
     }
+    @SysLog(MODULE = "oms", REMARK = "批量发货")
+    @ApiOperation("批量发货")
+    @RequestMapping(value = "/delivery", method = RequestMethod.POST)
+    @ResponseBody
+    public Object singleDelivery(@RequestBody OmsOrderDeliveryParam deliveryParamList) {
+        int count = IOmsOrderService.singleDelivery(deliveryParamList);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
 
     @SysLog(MODULE = "oms", REMARK = "批量关闭订单")
     @ApiOperation("批量关闭订单")
@@ -176,5 +190,25 @@ public class OmsOrderController {
             return new CommonResult().success(count);
         }
         return new CommonResult().failed();
+    }
+
+    @ApiOperation(value = "查询订单列表")
+    @GetMapping(value = "/order/list")
+    public Object orderList(OmsOrder order,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "30") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<OmsOrder> page = null;
+        if (order.getStatus()!=null && order.getStatus()==0){
+            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+        }else {
+            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+
+        }
+        for (OmsOrder omsOrder : page.getRecords()){
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+            omsOrder.setOrderItemList(itemList);
+        }
+        return new CommonResult().success(page);
     }
 }

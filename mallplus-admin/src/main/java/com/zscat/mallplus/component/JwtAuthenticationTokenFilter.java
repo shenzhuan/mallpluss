@@ -83,7 +83,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
-            if (fullUrl.contains("logout")){
+            if (fullUrl.contains("logout") || fullUrl.contains("login")){
 
             }else{
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

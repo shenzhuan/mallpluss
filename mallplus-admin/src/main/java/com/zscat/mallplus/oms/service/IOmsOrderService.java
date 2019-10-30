@@ -48,4 +48,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     @Transactional
     int close(List<Long> ids, String note);
+    @Transactional
+    int singleDelivery(OmsOrderDeliveryParam deliveryParamList);
 }

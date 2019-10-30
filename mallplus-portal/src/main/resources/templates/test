@@ -274,3 +274,6 @@ delete from ums_member where store_id>4 ;
 delete from sys_web_log  ;
 delete from admin_sys_job_log  ;
 delete from sys_admin_log  ;
+
+1938186471@qq.com
+

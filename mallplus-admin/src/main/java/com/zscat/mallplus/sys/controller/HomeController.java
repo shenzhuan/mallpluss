@@ -10,6 +10,7 @@ import com.zscat.mallplus.bo.HomeOrderData;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.mapper.CmsSubjectCategoryMapper;
 import com.zscat.mallplus.cms.mapper.CmsSubjectMapper;
+import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.pms.entity.PmsProduct;
@@ -87,6 +88,7 @@ public class HomeController extends BaseController {
         int status3 = 0;
         int status4 = 0;
         int status5 = 0;
+        int status6 = 0;
         OrderStatusCount count = new OrderStatusCount();
 
         for (OmsOrder order : orderList) {
@@ -115,23 +117,26 @@ public class HomeController extends BaseController {
                 weekOrderCount++;
                 weekOrderPay = weekOrderPay.add(order.getPayAmount());
             }
-            if (order.getStatus() == 12) {
+            if (order.getStatus() == OrderStatus.INIT.getValue()) {
                 status0++;
             }
-            if (order.getStatus() == 1) {
+            if (order.getStatus() == OrderStatus.TO_DELIVER.getValue()) {
                 status1++;
             }
-            if (order.getStatus() == 2) {
+            if (order.getStatus() == OrderStatus.DELIVERED.getValue()) {
                 status2++;
             }
-            if (order.getStatus() == 3) {
+            if (order.getStatus() == OrderStatus.TO_COMMENT.getValue()) {
                 status3++;
             }
-            if (order.getStatus() == 4) {
+            if (order.getStatus() == OrderStatus.TRADE_SUCCESS.getValue()) {
                 status4++;
             }
-            if (order.getStatus() == 5) {
+            if (order.getStatus() == OrderStatus.REFUNDING.getValue()) {
                 status5++;
+            }
+            if (order.getStatus() == OrderStatus.CLOSED.getValue()) {
+                status6++;
             }
 
         }
@@ -141,6 +146,7 @@ public class HomeController extends BaseController {
         count.setStatus3(status3);
         count.setStatus4(status4);
         count.setStatus5(status5);
+        count.setStatus14(status6);
 
         data.setNowOrderCount(nowOrderCount);
         data.setNowOrderPay(nowOrderPay);

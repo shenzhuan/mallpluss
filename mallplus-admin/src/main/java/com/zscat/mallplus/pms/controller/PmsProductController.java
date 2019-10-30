@@ -242,4 +242,25 @@ public class PmsProductController {
             return new CommonResult().failed();
         }
     }
+
+    @GetMapping(value = "/goods/list")
+    public Object getPmsProductListByPage(PmsProduct entity,
+                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+    ) {
+        try {
+            if(entity.getType()==1){
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publishStatus",1).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+            }if(entity.getType()==2){
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publishStatus",0).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+            }if(entity.getType()==3){
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock",1).select(ConstansValue.sampleGoodsList)));
+            }
+
+            return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().select(ConstansValue.sampleGoodsList)));
+        } catch (Exception e) {
+            log.error("根据条件查询所有商品信息列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
 }
