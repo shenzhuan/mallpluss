@@ -11,11 +11,13 @@ import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.IdStatus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -198,6 +200,20 @@ public class PmsProductController {
         }
     }
 
+    @ApiOperation("批量上下架")
+    @RequestMapping(value = "/publishStatus", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量上下架")
+    public Object updatePublishStatu(@RequestBody IdStatus ids, BindingResult result) {
+        PmsProduct product = new PmsProduct();
+        product.setId(ids.getId());product.setPublishStatus(ids.getStatus());
+        Boolean count = IPmsProductService.updateById(product);
+        if (count ) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
     @ApiOperation("批量推荐商品")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -250,9 +266,9 @@ public class PmsProductController {
     ) {
         try {
             if(entity.getType()==1){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publishStatus",1).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",1).gt("stock",0).select(ConstansValue.sampleGoodsList)));
             }if(entity.getType()==2){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publishStatus",0).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",0).gt("stock",0).select(ConstansValue.sampleGoodsList)));
             }if(entity.getType()==3){
                 return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock",1).select(ConstansValue.sampleGoodsList)));
             }

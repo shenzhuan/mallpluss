@@ -175,6 +175,8 @@ public class HomeController extends BaseController {
         int onCount = 0;
         int offCount = 0;
         int nowCount = 0;
+        int noStock = 0;
+        int yesCount = 0;
         for (PmsProduct goods : goodsList) {
             if (goods.getPublishStatus() == 1) { // 上架状态：0->下架；1->上架
                 onCount++;
@@ -182,14 +184,23 @@ public class HomeController extends BaseController {
             if (goods.getPublishStatus() == 0) { // 上架状态：0->下架；1->上架
                 offCount++;
             }
+            if (ValidatorUtils.empty(goods.getStock()) || goods.getStock() < 1) { // 上架状态：0->下架；1->上架
+                noStock++;
+            }
             if (DateUtils.format(goods.getCreateTime()).equals(DateUtils.format(new Date()))) {
                 nowCount++;
+            }
+            if (DateUtils.format(goods.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))) {
+                yesCount++;
+
             }
         }
         Map<String, Object> map = new HashMap();
         map.put("onCount", onCount);
         map.put("offCount", offCount);
+        map.put("noStock", noStock);
         map.put("nowCount", nowCount);
+        map.put("yesCount", yesCount);
         map.put("allCount", goodsList.size());
         stopWatch.stop();
         log.info(stopWatch.prettyPrint());
@@ -204,6 +215,8 @@ public class HomeController extends BaseController {
         int nowCount = 0;
         int yesUserCount = 0; // 昨日
         int qiUserCount = 0; // 当日
+        int mallCount = 0; // 当日
+        int femallount = 0; // 当日
         for (UmsMember member : memberList) {
             if (DateUtils.format(member.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))) {
                 yesUserCount++;
@@ -214,12 +227,19 @@ public class HomeController extends BaseController {
             if (DateUtils.format(member.getCreateTime()).equals(DateUtils.format(new Date()))) {
                 nowCount++;
             }
+            if (member.getGender()==null || member.getGender()==1){
+                mallCount++;
+            }else {
+                femallount++;
+            }
         }
         Map<String, Object> map = new HashMap();
         map.put("qiUserCount", qiUserCount);
         map.put("yesUserCount", yesUserCount);
         map.put("nowCount", nowCount);
         map.put("allCount", memberList.size());
+        map.put("mallCount", mallCount);
+        map.put("femallount", femallount);
         return new CommonResult().success(map);
     }
 

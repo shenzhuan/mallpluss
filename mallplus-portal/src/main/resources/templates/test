@@ -47,6 +47,7 @@ put -r /Users/java/test/git/jsshop/unpackage/dist/build/h5/index.html /root/jm/c
 netstat -tunlp |grep 端口号，用于查看指定的端口号的进程情况，如查看8000端口的情况，netstat -tunlp |grep 8000
 
 
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 
 
 
@@ -276,4 +277,5 @@ delete from admin_sys_job_log  ;
 delete from sys_admin_log  ;
 
 1938186471@qq.com
+wx1d852ffdcbedd005
 
