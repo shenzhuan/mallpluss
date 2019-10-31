@@ -84,5 +84,7 @@ http://ext.dcloud.net.cn/?page=33 评价模版
 http://ext.dcloud.net.cn/plugin?id=214 圆环统计
 http://ext.dcloud.net.cn/plugin?id=104 cms
 
+订单统计
+select DATE_FORMAT(create_time, '%Y-%m-%d') day1,sum(pay_amount) FROM  oms_order group by day1  HAVING day1>='2019-08-01'  ORDER BY day1
 
 

@@ -8,6 +8,7 @@ import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -50,4 +51,17 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     int close(List<Long> ids, String note);
     @Transactional
     int singleDelivery(OmsOrderDeliveryParam deliveryParamList);
+
+    /**
+     * 订单日统计
+     * @param date
+     * @return
+     */
+    Map orderDayStatic(String date);
+    /**
+     * 订单月统计
+     * @param date
+     * @return
+     */
+    Map orderMonthStatic(String date);
 }

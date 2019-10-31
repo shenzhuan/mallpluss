@@ -12,11 +12,14 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +88,17 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return count;
     }
 
+    @Override
+    public Map orderDayStatic(String date) {
+        Map list = orderMapper.orderDayStatic(date);
+       return list;
+    }
+
+    @Override
+    public Map orderMonthStatic(String date) {
+        Map list = orderMapper.orderMonthStatic(date);
+        return list;
+    }
     @Override
     public int close(List<Long> ids, String note) {
         OmsOrder record = new OmsOrder();

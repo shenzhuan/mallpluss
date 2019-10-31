@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -285,8 +286,46 @@ public class DateUtils {
         return cal.getTime();
     }
 
+    private static SimpleDateFormat sdf=new SimpleDateFormat("yyyyMM");
+    private static Calendar calendar=Calendar.getInstance();
+
+    /*
+    输入日期字符串比如201703，返回当月第一天的Date
+    */
+    public static Date getMinDateMonth(String month){
+        try {
+            Date nowDate=sdf.parse(month);
+            calendar = Calendar.getInstance();
+            calendar.setTime(nowDate);
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+            return calendar.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*
+    输入日期字符串，返回当月最后一天的Date
+    */
+    public static Date getMaxDateMonth(String month){
+        try {
+            Date nowDate=sdf.parse(month);
+            calendar = Calendar.getInstance();
+            calendar.setTime(nowDate);
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+            return calendar.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public static void main(String[] args) throws Exception {
+        String month="201705";
+        System.out.println(getMinDateMonth(month));
+        System.out.println(getMaxDateMonth(month));
+        System.out.println(DateUtils.geLastDayByMonth());
         System.out.println(DateUtils.addDay(new Date(), -7));
         System.out.println(DateUtils.calculateDaysNew(DateUtils.toDate(DateUtils.addDay(new Date(), -7)), new Date()));
     }

@@ -56,6 +56,26 @@ public class HomeController extends BaseController {
     @Resource
     private IUmsMemberService memberService;
 
+    @ApiOperation("首页订单日统计")
+    @SysLog(MODULE = "home", REMARK = "首页订单日统计")
+    @RequestMapping(value = "/orderDayStatic", method = RequestMethod.GET)
+    public Object orderDayStatic(@RequestParam String date) throws Exception {
+        if (date.startsWith("--")){
+            date=DateUtils.currentDay();
+        }
+        return new CommonResult().success(orderService.orderDayStatic(date));
+    }
+
+    @ApiOperation("首页订单月统计")
+    @SysLog(MODULE = "home", REMARK = "首页订单月统计")
+    @RequestMapping(value = "/orderMonthStatic", method = RequestMethod.GET)
+    public Object orderMonthStatic(@RequestParam String date) throws Exception {
+        if (date.startsWith("--")){
+            date=DateUtils.currentDay();
+        }
+        return new CommonResult().success(orderService.orderMonthStatic(date));
+    }
+
     /**
      * 订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单
      *
