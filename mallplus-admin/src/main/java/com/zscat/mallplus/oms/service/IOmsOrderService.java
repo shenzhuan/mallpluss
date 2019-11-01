@@ -64,4 +64,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return
      */
     Map orderMonthStatic(String date);
+
+    Object dayStatic(String date,Integer type);
 }

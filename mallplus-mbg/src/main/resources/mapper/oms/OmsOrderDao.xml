@@ -208,6 +208,18 @@ WHERE MONTH(create_time) = MONTH(#{date})
 
     <select id="listOrderGroupByMemberId"  resultType="com.zscat.mallplus.oms.vo.OrderStstic">
         select count(id) totalCount ,sum(pay_amount) totalPayAmount,member_id memberId from oms_order
-        where status between  2 and 4 group by member_id
+        where  9>status group by member_id
     </select>
+
+    <select id="listByDate"  resultMap="BaseResultMap">
+        select pay_amount,status from oms_order where
+        <if test="type==1">
+            date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
+        </if>
+        <if test="type==2">
+            date_format(create_time,'%y%m') = date_format(#{date},'%y%m')
+        </if>
+
+    </select>
+
 </mapper>

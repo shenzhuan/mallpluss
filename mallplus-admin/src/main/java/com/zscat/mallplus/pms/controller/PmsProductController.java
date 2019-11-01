@@ -262,15 +262,15 @@ public class PmsProductController {
     @GetMapping(value = "/goods/list")
     public Object getPmsProductListByPage(PmsProduct entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             if(entity.getType()==1){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",1).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",1).gt("stock",0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
             }if(entity.getType()==2){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",0).gt("stock",0).select(ConstansValue.sampleGoodsList)));
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",0).gt("stock",0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
             }if(entity.getType()==3){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock",1).select(ConstansValue.sampleGoodsList)));
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock",1).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
             }
 
             return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().select(ConstansValue.sampleGoodsList)));

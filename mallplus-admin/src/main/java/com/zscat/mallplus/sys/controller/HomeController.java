@@ -56,6 +56,14 @@ public class HomeController extends BaseController {
     @Resource
     private IUmsMemberService memberService;
 
+
+    @ApiOperation("按时间统计订单 会员和商品")
+    @SysLog(MODULE = "home", REMARK = "首页订单日统计")
+    @RequestMapping(value = "/dayStatic", method = RequestMethod.GET)
+    public Object dayStatic(@RequestParam String date,@RequestParam Integer type) throws Exception {
+        return new CommonResult().success(orderService.dayStatic(date,type));
+    }
+
     @ApiOperation("首页订单日统计")
     @SysLog(MODULE = "home", REMARK = "首页订单日统计")
     @RequestMapping(value = "/orderDayStatic", method = RequestMethod.GET)
@@ -113,27 +121,27 @@ public class HomeController extends BaseController {
 
         for (OmsOrder order : orderList) {
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))
-                    && (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3)) {
+                    && (order.getStatus() <9 )) {
                 nowOrderCount++;
                 nowOrderPay = nowOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))
-                    && (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3)) {
+                    && (order.getStatus() <9 )) {
                 yesOrderCount++;
                 yesOrderPay = yesOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.calculateDaysNew(order.getCreateTime(), new Date()) >= 7
-                    && (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3)) {
+                    && (order.getStatus() <9 )) {
                 qiOrderCount++;
                 qiOrderPay = qiOrderPay.add(order.getPayAmount());
             }
             if (order.getCreateTime().getTime() >= DateUtils.geFirstDayDateByMonth().getTime()
-                    && (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3)) {
+                    && (order.getStatus() <9 )) {
                 monthOrderCount++;
                 monthOrderPay = monthOrderPay.add(order.getPayAmount());
             }
             if (order.getCreateTime().getTime() >= DateUtils.getFirstDayOfWeek().getTime()
-                    && (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3)) {
+                    && (order.getStatus() <9 )) {
                 weekOrderCount++;
                 weekOrderPay = weekOrderPay.add(order.getPayAmount());
             }

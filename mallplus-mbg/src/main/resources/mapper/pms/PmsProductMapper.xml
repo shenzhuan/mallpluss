@@ -130,6 +130,17 @@
             resultMap="com.zscat.mallplus.pms.mapper.CmsPrefrenceAreaProductRelationMapper.BaseResultMap">
         select * from cms_prefrence_area_product_relation where product_id=#{productId}
     </select>
+
+    <select id="listByDate"  resultMap="BaseResultMap">
+        select publish_status,stock from pms_product where
+        <if test="type==1">
+            date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
+        </if>
+        <if test="type==2">
+            date_format(create_time,'%y%m') = date_format(#{date},'%y%m')
+        </if>
+    </select>
+
     <select id="getCartProduct" resultMap="cartProductMap">
         SELECT
         p.id id,

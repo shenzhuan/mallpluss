@@ -1,7 +1,11 @@
 package com.zscat.mallplus.ums.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.zscat.mallplus.ums.entity.UmsMember;
  */
 public interface UmsMemberMapper extends BaseMapper<UmsMember> {
 
+    List<UmsMember> listByDate(@Param("date") String date, @Param("type") Integer type);
 }

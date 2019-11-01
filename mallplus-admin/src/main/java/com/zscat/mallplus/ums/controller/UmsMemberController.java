@@ -44,10 +44,10 @@ public class UmsMemberController {
     @PreAuthorize("hasAuthority('ums:UmsMember:read')")
     public Object getUmsMemberByPage(UmsMember entity,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                     @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
         } catch (Exception e) {
             log.error("根据条件查询所有会员表列表：%s", e.getMessage(), e);
         }

@@ -12,12 +12,18 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +41,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Resource
     private OmsOrderMapper orderMapper;
-
+    @Resource
+    private UmsMemberMapper memberMapper;
+    @Resource
+    private PmsProductMapper productMapper;
     @Resource
     private IOmsOrderOperateHistoryService orderOperateHistoryDao;
     @Resource
@@ -91,7 +100,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     public Map orderDayStatic(String date) {
         Map list = orderMapper.orderDayStatic(date);
-       return list;
+        return list;
     }
 
     @Override
@@ -99,6 +108,61 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         Map list = orderMapper.orderMonthStatic(date);
         return list;
     }
+
+    @Override
+    public Object dayStatic(String date,Integer type) {
+        List<OmsOrder> orders = orderMapper.listByDate(date,type);
+        List<UmsMember> members = memberMapper.listByDate(date,type);
+        List<PmsProduct> products = productMapper.listByDate(date,type);
+        int nowOrderCount = 0; // 今日订单
+        BigDecimal nowOrderPay = new BigDecimal(0); //今日销售总额
+        for (OmsOrder order : orders) {
+            if (order.getStatus() < 9) {
+                nowOrderCount++;
+                nowOrderPay = nowOrderPay.add(order.getPayAmount());
+            }
+        }
+        int mallCount = 0; // 当日
+        int femallount = 0; // 当日
+        for (UmsMember member : members) {
+            if (member.getGender() == null || member.getGender() == 1) {
+                mallCount++;
+            } else {
+                femallount++;
+            }
+        }
+        int onCount = 0;
+        int offCount = 0;
+
+        int noStock = 0;
+
+        for (PmsProduct goods : products) {
+            if (goods.getPublishStatus() == 1) { // 上架状态：0->下架；1->上架
+                onCount++;
+            }
+            if (goods.getPublishStatus() == 0) { // 上架状态：0->下架；1->上架
+                offCount++;
+            }
+            if (ValidatorUtils.empty(goods.getStock()) || goods.getStock() < 1) { // 上架状态：0->下架；1->上架
+                noStock++;
+            }
+        }
+        Map<String, Object> map = new HashMap();
+        map.put("nowOrderCount", nowOrderCount);
+        map.put("nowOrderPay", nowOrderPay);
+        map.put("mallCount", mallCount);
+        map.put("femallount", femallount);
+        map.put("onCount", onCount);
+        map.put("offCount", offCount);
+        map.put("noStock", noStock);
+
+        map.put("memberCount", memberMapper.selectCount(new QueryWrapper<>()));
+        map.put("goodsCount", productMapper.selectCount(new QueryWrapper<>()));
+        map.put("orderCount", orderMapper.selectCount(new QueryWrapper<>()));
+        return map;
+
+    }
+
     @Override
     public int close(List<Long> ids, String note) {
         OmsOrder record = new OmsOrder();

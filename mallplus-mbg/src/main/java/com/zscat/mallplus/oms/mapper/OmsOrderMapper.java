@@ -67,4 +67,6 @@ public interface OmsOrderMapper extends BaseMapper<OmsOrder> {
      * @return
      */
     Map orderMonthStatic(String date);
+
+    List<OmsOrder> listByDate(@Param("date") String date,@Param("type") Integer type);
 }
