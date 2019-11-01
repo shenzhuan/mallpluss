@@ -17,7 +17,7 @@
 - 前端vue 项目路径下有一个zip包
 - 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
 - 功能列表 https://www.processon.com/view/link/5da6a3d9e4b0ea86c2b2a817
-
+- apk体验二维码  链接: https://pan.baidu.com/s/12eppb3a9jSMphXSCjhSUoQ 提取码: 25qg 复制这段内容后打开百度网盘手机App，操作更方便哦
 
 ## 说明
 
