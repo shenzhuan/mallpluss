@@ -76,7 +76,7 @@
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2019/0906/101538_bc52f965_134431.jpeg "alpayApplet.jpg")
 
-- apk体验二维码  加群下载 895616401
+- apk体验二维码  链接: https://pan.baidu.com/s/12eppb3a9jSMphXSCjhSUoQ 提取码: 25qg 复制这段内容后打开百度网盘手机App，操作更方便哦
 
 ### 组织结构
 
