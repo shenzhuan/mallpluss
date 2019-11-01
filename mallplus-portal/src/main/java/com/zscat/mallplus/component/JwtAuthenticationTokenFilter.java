@@ -171,14 +171,14 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
-        String authHeader = request.getHeader(this.tokenHeader);
+        String tokenPre = this.tokenHeader+storeId ;
+        String authHeader = request.getParameter(tokenPre);
       //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
-            if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
-                String authToken = authHeader.substring(this.tokenHead.length());
+            if (authHeader != null && authHeader.startsWith("Bearer")) {
+                String authToken = authHeader.substring("Bearer".length());
                 username = jwtTokenUtil.getUserNameFromToken(authToken);
                 LOGGER.info("checking username:{}", username);
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -188,7 +188,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     }else{
                         throw new RuntimeException();
                     }
-                }
+
             }else {
                 logger.info("no token"+request.getRequestURI());
             }

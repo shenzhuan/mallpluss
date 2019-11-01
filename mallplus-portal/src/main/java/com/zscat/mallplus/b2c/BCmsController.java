@@ -22,6 +22,7 @@ import com.zscat.mallplus.ums.entity.UmsRewardLog;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.UserUtils;
@@ -30,6 +31,7 @@ import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -83,6 +85,9 @@ public class BCmsController extends ApiBaseAction {
 
     @Resource
     private  CmsSubjectProductRelationMapper subjectProductRelationMapper;
+
+    @Autowired
+    private IUmsMemberService memberService;
 
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
@@ -198,7 +203,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/createSubject")
     public Object createSubject(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
@@ -244,7 +249,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/createTopic")
     public Object createTopic(CmsTopic subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
@@ -278,7 +283,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/attendTopic")
     public Object attendTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
 
         CmsTopic subject = topicService.getById(id);
         Date now = new Date();
@@ -317,7 +322,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/canceTopic")
     public Object canceTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         CmsTopic subject = topicService.getById(id);
 
         if (member!=null){
@@ -366,7 +371,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/addSubjectCom")
     public Object addSubjectCom(CmsSubjectComment subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());
@@ -388,7 +393,7 @@ public class BCmsController extends ApiBaseAction {
     @PostMapping(value = "/addTopicCom")
     public Object addTopicCom(CmsTopicComment subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());

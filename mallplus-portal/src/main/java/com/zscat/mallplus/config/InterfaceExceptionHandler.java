@@ -23,6 +23,7 @@ public class InterfaceExceptionHandler {
 	@ExceptionHandler(MemberNotExitException.class)
 	public Object businessInterfaceException(MemberNotExitException e) {
 		log.error(e.getMessage(), e);
+		e.printStackTrace();
 		return new CommonResult().fail(100);
 	}
 

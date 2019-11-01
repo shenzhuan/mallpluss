@@ -142,7 +142,7 @@ public class BPmsController extends ApiBaseAction {
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             PmsFavorite query = new PmsFavorite();
@@ -376,7 +376,7 @@ public class BPmsController extends ApiBaseAction {
         }
         SmsGroup group = groupMapper.getByGoodsId(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             p.setHit(viewCount);
@@ -446,7 +446,7 @@ public class BPmsController extends ApiBaseAction {
     public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         PmsGifts  goods = giftsService.getById(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsFavorite query = new PmsFavorite();
             query.setObjId(goods.getId());
@@ -586,7 +586,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/addGoodsConsult")
     public Object addGoodsConsult(PmsProductConsult subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setPic(member.getIcon());
             subject.setMemberName(member.getNickname());
@@ -610,7 +610,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/user.addgoodsbrowsing")
     public Object addView(@RequestParam  Long goodsId) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, UserUtils.getCurrentMember().getId());
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getId());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
@@ -631,7 +631,7 @@ public class BPmsController extends ApiBaseAction {
     public Object viewList(
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        String key = String.format(Rediskey.GOODSHISTORY, UserUtils.getCurrentMember().getId());
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
@@ -658,7 +658,7 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (UserUtils.getCurrentMember().getId()==null){
+        if (memberService.getCurrentMember().getId()==null){
             return new CommonResult().fail(100);
         }
         int count = memberCollectionService.addProduct(productCollection);
@@ -700,7 +700,7 @@ public class BPmsController extends ApiBaseAction {
     public Object listCollectByType( PmsFavorite productCollection,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        productCollection.setMemberId(UserUtils.getCurrentMember().getId());
+        productCollection.setMemberId(memberService.getCurrentMember().getId());
         return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
     }
 
@@ -737,13 +737,13 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLikeByType")
     public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(UserUtils.getCurrentMember().getId(),productCollection.getType());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLike")
     public Object listLike( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(UserUtils.getCurrentMember().getId());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 
@@ -815,7 +815,7 @@ public class BPmsController extends ApiBaseAction {
                     goods = pmsProductService.getGoodsRedisById(goodIds.get(0));
                 }
                 if (goods != null && goods.getGoods() != null) {
-                    UmsMember umsMember = UserUtils.getCurrentMember();
+                    UmsMember umsMember = memberService.getCurrentMember();
                     if (umsMember != null && umsMember.getId() != null) {
                         isCollectGoods(map, goods, umsMember);
                     }
@@ -842,7 +842,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/createGoods")
     public Object createGoods(PmsProduct productParam) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
             Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());

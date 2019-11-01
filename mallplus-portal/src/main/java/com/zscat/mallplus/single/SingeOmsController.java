@@ -21,6 +21,7 @@ import com.zscat.mallplus.pms.vo.ProductConsultParam;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -57,6 +58,8 @@ public class SingeOmsController extends ApiBaseAction {
     private IOmsOrderItemService orderItemService;
     @Autowired
     private IPmsProductConsultService pmsProductConsultService;
+    @Autowired
+    private IUmsMemberService memberService;
 
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
@@ -68,9 +71,9 @@ public class SingeOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus()!=null && order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            order.setMemberId(UserUtils.getCurrentMember().getId());
+            order.setMemberId(memberService.getCurrentMember().getId());
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }

@@ -57,7 +57,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCoupon> selectNotRecive() {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         SmsCoupon coupon = new SmsCoupon();
         coupon.setType(0);
         List<SmsCoupon> list = new ArrayList<>();
@@ -81,7 +81,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         if (currentMember == null) {
             return  new ArrayList<>();
         }
@@ -94,7 +94,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     @Transactional
     @Override
     public CommonResult addbatch(String couponIds){
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         if (currentMember == null) {
             return new CommonResult().failed("优惠券不存在");
         }
@@ -150,7 +150,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     @Transactional
     @Override
     public CommonResult add(Long couponId) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         if (currentMember == null) {
             return new CommonResult().failed("优惠券不存在");
         }
@@ -221,7 +221,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistory> list(Integer useStatus) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         SmsCouponHistory couponHistory = new SmsCouponHistory();
         couponHistory.setMemberId(currentMember.getId());
 
@@ -233,7 +233,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistoryDetail> listCart(List<OmsCartItem> cartItemList, Integer type) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         Date now = new Date();
         //获取该用户所有优惠券
         List<SmsCouponHistoryDetail> allList = couponHistoryMapper.getDetailList(currentMember.getId());

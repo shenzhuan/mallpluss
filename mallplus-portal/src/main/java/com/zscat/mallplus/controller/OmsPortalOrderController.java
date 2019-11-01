@@ -40,7 +40,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @Autowired
     private IOmsOrderService orderService;
     @Autowired
-    private IUmsMemberService umsMemberService;
+    private IUmsMemberService memberService;
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -51,7 +51,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     public Object list(OmsOrder queryParam,
                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        queryParam.setMemberId(UserUtils.getCurrentMember().getId());
+        queryParam.setMemberId(memberService.getCurrentMember().getId());
         List<OmsOrder> orderList = orderService.list(new QueryWrapper<>(queryParam));
         for (OmsOrder order : orderList) {
             OmsOrderItem query = new OmsOrderItem();
@@ -143,7 +143,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @RequestMapping("/getWayBillInfo")
     public Object getWayBillInfo(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws Exception {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getCurrentMember();
             OmsOrder order = orderService.getById(orderId);
             if (order == null) {
                 return null;

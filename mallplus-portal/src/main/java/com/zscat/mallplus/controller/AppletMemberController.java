@@ -342,7 +342,7 @@ public class AppletMemberController extends ApiBaseAction {
             data.setModule_list(model_list);
 //            List<SmsRedPacket> redPacketList = redPacketService.list(new QueryWrapper<>());
 //            SmsUserRedPacket userRedPacket = new SmsUserRedPacket();
-//            userRedPacket.setUserId(UserUtils.getCurrentMember().getId());
+//            userRedPacket.setUserId(memberService.getCurrentMember().getId());
 //            List<SmsUserRedPacket> list = userRedPacketService.list(new QueryWrapper<>(userRedPacket));
 //            for(SmsRedPacket vo : redPacketList){
 //                if (list!=null && list.size()>0){
@@ -369,7 +369,7 @@ public class AppletMemberController extends ApiBaseAction {
     @SysLog(MODULE = "applet", REMARK = "小程序用户详情")
     @GetMapping("/user")
     public Object user() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             OmsOrder param = new OmsOrder();
             param.setMemberId(umsMember.getId());

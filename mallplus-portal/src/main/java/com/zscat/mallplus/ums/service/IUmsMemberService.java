@@ -98,5 +98,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
 
     Object initMemberRedis();
+
+    UmsMember getCurrentMember();
 }
 

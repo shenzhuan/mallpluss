@@ -20,6 +20,7 @@ import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
@@ -112,6 +113,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private ApiContext apiContext;
     @Resource
     private SmsPaimaiLogMapper paimaiLogMapper;
+    @Autowired
+    private IUmsMemberService memberService;
     @Override
     public PmsProductAndGroup getProductAndGroup(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -309,7 +312,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         PmsProduct goods = productMapper.selectById(id);
         List<SmsPaimaiLog> paimaiLogList = paimaiLogMapper.selectList(new QueryWrapper<SmsPaimaiLog>().eq("goods_id",id).orderByDesc("create_time"));
         map.put("paimaiLogList", paimaiLogList);
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         map.put("favorite", false);
         if (umsMember != null && umsMember.getId() != null) {
             PmsFavorite query = new PmsFavorite();
@@ -349,9 +352,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         SmsPaimaiLog log = new SmsPaimaiLog();
         log.setCreateTime(new Date());
         log.setGoodsId(goods.getId());
-        log.setMemberId(UserUtils.getCurrentMember().getId());
+        log.setMemberId(memberService.getCurrentMember().getId());
         log.setPrice(goods.getOriginalPrice());
-        log.setPic(UserUtils.getCurrentMember().getIcon());
+        log.setPic(memberService.getCurrentMember().getIcon());
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
     }

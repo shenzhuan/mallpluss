@@ -7,6 +7,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.mapper.UmsMemberReceiveAddressMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
@@ -31,7 +32,8 @@ public class UmsMemberReceiveAddressController {
 
     @Resource
     private UmsMemberReceiveAddressMapper addressMapper;
-
+    @Autowired
+    private IUmsMemberService memberService;
 
 
     @ApiOperation("删除收货地址")
@@ -68,7 +70,7 @@ public class UmsMemberReceiveAddressController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id",umsMember.getId()));
             return new CommonResult().success(addressList);

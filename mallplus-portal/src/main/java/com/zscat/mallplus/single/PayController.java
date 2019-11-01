@@ -57,7 +57,7 @@ public class PayController extends ApiBaseAction {
     @Resource
     private IOmsOrderService orderService;
     @Resource
-    private IUmsMemberService umsMemberService;
+    private IUmsMemberService memberService;
     @Resource
     private IUmsMemberBlanceLogService blanceLogService;
 
@@ -155,7 +155,7 @@ public class PayController extends ApiBaseAction {
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
-        UmsMember user = UserUtils.getCurrentMember();
+        UmsMember user = memberService.getCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
 
@@ -257,7 +257,7 @@ public class PayController extends ApiBaseAction {
                     history.setNote("小程序支付");
                     orderOperateHistoryService.save(history);
 
-                    umsMemberService.addIntegration(user.getId(),orderInfo.getPayAmount().multiply(new BigDecimal("0.1")).intValue(),1,"小程序支付添加积分", AllEnum.ChangeSource.order.code(),user.getUsername());
+                    memberService.addIntegration(user.getId(),orderInfo.getPayAmount().multiply(new BigDecimal("0.1")).intValue(),1,"小程序支付添加积分", AllEnum.ChangeSource.order.code(),user.getUsername());
 
                     return toResponsObject(200, "微信统一订单下单成功", resultObj);
                 }
@@ -276,7 +276,7 @@ public class PayController extends ApiBaseAction {
     @ApiOperation(value = "查询订单状态")
     @GetMapping("query")
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = UserUtils.getCurrentMember();
+        UmsMember user = memberService.getCurrentMember();
         //
         SysAppletSet  appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {

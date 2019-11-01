@@ -38,7 +38,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
     @Resource
     private SmsUserRedPacketMapper userRedPacketMapper;
     @Resource
-    private IUmsMemberService umsMemberService;
+    private IUmsMemberService memberService;
     @Resource
     private IUmsMemberBlanceLogService memberBlanceLogService;
 
@@ -80,7 +80,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
             restPeopleNum--;
             SmsUserRedPacket vo = new SmsUserRedPacket();
             vo.setGrabTime(new Date());
-            vo.setAdminId(UserUtils.getCurrentMember().getId());
+            vo.setAdminId(redPacket.getUserId());
             vo.setAmount(new BigDecimal(amount));
             vo.setNote(redPacket.getNote());
             vo.setRedPacketId(redPacket.getId());
@@ -88,7 +88,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
         }
         SmsUserRedPacket vo = new SmsUserRedPacket();
         vo.setGrabTime(new Date());
-        vo.setAdminId(UserUtils.getCurrentMember().getId());
+        vo.setAdminId(redPacket.getUserId());
         vo.setAmount(new BigDecimal(restAmount));
         vo.setNote(redPacket.getNote());
         vo.setRedPacketId(redPacket.getId());
@@ -143,7 +143,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
             Integer e = boards.get(i + 1) - boards.get(i);
             SmsUserRedPacket vo = new SmsUserRedPacket();
             vo.setGrabTime(new Date());
-            vo.setAdminId(UserUtils.getCurrentMember().getId());
+            vo.setAdminId(redPacket.getUserId());
             vo.setAmount(new BigDecimal(e).divide(new BigDecimal(100)));
             vo.setNote(redPacket.getNote());
             vo.setRedPacketId(redPacket.getId());
@@ -177,7 +177,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
     @Override
     public int createRedPacket(SmsRedPacket redPacket) {
         redPacket.setSendDate(new Date());
-        redPacket.setUserId(UserUtils.getCurrentMember().getId());
+        redPacket.setUserId(memberService.getCurrentMember().getId());
         if (redPacket.getType() == 2) { //1随机红包 2等额红包
             redPacket.setAmount(new BigDecimal(redPacket.getTotal()).multiply(redPacket.getUnitAmount()));
         }
@@ -190,7 +190,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
             for (int i = 0; i < redPacket.getTotal(); i++) {
                 SmsUserRedPacket vo = new SmsUserRedPacket();
                 vo.setGrabTime(new Date());
-                vo.setAdminId(UserUtils.getCurrentMember().getId());
+                vo.setAdminId(memberService.getCurrentMember().getId());
                 vo.setAmount(redPacket.getUnitAmount());
 
                 vo.setNote(redPacket.getNote());
@@ -205,11 +205,11 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
     @Override
     @Transactional
     public int acceptRedPacket(Integer id) {
-        int counts = userRedPacketMapper.countOne(id, UserUtils.getCurrentMember().getId());
+        int counts = userRedPacketMapper.countOne(id, memberService.getCurrentMember().getId());
         if (counts > 0) {
             return 2;
         }
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         SmsUserRedPacket userRedPacket = userRedPacketMapper.listUserRedOne(id);
         userRedPacket.setUserId(member.getId());
 
@@ -223,7 +223,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
         member.setBlance(member.getBlance().add(userRedPacket.getAmount()));
 
         memberBlanceLogService.save(log);
-        umsMemberService.updateById(member);
+        memberService.updateById(member);
         userRedPacketMapper.updateById(userRedPacket);
         return 1;
     }

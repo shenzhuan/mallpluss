@@ -130,7 +130,7 @@ public class SingeUmsController extends ApiBaseAction {
             redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
 
             PmsFavorite query = new PmsFavorite();
@@ -190,7 +190,7 @@ public class SingeUmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "会员绑定学校")
     public Object bindSchool(@RequestParam(value = "schoolId", required = true) Long schoolId) {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getCurrentMember();
 
             String countKey = "bindSchool:count:" + ":" + member.getId();
             String value = redisService.get(countKey);
@@ -222,7 +222,7 @@ public class SingeUmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "会员绑定区域")
     public Object bindArea(@RequestParam(value = "areaId", required = true) Long areaId) {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getCurrentMember();
             String countKey = "bindArea:count:" + ":" + member.getId();
             String value = redisService.get(countKey);
             if (value != null) {
@@ -257,7 +257,7 @@ public class SingeUmsController extends ApiBaseAction {
             if (ValidatorUtils.empty(areaIds)) {
                 return new CommonResult().failed("请选择区域");
             }
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getCurrentMember();
             String[] areIdList = areaIds.split(",");
             List<UmsMemberMemberTagRelation> list = new ArrayList<>();
             for (String id : areIdList) {

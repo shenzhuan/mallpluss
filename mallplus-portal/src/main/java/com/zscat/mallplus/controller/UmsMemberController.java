@@ -87,7 +87,7 @@ public class UmsMemberController extends ApiBaseAction {
     @GetMapping("/user")
     @ResponseBody
     public Object user() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             return new CommonResult().success(umsMember);
         }

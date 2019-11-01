@@ -58,7 +58,7 @@ public class BPayController extends ApiBaseAction {
     @Resource
     private IOmsOrderService orderService;
     @Resource
-    private IUmsMemberService umsMemberService;
+    private IUmsMemberService memberService;
 
 
     @Resource
@@ -134,7 +134,7 @@ public class BPayController extends ApiBaseAction {
             return new CommonResult().failed("余额不足！");
         }else {
             OmsOrder order =orderService.getById(payParam.getOrderId());
-            UmsMember userDO = UserUtils.getCurrentMember();
+            UmsMember userDO = memberService.getCurrentMember();
             order.setStatus(OrderStatus.TO_DELIVER.getValue());
             order.setPayType(AllEnum.OrderPayType.balancePay.code());
             orderService.updateById(order);
@@ -145,7 +145,7 @@ public class BPayController extends ApiBaseAction {
                 groupMapper.updateById(group);
             }
             userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
-            umsMemberService.updateById(userDO);
+            memberService.updateById(userDO);
         }
         return new CommonResult().success();
     }
@@ -167,7 +167,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
-        UmsMember user = UserUtils.getCurrentMember();
+        UmsMember user = memberService.getCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
 
@@ -285,7 +285,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "查询订单状态")
     @PostMapping("query")
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = UserUtils.getCurrentMember();
+        UmsMember user = memberService.getCurrentMember();
         //
         SysAppletSet  appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {

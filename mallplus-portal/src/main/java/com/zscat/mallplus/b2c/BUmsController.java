@@ -73,7 +73,7 @@ public class BUmsController {
         if (member==null){
             return new CommonResult().paramFailed();
         }
-        UmsMember member1 = UserUtils.getCurrentMember();
+        UmsMember member1 = memberService.getCurrentMember();
         if(member1!=null&& member1.getId()!=null){
             member.setId(member1.getId());
             return new CommonResult().success(memberService.updateById(member));
@@ -88,7 +88,7 @@ public class BUmsController {
     public Object balancelist(UmsMemberBlanceLog entity,
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        entity.setMemberId(UserUtils.getCurrentMember().getId());
+        entity.setMemberId(memberService.getCurrentMember().getId());
         if (entity.getType()==0){
             return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>()));
         }
@@ -118,8 +118,8 @@ public class BUmsController {
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         Map<String,Object> map = new HashedMap();
-        map.put("member",memberService.getById(UserUtils.getCurrentMember().getId()));
-        entity.setMemberId(UserUtils.getCurrentMember().getId());
+        map.put("member",memberService.getById(memberService.getCurrentMember().getId()));
+        entity.setMemberId(memberService.getCurrentMember().getId());
         map.put("intList",integrationChangeHistoryService.page(new Page<UmsIntegrationChangeHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));
         return new CommonResult().success(map);
     }
@@ -137,7 +137,7 @@ public class BUmsController {
     @ApiOperation(value = "判断是否签到")
     @PostMapping(value = "/user.issign")
     public Object issign(CmsSubject subject, BindingResult result) {
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         return new CommonResult().success();
 
     }
@@ -147,7 +147,7 @@ public class BUmsController {
     @PostMapping(value = "/user.sign")
     public Object sign(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
 
         return new CommonResult().success();
     }
@@ -159,7 +159,7 @@ public class BUmsController {
     @ResponseBody
     public Object saveusership(UserBankcards address) {
         boolean count = false;
-        UmsMember umsMember =  UserUtils.getCurrentMember();
+        UmsMember umsMember =  memberService.getCurrentMember();
         if (ValidatorUtils.notEmpty(address.getIsDefault()) && address.getIsDefault()==1){
             UserBankcards query =new UserBankcards();
             query.setIsDefault(2);
@@ -187,7 +187,7 @@ public class BUmsController {
     @RequestMapping(value = "/user.getbankcardlist", method = RequestMethod.POST)
     @ResponseBody
     public Object getbankcardlist() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
             return new CommonResult().success(addressList);
@@ -209,7 +209,7 @@ public class BUmsController {
     @RequestMapping(value = "/user.getdefaultbankcard", method = RequestMethod.POST)
     @ResponseBody
     public Object getItemDefautl() {
-        UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id",UserUtils.getCurrentMember().getId()).eq("is_default",1));
+        UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id",memberService.getCurrentMember().getId()).eq("is_default",1));
         return new CommonResult().success(address);
     }
 

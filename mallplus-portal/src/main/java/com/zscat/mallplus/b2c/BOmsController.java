@@ -129,7 +129,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/cart.getlist", method = RequestMethod.POST)
     @ResponseBody
     public Object listCart() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
             for (OmsCartItem item : cartItemList){
@@ -149,7 +149,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object updateQuantity(@RequestParam Long id,
                                  @RequestParam Integer quantity) {
-        int count = cartItemService.updateQuantity(id, UserUtils.getCurrentMember().getId(), quantity);
+        int count = cartItemService.updateQuantity(id, memberService.getCurrentMember().getId(), quantity);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -160,7 +160,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/cart.getnumber", method = RequestMethod.POST)
     @ResponseBody
     public Object getnumber() {
-        int count = cartItemService.count(new QueryWrapper<OmsCartItem>().eq("member_id",UserUtils.getCurrentMember().getId()));
+        int count = cartItemService.count(new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getCurrentMember().getId()));
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -189,7 +189,7 @@ public class BOmsController extends ApiBaseAction {
         for (String s : ids.split(",")) {
             resultList.add(Long.valueOf(s));
         }
-        int count = cartItemService.delete(UserUtils.getCurrentMember().getId(), resultList);
+        int count = cartItemService.delete(memberService.getCurrentMember().getId(), resultList);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -200,7 +200,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/clear", method = RequestMethod.POST)
     @ResponseBody
     public Object clear() {
-        int count = cartItemService.clear(UserUtils.getCurrentMember().getId());
+        int count = cartItemService.clear(memberService.getCurrentMember().getId());
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -232,7 +232,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
-        Long memberId = UserUtils.getCurrentMember().getId();
+        Long memberId = memberService.getCurrentMember().getId();
         if (ValidatorUtils.empty(memberId)){
             return new CommonResult().fail(100);
 
@@ -257,7 +257,7 @@ public class BOmsController extends ApiBaseAction {
     public Object saveusership(UmsMemberReceiveAddress address) {
         boolean count = false;
         if (address.getDefaultStatus()==1){
-            addressMapper.updateStatusByMember(UserUtils.getCurrentMember().getId());
+            addressMapper.updateStatusByMember(memberService.getCurrentMember().getId());
         }
         if (address != null && address.getId() != null) {
             count = memberReceiveAddressService.updateById(address);
@@ -274,7 +274,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/user.getusership", method = RequestMethod.POST)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id",umsMember.getId()));
             return new CommonResult().success(addressList);
@@ -340,9 +340,9 @@ public class BOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (ValidatorUtils.empty(order.getStatus()) || order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",UserUtils.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            order.setMemberId(UserUtils.getCurrentMember().getId());
+            order.setMemberId(memberService.getCurrentMember().getId());
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
@@ -656,7 +656,7 @@ public class BOmsController extends ApiBaseAction {
             return   new CommonResult().success(objectMap);
         }
 
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         OrderStatusCount count = new OrderStatusCount();
         if (umsMember != null && umsMember.getId() != null) {
             OmsOrder param = new OmsOrder();
@@ -769,7 +769,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping(value = "/order.aftersalesstatus")
     public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
 
         return null;
     }
@@ -779,7 +779,7 @@ public class BOmsController extends ApiBaseAction {
     @ApiOperation(value = "添加售后单")
     @PostMapping(value = "/order.addaftersales")
     public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         aftersales.setUserId(member.getId());
 
         return new CommonResult().success( billAftersalesService.save(aftersales));
@@ -790,7 +790,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping(value = "/order.sendreship")
     public Object sendShip(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
 
         return null;
     }

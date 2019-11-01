@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UserBankcards;
 import com.zscat.mallplus.ums.mapper.UserBankcardsMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.IUserBankcardsService;
 import com.zscat.mallplus.util.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +27,12 @@ public class UserBankcardsServiceImpl extends ServiceImpl<UserBankcardsMapper, U
 
     @Resource
     UserBankcardsMapper bankcardsMapper;
-
+    @Autowired
+    private IUmsMemberService memberService;
     @Transactional
     @Override
     public int setDefault(Long id) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         UserBankcards query =new UserBankcards();
         query.setIsDefault(2);
         bankcardsMapper.update(query,new QueryWrapper<UserBankcards>().eq("user_id",currentMember.getId()));

@@ -133,7 +133,7 @@ public class HomeController {
     @ApiOperation(value = "据分类获取专题")
     public Object subjectDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsSubject cmsSubject = subjectService.getById(id);
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         /*if (umsMember != null && umsMember.getId() != null) {
             MemberProductCollection findCollection = productCollectionRepository.findByMemberIdAndProductId(
                     umsMember.getId(), id);

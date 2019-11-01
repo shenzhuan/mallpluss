@@ -55,7 +55,7 @@ public class MybatisPlusConfig {
                 if (null == currentProviderId) {
                     currentProviderId = 1L;
                     System.out.println("#1129 getCurrentProviderId error.");
-                 //   throw new RuntimeException("#1129 getCurrentProviderId error.");
+                    throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
                 return new LongValue(currentProviderId);
             }

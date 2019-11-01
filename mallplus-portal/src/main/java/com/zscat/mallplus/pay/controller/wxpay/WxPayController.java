@@ -103,7 +103,7 @@ public class WxPayController extends WxPayApiController {
     public Object userPay(HttpServletRequest request, HttpServletResponse response,PayParam payParam) {
         OmsOrder order = orderService.getById(payParam.getOrderId());
         order.setPayCode(payParam.getPayment_code());
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         PaymentParam paymentParam = payParam.getParams();
         if ("balancepay".equals(payParam.getPayment_code())){
             UmsMember member = memberService.getById(currentMember.getId());

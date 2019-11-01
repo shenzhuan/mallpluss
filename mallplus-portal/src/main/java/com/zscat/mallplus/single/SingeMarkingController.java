@@ -77,7 +77,8 @@ public class SingeMarkingController extends ApiBaseAction {
     private RedisUtil redisUtil;
     @Autowired
     private IPmsFavoriteService favoriteService;
-
+    @Autowired
+    private IUmsMemberService memberService;
 
 
     @ApiOperation("领取指定优惠券")
@@ -149,7 +150,7 @@ public class SingeMarkingController extends ApiBaseAction {
                     goods = productService.getGoodsRedisById(goodIds.get(0));
                 }
                     if (goods != null && goods.getGoods() != null) {
-                        UmsMember umsMember = UserUtils.getCurrentMember();
+                        UmsMember umsMember = memberService.getCurrentMember();
                         if (umsMember != null && umsMember.getId() != null) {
                             isCollectGoods(map, goods, umsMember);
                         }

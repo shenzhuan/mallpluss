@@ -46,7 +46,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public OmsCartItem add(OmsCartItem cartItem) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         cartItem.setMemberId(currentMember.getId());
         cartItem.setMemberNickname(currentMember.getNickname());
         cartItem.setDeleteStatus(0);
@@ -162,7 +162,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public OmsCartItem addCart(OmsCartItem cartItem) {
-        UmsMember currentMember = UserUtils.getCurrentMember();
+        UmsMember currentMember = memberService.getCurrentMember();
         cartItem.setMemberId(currentMember.getId());
         cartItem.setMemberNickname(currentMember.getNickname());
         cartItem.setDeleteStatus(0);

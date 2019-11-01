@@ -89,7 +89,7 @@ public class SingelHomeController {
     @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
     public Object userInfo() {
         UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
-       UmsMember umsMember = UserUtils.getCurrentMember();
+       UmsMember umsMember = memberService.getCurrentMember();
        if (umsMember!=null && umsMember.getId()!=null){
            umsMember = memberService.getById(umsMember.getId());
            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));
@@ -345,7 +345,7 @@ public class SingelHomeController {
                            @RequestParam String password,
                            @RequestParam String confimpassword,
                            @RequestParam String authCode,
-                           @RequestParam String invitecode) {
+                           @RequestParam(required = false) String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
@@ -367,7 +367,7 @@ public class SingelHomeController {
     @PostMapping(value = "/simpleReg")
     public Object simpleReg(@RequestParam String phone,
                             @RequestParam String password,
-                            @RequestParam String confimpassword,@RequestParam String invitecode) {
+                            @RequestParam String confimpassword,@RequestParam(required = false)  String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }

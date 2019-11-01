@@ -26,6 +26,7 @@ import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
@@ -106,6 +107,9 @@ public class SingePmsController extends ApiBaseAction {
     @Resource
     private IPmsGiftsCategoryService giftsCategoryService;
 
+    @Autowired
+    private IUmsMemberService memberService;
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/paimai/detail")
@@ -146,7 +150,7 @@ public class SingePmsController extends ApiBaseAction {
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
           isCollectGoods(map,goods,umsMember);
         }
@@ -192,7 +196,7 @@ public class SingePmsController extends ApiBaseAction {
     @PostMapping(value = "/createGoods")
     public Object createGoods(PmsProduct productParam) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
             Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());
@@ -244,7 +248,7 @@ public class SingePmsController extends ApiBaseAction {
     @PostMapping(value = "/addGoodsConsult")
     public Object addGoodsConsult(PmsProductConsult subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = UserUtils.getCurrentMember();
+        UmsMember member = memberService.getCurrentMember();
         if (member!=null){
             subject.setPic(member.getIcon());
             subject.setMemberName(member.getNickname());
@@ -374,7 +378,7 @@ public class SingePmsController extends ApiBaseAction {
         }
         SmsGroup group = groupMapper.getByGoodsId(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             p.setHit(recordGoodsFoot(id));
@@ -435,7 +439,7 @@ public class SingePmsController extends ApiBaseAction {
             e.printStackTrace();
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             p.setHit(recordGoodsFoot(id));
@@ -462,7 +466,7 @@ public class SingePmsController extends ApiBaseAction {
     public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         PmsGifts  goods = giftsService.getById(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsFavorite query = new PmsFavorite();
             query.setObjId(goods.getId());
@@ -619,9 +623,9 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation("添加商品浏览记录")
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/addView")
-    public Object addView(@RequestParam Long memberId,@RequestParam  Long goodsId) {
+    public Object addView(@RequestParam  Long goodsId) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberId);
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getUsername());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
@@ -638,10 +642,10 @@ public class SingePmsController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation(value = "查询用户浏览记录列表")
     @GetMapping(value = "/viewList")
-    public Object viewList(@RequestParam Long memberId,
+    public Object viewList(
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        String key = String.format(Rediskey.GOODSHISTORY, memberId);
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);

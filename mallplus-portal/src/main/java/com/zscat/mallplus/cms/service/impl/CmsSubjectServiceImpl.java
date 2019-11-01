@@ -12,11 +12,13 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsRewardLog;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.timeline.Timeline;
 import com.zscat.mallplus.vo.timeline.TimelineMonth;
 import com.zscat.mallplus.vo.timeline.TimelinePost;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -52,6 +54,8 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     private UmsRewardLogMapper rewardLogMapper;
     @Resource
     private CmsSubjectCategoryMapper subjectCategoryMapper;
+    @Autowired
+    private IUmsMemberService memberService;
 
 
 
@@ -105,7 +109,7 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     @Override
     public Object reward(Long aid, int coin) {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getCurrentMember();
             if (member!=null && member.getBlance().compareTo(new BigDecimal(coin))<0){
                 return new CommonResult().failed("余额不够");
             }

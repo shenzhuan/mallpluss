@@ -68,7 +68,7 @@ public class OmsCartItemController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getCurrentMember();
         Map<String,Object> map = new HashMap<>();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
@@ -94,7 +94,7 @@ public class OmsCartItemController {
     @ResponseBody
     public Object updateQuantity(@RequestParam Long id,
                                  @RequestParam Integer quantity) {
-        int count = cartItemService.updateQuantity(id, UserUtils.getCurrentMember().getId(), quantity);
+        int count = cartItemService.updateQuantity(id, memberService.getCurrentMember().getId(), quantity);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -131,7 +131,7 @@ public class OmsCartItemController {
         for (String s : cart_id_list.split(",")) {
             resultList.add(Long.valueOf(s));
         }
-        int count = cartItemService.delete(UserUtils.getCurrentMember().getId(), resultList);
+        int count = cartItemService.delete(memberService.getCurrentMember().getId(), resultList);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -142,7 +142,7 @@ public class OmsCartItemController {
     @RequestMapping(value = "/clear", method = RequestMethod.POST)
     @ResponseBody
     public Object clear() {
-        int count = cartItemService.clear(UserUtils.getCurrentMember().getId());
+        int count = cartItemService.clear(memberService.getCurrentMember().getId());
         if (count > 0) {
             return new CommonResult().success(count);
         }

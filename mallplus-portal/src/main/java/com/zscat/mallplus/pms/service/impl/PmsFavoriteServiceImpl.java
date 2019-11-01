@@ -10,7 +10,9 @@ import com.zscat.mallplus.pms.mapper.PmsFavoriteMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,13 +38,15 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
     private ICmsSubjectService subjectService;
     @Resource
     private SysStoreMapper storeMapper;
+    @Autowired
+    private IUmsMemberService memberService;
     @Override
     public int addProduct(PmsFavorite productCollection) {
         int count = 0;
-        productCollection.setMemberId(UserUtils.getCurrentMember().getId());
+        productCollection.setMemberId(memberService.getCurrentMember().getId());
         PmsFavorite query = new PmsFavorite();
         query.setObjId(productCollection.getObjId());
-        query.setMemberId(UserUtils.getCurrentMember().getId());
+        query.setMemberId(memberService.getCurrentMember().getId());
         query.setType(productCollection.getType());
         PmsFavorite findCollection = productCollectionRepository.selectOne(new QueryWrapper<>(query));
         if (findCollection == null) {
