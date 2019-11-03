@@ -7,7 +7,6 @@ import com.zscat.mallplus.ums.entity.UserBankcards;
 import com.zscat.mallplus.ums.mapper.UserBankcardsMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.IUserBankcardsService;
-import com.zscat.mallplus.util.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +31,7 @@ public class UserBankcardsServiceImpl extends ServiceImpl<UserBankcardsMapper, U
     @Transactional
     @Override
     public int setDefault(Long id) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         UserBankcards query =new UserBankcards();
         query.setIsDefault(2);
         bankcardsMapper.update(query,new QueryWrapper<UserBankcards>().eq("user_id",currentMember.getId()));

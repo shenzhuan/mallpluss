@@ -13,7 +13,6 @@ import com.zscat.mallplus.ums.entity.UmsRewardLog;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.timeline.Timeline;
 import com.zscat.mallplus.vo.timeline.TimelineMonth;
@@ -109,7 +108,7 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     @Override
     public Object reward(Long aid, int coin) {
         try {
-            UmsMember member = memberService.getCurrentMember();
+            UmsMember member = memberService.getNewCurrentMember();
             if (member!=null && member.getBlance().compareTo(new BigDecimal(coin))<0){
                 return new CommonResult().failed("余额不够");
             }

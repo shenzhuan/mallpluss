@@ -1,6 +1,8 @@
 package com.zscat.mallplus.single;
 
 
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,4 +139,11 @@ public class ApiBaseAction {
         }
         return tokenEntity.getUserId();
     }*/
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
+    @Resource
+    private RedisService redisService;
+
+
+
 }

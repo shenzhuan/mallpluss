@@ -23,7 +23,6 @@ import com.zscat.mallplus.pay.entity.WxPayBean;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +102,7 @@ public class WxPayController extends WxPayApiController {
     public Object userPay(HttpServletRequest request, HttpServletResponse response,PayParam payParam) {
         OmsOrder order = orderService.getById(payParam.getOrderId());
         order.setPayCode(payParam.getPayment_code());
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         PaymentParam paymentParam = payParam.getParams();
         if ("balancepay".equals(payParam.getPayment_code())){
             UmsMember member = memberService.getById(currentMember.getId());

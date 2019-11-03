@@ -1,30 +1,19 @@
 package com.zscat.mallplus.b2c;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.annotation.IgnoreAuth;
-import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.pms.vo.GoodsDetailResult;
 import com.zscat.mallplus.single.ApiBaseAction;
-import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.entity.SmsBasicGifts;
+import com.zscat.mallplus.sms.entity.SmsBasicMarking;
+import com.zscat.mallplus.sms.entity.SmsCoupon;
+import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
-import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -33,11 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @Auther: shenzhuan

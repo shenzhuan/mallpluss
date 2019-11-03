@@ -64,4 +64,6 @@ public interface IOmsCartItemService extends IService<OmsCartItem> {
     List<OmsCartItem> calcCartPromotion(List<OmsCartItem> cartItemList);
 
     OmsCartItem addCart(OmsCartItem cartItem);
+
+    int countCart(Long id);
 }

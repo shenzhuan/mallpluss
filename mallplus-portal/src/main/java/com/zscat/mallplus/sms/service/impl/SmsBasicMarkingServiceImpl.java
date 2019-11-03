@@ -137,11 +137,11 @@ public class SmsBasicMarkingServiceImpl extends ServiceImpl<SmsBasicMarkingMappe
                         lastAmount = getDIscountBigDecimal(lastAmount, newBasicGift, m, andCount.getSingleAmount(), andCount.getSingleCount(), actrule);
                     }
                 }
-
-
             }
         }
-        newBasicGift.setMinAmount(lastAmount);
+        if (newBasicGift!=null){
+            newBasicGift.setMinAmount(lastAmount);
+        }
         return newBasicGift;
     }
 

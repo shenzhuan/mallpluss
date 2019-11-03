@@ -13,4 +13,5 @@ import com.zscat.mallplus.oms.entity.OmsCartItem;
  */
 public interface OmsCartItemMapper extends BaseMapper<OmsCartItem> {
 
+    int countCart(Long id);
 }

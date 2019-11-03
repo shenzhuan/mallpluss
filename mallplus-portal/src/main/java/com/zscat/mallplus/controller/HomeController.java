@@ -19,7 +19,6 @@ import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
@@ -133,7 +132,7 @@ public class HomeController {
     @ApiOperation(value = "据分类获取专题")
     public Object subjectDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsSubject cmsSubject = subjectService.getById(id);
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         /*if (umsMember != null && umsMember.getId() != null) {
             MemberProductCollection findCollection = productCollectionRepository.findByMemberIdAndProductId(
                     umsMember.getId(), id);

@@ -21,12 +21,10 @@ import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.ConsultTypeCount;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
 import com.zscat.mallplus.pms.vo.ProductTypeVo;
-import com.zscat.mallplus.pms.vo.PromotionProduct;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
-import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
@@ -42,7 +40,6 @@ import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
@@ -50,8 +47,6 @@ import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -132,7 +127,7 @@ public class BPmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -142,7 +137,7 @@ public class BPmsController extends ApiBaseAction {
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             PmsFavorite query = new PmsFavorite();
@@ -364,7 +359,7 @@ public class BPmsController extends ApiBaseAction {
         }
         GoodsDetailResult goods = null;
         try {
-              goods =JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods =JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -376,7 +371,7 @@ public class BPmsController extends ApiBaseAction {
         }
         SmsGroup group = groupMapper.getByGoodsId(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
             p.setHit(viewCount);
@@ -446,7 +441,7 @@ public class BPmsController extends ApiBaseAction {
     public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         PmsGifts  goods = giftsService.getById(id);
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsFavorite query = new PmsFavorite();
             query.setObjId(goods.getId());
@@ -586,7 +581,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/addGoodsConsult")
     public Object addGoodsConsult(PmsProductConsult subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member!=null){
             subject.setPic(member.getIcon());
             subject.setMemberName(member.getNickname());
@@ -610,7 +605,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/user.addgoodsbrowsing")
     public Object addView(@RequestParam  Long goodsId) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getId());
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
@@ -631,7 +626,7 @@ public class BPmsController extends ApiBaseAction {
     public Object viewList(
                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        String key = String.format(Rediskey.GOODSHISTORY, memberService.getCurrentMember().getId());
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
@@ -658,7 +653,7 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (memberService.getCurrentMember().getId()==null){
+        if (memberService.getNewCurrentMember().getId()==null){
             return new CommonResult().fail(100);
         }
         int count = memberCollectionService.addProduct(productCollection);
@@ -700,7 +695,7 @@ public class BPmsController extends ApiBaseAction {
     public Object listCollectByType( PmsFavorite productCollection,
                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        productCollection.setMemberId(memberService.getCurrentMember().getId());
+        productCollection.setMemberId(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
     }
 
@@ -737,13 +732,13 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLikeByType")
     public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getCurrentMember().getId(),productCollection.getType());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLike")
     public Object listLike( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getCurrentMember().getId());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 
@@ -815,7 +810,7 @@ public class BPmsController extends ApiBaseAction {
                     goods = pmsProductService.getGoodsRedisById(goodIds.get(0));
                 }
                 if (goods != null && goods.getGoods() != null) {
-                    UmsMember umsMember = memberService.getCurrentMember();
+                    UmsMember umsMember = memberService.getNewCurrentMember();
                     if (umsMember != null && umsMember.getId() != null) {
                         isCollectGoods(map, goods, umsMember);
                     }
@@ -842,7 +837,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/createGoods")
     public Object createGoods(PmsProduct productParam) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
             Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());

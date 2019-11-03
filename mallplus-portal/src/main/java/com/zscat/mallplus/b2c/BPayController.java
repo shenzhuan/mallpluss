@@ -19,7 +19,10 @@ import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.*;
+import com.zscat.mallplus.util.CharUtil;
+import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.util.MapUtils;
+import com.zscat.mallplus.util.XmlUtil;
 import com.zscat.mallplus.util.applet.WechatRefundApiResult;
 import com.zscat.mallplus.util.applet.WechatUtil;
 import com.zscat.mallplus.utils.CommonResult;
@@ -129,12 +132,11 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
     public Object balancePay(BalancePayParam payParam){
-
         if(payParam.getPayAmount().compareTo(payParam.getBalance())>0){
             return new CommonResult().failed("余额不足！");
         }else {
             OmsOrder order =orderService.getById(payParam.getOrderId());
-            UmsMember userDO = memberService.getCurrentMember();
+            UmsMember userDO = memberService.getNewCurrentMember();
             order.setStatus(OrderStatus.TO_DELIVER.getValue());
             order.setPayType(AllEnum.OrderPayType.balancePay.code());
             orderService.updateById(order);
@@ -146,8 +148,8 @@ public class BPayController extends ApiBaseAction {
             }
             userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
             memberService.updateById(userDO);
+            return new CommonResult().success(order);
         }
-        return new CommonResult().success();
     }
 
     /**
@@ -167,7 +169,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
-        UmsMember user = memberService.getCurrentMember();
+        UmsMember user = memberService.getNewCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
 
@@ -285,7 +287,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "查询订单状态")
     @PostMapping("query")
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = memberService.getCurrentMember();
+        UmsMember user = memberService.getNewCurrentMember();
         //
         SysAppletSet  appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {

@@ -27,7 +27,6 @@ import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
@@ -130,7 +129,7 @@ public class SingeUmsController extends ApiBaseAction {
             redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
         }
         Map<String, Object> map = new HashMap<>();
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
 
             PmsFavorite query = new PmsFavorite();
@@ -190,7 +189,7 @@ public class SingeUmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "会员绑定学校")
     public Object bindSchool(@RequestParam(value = "schoolId", required = true) Long schoolId) {
         try {
-            UmsMember member = memberService.getCurrentMember();
+            UmsMember member = memberService.getNewCurrentMember();
 
             String countKey = "bindSchool:count:" + ":" + member.getId();
             String value = redisService.get(countKey);
@@ -222,7 +221,7 @@ public class SingeUmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "会员绑定区域")
     public Object bindArea(@RequestParam(value = "areaId", required = true) Long areaId) {
         try {
-            UmsMember member = memberService.getCurrentMember();
+            UmsMember member = memberService.getNewCurrentMember();
             String countKey = "bindArea:count:" + ":" + member.getId();
             String value = redisService.get(countKey);
             if (value != null) {
@@ -257,7 +256,7 @@ public class SingeUmsController extends ApiBaseAction {
             if (ValidatorUtils.empty(areaIds)) {
                 return new CommonResult().failed("请选择区域");
             }
-            UmsMember member = memberService.getCurrentMember();
+            UmsMember member = memberService.getNewCurrentMember();
             String[] areIdList = areaIds.split(",");
             List<UmsMemberMemberTagRelation> list = new ArrayList<>();
             for (String id : areIdList) {

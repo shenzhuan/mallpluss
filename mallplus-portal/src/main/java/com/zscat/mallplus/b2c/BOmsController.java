@@ -14,22 +14,12 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
-import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.entity.OmsOrderItem;
-import com.zscat.mallplus.oms.entity.OmsPayments;
-import com.zscat.mallplus.oms.service.IOmsCartItemService;
-import com.zscat.mallplus.oms.service.IOmsOrderItemService;
-import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.service.IOmsPaymentsService;
-import com.zscat.mallplus.oms.vo.CartProduct;
+import com.zscat.mallplus.oms.entity.*;
+import com.zscat.mallplus.oms.service.*;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
-import com.zscat.mallplus.pms.entity.PmsProductConsult;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
-import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
-import com.zscat.mallplus.pms.vo.ProductConsultParam;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.OmsShip;
@@ -43,7 +33,6 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -65,7 +54,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -104,7 +96,8 @@ public class BOmsController extends ApiBaseAction {
     @Autowired
     private ApiContext apiContext;
 
-
+    @Resource
+    private IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
 
     @Autowired
     private IOmsShipService omsShipService;
@@ -129,7 +122,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/cart.getlist", method = RequestMethod.POST)
     @ResponseBody
     public Object listCart() {
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
             for (OmsCartItem item : cartItemList){
@@ -149,7 +142,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object updateQuantity(@RequestParam Long id,
                                  @RequestParam Integer quantity) {
-        int count = cartItemService.updateQuantity(id, memberService.getCurrentMember().getId(), quantity);
+        int count = cartItemService.updateQuantity(id, memberService.getNewCurrentMember().getId(), quantity);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -160,7 +153,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/cart.getnumber", method = RequestMethod.POST)
     @ResponseBody
     public Object getnumber() {
-        int count = cartItemService.count(new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getCurrentMember().getId()));
+        int count = cartItemService.countCart(memberService.getNewCurrentMember().getId());
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -189,7 +182,7 @@ public class BOmsController extends ApiBaseAction {
         for (String s : ids.split(",")) {
             resultList.add(Long.valueOf(s));
         }
-        int count = cartItemService.delete(memberService.getCurrentMember().getId(), resultList);
+        int count = cartItemService.delete(memberService.getNewCurrentMember().getId(), resultList);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -200,7 +193,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/clear", method = RequestMethod.POST)
     @ResponseBody
     public Object clear() {
-        int count = cartItemService.clear(memberService.getCurrentMember().getId());
+        int count = cartItemService.clear(memberService.getNewCurrentMember().getId());
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -232,7 +225,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
-        Long memberId = memberService.getCurrentMember().getId();
+        Long memberId = memberService.getNewCurrentMember().getId();
         if (ValidatorUtils.empty(memberId)){
             return new CommonResult().fail(100);
 
@@ -257,7 +250,7 @@ public class BOmsController extends ApiBaseAction {
     public Object saveusership(UmsMemberReceiveAddress address) {
         boolean count = false;
         if (address.getDefaultStatus()==1){
-            addressMapper.updateStatusByMember(memberService.getCurrentMember().getId());
+            addressMapper.updateStatusByMember(memberService.getNewCurrentMember().getId());
         }
         if (address != null && address.getId() != null) {
             count = memberReceiveAddressService.updateById(address);
@@ -274,7 +267,7 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/user.getusership", method = RequestMethod.POST)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id",umsMember.getId()));
             return new CommonResult().success(addressList);
@@ -340,9 +333,9 @@ public class BOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (ValidatorUtils.empty(order.getStatus()) || order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
-            order.setMemberId(memberService.getCurrentMember().getId());
+            order.setMemberId(memberService.getNewCurrentMember().getId());
             page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
@@ -359,7 +352,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         OmsOrder orderDetailResult = null;
-        String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+id;
+        String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+id;
         String json = redisService.get(key);
         if (ValidatorUtils.notEmpty(json)){
             orderDetailResult = JsonUtils.jsonToPojo(json,OmsOrder.class);
@@ -392,7 +385,7 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能关闭");
             }
             if (orderService.closeOrder(newE)) {
-                String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+orderId;
+                String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+orderId;
                 redisService.remove(key);
                 return new CommonResult().success();
             }
@@ -415,7 +408,7 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能删除");
             }
             if (orderService.removeById(orderId)) {
-                String key = Rediskey.orderDetail+apiContext.getCurrentProviderId()+"orderid"+orderId;
+                String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+orderId;
                 redisService.remove(key);
                 return new CommonResult().success();
             }
@@ -656,7 +649,7 @@ public class BOmsController extends ApiBaseAction {
             return   new CommonResult().success(objectMap);
         }
 
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         OrderStatusCount count = new OrderStatusCount();
         if (umsMember != null && umsMember.getId() != null) {
             OmsOrder param = new OmsOrder();
@@ -769,7 +762,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping(value = "/order.aftersalesstatus")
     public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
 
         return null;
     }
@@ -779,7 +772,7 @@ public class BOmsController extends ApiBaseAction {
     @ApiOperation(value = "添加售后单")
     @PostMapping(value = "/order.addaftersales")
     public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         aftersales.setUserId(member.getId());
 
         return new CommonResult().success( billAftersalesService.save(aftersales));
@@ -790,8 +783,32 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping(value = "/order.sendreship")
     public Object sendShip(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
 
         return null;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
+    @ApiOperation(value = "用户发送退货包裹")
+    @PostMapping(value = "/order.getRefundReason")
+    public Object getRefundReason() {
+        return new CommonResult().success(IOmsOrderReturnReasonService.list(new QueryWrapper<>()));
+    }
+    @Resource
+    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
+
+    @SysLog(MODULE = "oms", REMARK = "保存订单退货申请")
+    @ApiOperation("保存订单退货申请")
+    @PostMapping(value = "/create")
+    public Object saveOmsOrderReturnApply( OmsOrderReturnApply entity) {
+        try {
+            if (IOmsOrderReturnApplyService.save(entity)) {
+                return new CommonResult().success();
+            }
+        } catch (Exception e) {
+            log.error("保存订单退货申请：%s", e.getMessage(), e);
+            return new CommonResult().failed();
+        }
+        return new CommonResult().failed();
     }
 }

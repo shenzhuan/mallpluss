@@ -1,3 +1,4 @@
+
 #user  nobody;
 worker_processes  1;
 
@@ -60,12 +61,7 @@ send_timeout 45;
 
 
     }
-server {
-    listen 80;
-    server_name _;
-    root /root/jm/h5;
-    index index.html;
-}
+
 server {
     listen 8082;
     server_name _;
@@ -77,6 +73,7 @@ server {
     server_name _;
     root /root/jm/mall;
     index index.html;
+try_files $uri $uri/ /index.html;
 }
 server {
     listen 8084;
@@ -87,9 +84,44 @@ try_files $uri $uri/ /index.html;
 }
 
 server {
-    listen 8085;
+    listen 8087;
     server_name _;
     root /root/jm/jsshop;
+    index index.html;
+try_files $uri $uri/ /index.html;
+}
+server {
+    listen 8088;
+    server_name _;
+    root /root/jm/pc;
+    index index.html;
+try_files $uri $uri/ /index.html;
+}
+server {
+    listen 8086;
+    server_name _;
+    root /root/jm/h5bak;
+    index index.html;
+try_files $uri $uri/ /index.html;
+}
+server {
+    listen 8000;
+    server_name _;
+    root /root/jm/h5bak1;
+    index index.html;
+try_files $uri $uri/ /index.html;
+}
+server {
+    listen 8000;
+    server_name _;
+    root /root/jm/pcbak;
+    index index.html;
+try_files $uri $uri/ /index.html;
+}
+server {
+    listen 8018;
+    server_name _;
+    root /root/jm/pcbak1;
     index index.html;
 try_files $uri $uri/ /index.html;
 }

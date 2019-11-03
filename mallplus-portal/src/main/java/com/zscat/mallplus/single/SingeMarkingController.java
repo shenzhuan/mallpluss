@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.cms.service.ISysAreaService;
-import com.zscat.mallplus.cms.service.ISysSchoolService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
@@ -21,19 +19,11 @@ import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
-import com.zscat.mallplus.sys.entity.SysArea;
-import com.zscat.mallplus.sys.entity.SysSchool;
-import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
-import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
-import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -44,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +139,7 @@ public class SingeMarkingController extends ApiBaseAction {
                     goods = productService.getGoodsRedisById(goodIds.get(0));
                 }
                     if (goods != null && goods.getGoods() != null) {
-                        UmsMember umsMember = memberService.getCurrentMember();
+                        UmsMember umsMember = memberService.getNewCurrentMember();
                         if (umsMember != null && umsMember.getId() != null) {
                             isCollectGoods(map, goods, umsMember);
                         }

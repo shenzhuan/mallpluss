@@ -8,6 +8,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
+import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.MemberDetails;
 import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
+    @Autowired
+    private ApiContext apiContext;
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf
@@ -106,8 +108,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 try {
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)),UmsMember.class);
+
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, username)),UmsMember.class);
                     if (member != null) {
+                        return new MemberDetails(member);
+                    }else {
+                        member = memberService.getByUsername(username);
                         return new MemberDetails(member);
                     }
                 }catch (Exception e){

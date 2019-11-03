@@ -31,6 +31,11 @@ public class ConfirmOrderResult {
     private UmsIntegrationConsumeSetting integrationConsumeSetting;
     //会员持有的积分
     private Integer memberIntegration;
+
+    /**
+     * 余额
+     */
+    private BigDecimal blance;
     //计算的金额
     private CalcAmount calcAmount;
     private PmsProduct goods;

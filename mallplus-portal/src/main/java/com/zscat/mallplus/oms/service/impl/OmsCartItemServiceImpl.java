@@ -16,7 +16,6 @@ import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.vo.PromotionProduct;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public OmsCartItem add(OmsCartItem cartItem) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         cartItem.setMemberId(currentMember.getId());
         cartItem.setMemberNickname(currentMember.getNickname());
         cartItem.setDeleteStatus(0);
@@ -162,7 +161,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public OmsCartItem addCart(OmsCartItem cartItem) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         cartItem.setMemberId(currentMember.getId());
         cartItem.setMemberNickname(currentMember.getNickname());
         cartItem.setDeleteStatus(0);
@@ -361,5 +360,10 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
             }
         }
         return null;
+    }
+
+    @Override
+    public int countCart(Long id){
+        return cartItemMapper.countCart(id);
     }
 }

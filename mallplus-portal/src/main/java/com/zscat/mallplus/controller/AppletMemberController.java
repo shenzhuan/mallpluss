@@ -1,7 +1,6 @@
 package com.zscat.mallplus.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
@@ -30,7 +29,6 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.*;
 import com.zscat.mallplus.vo.pms.CateProduct;
@@ -39,9 +37,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -342,7 +338,7 @@ public class AppletMemberController extends ApiBaseAction {
             data.setModule_list(model_list);
 //            List<SmsRedPacket> redPacketList = redPacketService.list(new QueryWrapper<>());
 //            SmsUserRedPacket userRedPacket = new SmsUserRedPacket();
-//            userRedPacket.setUserId(memberService.getCurrentMember().getId());
+//            userRedPacket.setUserId(memberService.getNewCurrentMember().getId());
 //            List<SmsUserRedPacket> list = userRedPacketService.list(new QueryWrapper<>(userRedPacket));
 //            for(SmsRedPacket vo : redPacketList){
 //                if (list!=null && list.size()>0){
@@ -369,7 +365,7 @@ public class AppletMemberController extends ApiBaseAction {
     @SysLog(MODULE = "applet", REMARK = "小程序用户详情")
     @GetMapping("/user")
     public Object user() {
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             OmsOrder param = new OmsOrder();
             param.setMemberId(umsMember.getId());

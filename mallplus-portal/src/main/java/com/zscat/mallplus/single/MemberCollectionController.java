@@ -6,7 +6,6 @@ import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,13 +64,13 @@ public class MemberCollectionController {
     @ApiOperation("显示收藏列表")
     @GetMapping(value = "/listCollectByType")
     public Object listCollectByType( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(memberService.getCurrentMember().getId(),productCollection.getType());
+        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示收藏列表")
     @GetMapping(value = "/listCollect")
     public Object listCollect( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(memberService.getCurrentMember().getId());
+        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 
@@ -107,13 +106,13 @@ public class MemberCollectionController {
     @ApiOperation("显示点赞列表")
     @GetMapping(value = "/listLikeByType")
     public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getCurrentMember().getId(),productCollection.getType());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
     @ApiOperation("显示点赞列表")
     @GetMapping(value = "/listLike")
     public Object listLike( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getCurrentMember().getId());
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
 }

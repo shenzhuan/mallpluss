@@ -135,7 +135,7 @@ public class PmsGoodsController {
         productResult.setPmsProductAttrList(attrList);
         productResult.setPmsComments(pmsCommentList);
 
-//        UmsMember umsMember = memberService.getCurrentMember();与用户关联再议
+//        UmsMember umsMember = memberService.getNewCurrentMember();与用户关联再议
         /*if (umsMember != null && umsMember.getId() != null && productResult != null) {
             MemberProductCollection findCollection = productCollectionRepository.findByMemberIdAndProductId(
                     umsMember.getId(), id);

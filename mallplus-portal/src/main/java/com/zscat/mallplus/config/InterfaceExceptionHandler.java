@@ -1,6 +1,5 @@
 package com.zscat.mallplus.config;
 
-import com.zscat.mallplus.exception.MemberNotExitException;
 import com.zscat.mallplus.utils.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,8 +19,8 @@ public class InterfaceExceptionHandler {
 	 * 接口 业务异常
 	 */
 	@ResponseBody
-	@ExceptionHandler(MemberNotExitException.class)
-	public Object businessInterfaceException(MemberNotExitException e) {
+	@ExceptionHandler(ClassCastException.class)
+	public Object businessInterfaceException(ClassCastException e) {
 		log.error(e.getMessage(), e);
 		e.printStackTrace();
 		return new CommonResult().fail(100);

@@ -7,7 +7,6 @@ import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.mapper.UmsMemberReceiveAddressMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +31,7 @@ public class UmsMemberReceiveAddressServiceImpl extends ServiceImpl<UmsMemberRec
     @Override
     public UmsMemberReceiveAddress getDefaultItem() {
 
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         UmsMemberReceiveAddress q = new UmsMemberReceiveAddress();
         q.setDefaultStatus(1);
         q.setMemberId(currentMember.getId());
@@ -42,7 +41,7 @@ public class UmsMemberReceiveAddressServiceImpl extends ServiceImpl<UmsMemberRec
     @Transactional
     @Override
     public int setDefault(Long id) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         addressMapper.updateStatusByMember(currentMember.getId());
 
         UmsMemberReceiveAddress def = new UmsMemberReceiveAddress();

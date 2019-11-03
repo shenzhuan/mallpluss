@@ -21,7 +21,6 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.OssAliyunUtil;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -89,7 +88,7 @@ public class SingelHomeController {
     @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
     public Object userInfo() {
         UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
-       UmsMember umsMember = memberService.getCurrentMember();
+       UmsMember umsMember = memberService.getNewCurrentMember();
        if (umsMember!=null && umsMember.getId()!=null){
            umsMember = memberService.getById(umsMember.getId());
            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));

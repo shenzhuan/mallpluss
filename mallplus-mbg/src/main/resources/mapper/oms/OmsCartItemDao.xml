@@ -34,4 +34,7 @@
         product_category_id, product_brand, product_sn, product_attr
     </sql>
 
+    <select id="countCart" resultType="int">
+        select sum(quantity) from oms_cart_item where member_id=#{id}
+    </select>
 </mapper>

@@ -153,14 +153,14 @@ public class CmsSubject extends BaseEntity implements Serializable {
     List<PmsProduct> products ;
     public List getPics() {
         if (ValidatorUtils.notEmpty(albumPics)){
-            this.pics = Arrays.asList(albumPics.split(",,"));
+            this.pics = Arrays.asList(albumPics.split(","));
         }
         return pics;
     }
 
     public void setPics(List pics) {
         if (ValidatorUtils.notEmpty(albumPics)){
-            this.pics = Arrays.asList(albumPics.split(",,"));
+            this.pics = Arrays.asList(albumPics.split(","));
         }
     }
 }

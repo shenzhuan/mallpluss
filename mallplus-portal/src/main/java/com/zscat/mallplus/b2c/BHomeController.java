@@ -25,7 +25,6 @@ import com.zscat.mallplus.ums.mapper.TbUserFromIdMapper;
 import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.OssAliyunUtil;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -341,7 +340,7 @@ public class BHomeController {
     @RequestMapping(value = "/user.info", method = RequestMethod.POST)
     public Object userInfo() {
         UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember!=null && umsMember.getId()!=null){
             umsMember = memberService.getById(umsMember.getId());
             List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));
@@ -505,7 +504,7 @@ public class BHomeController {
             return new CommonResult().success("添加成功");
         }
         entity.setFormId(formId);
-        entity.setUserId(memberService.getCurrentMember().getId());
+        entity.setUserId(memberService.getNewCurrentMember().getId());
         //校验formId是否已经存在
         if(fromIdMapper.selectCount(new QueryWrapper<>(entity))>0) {
             return new CommonResult().validateFailed("前置参数错误，formId已经存在 formId：" + formId);

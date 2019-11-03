@@ -25,7 +25,6 @@ import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.ApiContext;
@@ -214,7 +213,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             param.setProductLadderList(productLadderList);
             param.setSkuStockList(skuStockList);
             param.setSubjectProductRelationList(subjectProductRelationList);
-            redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+            redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
         }
         return 1;
     }
@@ -254,7 +253,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setStoreInfo(storeMapper.selectById(apiContext.getCurrentProviderId()));
         List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
         param.setTypeGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size()));
-        redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+        redisService.set(apiContext.getCurrentProviderId()+apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
     }
@@ -312,7 +311,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         PmsProduct goods = productMapper.selectById(id);
         List<SmsPaimaiLog> paimaiLogList = paimaiLogMapper.selectList(new QueryWrapper<SmsPaimaiLog>().eq("goods_id",id).orderByDesc("create_time"));
         map.put("paimaiLogList", paimaiLogList);
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         map.put("favorite", false);
         if (umsMember != null && umsMember.getId() != null) {
             PmsFavorite query = new PmsFavorite();
@@ -352,9 +351,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         SmsPaimaiLog log = new SmsPaimaiLog();
         log.setCreateTime(new Date());
         log.setGoodsId(goods.getId());
-        log.setMemberId(memberService.getCurrentMember().getId());
+        log.setMemberId(memberService.getNewCurrentMember().getId());
         log.setPrice(goods.getOriginalPrice());
-        log.setPic(memberService.getCurrentMember().getIcon());
+        log.setPic(memberService.getNewCurrentMember().getIcon());
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
     }

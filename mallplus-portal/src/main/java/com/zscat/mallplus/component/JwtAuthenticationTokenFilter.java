@@ -173,6 +173,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         String tokenPre = this.tokenHeader+storeId ;
         String authHeader = request.getParameter(tokenPre);
+        if (ValidatorUtils.empty(authHeader)){
+            authHeader = request.getHeader(tokenPre);
+        }
       //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
             if (authHeader != null && authHeader.startsWith("Bearer")) {
@@ -186,7 +189,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         LOGGER.info("authenticated user:{}", username);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }else{
-                        throw new RuntimeException();
+                        throw new ClassCastException();
                     }
 
             }else {

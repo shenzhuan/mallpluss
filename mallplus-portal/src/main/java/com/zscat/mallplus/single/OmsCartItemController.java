@@ -12,7 +12,6 @@ import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.CartParam;
 import io.swagger.annotations.Api;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
 
 /**
  * 购物车管理Controller
@@ -68,7 +66,7 @@ public class OmsCartItemController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = memberService.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         Map<String,Object> map = new HashMap<>();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
@@ -94,7 +92,7 @@ public class OmsCartItemController {
     @ResponseBody
     public Object updateQuantity(@RequestParam Long id,
                                  @RequestParam Integer quantity) {
-        int count = cartItemService.updateQuantity(id, memberService.getCurrentMember().getId(), quantity);
+        int count = cartItemService.updateQuantity(id, memberService.getNewCurrentMember().getId(), quantity);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -131,7 +129,7 @@ public class OmsCartItemController {
         for (String s : cart_id_list.split(",")) {
             resultList.add(Long.valueOf(s));
         }
-        int count = cartItemService.delete(memberService.getCurrentMember().getId(), resultList);
+        int count = cartItemService.delete(memberService.getNewCurrentMember().getId(), resultList);
         if (count > 0) {
             return new CommonResult().success(count);
         }
@@ -142,7 +140,7 @@ public class OmsCartItemController {
     @RequestMapping(value = "/clear", method = RequestMethod.POST)
     @ResponseBody
     public Object clear() {
-        int count = cartItemService.clear(memberService.getCurrentMember().getId());
+        int count = cartItemService.clear(memberService.getNewCurrentMember().getId());
         if (count > 0) {
             return new CommonResult().success(count);
         }

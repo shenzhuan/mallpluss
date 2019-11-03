@@ -11,7 +11,6 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
 import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -177,7 +176,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
     @Override
     public int createRedPacket(SmsRedPacket redPacket) {
         redPacket.setSendDate(new Date());
-        redPacket.setUserId(memberService.getCurrentMember().getId());
+        redPacket.setUserId(memberService.getNewCurrentMember().getId());
         if (redPacket.getType() == 2) { //1随机红包 2等额红包
             redPacket.setAmount(new BigDecimal(redPacket.getTotal()).multiply(redPacket.getUnitAmount()));
         }
@@ -190,7 +189,7 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
             for (int i = 0; i < redPacket.getTotal(); i++) {
                 SmsUserRedPacket vo = new SmsUserRedPacket();
                 vo.setGrabTime(new Date());
-                vo.setAdminId(memberService.getCurrentMember().getId());
+                vo.setAdminId(memberService.getNewCurrentMember().getId());
                 vo.setAmount(redPacket.getUnitAmount());
 
                 vo.setNote(redPacket.getNote());
@@ -205,11 +204,11 @@ public class SmsRedPacketServiceImpl extends ServiceImpl<SmsRedPacketMapper, Sms
     @Override
     @Transactional
     public int acceptRedPacket(Integer id) {
-        int counts = userRedPacketMapper.countOne(id, memberService.getCurrentMember().getId());
+        int counts = userRedPacketMapper.countOne(id, memberService.getNewCurrentMember().getId());
         if (counts > 0) {
             return 2;
         }
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         SmsUserRedPacket userRedPacket = userRedPacketMapper.listUserRedOne(id);
         userRedPacket.setUserId(member.getId());
 

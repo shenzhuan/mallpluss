@@ -13,7 +13,6 @@ import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.stereotype.Service;
@@ -57,7 +56,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCoupon> selectNotRecive() {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         SmsCoupon coupon = new SmsCoupon();
         coupon.setType(0);
         List<SmsCoupon> list = new ArrayList<>();
@@ -81,7 +80,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         if (currentMember == null) {
             return  new ArrayList<>();
         }
@@ -94,7 +93,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     @Transactional
     @Override
     public CommonResult addbatch(String couponIds){
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         if (currentMember == null) {
             return new CommonResult().failed("优惠券不存在");
         }
@@ -150,7 +149,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     @Transactional
     @Override
     public CommonResult add(Long couponId) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         if (currentMember == null) {
             return new CommonResult().failed("优惠券不存在");
         }
@@ -221,7 +220,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistory> list(Integer useStatus) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         SmsCouponHistory couponHistory = new SmsCouponHistory();
         couponHistory.setMemberId(currentMember.getId());
 
@@ -233,7 +232,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCouponHistoryDetail> listCart(List<OmsCartItem> cartItemList, Integer type) {
-        UmsMember currentMember = memberService.getCurrentMember();
+        UmsMember currentMember = memberService.getNewCurrentMember();
         Date now = new Date();
         //获取该用户所有优惠券
         List<SmsCouponHistoryDetail> allList = couponHistoryMapper.getDetailList(currentMember.getId());

@@ -24,7 +24,6 @@ import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.IUmsRewardLogService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -205,7 +204,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/createSubject")
     public Object createSubject(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member!=null){
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
@@ -251,7 +250,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/createTopic")
     public Object createTopic(CmsTopic subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member!=null){
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
@@ -285,7 +284,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/attendTopic")
     public Object attendTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
 
         CmsTopic subject = topicService.getById(id);
         Date now = new Date();
@@ -324,7 +323,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/canceTopic")
     public Object canceTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         CmsTopic subject = topicService.getById(id);
 
         if (member!=null){
@@ -373,7 +372,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/addSubjectCom")
     public Object addSubjectCom(CmsSubjectComment subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member!=null){
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());
@@ -395,7 +394,7 @@ public class SingeCmsController extends ApiBaseAction {
     @PostMapping(value = "/addTopicCom")
     public Object addTopicCom(CmsTopicComment subject, BindingResult result) {
         CommonResult commonResult;
-        UmsMember member = memberService.getCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (member!=null){
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());

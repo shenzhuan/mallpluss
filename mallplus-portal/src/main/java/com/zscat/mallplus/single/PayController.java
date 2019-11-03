@@ -19,7 +19,10 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberBlanceLogService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.*;
+import com.zscat.mallplus.util.CharUtil;
+import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.util.MapUtils;
+import com.zscat.mallplus.util.XmlUtil;
 import com.zscat.mallplus.util.applet.WechatRefundApiResult;
 import com.zscat.mallplus.util.applet.WechatUtil;
 import com.zscat.mallplus.utils.CommonResult;
@@ -155,7 +158,7 @@ public class PayController extends ApiBaseAction {
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
-        UmsMember user = memberService.getCurrentMember();
+        UmsMember user = memberService.getNewCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
 
@@ -276,7 +279,7 @@ public class PayController extends ApiBaseAction {
     @ApiOperation(value = "查询订单状态")
     @GetMapping("query")
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = memberService.getCurrentMember();
+        UmsMember user = memberService.getNewCurrentMember();
         //
         SysAppletSet  appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {

@@ -76,11 +76,13 @@ public class OrderTimeOutCancelTask {
                     Long articleId=Long.parseLong(kv[1]);
                     Integer viewCount=Integer.parseInt(viewCountItem.get(articleKey).toString());
                     CmsSubject subject = subjectService.getById(articleId);
-                    subject.setId(articleId);
-                    subject.setReadCount(subject.getReadCount()+viewCount);
-                    logger.info("SyncNodesAndShips"+articleId+","+viewCount);
-                    //更新到数据库
-                    subjectService.updateById(subject);
+                    if (subject!=null){
+                        subject.setId(articleId);
+                        subject.setReadCount(subject.getReadCount()+viewCount);
+                        logger.info("SyncNodesAndShips"+articleId+","+viewCount);
+                        //更新到数据库
+                        subjectService.updateById(subject);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -108,11 +110,13 @@ public class OrderTimeOutCancelTask {
                     Long articleId=Long.parseLong(kv[1]);
                     Integer viewCount=Integer.parseInt(viewCountItem.get(articleKey).toString());
                     PmsProduct subject = productMapper.selectById(articleId);
-                    subject.setId(articleId);
-                    subject.setHit(subject.getHit()+viewCount);
-                    logger.info("SyncGoodsView"+articleId+","+viewCount);
-                    //更新到数据库
-                    productMapper.updateById(subject);
+                   if(subject!=null){
+                       subject.setId(articleId);
+                       subject.setHit(subject.getHit()+viewCount);
+                       logger.info("SyncGoodsView"+articleId+","+viewCount);
+                       //更新到数据库
+                       productMapper.updateById(subject);
+                   }
                 }
             }
         } catch (Exception e) {

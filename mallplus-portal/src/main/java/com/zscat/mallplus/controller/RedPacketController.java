@@ -7,7 +7,6 @@ import com.zscat.mallplus.sms.entity.SmsUserRedPacket;
 import com.zscat.mallplus.sms.service.ISmsRedPacketService;
 import com.zscat.mallplus.sms.service.ISmsUserRedPacketService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -91,7 +90,7 @@ public class RedPacketController {
         List<SmsRedPacket> redPacketList = redPacketService.list(new QueryWrapper<>(redPacket));
 
         SmsUserRedPacket userRedPacket = new SmsUserRedPacket();
-        userRedPacket.setUserId(memberService.getCurrentMember().getId());
+        userRedPacket.setUserId(memberService.getNewCurrentMember().getId());
         List<SmsUserRedPacket> list = userRedPacketService.list(new QueryWrapper<>(userRedPacket));
         for (SmsRedPacket vo : redPacketList) {
             if (list != null && list.size() > 0) {

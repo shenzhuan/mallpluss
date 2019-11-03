@@ -2,15 +2,11 @@ package com.zscat.mallplus.ums.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.SmsCode;
-import org.springframework.http.HttpRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -99,6 +95,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     Object initMemberRedis();
 
-    UmsMember getCurrentMember();
+    Object getCurrentMember();
+    UmsMember getNewCurrentMember();
 }
 

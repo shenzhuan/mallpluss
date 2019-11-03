@@ -1,7 +1,6 @@
 package com.zscat.mallplus.ums.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import org.apache.ibatis.annotations.Param;
 
