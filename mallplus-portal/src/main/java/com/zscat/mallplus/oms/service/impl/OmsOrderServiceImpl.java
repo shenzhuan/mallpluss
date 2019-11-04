@@ -1478,7 +1478,7 @@ if (cartPromotionItemList==null|| cartPromotionItemList.size()<1){
                     PmsGifts newGoods = new PmsGifts();
                     newGoods.setId(goods.getId());
                     if ((goods.getStock() - item.getProductQuantity()) < 0) {
-                        throw new ApiMallPlusException("goods is stock out. goodsId=" + item.getProductId() + ", goodsId=" + item.getProductSkuId());
+                        throw new ApiMallPlusException("赠礼商品 goods is stock out. goodsId=" + item.getProductId() + ", goodsId=" + item.getProductSkuId());
                     }
                     newGoods.setStock(goods.getStock() - item.getProductQuantity());
                     pmsGiftsService.updateById(newGoods);
