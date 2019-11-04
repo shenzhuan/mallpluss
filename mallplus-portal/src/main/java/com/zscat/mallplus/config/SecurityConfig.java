@@ -109,7 +109,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 try {
 
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, username)),UmsMember.class);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, username)),UmsMember.class);
                     if (member != null) {
                         return new MemberDetails(member);
                     }else {

@@ -29,9 +29,9 @@ public class ConfirmOrderResult {
     private List<SmsCouponHistoryDetail> couponHistoryDetailList;
     //积分使用规则
     private UmsIntegrationConsumeSetting integrationConsumeSetting;
-    //会员持有的积分
+    //会员此次订单可以使用的积分
     private Integer memberIntegration;
-
+    private BigDecimal integrationAmount ;
     /**
      * 余额
      */

@@ -213,7 +213,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             param.setProductLadderList(productLadderList);
             param.setSkuStockList(skuStockList);
             param.setSubjectProductRelationList(subjectProductRelationList);
-            redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+            redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
         }
         return 1;
     }
@@ -253,7 +253,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setStoreInfo(storeMapper.selectById(apiContext.getCurrentProviderId()));
         List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
         param.setTypeGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size()));
-        redisService.set(apiContext.getCurrentProviderId()+apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+        redisService.set(apiContext.getCurrentProviderId()+":"+apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
     }

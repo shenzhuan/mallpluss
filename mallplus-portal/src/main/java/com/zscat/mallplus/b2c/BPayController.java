@@ -406,6 +406,7 @@ public class BPayController extends ApiBaseAction {
                 orderInfo.setStatus(2);
                 orderInfo.setPaymentTime(new Date());
                 orderService.updateById(orderInfo);
+
                 response.getWriter().write(setXml("SUCCESS", "OK"));
             }
         } catch (Exception e) {

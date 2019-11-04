@@ -141,7 +141,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 if (ValidatorUtils.notEmpty(username)){
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, username)),UmsMember.class);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, username)),UmsMember.class);
                     if (member==null || member.getId()==null){
                         member=getByUsername(username);
                     }
@@ -218,7 +218,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         UmsMember member = memberMapper.selectById(id);
         member.setIntegration(member.getIntegration() + integration);
         memberMapper.updateById(member);
-        redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
     }
 
     @Override
@@ -379,7 +379,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
         memberMapper.insert(umsMember);
 
-        redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
+        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
 
         addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
         umsMember.setPassword(null);
@@ -686,7 +686,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     public Object initMemberRedis() {
         List<UmsMember> list = memberMapper.selectList(new QueryWrapper<>());
         for (UmsMember member : list) {
-            redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+            redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
         return 1;
     }

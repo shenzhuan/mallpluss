@@ -191,7 +191,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
         count = 1;
 
-        redisService.set(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
+        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
     }
 

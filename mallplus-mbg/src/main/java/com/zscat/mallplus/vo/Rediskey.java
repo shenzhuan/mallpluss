@@ -47,12 +47,12 @@ public class Rediskey {
 
     public static String GOODSHISTORY = "GOODSHISTORY:%s";
 
-    public static String HOMEPAGE = "HOMEPAGEjsshop";
+    public static String HOMEPAGE = "HomeJsshop";
 
-    public static String HOMEPAGEmallplus1 = "HOMEPAGEmallplus1";
-    public static String HOMEPAGEmallplus2 = "HOMEPAGEmallplus2";
-    public static String HOMEPAGE2 = "HOMEPAGECRMWEB";
-    public static String HOMEPAGEPC = "HOMEPAGEPC";
+    public static String HOMEPAGEmallplus1 = "HomeMallplus1";
+    public static String HOMEPAGEmallplus2 = "HomeMallplus2";
+    public static String HOMEPAGE2 = "HomeCrmeb";
+    public static String HOMEPAGEPC = "HomePc";
     private static String SPLIT = ":";
     private static String BIZ_LIKE = "LIKE";
     private static String BIZ_DISLIKE = "DISLIKE";

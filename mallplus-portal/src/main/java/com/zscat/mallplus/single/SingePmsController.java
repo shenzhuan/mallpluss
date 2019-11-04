@@ -139,7 +139,7 @@ public class SingePmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -365,7 +365,7 @@ public class SingePmsController extends ApiBaseAction {
 
         GoodsDetailResult goods = null;
         try {
-              goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
