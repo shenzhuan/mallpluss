@@ -494,12 +494,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             if (!ValidatorUtils.empty(cartPromotionItem.getProductSkuId()) && cartPromotionItem.getProductSkuId() > 0) {
                 if (goods != null && goods.getId() != null && goods.getStock() > 0 && goods.getStock() > cartPromotionItem.getQuantity()) {
                     PmsSkuStock skuStock = skuStockMapper.selectById(cartPromotionItem.getProductSkuId());
-                    if (skuStock.getStock() > 0 && skuStock.getStock() > cartPromotionItem.getQuantity()) {
+                    if (skuStock.getStock() > 0 && skuStock.getStock() >= cartPromotionItem.getQuantity()) {
                         flag = true;
                     }
                 }
             } else {
-                if (goods != null && goods.getId() != null && goods.getStock() > 0 && goods.getStock() > cartPromotionItem.getQuantity()) {
+                if (goods != null && goods.getId() != null && goods.getStock() > 0 && goods.getStock() >= cartPromotionItem.getQuantity()) {
                     flag = true;
                 }
             }
@@ -519,6 +519,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
                 newCartItemList.add(cartPromotionItem);
             }
+        }
+        if (newCartItemList == null || newCartItemList.size() < 1) {
+            return new CommonResult().failed("没有下单的商品");
         }
 
         //3.计算优惠券
@@ -870,34 +873,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return orderMapper.updateById(order) > 0;
     }
 
-    @Override
-    public void releaseStock(OmsOrder order) {
-        List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", order.getId()));
-        if (itemList != null && itemList.size() > 0) {
-            for (OmsOrderItem item : itemList) {
-                if ("6".equals(order.getOrderType())) {
-                    SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(item.getGiftIntegration());
-                    relation.setFlashPromotionCount(relation.getFlashPromotionCount() + item.getProductQuantity());
-                    smsFlashPromotionProductRelationService.updateById(relation);
-                }
-                PmsProduct goods = productService.getById(item.getProductId());
-                if (goods != null && goods.getId() != null) {
-                    redisService.remove(String.format(Rediskey.GOODSDETAIL, goods.getId() + ""));
-                    goods.setStock(goods.getStock() + item.getProductQuantity());
-                    goods.setSale(goods.getSale() - item.getProductQuantity());
-                    productService.updateById(goods);
-                    if (!ValidatorUtils.empty(item.getProductSkuId()) && item.getProductSkuId() > 0) {
-                        PmsSkuStock skuStock = new PmsSkuStock();
-                        skuStock.setId(item.getProductSkuId());
-                        skuStock.setStock(skuStock.getStock() + item.getProductQuantity());
-                        skuStock.setSale(skuStock.getSale() - item.getProductQuantity());
-                        skuStockMapper.updateById(skuStock);
-                    }
-                }
-            }
-        }
 
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -1182,7 +1158,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             for (OmsOrderDetail timeOutOrder : timeOutOrders) {
                 //解除订单商品库存锁定
                 // orderMapper.releaseSkuStockLock(timeOutOrder.getOrderItemList());
-                releaseStock(timeOutOrder.getOrderItemList());
+              //  releaseStock(timeOutOrder.getOrderItemList());
                 //修改优惠券使用状态
                 updateCouponStatus(timeOutOrder.getCouponId(), timeOutOrder.getMemberId(), 0);
                 //返还使用积分
@@ -1205,10 +1181,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderMapper.updateById(cancelOrder);
             OmsOrderItem queryO = new OmsOrderItem();
             queryO.setOrderId(orderId);
-            List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
+          //  List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
             //解除订单商品库存锁定
             //  orderMapper.releaseSkuStockLock(list);
-            releaseStock(list);
+            releaseStock(cancelOrder);
             //修改优惠券使用状态
             updateCouponStatus(cancelOrder.getCouponId(), cancelOrder.getMemberId(), 0);
             //返还使用积分
@@ -1434,7 +1410,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     public void lockStockByOrder(List<OmsOrderItem> cartPromotionItemList, String type) {
         log.info("lockStockByOrder");
         for (OmsOrderItem item : cartPromotionItemList) {
-            if (item.getType().equals(AllEnum.OrderItemType.GOODS)) {
+            if (item.getType().equals(AllEnum.OrderItemType.GOODS.code())) {
                 if (type != null && "6".equals(type)) {
                     SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(item.getGiftIntegration());
                     if ((relation.getFlashPromotionCount() - item.getProductQuantity()) < 0) {
@@ -1520,10 +1496,16 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     /**
      * 解锁下单商品的所有库存
      */
-    public void releaseStock(List<OmsOrderItem> orderItemList) {
+    public void releaseStock(OmsOrder order) {
+        List<OmsOrderItem> orderItemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", order.getId()));
         log.info("releaseStock");
         for (OmsOrderItem item : orderItemList) {
-            if (item.getType().equals(AllEnum.OrderItemType.GOODS)) {
+            if (item.getType().equals(AllEnum.OrderItemType.GOODS.code())) {
+                if ("6".equals(order.getOrderType())) {
+                    SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(item.getGiftIntegration().longValue());
+                    relation.setFlashPromotionCount(relation.getFlashPromotionCount() + item.getProductQuantity());
+                    smsFlashPromotionProductRelationService.updateById(relation);
+                }
                 PmsProduct goods = productService.getById(item.getProductId());
                 if (goods != null && goods.getId() != null) {
                     PmsProduct newGoods = new PmsProduct();

@@ -15,6 +15,7 @@
         <module>mallplus-admin</module>
 
         <module>mallplus-portal</module>
+
     </modules>
 
 </project>
