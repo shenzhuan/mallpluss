@@ -6,6 +6,7 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.pms.entity.PmsProduct;
@@ -324,7 +325,7 @@ public class AppletMemberController extends ApiBaseAction {
                 redisService.set(Rediskey.appletCategoryKey, JsonUtils.objectToJson(productAttributeCategoryList));
                 redisService.expire(Rediskey.appletCategoryKey, 24 * 60 * 60);
             }
-            List<CmsSubject> subjectList = subjectService.list(new QueryWrapper<>());
+            List<CmsSubject> subjectList = subjectService.list(new QueryWrapper<CmsSubject>().select(ConstansValue.sampleSubjectList));
             data.setSubjectList(subjectList);
             data.setCat_goods_cols(2);
             data.setCat_list(productAttributeCategoryList);

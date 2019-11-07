@@ -66,17 +66,12 @@ public class SmsFlashPromotionProductRelation extends BaseEntity implements Seri
     private Integer sort;
 
 
-    @Override
-    public String toString() {
-        return "SmsFlashPromotionProductRelation{" +
-                ", id=" + id +
-                ", flashPromotionId=" + flashPromotionId +
-                ", flashPromotionSessionId=" + flashPromotionSessionId +
-                ", productId=" + productId +
-                ", flashPromotionPrice=" + flashPromotionPrice +
-                ", flashPromotionCount=" + flashPromotionCount +
-                ", flashPromotionLimit=" + flashPromotionLimit +
-                ", sort=" + sort +
-                "}";
-    }
+    @TableField(exist = false)
+    private String productImg;
+    @TableField(exist = false)
+    private String productName;
+    @TableField(exist = false)
+    private BigDecimal productPrice;
+    @TableField(exist = false)
+    private Double percent ;
 }

@@ -58,5 +58,9 @@ public class SmsFlashPromotionSession extends BaseEntity implements Serializable
     @TableField("create_time")
     private Date createTime;
 
+    @TableField(exist = false)
+    private String state;
+    @TableField(exist = false)
+    private long stop;
 
 }

@@ -20,5 +20,6 @@ public class ConstansValue {
 
     public static final String sampleOrderList = "id,member_id, order_sn, create_time, member_username, total_amount, pay_amount,status, order_type,pay_type,source_type,goods_id,goods_name" ;
 
+    public static final String sampleSubjectList = "id,member_id, create_time,title,pic ,album_pics" ;
 
 }
