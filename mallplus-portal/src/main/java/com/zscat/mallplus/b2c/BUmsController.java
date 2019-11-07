@@ -56,6 +56,15 @@ public class BUmsController {
 
     @Resource
     private IUserBankcardsService bankcardsService;
+
+
+    @ApiOperation("更新会员信息")
+    @SysLog(MODULE = "ums", REMARK = "更新会员信息")
+    @PostMapping(value = "/userInfo")
+    public Object userInfo() {
+        return new CommonResult().success(memberService.getNewCurrentMember());
+    }
+
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/user.editinfo")
@@ -83,7 +92,7 @@ public class BUmsController {
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setMemberId(memberService.getNewCurrentMember().getId());
-        if (entity.getType()==0){
+        if (entity==null || entity.getType()==0){
             return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>()));
         }
         return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>(entity)));
