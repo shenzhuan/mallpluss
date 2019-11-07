@@ -35,6 +35,7 @@ put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.
 put -r /Users/java/test/git/mall-admin-web/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
 put -r /Users/java/test/git/pc/pc /root/jm
 

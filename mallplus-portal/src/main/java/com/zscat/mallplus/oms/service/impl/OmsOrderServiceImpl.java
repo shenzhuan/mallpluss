@@ -571,21 +571,23 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 for (String basicGifts : basicGiftsList) {
                     if (ValidatorUtils.notEmpty(basicGifts)) {
                         String[] beanKv = basicGifts.split(":");
-                        String[] ids = beanKv[1].split(",");
-                        if (ids != null && ids.length > 0) {
-                            for (String id : ids) {
-                                PmsGifts pmsGifts = pmsGiftsService.getById(id);
-                                if (pmsGifts != null) {
-                                    OmsOrderItem orderItem = new OmsOrderItem();
-                                    orderItem.setOrderSn(beanKv[0]);
-                                    orderItem.setProductId(pmsGifts.getId());
-                                    orderItem.setProductName(pmsGifts.getTitle());
-                                    orderItem.setProductPic(pmsGifts.getIcon());
-                                    orderItem.setProductPrice(pmsGifts.getPrice());
-                                    orderItem.setProductQuantity(1);
-                                    orderItem.setType(AllEnum.OrderItemType.GIFT.code());
+                        if (beanKv!=null && beanKv.length>1) {
+                            String[] ids = beanKv[1].split(",");
+                            if (ids != null && ids.length > 0) {
+                                for (String id : ids) {
+                                    PmsGifts pmsGifts = pmsGiftsService.getById(id);
+                                    if (pmsGifts != null) {
+                                        OmsOrderItem orderItem = new OmsOrderItem();
+                                        orderItem.setOrderSn(beanKv[0]);
+                                        orderItem.setProductId(pmsGifts.getId());
+                                        orderItem.setProductName(pmsGifts.getTitle());
+                                        orderItem.setProductPic(pmsGifts.getIcon());
+                                        orderItem.setProductPrice(pmsGifts.getPrice());
+                                        orderItem.setProductQuantity(1);
+                                        orderItem.setType(AllEnum.OrderItemType.GIFT.code());
 
-                                    orderItemList.add(orderItem);
+                                        orderItemList.add(orderItem);
+                                    }
                                 }
                             }
                         }
@@ -1519,6 +1521,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                             skuStockMapper.updateById(skuStock);
                         }
                     }
+                    goods.setSale(goods.getSale() - item.getProductQuantity());
                     newGoods.setStock(goods.getStock() + item.getProductQuantity());
                     productService.updateById(newGoods);
                 }
@@ -1804,21 +1807,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return result;
     }
 
-    /**
-     * 获取该用户可以使用的优惠券
-     *
-     * @param cartPromotionItemList 购物车优惠列表
-     * @param couponId              使用优惠券id
-     */
-    private SmsCouponHistoryDetail getUseCoupon(List<OmsCartItem> cartPromotionItemList, Long couponId) {
-        List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(cartPromotionItemList, 1);
-        for (SmsCouponHistoryDetail couponHistoryDetail : couponHistoryDetailList) {
-            if (couponHistoryDetail.getCoupon().getId().equals(couponId)) {
-                return couponHistoryDetail;
-            }
-        }
-        return null;
-    }
+
 
     @Override
     public ConfirmOrderResult addGroup(OrderParam orderParam) {
