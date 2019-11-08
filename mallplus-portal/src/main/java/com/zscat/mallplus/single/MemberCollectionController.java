@@ -1,7 +1,10 @@
 package com.zscat.mallplus.single;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.cms.entity.CmsFavorite;
+import com.zscat.mallplus.cms.entity.CmsTopic;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
@@ -11,10 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +69,12 @@ public class MemberCollectionController {
     }
     @ApiOperation("显示收藏列表")
     @GetMapping(value = "/listCollect")
-    public Object listCollect( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listCollect(memberService.getNewCurrentMember().getId());
-        return new CommonResult().success(memberProductCollectionList);
+    public Object listCollect( PmsFavorite productCollection,
+                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+       productCollection.setMemberId(memberService.getNewCurrentMember().getId());
+        return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
+
     }
 
 

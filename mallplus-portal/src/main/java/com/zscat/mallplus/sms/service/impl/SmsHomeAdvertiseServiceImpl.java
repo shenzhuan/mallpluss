@@ -185,6 +185,13 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         return result;
     }
     @Override
+    public  HomeContentResult singelmobileContent(){
+        HomeContentResult result = new HomeContentResult();
+        result.setNavList(getNav());
+        result.setAdvertiseList(getHomeAdvertiseList());
+        return result;
+    }
+    @Override
     public HomeContentResult contentPc(){
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         HomeContentResult result = new HomeContentResult();

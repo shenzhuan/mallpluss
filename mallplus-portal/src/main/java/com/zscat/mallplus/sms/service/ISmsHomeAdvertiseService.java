@@ -53,4 +53,6 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
     HomeContentResult contentNew1();
 
     HomeContentResult contentPc();
+
+    HomeContentResult singelmobileContent();
 }

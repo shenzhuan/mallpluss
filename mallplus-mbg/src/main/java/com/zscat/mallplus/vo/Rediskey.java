@@ -49,6 +49,7 @@ public class Rediskey {
 
     public static String HOMEPAGE = "HomeJsshop";
 
+    public static String HOMEPAGEMOBILE = "HOMEPAGEMOBILE";
     public static String HOMEPAGEmallplus1 = "HomeMallplus1";
     public static String HOMEPAGEmallplus2 = "HomeMallplus2";
     public static String HOMEPAGE2 = "HomeCrmeb";

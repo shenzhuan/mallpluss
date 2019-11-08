@@ -91,10 +91,10 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
 
     @Override
     public List<PmsFavorite> listProduct(Long memberId, int type) {
-        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId).eq("type",type));
+        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId).eq("type",type).orderByAsc("add_time"));
     }
     @Override
     public List<PmsFavorite> listCollect(Long memberId) {
-        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId));
+        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId).orderByAsc("add_time"));
     }
 }

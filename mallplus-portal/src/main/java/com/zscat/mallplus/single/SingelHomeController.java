@@ -101,6 +101,30 @@ public class SingelHomeController {
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
+    public Object home_mobile() {
+        String key = Rediskey.HOMEPAGEMOBILE + apiContext.getCurrentProviderId();
+        String json = redisService.get(key);
+        HomeContentResult contentResult = null;
+        try {
+            if (ValidatorUtils.empty(json)){
+                contentResult = advertiseService.singelmobileContent();
+                redisService.set(key,JsonUtils.objectToJson(contentResult));
+                redisService.expire(key,3600*5);
+            }else{
+                contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
+            }
+        }catch (Exception e){
+            contentResult = advertiseService.singelmobileContent();
+            redisService.set(key,JsonUtils.objectToJson(contentResult));
+            redisService.expire(key,3600*5);
+        }
+        return new CommonResult().success(contentResult);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
         String key = Rediskey.HOMEPAGEmallplus1 + apiContext.getCurrentProviderId();

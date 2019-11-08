@@ -172,9 +172,9 @@ public class SingePmsController extends ApiBaseAction {
         product.setMemberId(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(product.getKeyword())){
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name",product.getKeyword()));
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name",product.getKeyword()).select(ConstansValue.sampleGoodsList));
         }else{
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product));
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList));
         }
         return new CommonResult().success(list);
     }
