@@ -153,8 +153,8 @@ public class BOmsController extends ApiBaseAction {
     @RequestMapping(value = "/cart.getnumber", method = RequestMethod.POST)
     @ResponseBody
     public Object getnumber() {
-        int count = cartItemService.countCart(memberService.getNewCurrentMember().getId());
-        if (count > 0) {
+        Integer count = cartItemService.countCart(memberService.getNewCurrentMember().getId());
+        if (ValidatorUtils.notEmpty(count) && count > 0) {
             return new CommonResult().success(count);
         }
         return new CommonResult().success(0);

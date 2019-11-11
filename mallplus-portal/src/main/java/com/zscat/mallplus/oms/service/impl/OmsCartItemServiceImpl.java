@@ -363,7 +363,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
     }
 
     @Override
-    public int countCart(Long id){
+    public Integer countCart(Long id){
         return cartItemMapper.countCart(id);
     }
 }

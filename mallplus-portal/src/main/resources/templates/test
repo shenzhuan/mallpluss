@@ -35,7 +35,8 @@ put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.
 put -r /Users/java/test/git/mall-admin-web/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
-put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
+
+put -r /Users/java/test/git/mobile-mall/unpackage/dist/build/jsshop /root/jm
 
 put -r /Users/java/test/git/pc/pc /root/jm
 
@@ -52,7 +53,7 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 
 
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
-
+put -r /Users/java/test/git/crmbmall/jsshop  /root/jm
 
 scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
 
