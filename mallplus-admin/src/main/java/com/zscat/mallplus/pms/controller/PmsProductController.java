@@ -1,9 +1,11 @@
 package com.zscat.mallplus.pms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductVertifyRecord;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -48,7 +50,14 @@ public class PmsProductController {
                                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity).select(ConstansValue.sampleGoodsList)));
+            IPage<PmsProduct> page = null;
+            if (ValidatorUtils.notEmpty(entity.getKeyword())){
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("name",entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList)) ;
+            }else {
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time").select(ConstansValue.sampleGoodsList)) ;
+
+            }
+            return new CommonResult().success(page);
         } catch (Exception e) {
             log.error("根据条件查询所有商品信息列表：%s", e.getMessage(), e);
         }

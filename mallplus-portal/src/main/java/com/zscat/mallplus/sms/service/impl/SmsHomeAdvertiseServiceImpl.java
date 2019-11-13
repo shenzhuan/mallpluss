@@ -28,12 +28,14 @@ import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.sms.vo.HomeProductAttr;
 import com.zscat.mallplus.sms.vo.SmsFlashSessionInfo;
+import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
+import com.zscat.mallplus.ums.entity.UmsRewardLog;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.home.Pages;
 import com.zscat.mallplus.vo.home.PagesItems;
 import com.zscat.mallplus.vo.home.Params;
@@ -107,8 +109,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Resource
     private ISmsCouponService couponService;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private PmsSmallNaviconCategoryMapper smallNaviconCategoryMapper;
     @Resource
@@ -230,7 +231,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             result.setNavList(getNav());
             result.setActivityList(getActivityList());
             result.setSaleProductList(getSaleProductList(1,3));
-            result.setStore(storeMapper.selectById(apiContext.getCurrentProviderId()));
+
             result.setCat_list(getPmsProductAttributeCategories());
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -274,11 +275,11 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             result.setHotProductList(newHotListTask.get());
             //获取推荐专题
             result.setSubjectList(recomSubListTask.get());
-            result.setBrandList(getRecommendBrandList(1,8));
+            result.setStoreList(getStoreList(1,8));
             result.setNavList(getNav());
             result.setActivityList(getActivityList());
             result.setSaleProductList(getSaleProductList(1,3));
-            result.setStore(storeMapper.selectById(apiContext.getCurrentProviderId()));
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -494,6 +495,11 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
                 .map(SmsHomeBrand::getBrandId)
                 .collect(Collectors.toList());
         return (List<PmsBrand>) brandService.listByIds(ids);
+
+    }
+    @Override
+    public List<SysStore> getStoreList(int pageNum, int pageSize) {
+        return storeMapper.selectPage(new Page<SysStore>(pageNum, pageSize), new QueryWrapper<>(new SysStore()).orderByDesc("create_time")).getRecords();
 
     }
     @Override

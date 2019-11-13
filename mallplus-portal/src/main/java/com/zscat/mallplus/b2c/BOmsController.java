@@ -36,7 +36,7 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
@@ -93,8 +93,7 @@ public class BOmsController extends ApiBaseAction {
     private UmsMemberReceiveAddressMapper addressMapper;
     @Resource
     private RedisService redisService;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Resource
     private IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
@@ -133,6 +132,16 @@ public class BOmsController extends ApiBaseAction {
                 }
             }
             return new CommonResult().success(cartItemList);
+        }
+        return new ArrayList<OmsCartItem>();
+    }
+    @ApiOperation("获取某个会员的购物车列表")
+    @RequestMapping(value = "/cart.getCartlist", method = RequestMethod.POST)
+    @ResponseBody
+    public Object listStoreCart() {
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            return new CommonResult().success(cartItemService.listStoreCart(umsMember.getId()));
         }
         return new ArrayList<OmsCartItem>();
     }
@@ -352,7 +361,7 @@ public class BOmsController extends ApiBaseAction {
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         OmsOrder orderDetailResult = null;
-        String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+id;
+        String key =  Rediskey.orderDetail+"orderid"+id;
         String json = redisService.get(key);
         if (ValidatorUtils.notEmpty(json)){
             orderDetailResult = JsonUtils.jsonToPojo(json,OmsOrder.class);
@@ -385,7 +394,7 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能关闭");
             }
             if (orderService.closeOrder(newE)) {
-                String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+orderId;
+                String key = Rediskey.orderDetail+"orderid"+orderId;
                 redisService.remove(key);
                 return new CommonResult().success();
             }
@@ -408,7 +417,7 @@ public class BOmsController extends ApiBaseAction {
                 return new CommonResult().paramFailed("订单已支付，不能删除");
             }
             if (orderService.removeById(orderId)) {
-                String key = apiContext.getCurrentProviderId()+Rediskey.orderDetail+"orderid"+orderId;
+                String key = Rediskey.orderDetail+"orderid"+orderId;
                 redisService.remove(key);
                 return new CommonResult().success();
             }
@@ -642,7 +651,7 @@ public class BOmsController extends ApiBaseAction {
     public Object getOrderStatusSum() {
         Map<String, Object> objectMap = new HashMap<>();
 
-        String key = Rediskey.getorderstatusnum+apiContext.getCurrentProviderId();
+        String key = Rediskey.getorderstatusnum;
         String json = redisService.get(key);
         if (ValidatorUtils.notEmpty(json)){
             objectMap = JsonUtils.readJsonToMap1(json);

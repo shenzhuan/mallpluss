@@ -42,7 +42,7 @@ import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -117,8 +117,7 @@ public class BPmsController extends ApiBaseAction {
     @Resource
     private OmsOrderMapper omsOrderMapper;
 
-    @Autowired
-    private ApiContext apiContext;
+
 
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
@@ -127,7 +126,7 @@ public class BPmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -191,7 +190,7 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询商品分类列表和子分类")
     @PostMapping(value = "/pidCategoryList")
     public Object pidCategoryList() throws Exception {
-        String json = redisService.get(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId());
+        String json = redisService.get(Rediskey.categoryAndChilds);
         List<PmsProductCategory> list = new ArrayList<>();
         try {
             if (ValidatorUtils.empty(json)){
@@ -200,8 +199,8 @@ public class BPmsController extends ApiBaseAction {
                     List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",category.getId()).eq("show_status",1));
                     category.setChildList(childlist);
                 }
-                redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-                redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),3600*5);
+                redisService.set(Rediskey.categoryAndChilds,JsonUtils.objectToJson(list));
+                redisService.expire(Rediskey.categoryAndChilds,3600*5);
             }else{
                 list = JsonUtils.json2list(json, PmsProductCategory.class);
             }
@@ -211,8 +210,8 @@ public class BPmsController extends ApiBaseAction {
                 List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",category.getId()).eq("show_status",1));
                 category.setChildList(childlist);
             }
-            redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-            redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),3600*5);
+            redisService.set(Rediskey.categoryAndChilds,JsonUtils.objectToJson(list));
+            redisService.expire(Rediskey.categoryAndChilds,3600*5);
         }
 
         return new CommonResult().success(list);
@@ -242,7 +241,7 @@ public class BPmsController extends ApiBaseAction {
                        @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
 
         Map<String, Object> objectMap = new HashMap<>();
-        String json = redisService.get(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId);
+        String json = redisService.get(Rediskey.goodsConsult+"goods"+goodsId);
         if (ValidatorUtils.notEmpty(json)){
             objectMap = JsonUtils.readJsonToMap1(json);
             return   new CommonResult().success(objectMap);
@@ -282,8 +281,8 @@ public class BPmsController extends ApiBaseAction {
 
         objectMap.put("list", list);
         objectMap.put("count", count);
-        redisService.set(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,JsonUtils.objectToJson(objectMap));
-        redisService.expire(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,3600*5);
+        redisService.set(Rediskey.goodsConsult+"goods"+goodsId,JsonUtils.objectToJson(objectMap));
+        redisService.expire(Rediskey.goodsConsult+"goods"+goodsId,3600*5);
         return new CommonResult().success(objectMap);
     }
 
@@ -359,7 +358,7 @@ public class BPmsController extends ApiBaseAction {
         }
         GoodsDetailResult goods = null;
         try {
-              goods =JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods =JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -473,7 +472,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/categories.getallcat")
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) throws Exception {
         List<PmsProductAttributeCategory> productAttributeCategoryList = new ArrayList<>();
-        String json = redisService.get(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId());
+        String json = redisService.get(Rediskey.categoryAndGoodsList);
         if (ValidatorUtils.notEmpty(json)){
             productAttributeCategoryList = JsonUtils.json2list(json,PmsProductAttributeCategory.class);
             return   new CommonResult().success(productAttributeCategoryList);
@@ -486,8 +485,8 @@ public class BPmsController extends ApiBaseAction {
             productQueryParam.setVerifyStatus(1);
             gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
-        redisService.set(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(productAttributeCategoryList));
-        redisService.expire(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.set(Rediskey.categoryAndGoodsList,JsonUtils.objectToJson(productAttributeCategoryList));
+        redisService.expire(Rediskey.categoryAndGoodsList,3600*5);
         return new CommonResult().success(productAttributeCategoryList);
     }
 
@@ -512,7 +511,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/typeGoodsList")
     public Object typeGoodsList() throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId());
+        String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
         if (ValidatorUtils.notEmpty(json)){
             relList = JsonUtils.json2list(json,ProductTypeVo.class);
             return   new CommonResult().success(relList);
@@ -547,8 +546,8 @@ public class BPmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.set(Rediskey.specialcategoryAndGoodsList,JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList,3600*5);
         return new CommonResult().success(relList);
     }
 
@@ -750,14 +749,7 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(product.getPic());
     }
 
-    @IgnoreAuth
-    @ApiOperation("显示默认收货地址")
-    @RequestMapping(value = "/store.getdefaultstore", method = RequestMethod.POST)
-    @ResponseBody
-    public Object getItemDefautl() {
-        SysStore address = storeMapper.selectById(apiContext.getCurrentProviderId());
-        return new CommonResult().success(address);
-    }
+
 
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth

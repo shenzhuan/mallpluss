@@ -42,7 +42,7 @@ import com.zscat.mallplus.util.applet.TemplateData;
 import com.zscat.mallplus.util.applet.WX_TemplateMsgUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
@@ -130,8 +130,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private SysAppletSetMapper appletSetMapper;
     @Resource
     private UmsIntegrationChangeHistoryMapper integrationChangeHistoryMapper;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Autowired
     private ISmsBasicGiftsService basicGiftsService;
@@ -545,12 +544,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             order.setCouponAmount(coupon.getAmount());
         }
         //获取积分使用规则
-        UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectOne(new QueryWrapper<>());
+       /* UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectOne(new QueryWrapper<>());
 
         if (integrationConsumeSetting!=null && currentMember.getIntegration()>0){
             order.setUseIntegration(currentMember.getIntegration()*integrationConsumeSetting.getMaxPercentPerOrder()/100);
             order.setIntegrationAmount(BigDecimal.valueOf((currentMember.getIntegration()*integrationConsumeSetting.getMaxPercentPerOrder()/100/integrationConsumeSetting.getDeductionPerAmount())));
-        }
+        }*/
         CartMarkingVo vo = new CartMarkingVo();
         vo.setCartList(newCartItemList);
         SmsBasicMarking basicMarking = basicMarkingService.matchOrderBasicMarking(vo);
@@ -912,7 +911,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     }
 
     private OmsOrderOperateHistory updateOrderInfo(Long id, OmsOrder order, OrderStatus refunding) {
-        String key = Rediskey.orderDetail + apiContext.getCurrentProviderId() + "orderid" + id;
+        String key = Rediskey.orderDetail +  "orderid" + id;
         redisService.remove(key);
         order.setStatus(refunding.getValue());
         orderMapper.updateById(order);
@@ -1027,7 +1026,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setNote("取消发货");
         orderOperateHistoryService.save(history);
 
-        String key = Rediskey.orderDetail + apiContext.getCurrentProviderId() + "orderid" + order.getId();
+        String key = Rediskey.orderDetail  + "orderid" + order.getId();
         redisService.remove(key);
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
         return orderMapper.updateById(order);
@@ -1077,7 +1076,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     , member.getUsername(), order.getId() + "", AllEnum.ChangeSource.order.code());
             integrationChangeHistoryMapper.insert(historyChange);
             // 删除订单缓存
-            String key = Rediskey.orderDetail + apiContext.getCurrentProviderId() + "orderid" + order.getId();
+            String key = Rediskey.orderDetail  + "orderid" + order.getId();
             redisService.remove(key);
 
         }
@@ -1095,7 +1094,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //恢复所有下单商品的锁定库存，扣减真实库存
         OmsOrderItem queryO = new OmsOrderItem();
         queryO.setOrderId(orderId);
-        String key = Rediskey.orderDetail + apiContext.getCurrentProviderId() + "orderid" + orderId;
+        String key = Rediskey.orderDetail  + "orderid" + orderId;
         redisService.remove(key);
         List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
         int count = orderMapper.updateSkuStock(list);
@@ -1889,6 +1888,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItem.setProductCategoryId(pmsProduct.getProductCategoryId());
                 cartItem.setProductBrand(pmsProduct.getBrandName());
                 cartItem.setCreateDate(new Date());
+                cartItem.setStoreId(pmsProduct.getStoreId());
+                cartItem.setStoreName(pmsProduct.getStoreName());
                 cartItemMapper.insert(cartItem);
             } else {
                 existCartItem.setPrice(pmsSkuStock.getPrice());
@@ -1912,6 +1913,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItem.setMemberId(memberService.getNewCurrentMember().getId());
                 cartItem.setProductCategoryId(pmsProduct.getProductCategoryId());
                 cartItem.setProductBrand(pmsProduct.getBrandName());
+                cartItem.setStoreId(pmsProduct.getStoreId());
+                cartItem.setStoreName(pmsProduct.getStoreName());
                 cartItemMapper.insert(cartItem);
             } else {
                 existCartItem.setPrice(pmsProduct.getPrice());

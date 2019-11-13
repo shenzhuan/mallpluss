@@ -123,6 +123,8 @@ public class OmsCartItem extends BaseEntity implements Serializable {
 
     @TableField("product_sn")
     private String productSn;
+    @TableField("store_name")
+    private String storeName;
 
     /**
      * 商品销售属性:[{"key":"颜色","value":"颜色"},{"key":"容量","value":"4G"}]

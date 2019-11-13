@@ -17,7 +17,7 @@ import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
@@ -109,8 +109,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Resource
     private IUmsIntegrationChangeHistoryService umsIntegrationChangeHistoryService;
 
-    @Autowired
-    private ApiContext apiContext;
+
 
     Integer regJifen = 100;
     Integer logginJifen = 5;
@@ -128,11 +127,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if ("OPTIONS".equals(requestType)) {
                 return null;
             }
-            String storeId = request.getParameter("storeid");
-            if (ValidatorUtils.empty(storeId)){
-                storeId = request.getHeader("storeid");
-            }
-            String tokenPre = "authorization"+storeId ;
+
+            String tokenPre = "authorization" ;
             String authHeader = request.getParameter(tokenPre);
             if (ValidatorUtils.empty(authHeader)){
                 authHeader = request.getHeader(tokenPre);
@@ -141,7 +137,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 if (ValidatorUtils.notEmpty(username)){
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, username)),UmsMember.class);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)),UmsMember.class);
                     if (member==null || member.getId()==null){
                         member=getByUsername(username);
                     }
@@ -218,7 +214,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         UmsMember member = memberMapper.selectById(id);
         member.setIntegration(member.getIntegration() + integration);
         memberMapper.updateById(member);
-        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+        redisService.set(String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
     }
 
     @Override
@@ -379,7 +375,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
         memberMapper.insert(umsMember);
 
-        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
+        redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
 
         addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
         umsMember.setPassword(null);
@@ -686,7 +682,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     public Object initMemberRedis() {
         List<UmsMember> list = memberMapper.selectList(new QueryWrapper<>());
         for (UmsMember member : list) {
-            redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+            redisService.set(String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
         return 1;
     }

@@ -24,7 +24,7 @@ import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -77,9 +77,7 @@ public class SingelHomeController {
     private IOmsOrderService orderService;
     @Resource
     private ISmsCouponService couponService;
-    @Autowired
-    private ApiContext apiContext;
-    @Resource
+
     private SmsCouponHistoryMapper couponHistoryMapper;
 
     @IgnoreAuth
@@ -103,7 +101,7 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
     public Object home_mobile() {
-        String key = Rediskey.HOMEPAGEMOBILE + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGEMOBILE ;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
@@ -127,7 +125,7 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
-        String key = Rediskey.HOMEPAGEmallplus1 + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGEmallplus1 ;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
@@ -151,7 +149,7 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content1", method = RequestMethod.GET)
     public Object content1() {
-        String key = Rediskey.HOMEPAGEmallplus2 + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGEmallplus2 ;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {

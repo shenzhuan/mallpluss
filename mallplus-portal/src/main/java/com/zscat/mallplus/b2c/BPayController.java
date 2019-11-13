@@ -139,6 +139,7 @@ public class BPayController extends ApiBaseAction {
             UmsMember userDO = memberService.getNewCurrentMember();
             order.setStatus(OrderStatus.TO_DELIVER.getValue());
             order.setPayType(AllEnum.OrderPayType.balancePay.code());
+            order.setPaymentTime(new Date());
             orderService.updateById(order);
             if (ValidatorUtils.notEmpty(order.getGroupId())){
                 SmsGroup group = new SmsGroup();

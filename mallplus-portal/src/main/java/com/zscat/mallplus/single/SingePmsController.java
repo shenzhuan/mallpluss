@@ -33,7 +33,7 @@ import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -72,8 +72,7 @@ public class SingePmsController extends ApiBaseAction {
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private IPmsProductService pmsProductService;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
@@ -139,7 +138,7 @@ public class SingePmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -365,7 +364,7 @@ public class SingePmsController extends ApiBaseAction {
 
         GoodsDetailResult goods = null;
         try {
-              goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
+              goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)){
                 log.info("redis缓存失效："+id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -553,7 +552,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/typeGoodsList")
     public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId());
+        String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
         if (ValidatorUtils.notEmpty(json)){
             relList = JsonUtils.json2list(json,ProductTypeVo.class);
             return   new CommonResult().success(relList);
@@ -589,8 +588,8 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.set(Rediskey.specialcategoryAndGoodsList,JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList,3600*5);
         return new CommonResult().success(relList);
     }
 
