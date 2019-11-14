@@ -41,6 +41,8 @@ public class OmsOrder extends BaseEntity implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    private Long pid;
+
     @TableField("member_id")
     private Long memberId;
 

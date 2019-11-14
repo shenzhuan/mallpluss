@@ -135,20 +135,7 @@ public class BPayController extends ApiBaseAction {
         if(payParam.getPayAmount().compareTo(payParam.getBalance())>0){
             return new CommonResult().failed("余额不足！");
         }else {
-            OmsOrder order =orderService.getById(payParam.getOrderId());
-            UmsMember userDO = memberService.getNewCurrentMember();
-            order.setStatus(OrderStatus.TO_DELIVER.getValue());
-            order.setPayType(AllEnum.OrderPayType.balancePay.code());
-            order.setPaymentTime(new Date());
-            orderService.updateById(order);
-            if (ValidatorUtils.notEmpty(order.getGroupId())){
-                SmsGroup group = new SmsGroup();
-                group.setId(order.getGroupId());
-                group.setPeoples(group.getPeoples()-1);
-                groupMapper.updateById(group);
-            }
-            userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
-            memberService.updateById(userDO);
+            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
             return new CommonResult().success(order);
         }
     }
