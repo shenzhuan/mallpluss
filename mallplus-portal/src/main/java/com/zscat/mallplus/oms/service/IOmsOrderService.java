@@ -21,15 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface IOmsOrderService extends IService<OmsOrder> {
 
-    Object preSingelOrder(GroupAndOrderVo orderParam);
-
-    Object generateSingleOrder(GroupAndOrderVo orderParam, UmsMember member);
-
-    /**
-     * 根据用户购物车信息生成确认单信息
-     */
-    ConfirmOrderResult generateConfirmOrder();
-
     /**
      * 根据提交信息生成订单
      */
