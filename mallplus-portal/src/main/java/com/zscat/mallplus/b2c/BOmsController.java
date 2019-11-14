@@ -16,6 +16,7 @@ import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.*;
 import com.zscat.mallplus.oms.service.*;
+import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
@@ -585,6 +586,19 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
+    @ResponseBody
+    @PostMapping("/submitStorePreview")
+    public Object submitStorePreview(OrderParam orderParam) {
+        try {
+            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
+            return new CommonResult().success(result);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * 提交订单
      *

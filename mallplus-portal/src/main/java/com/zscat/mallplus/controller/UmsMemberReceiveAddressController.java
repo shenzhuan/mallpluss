@@ -51,6 +51,7 @@ public class UmsMemberReceiveAddressController {
     @ResponseBody
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
+        address.setMemberId(memberService.getNewCurrentMember().getId());
         if (address.getDefaultStatus()==1){
             addressMapper.updateStatusByMember(address.getMemberId());
         }

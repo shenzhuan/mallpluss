@@ -45,6 +45,8 @@ public class ConfirmOrderResult {
 
     SmsGroupActivity groupActivity;
 
+    private String storeName;
+
     public static class CalcAmount {
         //订单商品总金额
         private BigDecimal totalAmount;

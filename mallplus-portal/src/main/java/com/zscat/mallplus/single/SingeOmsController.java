@@ -13,6 +13,7 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.service.IPmsProductConsultService;
@@ -151,6 +152,20 @@ public class SingeOmsController extends ApiBaseAction {
     public Object submitPreview(OrderParam orderParam) {
         try {
             ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            return new CommonResult().success(result);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @ResponseBody
+    @GetMapping("/submitStorePreview")
+    public Object submitStorePreview(OrderParam orderParam) {
+        try {
+            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
