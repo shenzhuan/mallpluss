@@ -321,4 +321,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     @TableField("is_comment")
     private Integer  isComment;	//是否评论，1未评论，2已评论
 
+    @TableField("store_name")
+    private String storeName;	//	税号
+
 }

@@ -151,7 +151,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         }
         return userMapper.insert(user) > 0;
     }
-    void createG(BakGoods gg,Long storeId){
+    void createG(BakGoods gg,Integer storeId){
         PmsProduct g = new PmsProduct();
 
         g.setName(gg.getName());

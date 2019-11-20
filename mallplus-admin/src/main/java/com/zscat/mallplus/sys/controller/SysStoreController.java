@@ -59,7 +59,7 @@ public class SysStoreController {
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/setStoreId/{id}")
-    public Object setStoreId(@ApiParam("id") @PathVariable Long id) {
+    public Object setStoreId(@ApiParam("id") @PathVariable Integer id) {
         try {
             apiContext.setCurrentProviderId(id);
             return new CommonResult().success();

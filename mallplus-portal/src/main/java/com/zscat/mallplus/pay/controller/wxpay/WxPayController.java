@@ -12,6 +12,7 @@ import com.jpay.weixin.api.WxPayApi.TradeType;
 import com.jpay.weixin.api.WxPayApiConfig;
 import com.jpay.weixin.api.WxPayApiConfig.PayModel;
 import com.jpay.weixin.api.WxPayApiConfigKit;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
@@ -424,6 +425,13 @@ public class WxPayController extends WxPayApiController {
                     orderInfo.setStatus(OrderStatus.TO_DELIVER.getValue());
                     orderInfo.setPaymentTime(new Date());
                     orderService.updateById(orderInfo);
+                    if (orderInfo.getPid()==null){
+                        OmsOrder neworder = new OmsOrder();
+                        neworder.setStatus(OrderStatus.TO_DELIVER.getValue());
+                        neworder.setPayType(AllEnum.OrderPayType.weixinAppletPay.code());
+                        neworder.setPaymentTime(new Date());
+                        orderService.update(neworder,new QueryWrapper<OmsOrder>().eq("pid",orderInfo.getId()));
+                    }
                     prepayParams.put("result_code", "SUCCESS");
                 } else {
                     prepayParams.put("result_code", "FAIL");

@@ -8,6 +8,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.utils.CommonResult;
@@ -53,7 +54,8 @@ public class BUmsController {
     private IUmsIntegrationChangeHistoryService integrationChangeHistoryService;
     @Resource
     private SysAreaMapper areaMapper;
-
+    @Resource
+    private SysStoreMapper storeMapper;
     @Resource
     private IUserBankcardsService bankcardsService;
 
@@ -314,5 +316,13 @@ public class BUmsController {
     public Object ischeck(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
 
         return new CommonResult().failed();
+    }
+
+
+    @ApiOperation("店铺详情")
+    @PostMapping(value = "/storeDetail")
+    @ResponseBody
+    public Object storeDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+        return new CommonResult().success(storeMapper.selectById(id));
     }
 }

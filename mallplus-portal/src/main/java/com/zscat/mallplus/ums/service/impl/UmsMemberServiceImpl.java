@@ -2,6 +2,7 @@ package com.zscat.mallplus.ums.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.config.WxAppletProperties;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -98,7 +99,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     private UmsMemberMemberTagRelationMapper umsMemberMemberTagRelationMapper;
 
     @Resource
-    private SysAppletSetMapper appletSetMapper;
+    private WxAppletProperties wxAppletProperties;
 
     @Resource
     private IUmsMemberLevelService memberLevelService;
@@ -504,10 +505,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public Object loginByWeixin(AppletLoginParam req) {
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
-            if (null == appletSet) {
-                return ApiBaseAction.toResponsFail("没有设置支付配置");
-            }
+
             String codeH = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=STAT#wechat_redirect";
 
             String code = req.getCode();
@@ -530,8 +528,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
             //获取openid
             String requestUrl = String.format(webAccessTokenhttps,
-                    appletSet.getAppid(),
-                    appletSet.getAppsecret(),
+                    wxAppletProperties.getAppId(),
+                    wxAppletProperties.getSecret(),
                     code);
 
             JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);

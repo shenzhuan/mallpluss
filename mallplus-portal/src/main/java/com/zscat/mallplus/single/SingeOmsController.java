@@ -66,10 +66,10 @@ public class SingeOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus()!=null && order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
             order.setMemberId(memberService.getNewCurrentMember().getId());
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
         for (OmsOrder omsOrder : page.getRecords()){

@@ -383,9 +383,9 @@ public class BHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @PostMapping("/advert.getAdvertList")
-    public Object bannerList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
-        return new CommonResult().success(bannerList);
+    public Object bannerList( SmsHomeAdvertise advertise) {
+        advertise.setStatus(1);
+        return new CommonResult().success(advertiseService.list(new QueryWrapper<>(advertise)));
     }
 
     /**
