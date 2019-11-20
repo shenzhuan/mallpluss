@@ -368,7 +368,7 @@ public class BOmsController extends ApiBaseAction {
                 orderDetailResult.setBlance(member.getBlance());
             }
         redisService.set(key,JsonUtils.objectToJson(orderDetailResult));
-        redisService.expire(key,3600*5);
+        redisService.expire(key,2);
         return new CommonResult().success(orderDetailResult);
     }
 
@@ -722,7 +722,7 @@ public class BOmsController extends ApiBaseAction {
         menuList.add(new ServiceMenu("联系客服","http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png","/pages/service/index","/customer/list"));
         objectMap.put("menuList",menuList);
         redisService.set(key,JsonUtils.objectToJson(objectMap));
-        redisService.expire(key,3600*5);
+        redisService.expire(key,2);
         return new CommonResult().success(objectMap);
     }
     @Resource

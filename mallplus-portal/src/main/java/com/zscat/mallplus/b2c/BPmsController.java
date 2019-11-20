@@ -201,7 +201,7 @@ public class BPmsController extends ApiBaseAction {
                     category.setChildList(childlist);
                 }
                 redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-                redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),3600*5);
+                redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),2);
             }else{
                 list = JsonUtils.json2list(json, PmsProductCategory.class);
             }
@@ -212,7 +212,7 @@ public class BPmsController extends ApiBaseAction {
                 category.setChildList(childlist);
             }
             redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-            redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),3600*5);
+            redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),2);
         }
 
         return new CommonResult().success(list);
@@ -283,7 +283,7 @@ public class BPmsController extends ApiBaseAction {
         objectMap.put("list", list);
         objectMap.put("count", count);
         redisService.set(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,JsonUtils.objectToJson(objectMap));
-        redisService.expire(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,3600*5);
+        redisService.expire(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,2);
         return new CommonResult().success(objectMap);
     }
 
@@ -487,7 +487,7 @@ public class BPmsController extends ApiBaseAction {
             gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
         redisService.set(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(productAttributeCategoryList));
-        redisService.expire(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.expire(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),2);
         return new CommonResult().success(productAttributeCategoryList);
     }
 
@@ -548,7 +548,7 @@ public class BPmsController extends ApiBaseAction {
             }
         }
         redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),2);
         return new CommonResult().success(relList);
     }
 

@@ -590,7 +590,7 @@ public class SingePmsController extends ApiBaseAction {
             }
         }
         redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),3600*5);
+        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),2);
         return new CommonResult().success(relList);
     }
 
