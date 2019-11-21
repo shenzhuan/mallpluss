@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopFriendPaidMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFriendPaid">
+        <id column="id" property="id"/>
+        <result column="help_statment" property="helpStatment"/>
+        <result column="paid_money" property="paidMoney"/>
+        <result column="top_up" property="topUp"/>
+        <result column="knock" property="knock"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+</mapper>

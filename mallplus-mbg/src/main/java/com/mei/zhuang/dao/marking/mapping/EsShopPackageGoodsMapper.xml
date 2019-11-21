@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopPackageGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopPackageGoods">
+        <result column="id" property="id" />
+        <result column="package_type" property="packageType" />
+        <result column="package_name" property="packageName" />
+        <result column="picture" property="picture" />
+        <result column="by_picture" property="byPicture" />
+        <result column="order_picture" property="orderPicture" />
+        <result column="starting_time" property="startingTime" />
+        <result column="end_time" property="endTime" />
+        <result column="status" property="status" />
+        <result column="package_price" property="packagePrice" />
+        <result column="price" property="price" />
+        <result column="cost_price" property="costPrice" />
+        <result column="good_id" property="goodId" />
+        <result column="according" property="according" />
+    </resultMap>
+    <update id="updatestatus">
+        update es_shop_package_goods_spec set status=#{param1} where id=#{param2}
+    </update>
+    <select id="packageList" resultType="com.mei.zhuang.entity.marking.EsShopPackageGoods">
+        select id,package_type,package_name,starting_time,end_time,status from es_shop_package_goods where according=1
+        <if test="goods.status!=null and goods.status!=''">
+            and status=#{goods.status}
+        </if>
+        <if test="goods.packageType !=null and goods.packageType!=''">
+            and package_type=#{goods.packageType}
+        </if>
+        <if test="goods.packageName !=null and goods.packageName!=''">
+            and package_name like concat(concat('%',#{goods.packageName},'%'))
+        </if>
+        order by id desc
+    </select>
+
+    <update id="updatePackage" >
+        update es_shop_package_goods set package_name=#{packageName} where good_id=#{goodId}
+    </update>
+
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsPermMapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsPermMap">
+        <result column="type_id" property="typeId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="member_type" property="memberType"/>
+        <result column="perm_type" property="permType"/>
+        <result column="shop_id" property="shopId"/>
+    </resultMap>
+
+</mapper>

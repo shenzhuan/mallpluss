@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopDiypageTemplateCategoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopDiypageTemplateCategory">
+        <id column="id" property="id"/>
+        <result column="uniacid" property="uniacid"/>
+        <result column="name" property="name"/>
+        <result column="merch" property="merch"/>
+    </resultMap>
+    <select id="selectList" resultType="com.mei.zhuang.entity.goods.EsShopDiypageTemplateCategory">
+          select * from es_shop_diypage_template_category order by id asc
+    </select>
+
+</mapper>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmSysDeptMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysDept">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="p_id" property="pId" />
+		<result column="num" property="num" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_date" property="createDate" />
+		<result column="create_time" property="createTime" />
+		<result column="update_user_id" property="updateUserId" />
+		<result column="update_date" property="updateDate" />
+		<result column="update_time" property="updateTime" />
+		<result column="version" property="version" />
+		<result column="dept_no" property="deptNo" />
+	</resultMap>
+    <resultMap id="deptDict" type="com.arvato.admin.dto.DeptDictData">
+        <result column="p_id" property="pId"></result>
+    </resultMap>
+
+    <select id="getDeptTree" resultType="com.arvato.common.vo.ZTreeNode">
+	    SELECT
+            m1.id,
+            (
+                CASE
+                WHEN (m2.ID = 0 OR m2.ID IS NULL) THEN
+                    0
+                ELSE
+                    m2.id
+                END
+            ) pId,
+            m1.name "name"
+        FROM
+            CRM_SYS_DEPT m1
+        LEFT JOIN CRM_SYS_DEPT m2 ON m1.p_id = m2.id
+        ORDER BY
+            m1.num,m1.id
+	</select>
+
+    <select id="getDeptTreeByOrgType" resultType="com.arvato.common.vo.ZTreeNode">
+        SELECT
+        id, coalesce(p_id,0) pId,name
+        FROM
+        CRM_SYS_DEPT
+        <where>
+            <if test="orgType == 0">
+                org_type in (-1,0)
+            </if>
+            <if test="orgType == 1">
+                org_type in (-1,0,1)
+            </if>
+            <if test="orgType == 2">
+                org_type in (-1,0,1,2)
+            </if>
+            <if test="orgType == 3">
+                org_type in (-1,0,1,2,3)
+            </if>
+            <if test="roleDeptIds!=null">
+                and id IN
+                <foreach collection="roleDeptIds" item="roleDeptIds" separator="," open="(" close=")">
+                    #{roleDeptIds}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY num,id
+	</select>
+
+	<select id="dpetTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
+        SELECT
+            m1.id AS id,
+            (
+                CASE
+                WHEN (m2.id = 0 OR m2.id IS NULL) THEN
+                    0
+                ELSE
+                    m2.id
+                END
+            ) AS pId,
+            m1. NAME AS NAME,
+            (
+                CASE
+                WHEN (m2.id = 0 OR m2.id IS NULL) THEN
+                    'true'
+                ELSE
+                    'false'
+                END
+            ) AS isOpen,
+            (
+                CASE
+                WHEN (m1.id = m3.p_id) THEN
+                    'true'
+                ELSE
+                    'false'
+                END
+            ) "checked"
+        FROM
+            crm_sys_dept m1
+        LEFT JOIN crm_sys_dept m2 ON m1.p_id = m2.id
+            LEFT JOIN (
+                select p_id from crm_sys_dept where id = #{deptId}
+            ) m3 on m1.id = m3.p_id
+        ORDER BY
+            m1.num,m1.id
+    </select>
+
+    <select id="isDeptChild" resultType="int">
+        with RECURSIVE cte as
+        (
+          select c1.id,c1.p_id from crm_sys_dept c1 where id=#{deptId}
+          union all
+          select c2.id,c2.p_id from crm_sys_dept c2 inner join cte c on c.id = c2.p_id
+        ) select id from cte
+        where id in
+        <foreach collection="deptChildren" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="initDeptDatasByCurrentUser" resultType="com.arvato.common.vo.ZTreeNode">
+        select
+           a.id,
+        coalesce(p_id,-1) pId,
+           a.name,
+           (select case when count(*)>0 then false else true end as leafNode from CRM_SYS_DEPT t where t.p_id=a.id )
+        from
+        CRM_SYS_DEPT a
+        <where>
+            <choose>
+                <when test="pid==-1">
+                  a.id=0
+                </when>
+                <otherwise>
+                  a.p_id=#{pid}
+                </otherwise>
+            </choose>
+            <if test="roleDeptIds!=null">
+                and a.id in
+                <foreach collection="roleDeptIds" item="roleDeptIds" separator="," open="(" close=")">
+                    #{roleDeptIds}
+                </foreach>
+            </if>
+        </where>
+        order by a.num,a.id
+    </select>
+
+
+    <select id="dict" resultMap="deptDict">
+        select id as "value", name as text, p_id from crm_sys_dept order by name
+    </select>
+</mapper>

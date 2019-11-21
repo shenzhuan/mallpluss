@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsMemberTagMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberTagMap" type="com.mei.zhuang.entity.member.EsMemberTag">
+        <id column="id" property="id"/>
+        <result column="goods_ids" property="goodsIds"/>
+        <result column="member_balance" property="memberBalance"/>
+        <result column="name" property="name"/>
+        <result column="auto_make" property="autoMake"/>
+        <result column="member_credit" property="memberCredit"/>
+        <result column="order_count" property="orderCount"/>
+        <result column="order_money" property="orderMoney"/>
+        <result column="shop_id" property="shopId"/>
+    </resultMap>
+
+</mapper>

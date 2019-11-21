@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopShareMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopShare">
+        <result column="id" property="id" />
+        <result column="activity_name" property="activityName" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="activity_type" property="activityType" />
+        <result column="channels" property="channels" />
+        <result column="status" property="status" />
+        <result column="weekday" property="weekday" />
+        <result column="activitystart_time" property="activitystartTime" />
+        <result column="activityend_time" property="activityendTime" />
+        <result column="bgimage" property="bgimage" />
+        <result column="activity_rule" property="activityRule" />
+        <result column="initiator_image" property="initiatorImage" />
+        <result column="power_image" property="powerImage" />
+        <result column="share_image" property="shareImage" />
+        <result column="share_title" property="shareTitle" />
+        <result column="help_number" property="helpNumber" />
+        <result column="gift_number" property="giftNumber" />
+        <result column="gift_prize" property="giftPrize" />
+        <result column="is_repeat" property="isRepeat" />
+        <result column="member_number" property="memberNumber" />
+        <result column="is_help" property="isHelp" />
+        <result column="repeat_number" property="repeatNumber" />
+        <result column="is_prize" property="isPrize" />
+        <result column="help_prize" property="helpPrize" />
+        <result column="winning_type" property="winningType" />
+        <result column="is_del" property="isDel" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="winning_type" property="winningType" />
+        <result column="top_picture" property="topPicture" />
+        <result column="shuffling_picture" property="shufflingPicture" />
+        <result column="bottom_picture" property="bottomPicture" />
+        <result column="button_text" property="buttonText" />
+        <result column="button_color" property="buttonColor" />
+        <result column="text_color" property="textColor" />
+        <result column="power_number" property="powerNumber" />
+        <result column="power_given" property="powerGiven" />
+        <result column="most_prize" property="mostPrize" />
+        <result column="total_power" property="totalPower" />
+    </resultMap>
+
+
+    <select id="ShareList" resultType="com.mei.zhuang.entity.marking.EsShopShare">
+        select id,activity_name,activitystart_time,activityend_time,activity_type,channels,status from es_shop_share where is_del=1 order by id desc
+    </select>
+
+    <update id="updateStatus">
+        update es_shop_share set status=#{status} where id=#{id}
+    </update>
+    <select id="status" resultType="java.lang.Integer">
+        select count(*) from es_shop_share where status=1 and is_del=1
+    </select>
+
+</mapper>

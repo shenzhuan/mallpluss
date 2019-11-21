@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopActivityPrizeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberCouponMap" type="com.mei.zhuang.entity.marking.EsShopActivityPrize">
+        <id column="id" property="id"/>
+        <result column="activaty_id" property="activatyId"/>
+        <result column="level" property="level"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="goods_content" property="goodsContent"/>
+        <result column="total" property="total"/>
+        <result column="minimum" property="minimum"/>
+        <result column="most" property="most"/>
+        <result column="upper_limit" property="upperLimit"/>
+        <result column="img" property="img"/>
+        <result column="content" property="content"/>
+    </resultMap>
+</mapper>

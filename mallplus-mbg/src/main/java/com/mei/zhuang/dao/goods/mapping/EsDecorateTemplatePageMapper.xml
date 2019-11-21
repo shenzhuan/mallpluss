@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsDecorateTemplatePageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsDecorateTemplatePage">
+        <id column="id" property="id"/>
+        <result column="template_id" property="templateId"/>
+        <result column="thumb" property="thumb"/>
+        <result column="type" property="type"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_home" property="isHome"/>
+        <result column="key" property="key"/>
+        <result column="system_id" property="systemId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="content" property="content"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+</mapper>

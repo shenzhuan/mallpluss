@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsStartAdvertisingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsStartAdvertising">
+        <id column="id" property="id"/>
+        <result column="advert_name" property="advertName"/>
+        <result column="advert_backaground" property="advertBackaground"/>
+        <result column="display_setup" property="displaySetup"/>
+        <result column="display_page" property="displayPage"/>
+        <result column="specified_page" property="specifiedPage"/>
+        <result column="is_start" property="isStart"/>
+        <result column="interval_time" property="intervalTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_time" property="lastTime"/>
+        <result column="start_time" property="startTime"/>
+    </resultMap>
+    <select id="select" resultType="com.mei.zhuang.entity.goods.EsStartAdvertising">
+        select * from es_start_advertising
+        where 1=1
+        <if test="advertName!=null and advertName!=''">
+            and advert_name like concat(concat('%',#{advertName},'%'))
+        </if>
+        order by id desc
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_start_advertising
+        where 1=1
+        <if test="advertName!=null and advertName!=''">
+          and advert_name like concat(concat('%',#{advertName},'%'))
+        </if>
+    </select>
+    <select id="countStatus" resultType="java.lang.Integer">
+        select count(1) from es_start_advertising
+        where
+        is_start in ('1','2')
+        <if test="id!=null">
+          and    id!=#{id}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoods">
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="brand_id" property="branId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="title" property="title"/>
+        <result column="sub_title" property="subTitle"/>
+        <result column="english_sub_title" property="englishSubTitle"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="price" property="price"/>
+        <result column="is_show_stock" property="isShowStock"/>
+        <result column="type" property="type"/>
+        <result column="stock" property="stock"/>
+        <result column="vitural_stock" property="vituralStock"/>
+        <result column="vitural_sales" property="vituralSales"/>
+        <result column="goods_code" property="goodsCode"/>
+        <result column="weight" property="weight"/>
+        <result column="unit" property="unit"/>
+        <result column="keyword" property="keyword"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="keyword" property="keyword"/>
+        <result column="sales_count" property="salesCount"/>
+        <result column="thumb" property="thumb"/>
+        <result column="thumbs" property="thumbs"/>
+        <result column="video" property="video"/>
+        <result column="product_sn" property="productSn"/>
+        <result column="template_id" property="templateId"/>
+        <result column="dispatch_type" property="dispatchType"/>
+        <result column="dispatch_price" property="dispatchPrice"/>
+        <result column="dispatch_id" property="dispatchId"/>
+        <result column="status" property="status"/>
+        <result column="is_refund_support" property="isRefundSupport"/>
+        <result column="stock_cnf" property="stockCnf"/>
+        <result column="is_invoice_support" property="isInvoiceSupport"/>
+        <result column="ednum" property="ednum"/>
+        <result column="edmoney" property="edmoney"/>
+        <result column="edareas" property="edareas"/>
+        <result column="search_show" property="searchShow"/>
+        <result column="letter_free" property="letterFree"/>
+        <result column="letter_status" property="letterStatus"/>
+        <result column="letter_time" property="letterTime"/>
+        <result column="card_type" property="cardType"/>
+        <result column="card_content" property="cardContent"/>
+        <result column="card_status" property="cardStatus"/>
+        <result column="packet_type" property="packetType"/>
+        <result column="packet_content" property="packetContent"/>
+        <result column="packet_status" property="packetStatus"/>
+        <result column="original_cost" property="originalCost"/>
+        <result column="cost_price" property="costPrice"/>
+        <result column="count_postage" property="countPostage"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <result column="is_putaway" property="isPutaway"/>
+        <result column="putaway_type" property="putawayType"/>
+        <result column="is_putaway_time" property="isPutawayTime"/>
+        <result column="putaway_time" property="putawayTime"/>
+        <result column="is_sales" property="isSales"/>
+        <result column="cargo_time" property="cargoTime"/>
+        <result column="bar_code" property="barCode"/>
+        <result column="rule_content" property="ruleContent"/>
+        <result column="is_color_show" property="isColorShow"/>
+        <result column="icon_img" property="iconImg"/>
+        <result column="template_details" property="templateDetails"/>
+        <result column="num_max" property="numMax"/>
+        <result column="num_min" property="numMin"/>
+        <result column="most_purchases" property="mostPurchases"/>
+        <result column="jurisdiction_member_browse" property="jurisdictionMemberBrowse"/>
+        <result column="jurisdiction_member_purchase" property="jurisdictionMemberPurchase"/>
+        <result column="jurisdiction_labs_browse" property="jurisdictionLabsBrowse"/>
+        <result column="jurisdiction_labs_purchase" property="jurisdictionLabsPurchase"/>
+        <result column="promotion_title" property="promotionTitle"/>
+        <result column="promotion_money" property="promotionMoney"/>
+        <result column="present_integral" property="presentIntegral"/>
+        <result column="return_money" property="returnMoney"/>
+        <result column="discount" property="discount"/>
+        <result column="is_sustained_use" property="isSustainedUse"/>
+        <result column="service_conditions" property="serviceConditions"/>
+        <result column="is_share" property="isShare"/>
+        <result column="member_discount" property="memberDiscount"/>
+        <result column="member_discount_money" property="memberDiscountMoney"/>
+        <result column="card_exclusive" property="cardExclusive"/>
+        <result column="channelName" property="channelName"/>
+        <result column="recom_goods_id" property="recomGoodsId"/>
+        <result column="promotion_time" property="promotionTime"/>
+        <result column="dispatch_status" property="dispatchStatus"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="delete_time" property="deleteTime"/>
+        <result column="sellout_time" property="selloutTime"/>
+        <result column="uniform_postage_status" property="uniformPostageStatus" />
+        <result column="uniform_postage_price" property="uniformPostagePrice" />
+        <result column="letter_ids" property="letterIds" />
+        <result column="letter_type" property="letterType" />
+        <result column="pack_box_status" property="packBoxStatus" />
+        <result column="packet_box_content" property="packBoxContent" />
+        <result column="packet_box_type" property="packBoxType" />
+        <result column="default_spec" property="defaultSpec" />
+        <result column="pay_by_post" property="payByPost"/>
+        <result column="letter_content" property="letterContent"/>
+        <result column="small_beauty_box_id" property="smallBeautyBoxId"/>
+    </resultMap>
+
+    <resultMap type="com.mei.zhuang.entity.goods.EsShopGoods" id="goodsDetailResult" extends="BaseResultMap">
+        <collection property="goodsCateMapList"
+                    resultMap="com.arvato.service.goods.api.orm.dao.EsShopGoodsCateMapMapper.BaseResultMap">
+        </collection>
+    </resultMap>
+
+    <!--商品上下架-->
+    <update id="updEsShopGoodsStatus">
+        update es_shop_goods set status=#{status},sellout_time=#{date} where id=#{id}
+    </update>
+
+    <!--商品删除逻辑删除-->
+    <update id="updEsShopGoodsIsDel">
+        update es_shop_goods set status=-1 , delete_time=#{date} where id=#{id}
+    </update>
+    <update id="updGoodsDisplayOrder">
+        update es_shop_goods set display_order=#{num} where id=#{id}
+    </update>
+    <update id="updEsShopGoodsStatusTime">
+        update es_shop_goods set status=#{status},delete_time=#{time} where id=#{id}
+    </update>
+
+
+    <!--批量刪除回收站垃圾-->
+    <delete id="delRecycleShop">
+        delete from es_shop_goods where id=#{id}
+    </delete>
+
+    <delete id="delGoodsCateMap">
+        delete from es_shop_goods_cate_map where goods_id=#{goodsId}
+    </delete>
+    <!--查询商品一级分类-->
+    <select id="selShopGoodsCategoryOne" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category where level=0  order by display_order DESC ,id asc
+    </select>
+    <select id="selDisplayShopGoodsCategoryOne" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category where level=0 and status = 1  order by display_order DESC ,id asc
+    </select>
+    <!--查询商品二、三级分类-->
+    <select id="selShopGoodsCategoryTwo" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select id,name from es_shop_goods_category where parent_id=#{parentId} and level=#{level} order by display_order DESC ,id asc
+    </select>
+    <!--查詢分離名稱-->
+    <select id="selCategoryName" resultType="java.lang.String">
+        select name from es_shop_goods_category where id=#{categoryId}
+    </select>
+    <!--查詢商品分組-->
+    <select id="selShopGoodsGroup" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select id,name from es_shop_goods_group
+    </select>
+    <!--查询赠品商品-->
+    <select id="selectgiftsgoods" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select id,shop_id,title,type,thumb,vitural_stock,price from es_shop_goods where type='3' and status = 1 and vitural_stock &gt; 0
+        <if test="title!=null and title!=''">
+            and title like concat(concat('%',#{title},'%'))
+        </if>
+    </select>
+
+    <!--条件查询商品列表-->
+    <select id="selGoodsPageList" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods
+        where
+        1=1
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+
+        </if>
+        <if test="putawayType != null and putawayType != ''">
+            and putaway_type = #{putawayType}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="appletstatus!=null and appletstatus!=''">
+            and status in (1,3)
+        </if>
+        <if test="needPutAway!=null and needPutAway!=''">
+            and current_timestamp>=TO_TIMESTAMP((putaway_time:: BIGINT/1000) :: BIGINT)
+        </if>
+        <if test="type!=null and type!=''">
+            and type in ('1','2','4')
+        </if>
+        order by display_order desc,putaway_time desc,sales_count desc,create_time desc
+
+    </select>
+
+    <!--条件查询商品列表-->
+    <select id="selGoodsPageLists" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods
+        where
+        1=1
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+        </if>
+        <if test="putawayType!=null and putawayType!=''">
+            and putaway_type = #{putawayType}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="appletstatus!=null and appletstatus!=''">
+            and status in (1,3)
+        </if>
+        <if test="needPutAway!=null and needPutAway!=''">
+            and current_timestamp>=TO_TIMESTAMP((putaway_time:: BIGINT/1000) :: BIGINT)
+        </if>
+        <if test="type!=null and type!=''">
+            and type in ('1','2','4')
+        </if>
+        order by display_order desc,putaway_time desc,sales_count desc,create_time desc
+
+    </select>
+
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods
+        where 1=1
+
+
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+        </if>
+        <if test="putawayType!=null and putawayType!=''">
+            and putaway_type = #{putawayType}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="appletstatus!=null and appletstatus!=''">
+            and status in (1,3)
+        </if>
+        <if test="needPutAway!=null and needPutAway!=''">
+            and current_timestamp>=TO_TIMESTAMP((putaway_time:: BIGINT/1000) :: BIGINT)
+        </if>
+        <if test="type!=null and type!=''">
+            and type in ('1','2','4')
+        </if>
+    </select>
+    <select id="selectgoodsListByCateIds" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods
+        where
+        <foreach collection="ids" item="categoryId" open="(" close=")" separator=" or ">
+            strpos(category_id,#{categoryId})>0
+        </foreach>
+
+
+    </select>
+
+    <select id="selEsShopGoods" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select id,title,price,thumb,vitural_stock from es_shop_goods where id=#{id}
+    </select>
+    <select id="selEsShopGoodsTitle" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select id from es_shop_goods where title=#{title}
+    </select>
+    <select id="selShopGoodsDetail" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods where id=#{id}
+    </select>
+    <select id="selCountShopTitle" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods where title=#{title}
+    </select>
+    <select id="selGoodsPutAwayTime" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select id,putaway_time from es_shop_goods where is_putaway=0
+    </select>
+    <select id="selGoodsPutaway" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods
+        where
+        status != -1 and status !=-2 and type != 3
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and title like concat(concat('%',#{idAndName},'%'))
+        </if>
+        order by display_order desc,id desc
+
+    </select>
+
+    <select id="selGoodsPutawayCount" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods
+        where
+        status !='-1' and status !=-2 and type != 3
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and title like concat(concat('%',#{idAndName},'%'))
+        </if>
+    </select>
+
+    <update id="decrGoodsStock">
+        update es_shop_goods
+        set vitural_stock = vitural_stock - #{count}
+        where id = #{id}
+        and vitural_stock &gt;= #{count}
+    </update>
+
+    <update id="addGoodsStock">
+        update es_shop_goods
+        set vitural_stock = vitural_stock + #{count}
+        where id = #{id}
+    </update>
+
+    <update id="updPutawayTime">
+        update es_shop_goods
+        set putaway_time = #{putawayTime},status=1
+        where id = #{id}
+    </update>
+
+    <select id="selectSaleByDate" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+       select to_char(create_time,'yyyy-MM-dd') createTime ,sum(sales_count) salesCount
+        from es_shop_goods where 1=1
+        <if test="startDate!=null and startDate!=''">
+            and to_char(create_time,'yyyy-MM-dd')  >= to_char(${startDate},'yyyy-MM-dd')
+        </if>
+        <if test="endDate!=null and endDate!=''">
+            and to_char(${endDate},'yyyy-MM-dd') >=to_char(create_time,'yyyy-MM-dd')
+        </if>
+    group by to_char(create_time,'yyyy-MM-dd')
+
+    </select>
+    <select id="lists" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
+        select * from es_shop_goods
+        where
+        type !=3
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+        </if>
+        <if test="putawayType!=null and putawayType!=''">
+            and putaway_type = #{putawayType}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="appletstatus!=null and appletstatus!=''">
+            and status in (1,3)
+        </if>
+        <if test="needPutAway!=null and needPutAway!=''">
+            and current_timestamp>=TO_TIMESTAMP((putaway_time:: BIGINT/1000) :: BIGINT)
+        </if>
+        <if test="type!=null and type!=''">
+            and type in (1,2,4)
+        </if>
+        order by display_order desc,putaway_time desc,sales_count desc,create_time desc
+    </select>
+    <select id="counts" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods
+        where
+        type !=3
+        <if test="categoryId!=null and categoryId!=''">
+            and strpos(category_id,#{categoryId})>0
+        </if>
+
+        <if test="idAndName!=null and idAndName!=''">
+            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+        </if>
+        <if test="putawayType!=null and putawayType!=''">
+            and putaway_type = #{putawayType}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        <if test="appletstatus!=null and appletstatus!=''">
+            and status in (1,3)
+        </if>
+        <if test="needPutAway!=null and needPutAway!=''">
+            and current_timestamp>=TO_TIMESTAMP((putaway_time:: BIGINT/1000) :: BIGINT)
+        </if>
+        <if test="type!=null and type!=''">
+            and type in (1,2,4)
+        </if>
+    </select>
+
+    <select id="selRankTopList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.goods.GoodsRankTopParam">
+        select * from es_shop_goods
+        where 1 = 1
+        and status != -1
+        <if test="startTime != null and startTime !=''.toString()">
+            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="startTime != null and endTime !=''.toString()">
+            and create_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        ORDER BY sales_count desc limit 10 offset 0
+
+
+
+    </select>
+
+    <select id="searchGoods" resultType="java.util.Map">
+        select  distinct g.* from es_shop_goods g left join es_shop_goods_option o
+        on g.id=o.goods_id  where g.title like concat(concat('%',#{keywords},'%'))
+        or o.specs like  concat(concat('%',#{keywords},'%'))
+    </select>
+</mapper>

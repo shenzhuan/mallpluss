@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsRecomMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsRecom">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="price" property="price"/>
+        <result column="vitural_stock" property="vituralStock"/>
+        <result column="goodsid" property="goodsid"/>
+    </resultMap>
+    <select id="selRecomGoods" resultType="com.mei.zhuang.entity.goods.EsShopGoodsRecom">
+        select * from es_shop_goods_recom where goodsid=#{goodsId}
+    </select>
+
+    <!--新增推荐商品-->
+    <!-- <insert id="insRecom">
+         insert  into es_shop_goods_recom values(null,#{recomName},#{recomMoney},#{recomVituralStock},#{shopid},#{recomGoodsId})
+     </insert>-->
+</mapper>

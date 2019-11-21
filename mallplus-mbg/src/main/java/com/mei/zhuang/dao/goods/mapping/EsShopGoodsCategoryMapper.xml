@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsCategoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="thumb" property="thumb"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="level" property="level"/>
+        <result column="last_time" property="lastTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select *
+        from es_shop_goods_category
+    </select>
+    <select id="getSonGoodsCategory" resultMap="BaseResultMap">
+        select *
+        from es_shop_goods_category
+        <where>
+            <if test="#{parentId} != null">
+                parent_id = #{parentId}
+            </if>
+            <if test="level != null">
+                `level` = #{level}
+            </if>
+            <if test="status != null">
+                status = #{status}
+            </if>
+        </where>
+        order by displayOrder desc
+    </select>
+    <!--查询子分类-->
+    <select id="selGoodsCategorySubClass" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category where parent_id=#{parentId}
+    </select>
+
+
+    <update id="updateStatusBatchById">
+        update es_shop_goods_category
+        set status = #{status}
+        where id in
+        <foreach collection="ids" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <!--商品分类禁用/启用-->
+    <update id="updGoodsCategoryStatus">
+        update es_shop_goods_category set status=#{status} where id=#{id}
+    </update>
+    <!--修改排序-->
+    <update id="updDisplayOrder">
+        update es_shop_goods_category set display_order=#{displayOrder} where id=#{id}
+    </update>
+
+
+    <delete id="dataDelelteById" parameterType="java.util.List">
+        delete from es_shop_goods_category where
+            or id in
+        <foreach collection="list" item="ids" open="(" separator="," close=")">
+                 #{ids}
+        </foreach>
+
+    </delete>
+    <delete id="delGoodsCategory">
+        delete from es_shop_goods_category where id=#{id}
+    </delete>
+
+    <select id="list" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        SELECT * FROM es_shop_goods_category where level=0 ORDER BY display_order desc,id desc
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(1) FROM es_shop_goods_category where level=0
+    </select>
+    <!--查询分类详情-->
+    <select id="selDetail" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category where id=#{id}
+    </select>
+    <select id="selEsShopGoodsCategory" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category
+    </select>
+
+    <select id="selCategory" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select id from es_shop_goods_category where name=#{name}
+    </select>
+    <select id="selCategoryByLevel" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        select * from es_shop_goods_category where level =#{level} and parent_id=#{parentId} ORDER BY display_order desc,id desc
+    </select>
+    <select id="selAll" resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategory">
+        SELECT * FROM es_shop_goods_category where level=0  ORDER BY display_order desc,id desc
+    </select>
+
+
+</mapper>

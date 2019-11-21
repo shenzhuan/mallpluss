@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmApiUserPermissionMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmApiUserPermission">
+		<id column="id" property="id" />
+		<result column="api_user_id" property="apiUserId" />
+		<result column="interface_id" property="interfaceId" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_time" property="createTime" />
+		<result column="create_date" property="createDate" />
+		<result column="update_user_id" property="updateUserId" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_date" property="updateDate" />
+		<result column="version" property="version" />
+	</resultMap>
+
+	<select id="hasAuthByApiId" resultType="int">
+		select count(1) from crm_api_user_permission cp where cp.api_user_id=#{apiUserId} and cp.interface_id = #{apiId}
+	</select>
+
+</mapper>

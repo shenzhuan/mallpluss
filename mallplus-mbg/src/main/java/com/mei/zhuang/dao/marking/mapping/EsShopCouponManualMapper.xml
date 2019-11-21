@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponManualMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponManual">
+        <id column="id" property="id" />
+        <result column="activity_name" property="activityName" />
+        <result column="stamps_number" property="stampsNumber" />
+        <result column="send_object" property="sendObject" />
+        <result column="message" property="message" />
+        <result column="activity_open" property="activityOpen" />
+        <result column="status" property="status" />
+        <result column="coupon_manualid" property="couponManualid" />
+        <result column="time" property="time" />
+        <result column="send_number" property="sendNumber" />
+        <result column="statusissue" property="statusissue" />
+    </resultMap>
+
+    <select id="selectmanual" resultType="java.util.Map">
+        select cm.id,cm.time,cm.activity_name,cm.activity_open,cm.status,cm.send_object,cm.statusissue,cm.send_number,cm.coupon_manualid,
+        cnr.couponid,cnr.coupon_name,cnr.coupon_types,cnr.public_couponid
+        from es_shop_coupon_manual cm,es_shop_coupon_new_rule cnr where cm.coupon_manualid=cnr.public_couponid
+      <if test="manual.couponTypes!=null and manual.couponTypes!=''">
+          and cnr.coupon_types=#{manual.couponTypes}
+      </if>
+        <if test="manual.activityName!=null and manual.activityName!=''">
+            and  activity_name like concat(concat('%',#{manual.activityName},'%'))
+        </if>
+        <if test="manual.startingTime!=null and manual.endTime!=''">
+            and #{manual.startingTime} &lt;=cm.time and #{manual.endTime} &gt;=cm.time
+        </if>
+        order by cm.id desc
+    </select>
+
+
+</mapper>

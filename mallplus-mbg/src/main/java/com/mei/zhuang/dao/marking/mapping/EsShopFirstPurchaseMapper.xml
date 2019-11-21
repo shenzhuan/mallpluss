@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopFirstPurchaseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFirstPurchase">
+        <id column="id" property="id"/>
+        <result column="time_interval" property="timeInterval"/>
+        <result column="type" property="type"/>
+        <result column="weekdays" property="weekdays"/>
+        <result column="disable_time_interval" property="disableTimeInterval"/>
+        <result column="expiry_fixed_time_start" property="expiryFixedTimeStart"/>
+        <result column="start_time" property="startTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="titles" property="titles"/>
+        <result column="description" property="description"/>
+        <result column="expiry_begin_time" property="expiryBeginTime"/>
+        <result column="is_self_desc" property="isSelfDesc"/>
+        <result column="expiry_fixed_time" property="expiryFixedTime"/>
+        <result column="goods_mode" property="goodsMode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="expiry_end_time" property="expiryEndTime"/>
+        <result column="activity_object" property="activityObject"/>
+        <result column="activity_object_value" property="activityObjectValue"/>
+        <result column="status" property="status"/>
+        <result column="pay_order_count" property="payOrderCount"/>
+        <result column="attend_user_count" property="attendUserCount"/>
+        <result column="pay_amount" property="payAmount"/>
+        <result column="unit_price" property="unitPrice"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="source" property="source"/>
+        <result column="small_program" property="smallProgram"/>
+    </resultMap>
+
+</mapper>

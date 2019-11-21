@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCoupon">
+        <result column="time_interval" property="timeInterval"/>
+        <result column="type" property="type"/>
+        <result column="weekdays" property="weekdays"/>
+        <result column="disable_time_interval" property="disableTimeInterval"/>
+        <result column="enough" property="enough"/>
+        <result column="expiry_fixed_time_start" property="expiryFixedTimeStart"/>
+        <result column="start_time" property="startTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="stock" property="stock"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="expiry_begin_time" property="expiryBeginTime"/>
+        <result column="amount" property="amount"/>
+        <result column="expiry_fixed_time" property="expiryFixedTime"/>
+        <result column="goods_mode" property="goodsMode"/>
+        <result column="limit" property="limit"/>
+        <result column="create_time" property="createTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="expiry_end_time" property="expiryEndTime"/>
+        <result column="id" property="id"/>
+        <result column="channel_id" property="channelId"/>
+        <result column="status" property="status"/>
+        <result column="coupons_name" property="couponsName"/>
+        <result column="coupon_number" property="couponNumber"/>
+        <result column="don_use_pic" property="donUsePic"/>
+        <result column="to_use_pic" property="toUsePic"/>
+        <result column="expired_pic" property="expiredPic"/>
+        <result column="status_open" property="statusOpen"/>
+
+
+    </resultMap>
+    <select id="selectcoupon" resultType="com.mei.zhuang.entity.marking.EsShopCoupon">
+        select id,coupons_name,type,stock,status from es_shop_coupon where 1=1 and not status_open='2'
+        <if test="type!=null and type!=''">
+            and type=#{type}
+        </if>
+        <if test="couponsName!=null and couponsName!=''">
+            and coupons_name like concat(concat('%',#{couponsName},'%'))
+        </if>
+       order by id desc
+    </select>
+
+    <select id="selectmapcoupon" resultType="java.util.Map">
+        select sc.id,sc.coupons_name,sc.channel_id,sc.type,sc.stock,sc.create_time,sc.status,sc.status_open,expiry_begin_time,sc.expiry_end_time,scr.coupon_id,scr.single_consumer,scr.single_batch,scr.conditions
+        from es_shop_coupon sc,es_shop_coupon_rule scr where sc.id=scr.coupon_id
+        <if test="channelId!=null and channelId!=''">
+            and channel_id=#{channelId}
+        </if>
+        <if test="couponsName!=null and couponsName!=''">
+            and coupons_name like concat(concat('%',#{couponsName},'%'))
+        </if>
+        <if test="type!=null">
+            and type=#{type}
+        </if>
+        <if test="exBeginTime!=null and exEndTime!=null">
+          and create_time &gt;=#{exBeginTime} and create_time &lt;=#{exEndTime}
+        </if>
+            order by sc.id desc
+    </select>
+
+    <select id="couponlimit" resultType="java.util.Map">
+    select sc.id,sc.time_interval,sc.coupon_number,sc.coupons_name,sc.channel_id,sc.enough,sc.title,sc.description,sc.amount,sc.limit,sc.type,sc.stock,
+    sc.create_time,sc.status,sc.expiry_begin_time,sc.expiry_end_time,sc.don_use_pic,sc.to_use_pic,sc.expired_pic,scr.coupon_id,scr.single_consumer,scr.single_batch,scr.extra,scr.single_consumer,
+    scr.single_batch,scr.marketing_id,scr.goods_limited_id,scr.coupon_id,scr.coupon_limit,scr.conditions,scr.classification_id
+        from es_shop_coupon sc,es_shop_coupon_rule scr where sc.id=scr.coupon_id and sc.limit=scr.activity_type and sc.id=#{id}
+    </select>
+
+    <update id="updatestatus">
+        update es_shop_coupon set status_open=#{statusOpen} where id=#{id}
+    </update>
+    <select id="selectstatus" resultType="java.lang.Integer">
+              select count(*)as count from  es_shop_coupon where status_open='1'
+    </select>
+
+    <select id="coupontime" resultType="com.mei.zhuang.entity.marking.EsShopCoupon">
+        select  id,expiry_begin_time,expiry_end_time,status from es_shop_coupon where amount=1
+    </select>
+
+</mapper>

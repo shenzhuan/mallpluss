@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmSysDataAuthMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysDataAuth">
+		<id column="id" property="id" />
+		<result column="role_id" property="roleId" />
+		<result column="menu_id" property="menuId" />
+		<result column="data_auth_level" property="dataAuthLevel" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_date" property="createDate" />
+		<result column="create_time" property="createTime" />
+		<result column="update_user_id" property="updateUserId" />
+		<result column="update_date" property="updateDate" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<select id="getAuthLevelByMenuIdAndRoleIds" resultType="int">
+	   SELECT
+	       MIN(data_auth_level)
+	   FROM
+	       CRM_SYS_DATA_AUTH
+	   WHERE
+	       role_id IN
+	       <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+               #{roleId}
+           </foreach>
+       AND
+           menu_id = #{menuId}
+	</select>
+
+	<select id="selectDeptIdByPid" resultType="int">
+		with recursive dept as (
+			select d1.id from crm_sys_dept d1 where d1.id in
+			<foreach collection="deptIds" index="index" item="deptId" open="(" separator="," close=")">
+				#{deptId}
+			</foreach>
+			union all
+			select d2.id from crm_sys_dept d2 inner join dept d on d.id = d2.p_id and d2.org_type <![CDATA[ <= ]]> 3
+		) select id from dept
+	</select>
+
+	<select id="getDeptIdById" resultType="int">
+		SELECT
+			id
+		FROM
+			crm_sys_dept
+		WHERE
+			p_id = #{deptId};
+	</select>
+
+</mapper>

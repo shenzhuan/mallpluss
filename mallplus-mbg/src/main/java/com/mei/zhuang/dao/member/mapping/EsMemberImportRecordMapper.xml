@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsMemberImportRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberImportRecordMap" type="com.mei.zhuang.entity.member.EsMemberImportRecord">
+        <id column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="success_number" property="successNumber"/>
+        <result column="tag_ids" property="tagIds"/>
+        <result column="amount" property="amount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="file_path" property="filePath"/>
+        <result column="reason" property="reason"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="verify_mobile" property="verifyMobile"/>
+        <result column="fail_file_path" property="failFilePath"/>
+        <result column="fail_number" property="failNumber"/>
+    </resultMap>
+
+</mapper>

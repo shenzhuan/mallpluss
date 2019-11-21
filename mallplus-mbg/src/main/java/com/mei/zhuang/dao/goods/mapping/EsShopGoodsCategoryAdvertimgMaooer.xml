@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsCategoryAdvertimgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsCategoryAdvertimg">
+        <result column="category_id" property="categoryId"/>
+        <result column="id" property="id"/>
+        <result column="categoru_adimg" property="categoruAdimg"/>
+        <result column="categoru_adaddress" property="categoruAdaddress"/>
+    </resultMap>
+
+
+    <!--查询商品分类广告图-->
+    <select id="selEsShopGoodsCategoryAdvertimg"
+            resultType="com.mei.zhuang.entity.goods.EsShopGoodsCategoryAdvertimg">
+        select * from es_shop_goods_category_advert_img where category_id=#{id}
+    </select>
+
+    <delete id="delete">
+        delete from es_shop_goods_category_advert_img where category_id=#{categoryId}
+    </delete>
+
+</mapper>

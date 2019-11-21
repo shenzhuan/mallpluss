@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsImgGroupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsImgGroup">
+        <id column="id" property="id"/>
+        <result column="group_name" property="groupName"/>
+    </resultMap>
+
+    <!--新增分组-->
+    <insert id="insEsShopGoodsImgGroup">
+        insert into es_shop_goods_img_group(group_name) values(#{greoupName})
+    </insert>
+
+    <!--删除分组-->
+    <delete id="delEsShopGoodsImgGroup">
+        delete from es_shop_goods_img_group where id=#{id}
+    </delete>
+
+    <!--查询所有分组列表-->
+    <select id="selEsShopGoodsImgGroupMapper" resultType="com.mei.zhuang.entity.goods.EsShopGoodsImgGroup">
+        select id,group_name from es_shop_goods_img_group order by id  asc
+    </select>
+
+    <!--判断分组是否存在-->
+    <select id="selCountGroup" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods_img_group where id=#{groupId}
+    </select>
+    <select id="selCountGroupName" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods_img_group where group_name=#{name}
+    </select>
+
+
+</mapper>

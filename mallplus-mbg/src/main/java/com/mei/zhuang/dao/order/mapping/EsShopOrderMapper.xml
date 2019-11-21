@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopOrder">
+        <id column="id" property="id"/>
+        <result column="pay_channel" property="payChannel"/>
+        <result column="change_price" property="changePrice"/>
+        <result column="goods_info" property="goodsInfo"/>
+        <result column="original_dispatch_price" property="originalDispatchPrice"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="dispatch_price" property="dispatchPrice"/>
+        <result column="member_id" property="memberId"/>
+        <result column="original_goods_price" property="originalGoodsPrice"/>
+        <result column="refund_price" property="refundPrice"/>
+        <result column="auto_finish_time" property="autoFinishTime"/>
+        <result column="member_nickname" property="memberNickname"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="pay_price" property="payPrice"/>
+        <result column="address_info" property="addressInfo"/>
+        <result column="create_time" property="createTime"/>
+        <result column="goods_price" property="goodsPrice"/>
+        <result column="form_data" property="formData"/>
+        <result column="order_type" property="orderType"/>
+        <result column="status" property="status"/>
+        <result column="auto_close_time" property="autoCloseTime"/>
+        <result column="extra_price_package" property="extraPricePackage"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="extra_discount_rules_package" property="extraDiscountRulesPackage"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="remark_send" property="remarkSend"/>
+        <result column="auto_delivery_content" property="autoDeliveryContent"/>
+        <result column="buyer_name" property="buyerName"/>
+        <result column="city_distribution_type" property="cityDistributionType"/>
+        <result column="address_province" property="addressProvince"/>
+        <result column="member_avatar" property="memberAvatar"/>
+        <result column="payment_id" property="paymentId"/>
+        <result column="original_price" property="originalPrice"/>
+        <result column="type" property="type"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="is_refund" property="isRefund"/>
+        <result column="remark_close_saler" property="remarkCloseSaler"/>
+        <result column="address_area" property="addressArea"/>
+        <result column="dispatch_type" property="dispatchType"/>
+        <result column="member_realname" property="memberRealname"/>
+        <result column="remark_buyer" property="remarkBuyer"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="change_dispatch_price" property="changeDispatchPrice"/>
+        <result column="deleted" property="deleted"/>
+        <result column="member_mobile" property="memberMobile"/>
+        <result column="trade_no" property="tradeNo"/>
+        <result column="address_city" property="addressCity"/>
+        <result column="invoice_info" property="invoiceInfo"/>
+        <result column="is_city_distribution" property="isCityDistribution"/>
+        <result column="remark_close_buyer" property="remarkCloseBuyer"/>
+        <result column="change_price_count" property="changePriceCount"/>
+        <result column="dispatch_info" property="dispatchInfo"/>
+        <result column="out_trade_no" property="outTradeNo"/>
+        <result column="pay_type" property="payType"/>
+        <result column="buyer_mobile" property="buyerMobile"/>
+        <result column="close_time" property="closeTime"/>
+        <result column="close_type" property="closeType"/>
+        <result column="comment_status" property="commentStatus"/>
+        <result column="remark_saler" property="remarkSaler"/>
+        <result column="uid" property="uid"/>
+        <result column="address_id" property="addressId"/>
+        <result column="remark" property="remark"/>
+        <result column="receive_type" property="receiveType"/>
+        <result column="goods_ids" property="goodsIds"/>
+        <result column="is_part_delivery" property="isPartDelivery"/>
+        <result column="goods_no" property="goodsNo"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="discount_amount" property="discountAmount"/>
+        <result column="cart_ids" property="cartIds"/>
+        <result column="soure_type" property="soureType"/>
+        <result column="gift_giving" property="giftGiving"/>
+        <result column="gift_id" property="giftId"/>
+
+    </resultMap>
+    <resultMap type="com.mei.zhuang.entity.order.EsShopOrder" id="orderDetailResult" extends="BaseResultMap">
+        <collection property="orderGoodsList"
+                    resultMap="com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper.BaseResultMap">
+        </collection>
+    </resultMap>
+
+    <select id="orderIdList" parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam"
+            resultType="java.lang.Long">
+        select id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+    </select>
+
+    <select id="orderIdList2" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam"
+            resultType="java.lang.Long">
+        select id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+    </select>
+    <!--  <resultMap id="tempVoResultMap" type="com.arvato.ec.common.vo.order.OrderCustTotalVo">
+          <result property="newClientCount" column="newClientCount"/>
+          <result property="oldClientCount" column="oldClientCount"/>
+          <result property="newConsumeAmount" column="newConsumeAmount"/>
+          <result property="oldConsumeAmount" column="oldConsumeAmount"/>
+          <result property="total" column="total"/>
+          <result property="count" column="count"/>
+      </resultMap>
+  -->
+
+
+
+    <select id="hasOrder" resultType="java.lang.Integer" >
+        select count(1)
+        from es_shop_order
+        where  member_id =#{memberId}
+    </select>
+    <select id="getOrderBuyerByMemberId" resultMap="BaseResultMap" >
+        select *
+        from es_shop_order
+        where  buyer_mobile is not null and member_id =#{memberId} limit 1
+    </select>
+
+    <select id="queryAutoCloseOrders" resultMap="BaseResultMap">
+        select *
+        from es_shop_order
+        where status=0
+        and <![CDATA[ close_time < now()]]>
+    </select>
+
+    <select id="queryAutoConfirmOrders" resultMap="BaseResultMap">
+        select *
+        from es_shop_order
+        where status=2
+
+
+    </select>
+
+    <select id="selectOrderList" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+            resultMap="orderDetailResult">
+        SELECT * from es_shop_order o LEFT join es_shop_order_goods og
+        on o.id=og.order_id where 1=1
+        <include refid="query_order_where"/>
+        <if test="isAsc == 0">
+            order by o.create_time desc
+        </if>
+        <if test="isAsc == 1">
+            order by o.id asc
+        </if>
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+
+
+    <select id="getOrderListByCon" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+            resultMap="BaseResultMap">
+        SELECT * from es_shop_order o
+        where 1=1
+        <include refid="query_order_where"/>
+        order by o.create_time desc
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+
+    <select id="getCountByCon" parameterType="com.arvato.ec.common.vo.order.OrderParam" resultType="java.lang.Integer">
+        SELECT count(*) from es_shop_order o
+        where 1=1
+        <include refid="query_order_where"/>
+    </select>
+
+
+
+    <select id="selOrderByPage" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+        SELECT * from es_shop_order o
+        where 1=1
+        <include refid="query_order_where_bypage"/>
+        order by o.create_time desc
+
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+    <select id="getCountByPage" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+        SELECT count(*) from es_shop_order o
+        where 1=1
+        <include refid="query_order_where_bypage"/>
+    </select>
+
+    <update id="updateaddress"   parameterType="com.mei.zhuang.entity.order.EsShopOrder">
+        update es_shop_order set address_detail=#{addressDetail},address_province=#{addressProvince},address_city=#{addressCity},address_area=#{addressArea},
+        buyer_name=#{buyerName},buyer_mobile=#{buyerMobile},gift_giving=2,status=1 where id=#{id}
+    </update>
+
+
+    <select id="selectOrderCount" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+            resultType="java.lang.Integer">
+        SELECT count(1) from es_shop_order o LEFT join es_shop_order_goods og
+        on o.id=og.order_id where 1=1
+        <include refid="query_order_where"/>
+
+    </select>
+
+    <select id="selectOrderItemById" resultMap="orderDetailResult">
+        SELECT * from es_shop_order o LEFT join es_shop_order_goods og
+        on o.id=og.order_id where order_id = #{orderId}
+    </select>
+
+    <sql id="query_order_where_bypage">
+        <if test="orderIds != null">
+            and o.id in
+            <foreach item="item"  index="index"  open="(" separator=","  close=")" collection="orderIds">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="timeType==1">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==2">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString( )">
+                and o.pay_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==3">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.send_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.send_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==4">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.finish_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.finish_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and o.soure_type = #{source}
+        </if>
+        <if test="keyType==1">
+            <if test="keyword!=null and keyword !=''.toString()">
+                and o.order_no like concat('%',#{keyword},'%')
+            </if>
+        </if>
+        <if test="keyType==2">
+            <if test="keyword!=null and keyword !=''.toString()">
+                and o.buyer_name like concat('%',#{keyword},'%')
+            </if>
+        </if>
+        <if test="keyType==3">
+            and o.express_sn like concat('%',#{keyword},'%')
+        </if>
+        <if test="status != null and status != -1">
+            and o.status = #{status}
+        </if>
+        <if test="userId != null and userId != ''.toString() ">
+            and o.member_id = #{userId}
+        </if>
+        <if test="orderType !=-1">
+            and o.order_type=#{orderType}
+        </if>
+    </sql>
+
+
+    <sql id="query_order_where">
+
+        <if test="timeType==1">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==2">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString( )">
+                and o.pay_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==3">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.send_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.send_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="timeType==4">
+            <if test="startTime != null and startTime !=''.toString()">
+                and o.finish_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+            <if test="endTime != null and endTime !=''.toString()">
+                and o.finish_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and o.soure_type = #{source}
+        </if>
+        <if test="keyType==1">
+            <if test="keyword!=null and keyword !=''.toString()">
+                and o.order_no like concat('%',#{keyword},'%')
+            </if>
+        </if>
+        <if test="keyType==2">
+            <if test="keyword!=null and keyword !=''.toString()">
+                and o.buyer_name like concat('%',#{keyword},'%')
+            </if>
+        </if>
+        <if test="keyType==3">
+            and o.express_sn like concat('%',#{keyword},'%')
+        </if>
+        <if test="keyType==4">
+            and og.title like concat('%',#{keyword},'%')
+        </if>
+        <if test="keyType==5">
+            and og.goods_code like concat('%',#{keyword},'%')
+        </if>
+        <if test="status != null and status != -1">
+            and o.status = #{status}
+        </if>
+        <if test="userId != null and userId != ''.toString() ">
+            and o.member_id = #{userId}
+        </if>
+        <if test="orderType !=-1 and orderType!=null">
+            and o.order_type=#{orderType}
+        </if>
+    </sql>
+
+    <select id="hasOrderBefore" resultType="java.lang.Boolean">
+        SELECT COUNT(id) > 0
+        FROM es_shop_order
+        WHERE member_id = #{userId} and status != 8
+    </select>
+
+    <select id="orderonnumber" resultType="java.lang.Integer">
+        SELECT COUNT
+        FROM es_shop_order
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!--<select id="selectOrderListByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+            resultMap="BaseResultMap">
+        SELECT * from es_shop_order o LEFT join es_shop_order_goods og
+        on o.id=og.order_id where 1=1
+        <include refid="query_order_where_by_applet"/>
+        <if test="isAsc == 0">
+            order by o.id desc
+        </if>
+        <if test="isAsc == 1">
+            order by o.id asc
+        </if>
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>-->
+
+    <select id="selectOrderListByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+            resultMap="BaseResultMap">
+        SELECT * from es_shop_order
+        where 1=1
+        <if test="status != null and status != -1">
+            and status = #{status}
+        </if>
+        <if test="orderType==null">
+            and order_type=1
+        </if>
+        <if test="memberId != null">
+            and member_id = #{memberId}
+        </if>
+        <if test="isAsc == 0">
+            order by id desc
+        </if>
+        <if test="isAsc == 1">
+            order by id asc
+        </if>
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+
+
+
+
+
+
+
+    <!--<select id="selectOrderCountByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+            resultType="java.lang.Integer">
+        SELECT count(1) from es_shop_order o LEFT join es_shop_order_goods og
+        on o.id=og.order_id where 1=1
+        <include refid="query_order_where_by_applet"/>
+    </select>-->
+
+    <select id="selectOrderCountByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+            resultType="java.lang.Integer">
+        SELECT count(1) from es_shop_order
+        where 1=1
+        <if test="status != null and status != -1">
+            and status = #{status}
+        </if>
+        <if test="memberId != null">
+            and member_id = #{memberId}
+        </if>
+    </select>
+
+
+
+    <select id="hasCountByMemberById" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(*) from es_shop_order where member_id = #{memberId}
+    </select>
+    <select id="hasPayied" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(*) from es_shop_order where member_id = #{memberId} and status between  1 and 3
+    </select>
+    <sql id="query_order_where_by_applet">
+        <if test="memberId != null and memberId != ''.toString() and memberId !='0'.toString()">
+            and o.member_id = #{memberId}
+        </if>
+        <if test="status != null and status != -1">
+            and o.status = #{status}
+        </if>
+    </sql>
+
+
+    <select id="listOrderGroupByMemberId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+       select count(id) totalCount ,sum(pay_price) totalPayAmount,member_id memberId from es_shop_order
+       where status between  1 and 3 group by member_id
+    </select>
+
+    <select id="listOrderGroupByManJianId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+          select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
+    where status between  1 and 3 and manjian_or_discountid is not null and manjian_info is not null group by manjian_or_discountid
+
+    </select>
+
+    <select id="listOrderGroupByDiscountId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+        select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
+        where status between  1 and 3 and manjian_or_discountid is not null and discount_info is not null group by manjian_or_discountid
+
+    </select>
+
+    <select id="getBuyCountByUserId"  resultType="java.lang.Integer">
+        select sum(count)
+from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
+from es_shop_order where es_shop_order.member_id=#{memberId} and status between  1 and 3)
+    </select>
+
+    <select id="sumByGoods"  resultType="java.lang.Integer">
+        select sum(count)
+        from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
+        from es_shop_order where es_shop_order.member_id=#{memberId} and status between  1 and 3
+        <if test="startTime != null">
+            and  pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and  to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') >= pay_time
+        </if>
+        )
+    </select>
+
+    <select id="getBuyCountByMemberId"  resultType="java.lang.Integer">
+        select sum(count)
+        from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
+        from es_shop_order where es_shop_order.member_id=#{memberId} and status = #{status})
+    </select>
+
+    <select id="getOldConsumeInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select sum(record.total) as oldConsumeAmount, sum(record.count) as oldClientCount
+        from (select SUM(pay_price) as total ,count(member_id) as count, member_id
+        from es_shop_order WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS') AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id)
+        as record
+        where member_id in
+        (
+        select member_id
+        from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8) AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id having count(member_id) > 1
+        )
+
+    </select>
+
+    <select id="getTotalInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select
+        sum(record.total) as total, sum(record.count) as count
+        from (
+        select
+        SUM(pay_price) as total ,count(member_id) as count
+        from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        as record
+
+    </select>
+
+    <select id="selectUCustoCount" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select  count( distinct member_id)  from es_shop_order
+        where 1 = 1
+        <if test="startTime != null and startTime !=''.toString()">
+            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="endTime != null and endTime !=''.toString()">
+            and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+
+
+    </select>
+
+    <select id="getNewOrderList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+        select * from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id having count(member_id) = 1
+        )
+
+    </select>
+
+    <select id="getOldOrderList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+        select * from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id having count(member_id) > 1
+        )
+
+    </select>
+
+    <select id="getMinCreateTime" resultType="java.util.Date" parameterType="java.lang.Long">
+      select create_time from es_shop_order where 1=1
+       and shop_id={shopId}
+       order by create_time asc limit 1 OFFSET 0
+    </select>
+
+    <select id="getAllOrderInfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+        select * from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id
+        )
+    </select>
+
+
+    <select id="getOldOrderIfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+        select * from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id having count(member_id) > 1
+        )
+
+    </select>
+
+    <select id="getNewOrderInfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+        select * from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        where member_id in
+        (
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        group by member_id
+        )
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id having count(member_id) = 1
+        )
+
+    </select>
+
+    <select id="selOrderIdsByGoodsAnParam" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+        select id from es_shop_order
+        where 1=1
+        <include refid="timeCondtion"/>
+
+
+    </select>
+    <select id="selectfriend"  resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+        select * from es_shop_order o where o.gift_giving=#{giftGiving}
+    </select>
+
+    <select id="selectFriendListByApplet"  parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+            resultMap="BaseResultMap">
+        SELECT * from es_shop_order
+        where 1=1 and status!=8
+        <if test="orderType!=null">
+            and order_type=#{orderType}
+        </if>
+        <if test="giftGiving!=null">
+            and gift_giving=#{giftGiving}
+        </if>
+        <if test="memberId != null">
+            and member_id = #{memberId}
+        </if>
+        <if test="isAsc == 0">
+            order by id desc
+        </if>
+        <if test="isAsc == 1">
+            order by id asc
+        </if>
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+    <select id="memberIdList" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select member_id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        group by member_id
+    </select>
+    <select id="paymentNumber" resultType="java.lang.Integer">
+        select member_id from es_shop_order where status=3 AND create_time &gt;= to_timestamp(#{beginTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+    </select>
+    <select id="selCountDateDetail" resultType="com.mei.zhuang.entity.order.EsShopOrder">
+        select * from es_shop_order where status=#{status} AND create_time &gt;= to_timestamp(#{beginTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+    </select>
+
+
+    <sql id="timeCondtion">
+        <if test="startTime != null and startTime !=''.toString()">
+            AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="startTime != null and startTime !=''.toString()">
+            AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
+            and soure_type = #{source}
+        </if>
+        <if test="shopId != null">
+            AND shop_id = #{shopId}
+        </if>
+    </sql>
+
+
+
+
+</mapper>
+

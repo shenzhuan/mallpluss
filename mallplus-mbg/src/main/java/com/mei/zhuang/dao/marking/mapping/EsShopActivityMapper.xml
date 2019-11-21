@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopActivityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopActivity">
+        <id column="id" property="id" />
+        <result column="activity_start_time" property="activityStartTime" />
+        <result column="activity_end_time" property="activityEndTime" />
+        <result column="activaty_rule" property="activatyRule" />
+        <result column="participants" property="participants" />
+        <result column="consumer_integral" property="consumerIntegral" />
+        <result column="send_integral" property="sendIntegral" />
+        <result column="win_num" property="winNum" />
+        <result column="participant_num" property="participantNum" />
+        <result column="everyone_participant_num" property="everyoneParticipantNum" />
+        <result column="prize_notice" property="prizeNotice" />
+        <result column="nowin_tips" property="nowinTips" />
+        <result column="jump" property="jump" />
+        <result column="nowin_img" property="nowinImg" />
+        <result column="backage_img" property="backageImg" />
+        <result column="smoke_type" property="smokeType" />
+        <result column="smoke_template" property="smokeTemplate" />
+        <result column="name" property="name" />
+        <result column="not_win_status" property="notWinStatis" />
+        <result column="win_rate" property="winRate"/>
+    </resultMap>
+    <select id="selPageList" resultType="com.mei.zhuang.entity.marking.EsShopActivity">
+        select * from es_shop_activity
+        where 1=1
+        <if test="activityStartTime != null">
+            and activity_start_time &gt;= #{activityStartTime} and activity_end_time &lt;= #{activityEndTime}
+        </if>
+
+        <if test="status != null ">
+
+            <if test="status == 1">
+                 and activity_start_time &lt; #{currentTime} and activity_end_time &gt; #{currentTime}
+            </if>
+
+            <if test="status == 2">
+                and activity_start_time &gt; #{currentTime}
+            </if>
+
+            <if test="status == 3">
+                and activity_end_time &lt;  #{currentTime}
+            </if>
+        </if>
+
+
+
+        <if test="name != null">
+            and name like concat(concat('%',#{name},'%'))
+        </if>
+
+
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_shop_activity
+        where 1=1
+        <if test="activityStartTime != null">
+            and activity_start_time &gt;= #{activityStartTime} and activity_end_time &lt;= #{activityEndTime}
+        </if>
+
+        <if test="status != null ">
+
+            <if test="status == 1">
+                and activity_start_time &lt; #{currentTime} and activity_end_time &gt; #{currentTime}
+            </if>
+
+            <if test="status == 2">
+                and activity_start_time &gt; #{currentTime}
+            </if>
+
+            <if test="status == 3">
+                and activity_end_time &lt;  #{currentTime}
+            </if>
+        </if>
+    </select>
+
+</mapper>

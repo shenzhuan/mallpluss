@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsMemberStatisticMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberStatisticMap" type="com.mei.zhuang.entity.member.EsMemberStatistic">
+        <result column="coupon_enabled_ids" property="couponEnabledIds"/>
+        <result column="coupon_used_ids" property="couponUsedIds"/>
+        <result column="member_id" property="memberId"/>
+        <result column="no_cost_day_count" property="noCostDayCount"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="activity_earnings" property="activityEarnings"/>
+        <result column="cost_time_average" property="costTimeAverage"/>
+        <result column="coupon_use_total" property="couponUseTotal"/>
+        <result column="recharge_price_total" property="rechargePriceTotal"/>
+        <result column="cost_balance_today" property="costBalanceToday"/>
+        <result column="cost_credit_today" property="costCreditToday"/>
+        <result column="cost_goods_ids_today" property="costGoodsIdsToday"/>
+        <result column="coupon_send_total" property="couponSendTotal"/>
+        <result column="activity_join_rate" property="activityJoinRate"/>
+        <result column="cost_price_total" property="costPriceTotal"/>
+        <result column="cost_times_count" property="costTimesCount"/>
+        <result column="coupon_enabled_count" property="couponEnabledCount"/>
+        <result column="date" property="date"/>
+        <result column="recharge_times_count" property="rechargeTimesCount"/>
+    </resultMap>
+
+</mapper>

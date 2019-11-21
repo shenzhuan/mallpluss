@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponNewRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponNewRule">
+        <result column="id" property="id" />
+        <result column="couponid" property="couponid" />
+        <result column="inventory" property="inventory" />
+        <result column="coupon_name" property="couponName" />
+        <result column="public_couponid" property="publicCouponid" />
+        <result column="coupon_types" property="couponTypes" />
+    </resultMap>
+
+    <delete id="deletetypeid">
+        delete from es_shop_coupon_new_rule where couponid=#{arg0} and public_couponid=#{arg1}
+    </delete>
+    <select id="listrule" resultType="com.mei.zhuang.entity.marking.EsShopCouponNewRule">
+        select * from es_shop_coupon_new_rule where vouchers=#{vouchers}
+    </select>
+</mapper>

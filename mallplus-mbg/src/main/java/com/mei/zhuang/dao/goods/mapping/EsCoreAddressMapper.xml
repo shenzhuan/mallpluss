@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsCoreAddressMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsCoreAddress">
+        <id column="id" property="id"/>
+        <result column="code_id" property="codeId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="level" property="level"/>
+        <result column="location" property="location"/>
+    </resultMap>
+    <select id="selEsCoreAddress" resultType="com.mei.zhuang.entity.goods.EsCoreAddress">
+        select * from es_core_address
+        where 1=1
+        <if test="level != null and level != ''">
+            and level=#{level}
+        </if>
+        <if test="parentId != null and parentId != ''">
+            and parent_id=#{parentId}
+        </if>
+
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsMiniprogramMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.arvato.ec.common.vo.EsMiniprogram">
+        <id column="id" property="id"/>
+        <result column="shop_type" property="shopType"/>
+        <result column="signature" property="signature"/>
+        <result column="refresh_token" property="refreshToken"/>
+        <result column="app_secret" property="appSecret"/>
+        <result column="func_info" property="funcInfo"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="user_name" property="userName"/>
+        <result column="appid" property="appid"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="principal_name" property="principalName"/>
+        <result column="qrcode_url" property="qrcodeUrl"/>
+        <result column="authorizer_access_token" property="authorizerAccessToken"/>
+        <result column="head_img" property="headImg"/>
+        <result column="is_authorized" property="isAuthorized"/>
+    </resultMap>
+
+</mapper>

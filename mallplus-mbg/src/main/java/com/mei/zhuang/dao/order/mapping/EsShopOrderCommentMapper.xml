@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderCommentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsShopOrderCommentMap" type="com.mei.zhuang.entity.order.EsShopOrderComment">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="level" property="level"/>
+        <result column="nickname" property="nickname"/>
+        <result column="option_id" property="optionId"/>
+        <result column="reply_images" property="replyImages"/>
+        <result column="checked" property="checked"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="reply_time" property="replyTime"/>
+        <result column="order_goods_id" property="orderGoodsId"/>
+        <result column="append_reply_time" property="appendReplyTime"/>
+        <result column="order_type" property="orderType"/>
+        <result column="append_reply_images" property="appendReplyImages"/>
+        <result column="append_time" property="appendTime"/>
+        <result column="avatar" property="avatar"/>
+        <result column="create_time" property="createTime"/>
+        <result column="append_reply_content" property="appendReplyContent"/>
+        <result column="append_images" property="appendImages"/>
+        <result column="goods_title" property="goodsTitle"/>
+        <result column="is_top" property="isTop"/>
+        <result column="member_id" property="memberId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="append_content" property="appendContent"/>
+        <result column="goods_img" property="goodsImg"/>
+        <result column="option_title" property="optionTitle"/>
+        <result column="append_checked" property="appendChecked"/>
+        <result column="images" property="images"/>
+        <result column="reply_content" property="replyContent"/>
+        <result column="goods_id" property="goodsId"/>
+    </resultMap>
+
+</mapper>

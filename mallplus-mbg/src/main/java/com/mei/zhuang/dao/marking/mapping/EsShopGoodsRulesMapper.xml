@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopGoodsRulesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopGoodsRules">
+        <result column="id" property="id"/>
+        <result column="goodsname" property="goodsname"/>
+        <result column="price" property="price"/>
+        <result column="create_time" property="createTime"/>
+        <result column="rule_conditions" property="ruleConditions"/>
+        <result column="goods_scope" property="goodsScope"/>
+        <result column="according" property="according"/>
+    </resultMap>
+
+    <select id="lsitrules" resultType="com.mei.zhuang.entity.marking.EsShopGoodsRules">
+        select id,goodsname,price,create_time from  es_shop_goods_rules where according=1
+        <if test="goodsname!=null and goodsname!=''">
+            and goodsname like concat(concat('%',#{goodsname},'%'))
+        </if>
+        order by id desc
+    </select>
+    <update id="updateRule">
+        update es_shop_goods_rules set goodsname=#{goodsname} where goods_id=#{goodsId}
+    </update>
+
+</mapper>

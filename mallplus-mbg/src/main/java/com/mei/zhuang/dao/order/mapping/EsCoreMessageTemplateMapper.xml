@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsCoreMessageTemplateMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsCoreMessageTemplate">
+        <id column="id" property="id"/>
+        <result column="message_sign" property="messageSign"/>
+        <result column="template_sign" property="templateSign"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="keyword_id_list" property="keywordIdlist"/>
+        <result column="message_type" property="messageType"/>
+        <result column="original_template_id" property="originalTemplateId"/>
+        <result column="send_type" property="sendType"/>
+        <result column="app_name" property="appName"/>
+        <result column="core_message_id" property="coreMessageId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="template_id" property="templateId"/>
+    </resultMap>
+
+    <select id="select" resultType="com.mei.zhuang.entity.order.EsCoreMessageTemplate">
+        select * from es_core_message_template
+        where 1=1
+        <if test="title!=null and title!=''">
+            and title like concat(concat('%',#{title},'%'))
+        </if>
+        order by id desc
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_core_message_template
+        where 1=1
+        <if test="title!=null and title!=''">
+            and title like concat(concat('%',#{title},'%'))
+        </if>
+    </select>
+
+
+</mapper>

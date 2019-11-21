@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsDeliveryPanelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsDeliveryPanelMap" type="com.mei.zhuang.entity.order.EsDeliveryPanel">
+        <id column="id" property="id"/>
+        <result column="app_secret" property="appSecret"/>
+        <result column="panel_pwd" property="panelPwd"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="panel_account" property="panelAccount"/>
+        <result column="postage_payment_method" property="postagePaymentMethod"/>
+        <result column="change_status" property="changeStatus"/>
+        <result column="collection_shop_no" property="collectionShopNo"/>
+        <result column="company" property="company"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="app_key" property="appKey"/>
+        <result column="month_knot_no" property="monthKnotNo"/>
+        <result column="name" property="name"/>
+        <result column="style" property="style"/>
+        <result column="is_notice" property="isNotice"/>
+    </resultMap>
+
+</mapper>

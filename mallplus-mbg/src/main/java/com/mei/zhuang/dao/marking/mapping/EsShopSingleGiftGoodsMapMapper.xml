@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopSingleGiftGoodsMapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap">
+        <result column="single_gift_id" property="singleGiftId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_type" property="goodsType"/>
+        <result column="spec_ids" property="specIds"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="pic" property="pic"/>
+    </resultMap>
+    <select id="selectsinggoods1" resultType="com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap">
+        select * from es_shop_single_gift_goods_map where goods_type=1 and single_gift_id=#{singleGiftId}
+    </select>
+    <select id="selectsinggoods2" resultType="com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap">
+        select * from es_shop_single_gift_goods_map where goods_type=2 and single_gift_id=#{singleGiftId}
+    </select>
+    <select id="selectsinggoods3" resultType="com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap">
+        select * from es_shop_single_gift_goods_map where goods_type=3 and single_gift_id=#{singleGiftId}
+    </select>
+
+
+
+</mapper>

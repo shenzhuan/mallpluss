@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopFullGiftGoodsMapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap">
+        <id column="id" property="id"/>
+        <result column="full_gift_id" property="fullGiftId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_type" property="goodsType"/>
+        <result column="spec_ids" property="specIds"/>
+        <result column="activity_name" property="activityName"/>
+        <result column="rule_id" property="ruleId"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="pic" property="pic"/>
+    </resultMap>
+    <select id="selectgift" resultType="com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap">
+        select * from es_shop_full_gift_goods_map where goods_type=1 and full_gift_id=#{fullGiftId}
+
+    </select>
+    <select id="selectgift2" resultType="com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap">
+        select * from es_shop_full_gift_goods_map where goods_type=2 and full_gift_id=#{fullGiftId}
+
+    </select>
+
+    <select id="slecetgoods" resultType="com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap">
+        select * from es_shop_full_gift_goods_map where rule_id=#{ruleId}
+
+    </select>
+</mapper>

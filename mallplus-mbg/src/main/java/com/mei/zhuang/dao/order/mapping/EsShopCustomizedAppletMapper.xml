@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopCustomizedAppletMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsShopCartMap" type="com.mei.zhuang.entity.order.EsShopCustomizedApplet">
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="basic_id" property="basicId"/>
+        <result column="card_id" property="cardId"/>
+        <result column="packet_id" property="packetId"/>
+        <result column="basic_content" property="basicContent"/>
+        <result column="special_symbols" property="specialSymbols"/>
+        <result column="leaving_message" property="leavingMessage"/>
+        <result column="card_message" property="cardMessage"/>
+        <result column="legend_id" property="legendId"/>
+        <result column="cart_id" property="cardId"/>
+        <result column="card_img" property="cardImg"/>
+        <result column="packet_img" property="packetImg"/>
+    </resultMap>
+</mapper>

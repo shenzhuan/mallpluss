@@ -1,0 +1,36 @@
+package com.mei.zhuang.service.marking;
+
+
+import com.arvato.ec.common.vo.marking.CodeResult;
+import com.arvato.ec.common.vo.order.CartMarkingVo;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.mei.zhuang.entity.marking.EsShopCodeGift;
+import com.mei.zhuang.entity.marking.EsShopCodeGiftRule;
+
+import java.util.Map;
+
+/**
+ * @Auther: shenzhuan
+ * @Date: 2019/4/13 06:49
+ * @Description:
+ */
+public interface CodeGiftService extends IService<EsShopCodeGift> {
+    boolean save(EsShopCodeGift entity) throws Exception;
+
+    int updateShowStatus(Long ids, Integer status);
+
+    boolean update(EsShopCodeGift entity) throws Exception;
+    //验证码删除
+    Integer deleteCode(long id);
+
+    //验证码明细查询
+    EsShopCodeGift CodeList(long id);
+    //唯一验证
+    EsShopCodeGiftRule codegif(long codeGiftId);
+    EsShopCodeGiftRule codegif2(String code);
+
+    Map<String,Object> selPageList(EsShopCodeGift entity);
+
+    public CodeResult getCodeGoods(CartMarkingVo vo);
+    public  void updateCodeStatus(String code, Integer status);
+}

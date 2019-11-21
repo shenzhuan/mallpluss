@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsDecorateTemplateOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsDecorateTemplateOrder">
+        <id column="id" property="id"/>
+        <result column="is_free" property="isFree"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="template_id" property="templateId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="buy_expire_time" property="buyExpireTime"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="is_buy" property="isBuy"/>
+        <result column="is_forever" property="isForever"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopOrderGoods">
+        <result column="refund_id" property="refundId"/>
+        <result column="title" property="title"/>
+        <result column="create_time" property="createTime"/>
+        <result column="price_change" property="priceChange"/>
+        <result column="id" property="id"/>
+        <result column="member_price" property="memberPrice"/>
+        <result column="option_title" property="optionTitle"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="activity_package" property="activityPackage"/>
+        <result column="goods_code" property="goodsCode"/>
+        <result column="dispatch" property="dispatch"/>
+        <result column="refund_type" property="refundType"/>
+        <result column="member_id" property="memberId"/>
+        <result column="option_id" property="optionId"/>
+        <result column="price" property="price"/>
+        <result column="price_discount" property="priceDiscount"/>
+        <result column="total" property="total"/>
+        <result column="add_credit" property="addCredit"/>
+        <result column="is_join_member_price" property="isJoinMemberPrice"/>
+        <result column="form_data" property="formData"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="price_original" property="priceOriginal"/>
+        <result column="price_unit" property="priceUnit"/>
+        <result column="comment_status" property="commentStatus"/>
+        <result column="coupon_price" property="couponPrice"/>
+        <result column="unit" property="unit"/>
+        <result column="status" property="status"/>
+        <result column="thumb" property="thumb"/>
+        <result column="order_id" property="orderId"/>
+        <result column="package_cancel_reason" property="packageCancelReason"/>
+        <result column="uid" property="uid"/>
+        <result column="deduct_credit" property="deductCredit"/>
+        <result column="member_discount_price" property="memberDiscountPrice"/>
+        <result column="is_gifts" property="isGifts"/>
+        <result column="count" property="count"/>
+        <result column="gift_type" property="giftType"/>
+        <result column="cart_id" property="cartId"/>
+        <result column="cust_id" property="custId"></result>
+
+
+    </resultMap>
+
+
+    <select id="selectGoodsByIds" parameterType="java.util.List" resultType="java.lang.Integer">
+        select count(id) from es_shop_goods
+        where 1 = 1 or id in
+        <foreach collection="list" item="ids" open="(" separator="," close=")">
+                 #{ids}
+        </foreach>
+    </select>
+
+
+    <select id="selOgByCondition" parameterType="com.arvato.ec.common.vo.order.OrderParam" resultType="java.lang.Long">
+        select DISTINCT(order_id) from es_shop_order_goods where 1=1
+        and is_gifts = 0
+        <if test="keyType==4">
+            and title like concat('%',#{keyword},'%')
+        </if>
+        <if test="keyType==5">
+            and goods_code like concat('%',#{keyword},'%')
+        </if>
+    </select>
+
+    <select id="selGoodsTotalSaleCount" resultType="java.lang.Integer">
+        select sum(count) from es_shop_order_goods
+        where 1 = 1 and is_gifts=0 and order_id in
+        <foreach collection="ids" index="index" item="i" open="(" separator="," close=")">
+                 #{i}
+        </foreach>
+    </select>
+
+<select id="orderid" resultType="com.mei.zhuang.entity.order.EsShopOrderGoods">
+    select * from es_shop_order_goods where order_id=#{orderId} and is_gifts=0
+</select>
+
+    <select id="OrderGoods"  resultMap="BaseResultMap"  parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+        select goods_id,sum(total)as total,title,thumb,count(goods_id) as count,sum(count) as goodscount from es_shop_order_goods where order_id in(
+        select id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        ) group by goods_id,title,thumb
+    </select>
+
+    <select id="purchaseGoods" resultMap="BaseResultMap"  parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+        select member_id,count(goods_id) as goodscount,goods_id from es_shop_order_goods where order_id in(
+        select id from es_shop_order
+        WHERE status NOT IN (0, 8)
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        )group by goods_id,member_id
+    </select>
+
+</mapper>

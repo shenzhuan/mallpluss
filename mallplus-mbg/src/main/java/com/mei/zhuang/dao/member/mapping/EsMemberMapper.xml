@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsMemberMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberMap" type="com.mei.zhuang.entity.member.EsMember">
+        <id column="id" property="id"/>
+        <result column="tail_number" property="tailNumber"/>
+        <result column="buy_count" property="buyCount"/>
+        <result column="buy_money" property="buyMoney"/>
+        <result column="followed" property="followed"/>
+        <result column="mobile" property="mobile"/>
+        <result column="province" property="province"/>
+        <result column="credit" property="credit"/>
+        <result column="email" property="email"/>
+        <result column="privilege" property="privilege"/>
+        <result column="realname" property="realname"/>
+        <result column="password" property="password"/>
+        <result column="birthday" property="birthday"/>
+        <result column="come_from" property="comeFrom"/>
+        <result column="inviter" property="inviter"/>
+        <result column="openid_app" property="openidApp"/>
+        <result column="create_time" property="createTime"/>
+        <result column="nickname" property="nickname"/>
+        <result column="salt" property="salt"/>
+        <result column="wechat" property="wechat"/>
+        <result column="constellation" property="constellation"/>
+        <result column="level_id" property="levelId"/>
+        <result column="remark" property="remark"/>
+        <result column="sex" property="sex"/>
+        <result column="uid" property="uid"/>
+        <result column="age" property="age"/>
+        <result column="avatar" property="avatar"/>
+        <result column="city" property="city"/>
+        <result column="unionid" property="unionid"/>
+        <result column="area" property="area"/>
+        <result column="balance" property="balance"/>
+        <result column="is_black" property="isBlack"/>
+        <result column="openid_wxapp" property="openidWxapp"/>
+        <result column="mobile_verified" property="mobileVerified"/>
+        <result column="openid" property="openid"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="open_card" property="openCard"/>
+    </resultMap>
+    <select id="memberNumber" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select count(*) from es_member where create_time &gt;= to_timestamp(#{param.startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        and create_time &lt;= to_timestamp(#{param.endTime}, 'YYYY/MM/DD HH24:MI:SS')
+
+    </select>
+
+    <select id="selTotalMember" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.customer.CustGroupIndexParam">
+        select count(id) from es_member where shop_id = #{shopId}
+       <!-- <if test="startTime != null and startTime !=''.toString()">
+            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="endTime != null and endTime !=''.toString()">
+            and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+-->
+
+    </select>
+
+    <select id="membercount" resultType="java.lang.Integer">
+       select count(*) from es_member
+    </select>
+    <select id="memberselect" resultType="com.mei.zhuang.entity.member.EsMember">
+        select id,openid from es_member where 1=1 order by id asc
+        <if test="param1!=0">
+            limit #{param1} offset #{param2}
+        </if>
+    </select>
+    <select id="selectmember" resultType="com.mei.zhuang.entity.member.EsMember" >
+        select * from es_member where mobile=#{mobile}
+    </select>
+
+</mapper>

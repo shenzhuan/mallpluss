@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmSysLoginLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysLoginLog">
+        <id column="id" property="id" />
+        <result column="login_name" property="loginName" />
+        <result column="login_result" property="loginResult" />
+        <result column="login_desc" property="loginDesc" />
+        <result column="login_time" property="loginTime" />
+    </resultMap>
+
+    <select id="getSpecifyMinutesPasswordErrorCount" resultType="int">
+        SELECT
+          COUNT(0)
+        FROM
+          ${schema}.crm_sys_login_log
+        WHERE
+          login_result = 1
+        AND
+          unlock_flag = 0
+        AND
+          login_name = #{loginName}
+        AND
+          login_time >= #{specifyTime}
+    </select>
+
+    <update id="updateUnlockFlagOfSpecifyMinutes">
+        UPDATE
+          crm_sys_login_log
+        SET
+          unlock_flag = 1
+        WHERE
+          login_result = 1
+        AND
+          login_name = #{loginName}
+        AND
+          login_time >= #{specifyTime}
+    </update>
+
+    <update id="updateUnlockFlagOfSpecifyMinutesWithSchema">
+        UPDATE
+        ${schema}.crm_sys_login_log
+        SET
+        unlock_flag = 1
+        WHERE
+        login_result = 1
+        AND
+        login_name = #{loginName}
+        AND
+        login_time >= #{specifyTime}
+    </update>
+
+    <insert id="insertLoginLog">
+        insert into ${schema}.crm_sys_login_log(login_name,login_result,login_desc,login_time)
+        values(#{loginLog.loginName},#{loginLog.loginResult},#{loginLog.loginDesc},#{loginLog.loginTime})
+    </insert>
+
+</mapper>

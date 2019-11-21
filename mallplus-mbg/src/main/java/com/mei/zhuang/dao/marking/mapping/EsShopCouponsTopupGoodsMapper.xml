@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods">
+        <result column="id" property="id" />
+        <result column="good_id" property="goodId" />
+        <result column="specifications_id" property="specificationsId" />
+        <result column="public_goodsid" property="publicGoodsid" />
+        <result column="physical_id" property="physicalId" />
+    </resultMap>
+
+
+    <delete id="deletegoodsid">
+        delete from es_shop_coupons_topup_goods where good_id=#{param1} and public_goodsid=#{param2}
+    </delete>
+</mapper>

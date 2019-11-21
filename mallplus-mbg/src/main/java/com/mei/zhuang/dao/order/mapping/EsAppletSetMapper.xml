@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsAppletSetMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsAppletSet">
+        <id column="id" property="id"/>
+        <result column="appid" property="appId"/>
+        <result column="app_secret" property="appSecret"/>
+        <result column="is_vindicate" property="isVindicate"/>
+        <result column="is_user_binding" property="isUserBinding"/>
+        <result column="is_show_customer_service" property="isShowCustomerService"/>
+        <result column="is_show_phone_service" property="isShowPhoneService"/>
+        <result column="place_order_inform" property="placeOrderInform"/>
+        <result column="pay_succed_inform" property="paySuccedInform"/>
+        <result column="order_cancel_inform" property="orderCancelInform"/>
+        <result column="order_shipments_inform" property="orderShipmentsInform"/>
+        <result column="order_status_inform" property="orderStatusInform"/>
+        <result column="binding_nodes" property="bindingNodes"/>
+    </resultMap>
+
+
+</mapper>

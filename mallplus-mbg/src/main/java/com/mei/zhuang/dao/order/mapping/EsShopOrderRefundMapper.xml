@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderRefundMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsShopOrderRefundMap" type="com.mei.zhuang.entity.order.EsShopOrderRefund">
+        <result column="apply_price" property="applyPrice"/>
+        <result column="close_remark" property="closeRemark"/>
+        <result column="content" property="content"/>
+        <result column="id" property="id"/>
+        <result column="images" property="images"/>
+        <result column="order_id" property="orderId"/>
+        <result column="refund_address_id" property="refundAddressId"/>
+        <result column="refund_type" property="refundType"/>
+        <result column="saler_message" property="salerMessage"/>
+        <result column="step" property="step"/>
+        <result column="deny_reason" property="denyReason"/>
+        <result column="member_id" property="memberId"/>
+        <result column="order_goods_id" property="orderGoodsId"/>
+        <result column="refund_address_name" property="refundAddressName"/>
+        <result column="status" property="status"/>
+        <result column="uid" property="uid"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="saler_express_sn" property="salerExpressSn"/>
+        <result column="saler_remark" property="salerRemark"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="step2_time" property="step2Time"/>
+        <result column="step3_saler_time" property="step3SalerTime"/>
+        <result column="type" property="type"/>
+        <result column="real_price" property="realPrice"/>
+        <result column="reason" property="reason"/>
+        <result column="refund_status" property="refundStatus"/>
+        <result column="original_price" property="originalPrice"/>
+        <result column="step1_time" property="step1Time"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="refund_address_info" property="refundAddressInfo"/>
+        <result column="saler_express_code" property="salerExpressCode"/>
+        <result column="create_time" property="createTime"/>
+        <result column="express_name" property="expressName"/>
+        <result column="refund_address_mobile" property="refundAddressMobile"/>
+        <result column="refund_recv_accout" property="refundRecvAccout"/>
+        <result column="express_code" property="expressCode"/>
+        <result column="express_sn" property="expressSn"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="refund_no" property="refundNo"/>
+        <result column="refund_notify_data" property="refundNotifyData"/>
+        <result column="refund_success_time" property="refundSuccessTime"/>
+        <result column="saler_express_name" property="salerExpressName"/>
+        <result column="step3_time" property="step3Time"/>
+        <result column="step4_time" property="step4Time"/>
+    </resultMap>
+
+</mapper>

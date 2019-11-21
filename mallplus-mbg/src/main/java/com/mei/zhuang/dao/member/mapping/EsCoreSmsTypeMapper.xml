@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.member.api.orm.dao.EsCoreSmsTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.member.EsCoreSmsType">
+        <id column="id" property="id" />
+        <result column="type_name" property="typeName" />
+        <result column="parent_id" property="parentId" />
+        <result column="level" property="level" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by_id" property="createById" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by_id" property="updateById" />
+        <result column="is_delete" property="isDelete" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 存在 -->
+    <!--<resultMap id="BaseResultMapItem" type="com.mei.zhuang.entity.member.EsCoreSmsType" extends="BaseResultMap">
+
+    </resultMap>
+
+    <select id=""
+
+
+    </select>
+    -->
+
+</mapper>

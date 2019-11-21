@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopBrandMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopBrand">
+        <id column="id" property="id"/>
+        <result column="brand_id" property="brandId"/>
+        <result column="brand_name" property="brandName"/>
+        <result column="contact_mobile" property="contactMobile"/>
+        <result column="contact_name" property="contactName"/>
+        <result column="logo" property="logo"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+
+    <insert id="addbrand" parameterType="com.mei.zhuang.entity.goods.EsShopBrand">
+        insert into es_shop_brand (brand_id,brand_name,contact_mobile,contact_name,logo,create_time)
+        values(#{brandId},#{brandName},#{contactMobile},#{contactName},#{logo},#{createTime})
+
+    </insert>
+
+    <update id="updatebrand" parameterType="com.mei.zhuang.entity.goods.EsShopBrand">
+        update es_shop_brand set
+        brand_name=#{brandName},contact_mobile=#{contactMobile},contact_name=#{contactName},logo=#{logo} where
+        brand_id=#{brandId}
+
+    </update>
+
+    <delete id="deletebrand" parameterType="java.lang.Long">
+        delete from es_shop_brand where brand_id=#{brandId}
+    </delete>
+
+    <select id="selectbrandid" parameterType="java.lang.Long"
+            resultType="com.mei.zhuang.entity.goods.EsShopBrand">
+        select brand_id,brand_name,contact_mobile,contact_name,logo from es_shop_brand where brand_id=#{brandId}
+    </select>
+
+</mapper>

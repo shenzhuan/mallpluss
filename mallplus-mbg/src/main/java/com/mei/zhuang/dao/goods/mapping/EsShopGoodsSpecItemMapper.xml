@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsSpecItemMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsSpecItem">
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="spec_id" property="specId"/>
+        <result column="title" property="title"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="money" property="money"/>
+        <result column="level" property="level"/>
+        <result column="title_item" property="titleItem"/>
+    </resultMap>
+    <update id="updates">
+        update es_shop_goods_spec_item set title_item=#{title} where spec_id=#{id}
+    </update>
+    <select id="selectSpecItem" resultType="com.mei.zhuang.entity.goods.EsShopGoodsSpecItem">
+        select * from es_shop_goods_spec_item where goods_id=#{goodsId} and id=#{id}
+    </select>
+    <select id="selectSpecItems" resultType="com.mei.zhuang.entity.goods.EsShopGoodsSpecItem">
+        select * from es_shop_goods_spec_item where goods_id=#{goodsId} and spec_id=#{specId} order by display_order asc
+    </select>
+    <select id="selectSpecItemsGoodsId" resultType="com.mei.zhuang.entity.goods.EsShopGoodsSpecItem">
+        select * from es_shop_goods_spec_item where goods_id  =#{goodsId} order by display_order asc
+    </select>
+
+</mapper>

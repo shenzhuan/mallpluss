@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopCustomizedPacketMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopCustomizedPacket">
+        <result column="id" property="id"/>
+        <result column="uniacid" property="uniacid"/>
+        <result column="type" property="type"/>
+        <result column="name" property="name"/>
+        <result column="img" property="img"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <select id="selPageList" resultType="com.mei.zhuang.entity.goods.EsShopCustomizedPacket">
+        select * from es_shop_customized_packet where type=#{type} order by create_time desc
+
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_shop_customized_packet where type=#{type}
+    </select>
+    <select id="list" resultType="com.mei.zhuang.entity.goods.EsShopCustomizedPacket">
+         select * from es_shop_customized_packet where type=#{type}
+    </select>
+
+
+</mapper>

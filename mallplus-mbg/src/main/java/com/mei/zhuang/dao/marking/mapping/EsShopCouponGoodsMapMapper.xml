@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponGoodsMapMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+        <result column="coupon_id" property="couponId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="spec_ids" property="specIds"/>
+        <result column="goodslimit" property="goodslimit"/>
+        <result column="spec_id" property="specId"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="pic" property="pic"/>
+    </resultMap>
+
+    <select id="selectgoods" resultType="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+		 select distinct(goods_id),coupon_id,spec_ids from  es_shop_coupon_goods_map where  coupon_id=#{couponId} and goodslimit=2
+
+    </select>
+    <select id="selectgoods2" resultType="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+         select distinct(goods_id),coupon_id,spec_ids from  es_shop_coupon_goods_map where  coupon_id=#{couponId} and goodslimit=1
+
+    </select>
+    <select id="selcetcoupongoods" resultType="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+         select distinct(goods_id),coupon_id,spec_ids from  es_shop_coupon_goods_map where  coupon_id=#{couponId} and goodslimit=3
+
+    </select>
+
+    <select id="couponList" resultType="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+         select goods_id,coupon_id,spec_ids from  es_shop_coupon_goods_map where  coupon_id=#{param1} and goodslimit=#{param2}
+    </select>
+    <select id="selectgoods3" resultType="com.mei.zhuang.entity.marking.EsShopCouponGoodsMap">
+         select coupon_id,spec_ids from  es_shop_coupon_goods_map where  coupon_id=#{couponId} and goodslimit=1
+
+    </select>
+
+</mapper>

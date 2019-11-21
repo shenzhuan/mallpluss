@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopCustomizedCardMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopCustomizedCard">
+        <id column="id" property="id"/>
+        <result column="uniacid" property="uniacid"/>
+        <result column="img" property="img"/>
+        <result column="type" property="type"/>
+        <result column="notice" property="notice"/>
+        <result column="code" property="code"/>
+        <result column="create_time" property="createTime"/>
+        <result column="name" property="name"/>
+    </resultMap>
+    <select id="selCardPage" resultType="com.mei.zhuang.entity.goods.EsShopCustomizedCard">
+        select * from es_shop_customized_card
+        where id!=1
+        order by create_time desc
+    </select>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_shop_customized_card
+        where id!=1
+    </select>
+    <select id="list" resultType="com.mei.zhuang.entity.goods.EsShopCustomizedCard">
+        select * from es_shop_customized_card
+        where id!=1
+    </select>
+
+</mapper>

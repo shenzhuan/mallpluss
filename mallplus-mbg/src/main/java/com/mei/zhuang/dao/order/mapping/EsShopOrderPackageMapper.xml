@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderPackageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsShopOrderPackageMap" type="com.mei.zhuang.entity.order.EsShopOrderPackage">
+        <id column="id" property="id"/>
+        <result column="no_express" property="noExpress"/>
+        <result column="order_goods_ids" property="orderGoodsIds"/>
+        <result column="send_time" property="sendTime"/>
+        <result column="city_distribution_type" property="cityDistributionType"/>
+        <result column="express_id" property="expressId"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="is_city_distribution" property="isCityDistribution"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="express_sn" property="expressSn"/>
+        <result column="member_id" property="memberId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <resultMap id="EsShopOrderPackageItemMap" type="com.mei.zhuang.entity.order.EsShopOrderPackage"
+               extends="EsShopOrderPackageMap">
+        <collection property="orderGoodsList" javaType="com.mei.zhuang.entity.order.EsShopOrderGoods">
+        </collection>
+
+    </resultMap>
+
+    <select id="selectPackItemByOrderId" parameterType="java.lang.Long" resultMap="EsShopOrderPackageItemMap">
+        select * from es_shop_order_package pack
+        left join es_shop_order_goods ogoods on
+        pack.order_id = ogoods.order_id
+        where pack.order_id = #{orderId}
+
+    </select>
+
+
+</mapper>

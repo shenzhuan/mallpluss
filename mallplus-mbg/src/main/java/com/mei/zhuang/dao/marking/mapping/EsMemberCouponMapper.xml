@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsMemberCouponMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberCouponMap" type="com.mei.zhuang.entity.order.EsMemberCoupon">
+        <id column="id" property="id"/>
+        <result column="end_time" property="endTime"/>
+        <result column="enough" property="enough"/>
+        <result column="from" property="froms"/>
+        <result column="type" property="type"/>
+        <result column="weekdays" property="weekdays"/>
+        <result column="create_time" property="createTime"/>
+        <result column="disable_time_interval" property="disableTimeInterval"/>
+        <result column="max_cut" property="maxCut"/>
+        <result column="member_id" property="memberId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="time_interval" property="timeInterval"/>
+        <result column="description" property="description"/>
+        <result column="goods_ids" property="goodsIds"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="used_time" property="usedTime"/>
+        <result column="amount" property="amount"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="title" property="title"/>
+        <result column="status" property="status"/>
+        <result column="conditions" property="conditions"/>
+        <result column="enoughtwo" property="enoughtwo"/>
+        <result column="effective" property="effective"/>
+        <result column="user_openid" property="userOpenid"/>
+        <result column="type_id" property="typeId"/>
+    </resultMap>
+    <update id="lockCoupon" parameterType="com.mei.zhuang.entity.order.EsMemberCoupon">
+        update es_member_coupon
+        set STATUS = 2,
+        order_id = #{orderId},
+        order_no = #{orderNo}
+        where COUPON_ID = #{couponId}
+        and STATUS = 1
+        and ACTIVE_TIME &lt;= now()
+        and EXPIRE_TIME &gt; now()
+    </update>
+
+    <update id="useCoupon">
+        update es_member_coupon
+        set STATUS = 3
+        where COUPON_ID = #{couponId}
+        and STATUS = 2
+        and ACTIVE_TIME &lt;= now()
+    </update>
+
+    <update id="releaseCoupon">
+        update es_member_coupon
+        set STATUS = 1,
+        order_id = null,
+        order_no =null
+        where COUPON_ID = #{couponId}
+        and STATUS IN (2,3)
+    </update>
+    <select id="selectCouponByOrderId" resultMap="EsMemberCouponMap">
+        select *
+        from es_member_coupon
+        where ORDER_ID = #{orderId}
+    </select>
+
+    <select id="myCoupon"	resultMap="EsMemberCouponMap">
+        select *
+        from es_member_coupon
+        where  ACCOUNT_ID = #{accountId}
+        <if test="type == 1">and STATUS = 1  and EXPIRE_TIME &gt;= now() </if>
+        <if test="type == 2">and STATUS in (2,3) </if>
+        <if test="type == 3">and STATUS = 1 and now() &gt; EXPIRE_TIME  </if>
+        order by STATUS, EXPIRE_TIME asc
+    </select>
+
+    <select id="unusedCouponList" resultMap="EsMemberCouponMap">
+        select  *
+        from es_member_coupon
+        where ACCOUNT_ID = #{accountId}
+        and STATUS = 1
+        and EXPIRE_TIME &gt; now()
+        order by COUPON_AMOUNT desc,EXPIRE_TIME
+    </select>
+
+    <update id="cacelOrder">
+        update es_member_coupon
+        set STATUS = 1
+        where ORDER_ID = #{orderId}
+    </update>
+
+    <update id="updatecoupon">
+        update es_member_coupon set start_time=#{cou.startTime},end_time=#{cou.endTime},effective=#{cou.effective} where title=#{cou.title}
+    </update>
+
+    <select id="selectMemberCoupon"  resultType="java.util.Map">
+        select mc.id,mc.type,mc.title,mc.member_id,mc.froms,mc.create_time,mc.status,mc.used_time,mc.order_no,mb.id,mb.nickname,mb.avatar
+        from es_member_coupon mc,es_member mb where mc.member_id=mb.id
+        <if test="coupon.froms!=null">
+            and froms=#{coupon.froms}
+        </if>
+        <if test="coupon.type!=null">
+            and type=#{coupon.type}
+        </if>
+        <if test="coupon.status!=null">
+            and status=#{coupon.status}
+        </if>
+        <if test="coupon.createTime!=null and coupon.createTime!=''">
+            and  mc.create_time&gt;=#{coupon.createDate} and mc.create_time&lt;=#{coupon.uesdDate}
+        </if>
+        <if test="coupon.usedTime!=null and coupon.usedTime!=''">
+            and mc.used_time&gt;=#{coupon.createDate} and mc.used_time&lt;=#{coupon.uesdDate}
+        </if>
+        <if test="coupon.title!=null and coupon.title!=''">
+            and mc.title like concat(concat('%',#{coupon.title},'%'))
+        </if>
+         order by mc.id desc
+    </select>
+
+    <select id="selectMemberCoupon2"  resultType="java.util.Map">
+        select mc.id,mc.type,mc.title,mc.member_id,mc.froms,mc.create_time,mc.status,mc.used_time,mc.order_id,mb.id,mb.nickname,mb.avatar
+        from es_member_coupon mc,es_member mb where mc.member_id=mb.id
+        order by mc.id desc
+    </select>
+
+    <select id="couponeff" resultType="com.mei.zhuang.entity.order.EsMemberCoupon">
+       select  count(effective) as effective from es_member_coupon where effective=1 and  CAST(create_time AS DATE)=current_date
+    </select>
+    <select id="couponsta" resultType="com.mei.zhuang.entity.order.EsMemberCoupon">
+        select count(status)as status from es_member_coupon where status=0 and  CAST(used_time AS DATE)=current_date
+    </select>
+    <select id="couponmember" resultType="com.mei.zhuang.entity.order.EsMemberCoupon">
+        select count(distinct member_id) as memberID, count(coupon_id) as couponid from es_member_coupon where CAST(create_time AS DATE)=current_date
+    </select>
+    <select id="selectstatus" resultType="com.mei.zhuang.entity.order.EsMemberCoupon">
+        select end_time,start_time,status,effective from es_member_coupon where status=1
+
+    </select>
+
+    <select id="namesum" resultType="java.lang.Integer">
+        select count(*) from  (select member_id  from es_member_coupon where title=#{title} and type_id=#{typeId} group by member_id)es_member_coupon
+    </select>
+    <select id="selectCountMax" resultMap="EsMemberCouponMap">
+        select * from es_member_coupon where create_time &gt;=#{beginTime} and create_time &lt;=#{endTimes} and coupon_id=#{couponId} and member_id =#{memberId}
+    </select>
+    <select id="selectCounts" resultType="java.lang.Integer">
+        select count(1) from es_member_coupon where member_id = #{memberId} and type_id != null
+    </select>
+</mapper>

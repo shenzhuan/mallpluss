@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponsTopup">
+        <result column="id" property="id" />
+        <result column="activity_name" property="activityName" />
+        <result column="meet_amount" property="meetAmount" />
+        <result column="single_coupon" property="singleCoupon" />
+        <result column="inventory" property="inventory" />
+        <result column="node" property="node" />
+        <result column="coupon_goods" property="couponGoods" />
+        <result column="activity_status" property="activityStatus" />
+        <result column="starting_time" property="startingTime" />
+        <result column="end_time" property="endTime" />
+        <result column="status" property="status" />
+        <result column="activities_open" property="activitiesOpen" />
+        <result column="coupon_topupid" property="couponTopupid" />
+        <result column="goods_id" property="goodsId" />
+    </resultMap>
+
+
+
+    <select id="selectTopup" resultType="java.util.Map" >
+        select top.id,top.starting_time,top.activities_open,top.end_time,top.activity_name,top.meet_amount,top.inventory,cnr.couponid,cnr.coupon_name,cnr.public_couponid
+        from es_shop_coupons_topup top, es_shop_coupon_new_rule cnr
+         where top.coupon_topupid=cnr.public_couponid  order by  top.id desc
+    </select>
+
+    <update id="updatestatusid" >
+        update es_shop_coupons_topup set activities_open=#{param1} where id=#{param2}
+    </update>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsCoreLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsCoreLog">
+        <id column="id" property="id" />
+        <result column="content" property="content" />
+        <result column="create_time" property="createTime" />
+        <result column="ip" property="ip" />
+        <result column="type" property="type" />
+        <result column="uid" property="uid" />
+        <result column="employee_name" property="employeeName" />
+        <result column="operation_type_id" property="operationTypeId" />
+
+    </resultMap>
+
+    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.EsCoreLogParam">
+        select * from es_core_log log
+        left join es_core_log_type t
+        on log.operation_type_id = t.id
+        where 1 = 1
+        <include refid="query_condition_where"/>
+        <if test="isAsc == 0">
+            order by log.create_time,log.id desc
+        </if>
+        <if test="isAsc == 1">
+            order by log.create_time,log.id asc
+        </if>
+        limit #{size} offset (#{current} - 1) * #{size}
+
+
+    </select>
+
+    <select id="selectLogCount"  parameterType="com.arvato.ec.common.vo.order.EsCoreLogParam" resultType="java.lang.Integer">
+        select count(*) from es_core_log log
+        left join es_core_log_type t
+        on log.operation_type_id = t.id
+        where 1 = 1
+        <include refid="query_condition_where"/>
+
+
+    </select>
+
+    <sql id="query_condition_where">
+
+        <if test="startTime != null and startTime !=''.toString()">
+            and log.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="endTime != null and endTime !=''.toString()">
+            and log.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="operationTypeId != null">
+            and log.operation_type_id = #{operationTypeId}
+        </if>
+        <if test="keyword != null">
+            and log.employee_name = #{keyword}
+        </if>
+
+
+    </sql>
+
+</mapper>

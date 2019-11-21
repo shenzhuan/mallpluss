@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsSpecMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsSpec">
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="title" property="title"/>
+        <result column="is_mainspec" property="isMainSpec"/>
+    </resultMap>
+    <select id="detail" resultType="com.mei.zhuang.entity.goods.EsShopGoodsSpec">
+        select * from es_shop_goods_spec where goods_id=#{id}
+    </select>
+
+</mapper>

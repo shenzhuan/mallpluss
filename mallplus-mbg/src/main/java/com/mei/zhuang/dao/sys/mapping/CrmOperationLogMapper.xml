@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmOperationLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmOperationLog">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="module" property="module" />
+        <result column="method" property="method" />
+        <result column="operation_desc" property="operationDesc" />
+        <result column="ip" property="ip" />
+        <result column="params" property="params" />
+        <result column="shop_id" property="shopId" />
+        <result column="time_min" property="timeMin" />
+        <result column="add_time" property="addTime" />
+    </resultMap>
+
+    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+        select * from crm_operation_log log
+        /*left join crm_sys_log_type t
+        on log.operation_type_id = t.id*/
+        where 1 = 1
+        <include refid="query_condition_where"/>
+        <if test="isAsc == 0">
+            order by log.id desc
+        </if>
+        <if test="isAsc == 1">
+            order by log.id asc
+        </if>
+
+        limit #{size} offset (#{current} - 1) * #{size}
+    </select>
+
+    <select id="exportLogList" resultMap="BaseResultMap" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+        select * from crm_operation_log log
+        /*left join crm_sys_log_type t
+        on log.operation_type_id = t.id*/
+        where 1 = 1
+        <include refid="query_condition_where"/>
+        <if test="isAsc == 0">
+            order by log.id desc
+        </if>
+        <if test="isAsc == 1">
+            order by log.id asc
+        </if>
+
+    </select>
+
+    <select id="selectLogCount" resultType="java.lang.Long" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+        select count(*) from crm_operation_log log
+        where 1=1
+        <include refid="query_condition_where"/>
+
+
+
+    </select>
+
+    <sql id="query_condition_where">
+        <if test="startTime != null and startTime !=''.toString()">
+            and log.add_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="endTime != null and endTime !=''.toString()">
+            and log.add_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+      <!--  <if test="operationTypeId != null">
+            and log.operation_type_id = #{operationTypeId}
+        </if>-->
+        <if test="operationTypeName != null and operationTypeName!=''.toString()">
+            and log.module like concat('%',#{operationTypeName},'%')
+        </if>
+        <if test="keyword != null and keyword !=''.toString()">
+            and log.user_name like concat('%',#{keyword},'%')
+        </if>
+
+
+    </sql>
+
+
+</mapper>

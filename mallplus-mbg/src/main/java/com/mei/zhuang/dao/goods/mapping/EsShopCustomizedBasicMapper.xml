@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopCustomizedBasicMapper">
+
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopCustomizedBasic">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="price" property="price"/>
+        <result column="is_full" property="isFull"/>
+        <result column="full_price" property="fullPrice"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="basic_content_tip" property="basicContentTip"/>
+        <result column="basic_rqe_desc" property="basicRqeDesc"/>
+        <result column="legend_img" property="legendImg"/>
+        <result column="spec_sym_title" property="specSymTitle"/>
+        <result column="spec_sym_desc" property="specSymDesc"/>
+        <result column="spec_sym_img" property="specSymImg"/>
+        <result column="box_message" property="boxMessage"/>
+        <result column="basic_notice" property="basicNotice"/>
+
+    </resultMap>
+    <select id="detail" resultType="com.mei.zhuang.entity.goods.EsShopCustomizedBasic">
+        select * from es_shop_customized_basic
+        where 1=1
+        <if test="id != null and id !=''">
+            and id = #{id}
+        </if>
+    </select>
+
+</mapper>

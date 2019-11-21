@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.admin.orm.dao.CrmApiUserMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmApiUser">
+		<id column="id" property="id" />
+		<result column="account" property="account" />
+		<result column="password" property="password" />
+		<result column="firm_name" property="firmName" />
+		<result column="api_key" property="apiKey" />
+		<!--<result column="private_key" property="privateKey" />-->
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_time" property="createTime" />
+		<result column="create_date" property="createDate" />
+		<result column="update_user_id" property="updateUserId" />
+		<result column="update_time" property="updateTime" />
+		<result column="update_date" property="updateDate" />
+		<result column="version" property="version" />
+		<result column="status" property="status" />
+	</resultMap>
+
+	<select id="list" resultMap="BaseResultMap">
+		SELECT
+		t.id,t.account,t.firm_name,t.api_key,t.version,t.create_date,t.create_time,
+		status.text AS "status"
+		FROM crm_api_user t
+		LEFT JOIN crm_sys_dict status ON t.status = status.value AND status.table_name = 'global' AND status.field = 'valid'
+		WHERE 1=1
+			<if test="account != null and account != ''">
+				AND t.account LIKE  CONCAT('%', #{account}, '%')
+			</if>
+			<if test="firmName != null and firmName != ''">
+				AND t.firm_name LIKE CONCAT('%', #{firmName}, '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND t.status = #{status}
+			</if>
+			<!--<if test="deptIds != null and deptIds.size > 0">-->
+				<!--AND c.bu_id in-->
+				<!--<foreach collection="deptIds" index="index" item="deptId" separator="," open="(" close=")">-->
+					<!--#{deptId}-->
+				<!--</foreach>-->
+			<!--</if>-->
+		 ORDER BY id DESC
+		limit #{limit} offset #{offset}
+	</select>
+
+	<select id="count" resultType="int" >
+		SELECT count(1) FROM crm_api_user t
+		WHERE 1=1
+		<trim>
+			<if test="account != null and account != ''">
+				AND t.account LIKE  CONCAT('%', #{account}, '%')
+			</if>
+			<if test="firmName != null and firmName != ''">
+				AND t.firm_name LIKE CONCAT('%', #{firmName}, '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND t.status = #{status}
+			</if>
+			<!-- <if test="deptIds != null and deptIds.size > 0">
+				AND c.bu_id in
+				<foreach collection="deptIds" index="index" item="deptId" separator="," open="(" close=")">
+					#{deptId}
+				</foreach>
+			</if> -->
+		</trim>
+	</select>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopGoodsGroupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="sort_type" property="sortType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="goods_num" property="goodsNum"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <insert id="add" parameterType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        insert into es_shop_goods_group (name,goods_id,sort_type,create_time,goods_num,status)
+        values(#{name},#{goodsId},#{sortType},#{createTime},#{goodsNum},#{status})
+    </insert>
+    <update id="updatestate" parameterType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        update es_shop_goods_group
+        set status=#{status}
+        where id=#{id}
+
+    </update>
+    <!--分组连表查询-->
+    <select id="goodsgrouplist" resultType="java.util.Map"
+            parameterType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        select cate.group_id,goods.status, goods.name,count(cate.goods_id) as counts,goods.id,goods.create_time from
+        es_shop_goods_group goods,es_shop_goods_group_map cate
+        GROUP BY goods.name,goods.id,cate.group_id having cate.group_id=goods.id
+        <if test="name!=null and name!=''">
+            and goods.name like concat(concat('%',#{name},'%'))
+        </if>
+    </select>
+    <select id="goodscatelist" resultType="java.util.Map"
+            parameterType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        select goods.type,cate.id,goods.id as goodsid,goods.thumb,goods.price,goods.stock,goods.title,cate.name from
+        es_shop_goods goods,es_shop_goods_category cate where cate.id=goods.type
+        <if test="title!=null and title!=''">
+            and title like concat(concat('%',#{title},'%'))
+        </if>
+        <if test="type!=null and type!=''">
+            and type=#{type}
+        </if>
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods_group
+    </select>
+    <select id="list" resultType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        SELECT * FROM es_shop_goods_group
+        where 1=1
+        <if test="groupName!=null and groupName!=''">
+            and name like concat(concat('%',#{groupName},'%'))
+        </if>
+        ORDER BY id DESC
+    </select>
+    <select id="selEsShopGoodsGroup" resultType="com.mei.zhuang.entity.goods.EsShopGoodsGroup">
+        select * from es_shop_goods_group where name=#{name} and create_time=#{createTime}
+    </select>
+    <select id="selCateCount" resultType="java.lang.Integer">
+        select count(1) from es_shop_goods_group where name=#{cateName}
+    </select>
+
+    <!--<select id="selOrderListByGoodsParam"  resultMap="com.arvato.service.order.api.orm.dao.EsShopOrderMapper.BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam" >
+        select * from es_shop_order where 1 = 1
+        and status != 0 and status != 8
+
+        <if test="startTime != null and startTime !=''.toString()">
+            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+        <if test="endTime != null and endTime !=''.toString()">
+            and create_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        </if>
+
+    </select>-->
+
+
+
+</mapper>

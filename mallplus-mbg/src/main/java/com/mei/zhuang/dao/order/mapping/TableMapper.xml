@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.TableMapper">
+
+    <resultMap id="BaseResultMap" type="com.arvato.ec.common.entity.Table.TableColumnInfo">
+        <result column="columnName" property="columnName"/>
+        <result column="comment" property="comment"/>
+    </resultMap>
+
+   <!-- SELECT col_description(a.attrelid,a.attnum) as comment,format_type(a.atttypid,a.atttypmod) as type,a.attname as columnName, a.attnotnull as notnull
+    FROM pg_class as c,pg_attribute as a
+    where c.relname = 'es_order_temp_map' and a.attrelid = c.oid and a.attnum>0-->
+
+    <select id="getColumnInfoByTableName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT a.attname as columnName,col_description(a.attrelid,a.attnum) as comment
+        FROM pg_class as c,pg_attribute as a
+        WHERE c.relname = #{tableName} and a.attrelid = c.oid and a.attnum > 0
+
+    </select>
+
+
+</mapper>

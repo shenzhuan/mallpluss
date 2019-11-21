@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopFullGiftRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFullGiftRule">
+        <result column="activity_type" property="activityType"/>
+        <result column="full_gift_id" property="fullGiftId"/>
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="price" property="price"/>
+        <result column="conditions" property="conditions"/>
+        <result column="amount" property="amount"/>
+        <result column="song_amount" property="songAmount"/>
+        <result column="full_level" property="fullLevel"/>
+        <result column="activity_name" property="activityName"/>
+    </resultMap>
+    <select id="selectfullgif" resultType="com.mei.zhuang.entity.marking.EsShopFullGiftRule">
+        select * from es_shop_full_gift_rule where full_gift_id=#{fullGiftId} order by full_level asc
+    </select>
+    <select id="selectgif" resultType="com.mei.zhuang.entity.marking.EsShopFullGiftRule">
+        select * from es_shop_full_gift_rule where full_gift_id=#{fullGiftId}  order by full_level asc LIMIT 1
+    </select>
+</mapper>

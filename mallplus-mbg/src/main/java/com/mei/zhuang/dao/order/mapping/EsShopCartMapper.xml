@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopCartMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsShopCartMap" type="com.mei.zhuang.entity.order.EsShopCart">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="is_lose_efficacy" property="isLoseEfficacy"/>
+        <result column="total" property="total"/>
+        <result column="is_selected" property="isSelected"/>
+        <result column="member_id" property="memberId"/>
+        <result column="option_id" property="optionId"/>
+        <result column="price" property="price"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="cust_id" property="custId"/>
+        <result column="activaty_type" property="activatyType"/>
+    </resultMap>
+
+    <select id="cartGoodsCount" resultType="java.lang.Integer">
+        select sum(total) from es_shop_cart
+        where member_id = #{memberId}
+    </select>
+
+    <select id="shopNumber" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+  select member_id from es_shop_cart where
+  create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+  AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') group by member_id
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsMemberActivatyRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="EsMemberActivatyRecord" type="com.mei.zhuang.entity.marking.EsMemberActivatyRecord">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="activaty_id" property="activatyId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="is_win" property="isWin"/>
+        <result column="prize_id" property="prizeId"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="open_id" property="openId"/>
+        <result column="prize_level" property="prizeLevel"/>
+        <result column="prize_name" property="prizeName"/>
+        <result column="activaty_name" property="activatyName"/>
+    </resultMap>
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from es_member_activaty_record
+        where
+        activaty_id =#{activatyId}
+        <if test="isWin !=null and isWin !=''">
+            and is_win = #{isWin}
+        </if>
+        <if test="beginTimeD != null">
+            and create_time &gt; #{beginTimeD} and create_time &lt; #{endTimeD}
+        </if>
+    </select>
+    <select id="selPageList" resultType="com.mei.zhuang.entity.marking.EsMemberActivatyRecord">
+        select * from es_member_activaty_record
+        where
+        activaty_id =#{activatyId}
+        <if test="isWin !=null and isWin !=''">
+            and is_win = #{isWin}
+        </if>
+        <if test="beginTimeD != null">
+            and create_time &gt; #{beginTimeD} and create_time &lt; #{endTimeD}
+        </if>
+        order by id desc
+    </select>
+    <select id="distinctMember" resultType="com.mei.zhuang.entity.marking.EsMemberActivatyRecord">
+        SELECT DISTINCT open_id FROM "es_member_activaty_record"
+        where activaty_id = #{actavatyId}
+    </select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.goods.api.orm.dao.EsShopDiypageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.goods.EsShopDiypage">
+        <result column="id" property="id"/>
+        <result column="uniacid" property="uniacid"/>
+        <result column="type" property="type"/>
+        <result column="name" property="name"/>
+        <result column="data" property="data"/>
+        <result column="establish_time" property="establishTime"/>
+        <result column="lastedit_time" property="lasteditTime"/>
+        <result column="keyword" property="keyword"/>
+        <result column="diymenu" property="diymenu"/>
+        <result column="merch" property="merch"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <!--条件查询自定义页面-->
+    <select id="selDivpage" resultType="com.mei.zhuang.entity.goods.EsShopDiypage">
+
+        select * from es_shop_diypage
+        where 1=1
+        <if test="name!=null and name!=''">
+            and name like concat(concat('%',#{name},'%'))
+        </if>
+        <if test="type!=null and type !='' and type!=1">
+            and type = #{type}
+        </if>
+        <if test="type !=null and  type == 1">
+            and type != 4
+        </if>
+        order by create_time desc
+
+    </select>
+    <!---->
+    <select id="selDivPageCount" resultType="java.lang.Integer">
+        select count(1) from es_shop_diypage
+        where 1=1
+        <if test="name!=null and name!=''">
+            and name like concat(concat('%',#{name},'%'))
+        </if>
+        <if test="type!=null and type !='' and type!=1">
+            and type =#{type}
+        </if>
+        <if test="type !=null and  type == 1">
+            and type != 4
+        </if>
+    </select>
+    <select id="selDiyPageTypeId" resultType="java.lang.Integer">
+        select count(1) from es_shop_diypage where status=1 and type=#{typeId} and id!=#{id}
+    </select>
+    <select id="selectAll" resultType="com.mei.zhuang.entity.goods.EsShopDiypage">
+        select * from es_shop_diypage where type=4 and status=1 order by id desc
+    </select>
+    <select id="selDiyDetail" resultType="com.mei.zhuang.entity.goods.EsShopDiypage">
+        select * from es_shop_diypage where id=#{id}
+    </select>
+    <select id="selectCounts" resultType="java.lang.Integer">
+        select count(1) from es_shop_diypage where id!=#{id} and name=#{name}
+    </select>
+    <select id="selDivPageDetailCount" resultType="java.lang.Integer">
+        select count(1) from es_shop_diypage
+        where 1=1
+        <if test="name!=null and name!=''">
+            and name like concat(concat('%',#{name},'%'))
+        </if>
+        <if test="type !=null">
+            and type = #{type}
+        </if>
+    </select>
+    <select id="selDivpageDetail" resultType="com.mei.zhuang.entity.goods.EsShopDiypage">
+        select * from es_shop_diypage
+        where 1=1
+        <if test="name!=null and name!=''">
+            and name like concat(concat('%',#{name},'%'))
+        </if>
+        <if test="type !=null">
+            and type = #{type}
+        </if>
+
+        order by create_time desc
+    </select>
+
+
+</mapper>

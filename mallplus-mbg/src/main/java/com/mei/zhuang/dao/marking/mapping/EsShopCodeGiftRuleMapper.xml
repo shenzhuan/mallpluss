@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.service.marking.api.orm.dao.EsShopCodeGiftRuleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCodeGiftRule">
+        <result column="activity_type" property="activityType"/>
+        <result column="code_gift_id" property="codeGiftId"/>
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="code" property="code"/>
+        <result column="status" property="status"/>
+        <result column="code_openid" property="codeOpenid"/>
+    </resultMap>
+
+    <update id="updateCodeStatus">
+        update es_shop_code_gift_rule set status=#{status} where code =#{code}
+    </update>
+    <select id="codelist" resultType="com.mei.zhuang.entity.marking.EsShopCodeGiftRule">
+        select distinct code_openid,code from es_shop_code_gift_rule  where code_gift_id=#{codeGiftId}
+    </select>
+    <select id="codegif" resultType="com.mei.zhuang.entity.marking.EsShopCodeGiftRule">
+        select code from es_shop_code_gift_rule where code_gift_id=#{codeGiftId}
+    </select>
+    <select id="codegif2" resultType="com.mei.zhuang.entity.marking.EsShopCodeGiftRule">
+        select count(code) as count,code from es_shop_code_gift_rule where code=#{code} group by code
+    </select>
+</mapper>
