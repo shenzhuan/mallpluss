@@ -34,8 +34,8 @@
             ) pId,
             m1.name "name"
         FROM
-            CRM_SYS_DEPT m1
-        LEFT JOIN CRM_SYS_DEPT m2 ON m1.p_id = m2.id
+            crm_sys_dept m1
+        LEFT JOIN crm_sys_dept m2 ON m1.p_id = m2.id
         ORDER BY
             m1.num,m1.id
 	</select>
@@ -44,7 +44,7 @@
         SELECT
         id, coalesce(p_id,0) pId,name
         FROM
-        CRM_SYS_DEPT
+        crm_sys_dept
         <where>
             <if test="orgType == 0">
                 org_type in (-1,0)
@@ -124,9 +124,9 @@
         a.id,
         coalesce(p_id,-1) pId,
         a.name,
-        (select case when count(*)>0 then false else true end as leafNode from CRM_SYS_DEPT t where t.p_id=a.id )
+        (select case when count(*)>0 then false else true end as leafNode from crm_sys_dept t where t.p_id=a.id )
         from
-        CRM_SYS_DEPT a
+        crm_sys_dept a
         <where>
             <choose>
                 <when test="pid==-1">

@@ -8,7 +8,7 @@ package com.mei.zhuang.constant;
 public class AdminCommonConstant {
 
     public final static String DICT_TABLE_CRM_SYS_USER = "crm_sys_user";
-    public final static String DICT_TABLE_CRM_SYS_MENU = "crm_sys_menu";
+    public final static String DICT_TABLE_crm_sys_menu = "crm_sys_menu";
     public final static String DICT_TABLE_GLOBAL = "global";
 
     /**

@@ -185,7 +185,7 @@ public class MenuBiz {
      * @return 菜单类型集合
      */
     public List<Map<String, String>> getMenuType() {
-        return sysDictMapper.getDictList(AdminCommonConstant.DICT_TABLE_CRM_SYS_MENU, AdminCommonConstant.DICT_FIELD_MENU_TYPE);
+        return sysDictMapper.getDictList(AdminCommonConstant.DICT_TABLE_crm_sys_menu, AdminCommonConstant.DICT_FIELD_MENU_TYPE);
     }
 
     /**

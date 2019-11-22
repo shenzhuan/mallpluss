@@ -26,7 +26,7 @@
         SELECT
             menu_id
         FROM
-            CRM_SYS_ROLE_MENU
+            crm_sys_role_menu
         WHERE
             role_id = #{roleId}
     </select>
@@ -44,8 +44,8 @@
 		    ) pId,
 		    m1.name "name"
 		FROM
-		    CRM_SYS_MENU m1
-		LEFT JOIN CRM_SYS_MENU m2 ON m1.p_id = m2.id
+		    crm_sys_menu m1
+		LEFT JOIN crm_sys_menu m2 ON m1.p_id = m2.id
 		ORDER BY
 		    m1.order_num,id
     </select>
@@ -71,8 +71,8 @@
         END
         ) "checked"
         FROM
-        CRM_SYS_MENU m1
-        LEFT JOIN CRM_SYS_MENU m2 ON m1.p_id = m2.id
+        crm_sys_menu m1
+        LEFT JOIN crm_sys_menu m2 ON m1.p_id = m2.id
         LEFT JOIN (
         SELECT
         ID
@@ -132,9 +132,9 @@
         order_num,
         type
         FROM
-        CRM_SYS_MENU t1
+        crm_sys_menu t1
         INNER JOIN (
-        SELECT menu_id from CRM_SYS_ROLE_MENU WHERE role_id in
+        SELECT menu_id from crm_sys_role_menu WHERE role_id in
         <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
             #{i}
         </foreach>

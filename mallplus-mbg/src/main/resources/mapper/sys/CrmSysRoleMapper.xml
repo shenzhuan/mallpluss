@@ -45,7 +45,7 @@
         t.description,
         t.create_date
         FROM
-        CRM_SYS_ROLE t
+        crm_sys_role t
         <include refid="whereCondition"></include>
         ORDER BY t.id DESC
 
@@ -59,7 +59,7 @@
             'true' isOpen,
             'false' "checked"
         FROM
-            CRM_SYS_ROLE t
+            crm_sys_role t
         ORDER BY
             t.id ASC
     </select>
@@ -96,12 +96,12 @@
         END
         ) "checked"
         FROM
-        CRM_SYS_ROLE t1
+        crm_sys_role t1
         LEFT JOIN (
         SELECT
         ID
         FROM
-        CRM_SYS_ROLE
+        crm_sys_role
         WHERE
         ID IN
         <foreach collection="list" index="index" item="i" open="(" separator="," close=")">

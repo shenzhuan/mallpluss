@@ -16,7 +16,7 @@
         SELECT
         COUNT(0)
         FROM
-        CRM_SYS_ROLE_MENU
+        crm_sys_role_menu
         WHERE
         role_id IN
         <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
@@ -28,7 +28,7 @@
         SELECT
         *
         FROM
-        CRM_SYS_ROLE_MENU
+        crm_sys_role_menu
         WHERE
         role_id IN
         <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">

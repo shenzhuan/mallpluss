@@ -20,7 +20,7 @@
         SELECT
         MIN(data_auth_level)
         FROM
-        CRM_SYS_DATA_AUTH
+        crm_sys_data_auth
         WHERE
         role_id IN
         <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">

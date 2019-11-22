@@ -19,7 +19,7 @@
 	   SELECT
 	       role_id
 	   FROM
-	       CRM_SYS_USER_ROLE
+	       crm_sys_user_role
 	   WHERE
 	       user_id = #{userId}
 	</select>
