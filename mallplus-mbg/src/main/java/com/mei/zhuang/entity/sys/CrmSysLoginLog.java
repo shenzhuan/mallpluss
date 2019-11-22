@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * 后期多租户可以删除，可以删除，可以删除，可以删除
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-01-09
  */
 @Data

@@ -51,7 +51,7 @@
 
     </select>
 
-    <select id="selectRoleTree" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="selectRoleTree" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
             t.id id,
             '0' pId,
@@ -81,7 +81,7 @@
             user_id = #{userId}
     </select>
 
-    <select id="getRoleTreeListByRoleIds" resultType="com.arvato.admin.vo.ZTreeNode">
+    <select id="getRoleTreeListByRoleIds" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
         t1.id,
         '0' pId,

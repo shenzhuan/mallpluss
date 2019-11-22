@@ -6,8 +6,9 @@ import com.mei.zhuang.annotation.DynamicData;
 import com.mei.zhuang.dao.sys.SysPlatformUserMapper;
 import com.mei.zhuang.entity.sys.SysPlatformUser;
 import com.mei.zhuang.vo.sys.DataSourceDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @Description: 平台用户操作逻辑，因为需要切换数据源，所以单独出来
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysPlatUserBiz {
 
-    @Autowired
+    @Resource
     private SysPlatformUserMapper sysPlatformUserMapper;
 
     @DynamicData
@@ -29,7 +30,7 @@ public class SysPlatUserBiz {
     }
 
     @DynamicData
-    public void addPlatFormUser(String username, String password, Integer managerId, Integer[] tenantIds, DataSourceDto dto) {
+    public void addPlatFormUser(String username, String password, Integer managerId, String tenantIds, DataSourceDto dto) {
         SysPlatformUser sysPlatformUser = new SysPlatformUser();
         sysPlatformUser.setUsername(username);
         sysPlatformUser.setPassword(password);

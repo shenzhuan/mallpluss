@@ -34,7 +34,7 @@ public class ToolUtil {
     /**
      * 判断一个对象是否是时间类型
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/4/18 12:55
      */
     public static String dateType(Object o) {
@@ -48,7 +48,7 @@ public class ToolUtil {
     /**
      * 获取异常的具体信息
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/3/30 9:21
      * @version 2.0
      */
@@ -68,7 +68,7 @@ public class ToolUtil {
 
     /**
      * @Description 主键id
-     * @author arvato team
+     * @author meizhuang team
      */
     public static String getUid() {
         return getRandomNum();
@@ -76,7 +76,7 @@ public class ToolUtil {
 
     /**
      * @Description 随机数字
-     * @author arvato team
+     * @author meizhuang team
      */
     public static String getRandomNum() {
         return Calendar.getInstance().getTimeInMillis() + generateCellPhoneValNum();
@@ -84,7 +84,7 @@ public class ToolUtil {
 
     /**
      * @Description 获取电话号码
-     * @author arvato team
+     * @author meizhuang team
      */
     public static String generateCellPhoneValNum() {
         String[] beforeShuffle = new String[]{"1", "2", "3", "4", "5", "6",
@@ -497,7 +497,7 @@ public class ToolUtil {
     /**
      * 当前时间
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/7 21:56
      */
     public static String currentTime() {
@@ -507,7 +507,7 @@ public class ToolUtil {
     /**
      * 首字母大写
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/7 22:01
      */
 //    public static String firstLetterToUpper(String val){
@@ -517,7 +517,7 @@ public class ToolUtil {
     /**
      * 首字母小写
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/7 22:02
      */
 //    public static String firstLetterToLower(String val){
@@ -527,7 +527,7 @@ public class ToolUtil {
     /**
      * 获取验证码开关
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/23 22:34
      */
 //    public static Boolean getKaptchaOnOff(){
@@ -537,7 +537,7 @@ public class ToolUtil {
     /**
      * 判断是否是windows操作系统
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/24 22:34
      */
     public static Boolean isWinOs() {
@@ -552,7 +552,7 @@ public class ToolUtil {
     /**
      * 获取临时目录
      *
-     * @author arvato team
+     * @author meizhuang team
      * @Date 2017/5/24 22:35
      */
     public static String getTempPath() {

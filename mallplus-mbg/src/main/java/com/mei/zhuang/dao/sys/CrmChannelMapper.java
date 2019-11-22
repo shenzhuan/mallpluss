@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmChannel;
  * 销售渠道表 Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-12-14
  */
 public interface CrmChannelMapper extends BaseMapper<CrmChannel> {

@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmMember;
  * 服务类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-08-22
  */
 public interface ICrmMemberService extends IService<CrmMember> {

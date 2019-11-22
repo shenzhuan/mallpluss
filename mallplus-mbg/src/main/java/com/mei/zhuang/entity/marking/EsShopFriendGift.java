@@ -15,7 +15,7 @@ import java.util.List;
  * 好友赠礼
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-08-07
  */
 @Data

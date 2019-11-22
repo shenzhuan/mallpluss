@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.order.EsShopOrderRefundRecord;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-15
  */
 public interface EsShopOrderRefundRecordMapper extends BaseMapper<EsShopOrderRefundRecord> {

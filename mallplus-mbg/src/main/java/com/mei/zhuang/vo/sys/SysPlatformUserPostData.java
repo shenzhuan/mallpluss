@@ -14,5 +14,5 @@ public class SysPlatformUserPostData {
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("管理的租户id list")
-    private Integer[] manageTenantIds;
+    private String manageTenantIds;
 }

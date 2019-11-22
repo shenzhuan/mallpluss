@@ -11,7 +11,7 @@ import java.util.List;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-10-25
  */
 public interface CrmSysRoleMenuMapper extends BaseMapper<CrmSysRoleMenu> {

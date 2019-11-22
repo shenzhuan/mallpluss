@@ -16,12 +16,12 @@ import com.mei.zhuang.vo.sys.DataSourceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 public class UserBiz {
-    @Autowired
+    @Resource
     SysPlatformUserMapper mapper;
     private CrmSysUserMapper crmSysUserMapper;
     private CrmSysUserRoleMapper crmSysUserRoleMapper;
@@ -39,18 +39,18 @@ public class UserBiz {
     private CrmSysDeptMapper crmSysDeptMapper;
     private CrmSysLoginLogMapper crmSysLoginLogMapper;
     private CrmSysMenuMapper crmSysMenuMapper;
-    @Autowired
+    @Resource
     private SysPlatformUserMapper sysPlatformUserMapper;
-    @Autowired
+    @Resource
     private SysPlatUserBiz sysPlatUserBiz;
-    @Autowired
+    @Resource
     private ISysPlatformUserService sysPlatformUserService;
-    @Value("${system.userManagerMenuCode}")
-    private String userManagerMenuCode;
-    @Value("${masterdbsource.dbname}")
-    private String masterDbName;
-    @Value("${masterdbsource.schema}")
-    private String masterSchema;
+   // @Value("${system.userManagerMenuCode}")
+    private String userManagerMenuCode = "user/mamager";
+  //  @Value("${masterdbsource.dbname}")
+    private String masterDbName="oreal";
+   // @Value("${masterdbsource.schema}")
+    private String masterSchema="public";
 
     @Autowired
     public UserBiz(CrmSysUserMapper crmSysUserMapper, CrmSysUserRoleMapper crmSysUserRoleMapper,
@@ -105,7 +105,7 @@ public class UserBiz {
             String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(entity.getPassword());
             entity.setPassword(password);
             crmSysUserMapper.insert(entity);
-            sysPlatUserBiz.addPlatFormUser(entity.getUsername(), password, managerId, new Integer[]{dataSourceDto.getTenantId()}, new DataSourceDto(masterDbName, masterSchema));
+            sysPlatUserBiz.addPlatFormUser(entity.getUsername(), password, managerId, dataSourceDto.getTenantId()+"", new DataSourceDto(masterDbName, masterSchema));
             bizResult.setCode(CommonConstant.CODE_SUCCESS);
             bizResult.setMsg("添加用户成功");
         } catch (UserNameRepeatException e) {

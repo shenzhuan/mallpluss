@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 字典表
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-09-27
  */
 @Setter

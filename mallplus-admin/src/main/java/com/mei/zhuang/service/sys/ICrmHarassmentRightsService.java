@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmHarassmentRights;
  * 服务类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-08-28
  */
 public interface ICrmHarassmentRightsService extends IService<CrmHarassmentRights> {

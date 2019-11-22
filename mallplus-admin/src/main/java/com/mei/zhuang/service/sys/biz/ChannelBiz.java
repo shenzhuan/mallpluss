@@ -3,9 +3,9 @@ package com.mei.zhuang.service.sys.biz;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.dao.sys.CrmChannelMapper;
 import com.mei.zhuang.entity.sys.CrmChannel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class ChannelBiz {
 
-    @Autowired
+    @Resource
     private CrmChannelMapper crmChannelMapper;
 
     /**

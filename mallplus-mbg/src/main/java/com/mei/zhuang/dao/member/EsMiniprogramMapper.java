@@ -9,7 +9,7 @@ import com.mei.zhuang.vo.EsMiniprogram;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-15
  */
 public interface EsMiniprogramMapper extends BaseMapper<EsMiniprogram> {

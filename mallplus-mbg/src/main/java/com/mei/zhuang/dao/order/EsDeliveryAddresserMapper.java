@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.order.EsDeliveryAddresser;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-06
  */
 public interface EsDeliveryAddresserMapper extends BaseMapper<EsDeliveryAddresser> {

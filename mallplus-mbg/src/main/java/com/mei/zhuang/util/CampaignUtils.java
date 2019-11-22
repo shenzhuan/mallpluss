@@ -1,7 +1,7 @@
 package com.mei.zhuang.util;//package com.arvato.common.utils;
 //
 //import com.alibaba.fastjson.JSONObject;
-//import com.arvato.common.orm.model.CrmNodeSchedule;
+//import com.mei.zhuang.entity.sys.CrmNodeSchedule;
 //import com.arvato.utils.constant.CommonConstant;
 //import org.apache.commons.lang3.StringUtils;
 //import org.dom4j.Document;

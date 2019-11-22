@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.order.EsShopPayLog;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-22
  */
 public interface EsShopPayLogMapper extends BaseMapper<EsShopPayLog> {

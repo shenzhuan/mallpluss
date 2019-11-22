@@ -19,7 +19,7 @@
         <result column="version" property="version"/>
     </resultMap>
 
-    <select id="list" resultType="com.arvato.admin.vo.ApiInterfaceVo">
+    <select id="list" resultType="com.mei.zhuang.vo.ApiInterfaceVo">
         SELECT
         t.id,
         t.name,
@@ -62,7 +62,7 @@
 		where cai.request_url = #{uri} limit 1
 	</select>
 
-    <select id="getAllTypes" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="getAllTypes" resultType="com.mei.zhuang.vo.ZTreeNode">
 		SELECT
             id,
             0 as "pId",

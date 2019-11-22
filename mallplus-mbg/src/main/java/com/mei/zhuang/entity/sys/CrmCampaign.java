@@ -15,7 +15,7 @@ import java.util.Date;
  * 活动表
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-10-11
  */
 @Setter

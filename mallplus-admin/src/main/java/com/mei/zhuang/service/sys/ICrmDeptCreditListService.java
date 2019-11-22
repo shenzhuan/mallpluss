@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmDeptCreditList;
  * 服务类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-08-22
  */
 public interface ICrmDeptCreditListService extends IService<CrmDeptCreditList> {

@@ -42,7 +42,7 @@
 		SELECT value, text FROM ec_sys_dict where table_name = #{tableName} and field = #{field} order by sort
 	</select>
 
-    <select id="selectDictObjectList" resultType="com.arvato.common.msg.DictData">
+    <select id="selectDictObjectList" resultType="com.mei.zhuang.vo.DictData">
 		SELECT value, text,field_name fieldName,"sort" FROM ec_sys_dict where table_name = #{tableName} and field = #{field} order by sort
 	</select>
 

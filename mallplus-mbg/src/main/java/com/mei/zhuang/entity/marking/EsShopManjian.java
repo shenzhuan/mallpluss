@@ -20,7 +20,7 @@ import java.util.List;
  * <p>满额立减
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-02
  */
 @Data

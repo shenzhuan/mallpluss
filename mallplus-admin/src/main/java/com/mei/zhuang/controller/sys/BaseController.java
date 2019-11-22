@@ -5,6 +5,7 @@ import com.mei.zhuang.constant.CommonConstant;
 import com.mei.zhuang.dao.sys.CrmSysUserMapper;
 import com.mei.zhuang.entity.sys.CrmSysUser;
 import com.mei.zhuang.service.sys.ICrmSysDeptService;
+import com.mei.zhuang.util.JwtTokenUtil;
 import com.mei.zhuang.util.UserNameDecodeUtil;
 import com.mei.zhuang.vo.sys.DataSourceDto;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ public class BaseController {
     protected CrmSysUserMapper sysUserMapper;
     @Resource
     private ICrmSysDeptService crmSysDeptService;
+
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     /**
      * 获取当前用户名
@@ -74,7 +78,14 @@ public class BaseController {
     }
 
     public CrmSysUser getCurrentUser() {
-        String userName = UserNameDecodeUtil.getDecodeUserName(request);
+       // String userName = UserNameDecodeUtil.getDecodeUserName(request);
+        String token = request.getParameter("token");
+        String userName = null;
+        try {
+            userName = jwtTokenUtil.getInfoFromToken(token).getUniqueName();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (StringUtils.isEmpty(userName)) {
             return null;
         }

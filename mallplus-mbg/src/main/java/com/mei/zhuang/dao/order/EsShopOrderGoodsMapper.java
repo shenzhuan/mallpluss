@@ -14,7 +14,7 @@ import java.util.List;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-15
  */
 public interface EsShopOrderGoodsMapper extends BaseMapper<EsShopOrderGoods> {

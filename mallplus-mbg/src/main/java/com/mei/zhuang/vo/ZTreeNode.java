@@ -3,7 +3,7 @@ package com.mei.zhuang.vo;
 /**
  * jquery ztree 插件的节点
  *
- * @author arvato team
+ * @author meizhuang team
  * @date 2017年2月17日 下午8:25:14
  */
 public class ZTreeNode {

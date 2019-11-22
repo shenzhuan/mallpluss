@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.marking.EsShopPackageGoodsSpec;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-06-24
  */
 public interface EsShopPackageGoodsSpecMapper extends BaseMapper<EsShopPackageGoodsSpec> {

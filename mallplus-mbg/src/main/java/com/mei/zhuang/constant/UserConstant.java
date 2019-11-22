@@ -3,7 +3,7 @@ package com.mei.zhuang.constant;
 /**
  * ${DESCRIPTION}
  *
- * @author arvato team
+ * @author meizhuang team
  * @create 2017-06-14 8:36
  */
 public class UserConstant {

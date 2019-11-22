@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmDeptCreditList;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-08-06
  */
 public interface CrmDeptCreditListMapper extends BaseMapper<CrmDeptCreditList> {

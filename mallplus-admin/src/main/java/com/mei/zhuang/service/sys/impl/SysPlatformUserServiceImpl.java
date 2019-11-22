@@ -25,7 +25,7 @@ import java.util.List;
  * 服务实现类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-01-16
  */
 @Service
@@ -67,7 +67,7 @@ public class SysPlatformUserServiceImpl extends ServiceImpl<SysPlatformUserMappe
 
     @Override
     public void platformUserInit(SysPlatformUser platformUser) {
-        Integer[] tenantIds = platformUser.getManageTenantIds();
+        String[] tenantIds = platformUser.getManageTenantIds().split(",");
         Arrays.stream(tenantIds).forEach(tenantId -> {
             SysTenant sysTenant = sysTenantMapper.selectById(tenantId);
             SysDbResource sysDbResource = sysDbResourceMapper.selectById(sysTenant.getDbResourceId());

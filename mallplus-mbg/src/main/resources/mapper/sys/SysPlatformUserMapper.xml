@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.common.orm.dao.SysPlatformUserMapper">
+<mapper namespace="com.mei.zhuang.dao.sys.SysPlatformUserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysPlatformUser">
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.SysPlatformUser">
         <result column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="last_login_time" property="lastLoginTime"/>
         <result column="login_error_count" property="loginErrorCount"/>
-        <result column="manage_tenant_ids" property="manageTenantIds" javaType="int[]" jdbcType="ARRAY"
-                typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+        <result column="manage_tenant_ids" property="manageTenantIds" />
         <result column="user_type" property="userType"/>
         <result column="status" property="status"/>
         <result column="create_date" property="createDate"/>
@@ -20,9 +19,8 @@
     </resultMap>
 
 
-    <resultMap id="pagingData" type="com.arvato.common.dto.SysPlatformUserPagingData">
-        <result column="manage_tenant_names" property="manageTenantNames" javaType="string" jdbcType="ARRAY"
-                typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+    <resultMap id="pagingData" type="com.mei.zhuang.vo.sys.SysPlatformUserPagingData">
+
         <result column="create_date" property="createDate"/>
     </resultMap>
 

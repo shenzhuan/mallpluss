@@ -99,7 +99,7 @@
         order by t.id desc
     </select>
 
-    <select id="deptTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="deptTreeListByDeptId" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
             m1.id AS id,
             (

@@ -28,11 +28,11 @@
         <result column="is_show_goods_evaluate" property="isShowGoodsEvaluate"/>
     </resultMap>
     <resultMap id="shopItem" type="com.mei.zhuang.entity.sys.EsShopNew" extends="BaseResultMap">
-        <association property="shopBrand" javaType="com.mei.zhuang.entity.sys.EsShopBrand"
+        <association property="shopBrand" javaType="com.mei.zhuang.entity.goods.EsShopBrand"
                      resultMap="com.mei.zhuang.dao.sys.EsShopBrandMapper.BaseResultMap"/>
     </resultMap>
 
-    <select id="selectShopListByParam" parameterType="com.arvato.admin.vo.ShopParam" resultMap="shopItem">
+    <select id="selectShopListByParam" parameterType="com.mei.zhuang.vo.ShopParam" resultMap="shopItem">
         select * from es_shop_new shop
         left join es_shop_brand shopB on shop.brand_id = shopB."id"
         where 1 = 1
@@ -57,7 +57,7 @@
 
     </select>-->
 
-    <select id="selectShopCountByParam" resultType="java.lang.Integer" parameterType="com.arvato.admin.vo.ShopParam">
+    <select id="selectShopCountByParam" resultType="java.lang.Integer" parameterType="com.mei.zhuang.vo.ShopParam">
         select count(*) from es_shop_new shop
         left join es_shop_brand shopB on shop.brand_id = shopB."id"
         where 1=1

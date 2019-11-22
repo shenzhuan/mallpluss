@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  * goods_option规格选项的扩展表
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-16
  */
 @Data

@@ -5,7 +5,7 @@ package com.mei.zhuang.constant;
  * ${DESCRIPTION}
  * 通用Constant
  *
- * @author arvato team
+ * @author meizhuang team
  * @create 2017-06-17 14:41
  */
 public class CommonConstant {

@@ -16,7 +16,7 @@ import java.util.List;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-01-16
  */
 public interface SysTenantMapper extends BaseMapper<SysTenant> {

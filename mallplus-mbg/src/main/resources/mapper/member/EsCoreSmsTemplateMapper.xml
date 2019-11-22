@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.member.api.orm.dao.EsCoreSmsTemplateMapper">
+<mapper namespace="com.mei.zhuang.dao.member.EsCoreSmsTemplateMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.member.EsCoreSmsTemplate">
@@ -25,11 +25,11 @@
 
     <resultMap id="smsDetailMap" type="com.mei.zhuang.entity.member.EsCoreSmsTemplate" extends="BaseResultMap">
         <association property="serverInfo" javaType="com.mei.zhuang.entity.member.EsCoreSms"
-                     resultMap="com.arvato.service.member.api.orm.dao.EsCoreSmsMapper.BaseResultMap"></association>
+                     resultMap="com.mei.zhuang.dao.member.EsCoreSmsMapper.BaseResultMap"></association>
     </resultMap>
 
     <select id="selectSmsTemplateList" resultMap="smsDetailMap"
-            parameterType="com.arvato.service.member.api.vo.SmsParam">
+            parameterType="com.mei.zhuang.vo.SmsParam">
         select * from es_core_sms_template smsTemp
         left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
         where 1 = 1
@@ -57,7 +57,7 @@
  -->
 
     <select id="selectSmsTemplateCount" resultType="java.lang.Integer"
-            parameterType="com.arvato.service.member.api.vo.SmsParam">
+            parameterType="com.mei.zhuang.vo.SmsParam">
         select count(*) from es_core_sms_template smsTemp
         left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
         where 1 = 1

@@ -12,7 +12,7 @@ import java.util.Map;
  * 购物发券
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-15
  */
 public interface CouponShoppingService extends IService<EsShopCouponShopping> {

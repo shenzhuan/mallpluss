@@ -17,7 +17,7 @@ import java.io.Serializable;
  *
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-12-22
  */
 @ApiModel("接口用户信息")

@@ -12,29 +12,29 @@ import com.mei.zhuang.entity.sys.CrmSysUserRole;
 import com.mei.zhuang.vo.BizResult;
 import com.mei.zhuang.vo.ZTreeNode;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 @Service
 public class RoleBiz {
 
-    @Autowired
+    @Resource
     private CrmSysRoleMapper crmSysRoleMapper;
 
-    @Autowired
+    @Resource
     private CrmSysDictMapper sysDictMapper;
 
-    @Autowired
+    @Resource
     private CrmSysUserRoleMapper crmSysUserRoleMapper;
 
-    @Autowired
+    @Resource
     private CrmSysRoleMenuMapper crmSysRoleMenuMapper;
 
-    @Autowired
+    @Resource
     private CrmSysDataAuthMapper dataAuthMapper;
 
     /**

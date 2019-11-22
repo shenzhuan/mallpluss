@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.common.orm.dao.SysTenantMapper">
+<mapper namespace="com.mei.zhuang.dao.sys.SysTenantMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysTenant">
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.SysTenant">
         <id column="id" property="id"/>
         <result column="tenant_name" property="tenantName"/>
         <result column="db_resource_id" property="dbResourceId"/>
@@ -18,7 +18,7 @@
     </resultMap>
 
 
-    <resultMap id="pagingData" type="com.arvato.common.dto.SysTenantPagingData">
+    <resultMap id="pagingData" type="com.mei.zhuang.vo.sys.SysTenantPagingData">
         <result column="tenant_name" property="tenantName"/>
         <result column="db_resource_name" property="dbResourceName"/>
         <result column="db_schema" property="dbSchema"/>
@@ -26,7 +26,7 @@
         <result column="create_date" property="createDate"/>
     </resultMap>
 
-    <resultMap id="sysTenantInfo" type="com.arvato.common.dto.SysTenantInfo">
+    <resultMap id="sysTenantInfo" type="com.mei.zhuang.vo.sys.SysTenantInfo">
         <result column="id" property="id"/>
         <result column="db_name" property="dbName"/>
         <result column="db_schema" property="dbSchema"/>
@@ -40,7 +40,7 @@
         </foreach>
     </select>
 
-    <select id="selectDataSourceById" resultType="com.arvato.common.dto.DataSourceDto">
+    <select id="selectDataSourceById" resultType="com.mei.zhuang.vo.sys.DataSourceDto">
         select sttemp.id as "tenantId",sr.db_name as "dataSource",sttemp.db_schema as "schema"
         from (select st.id,st.db_schema,st.db_resource_id from sys_tenant st where st.id = #{tenantId} and st.status='0' limit 1) sttemp
         join sys_db_resource sr on sttemp.db_resource_id = sr.id
@@ -76,7 +76,7 @@
         </where>
     </sql>
 
-    <select id="getDictList" resultType="com.arvato.common.msg.DictData">
+    <select id="getDictList" resultType="com.mei.zhuang.vo.DictData">
         select id as "value",tenant_name as "text" from sys_tenant order by tenant_name
     </select>
 

@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-01-16
  */
 @Data
@@ -36,8 +36,8 @@ public class SysPlatformUser extends Model<SysPlatformUser> {
     /**
      * 管理的租户，租户id数组
      */
-    @TableField(value = "manage_tenant_ids", el = "manageTenantIds,typeHandler=com.arvato.utils.util.ArrayTypeHandler")
-    private Integer[] manageTenantIds;
+    @TableField(value = "manage_tenant_ids")
+    private String manageTenantIds;
     /**
      * 0=租户管理员
      * 1=普通用户

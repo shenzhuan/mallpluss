@@ -15,7 +15,7 @@ import java.util.List;
  * 手工发券
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-18
  */
 @Data

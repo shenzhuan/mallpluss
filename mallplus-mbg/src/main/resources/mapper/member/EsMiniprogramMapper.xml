@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.member.api.orm.dao.EsMiniprogramMapper">
+<mapper namespace="com.mei.zhuang.dao.member.EsMiniprogramMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.arvato.ec.common.vo.EsMiniprogram">
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.vo.EsMiniprogram">
         <id column="id" property="id"/>
         <result column="shop_type" property="shopType"/>
         <result column="signature" property="signature"/>

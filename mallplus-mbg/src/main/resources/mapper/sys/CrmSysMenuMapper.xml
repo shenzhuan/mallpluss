@@ -31,7 +31,7 @@
             role_id = #{roleId}
     </select>
 
-    <select id="menuTreeList" resultType="com.arvato.admin.vo.ZTreeNode">
+    <select id="menuTreeList" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
 		    m1.id,
 		    (
@@ -50,7 +50,7 @@
 		    m1.order_num,id
     </select>
 
-    <select id="menuTreeListByMenuIds" resultType="com.arvato.admin.vo.ZTreeNode">
+    <select id="menuTreeListByMenuIds" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
         m1.id,
         (
@@ -89,7 +89,7 @@
         m1.order_num,id
     </select>
 
-    <select id="menuTreeListByMenuId" resultType="com.arvato.admin.vo.ZTreeNode">
+    <select id="menuTreeListByMenuId" resultType="com.mei.zhuang.vo.ZTreeNode">
 	    SELECT
             m1.id AS id,
             (
@@ -239,7 +239,7 @@
     </select>
 
 
-    <resultMap type="com.arvato.admin.vo.AuthMenuNode" id="AuthMenuMap">
+    <resultMap type="com.mei.zhuang.vo.sys.AuthMenuNode" id="AuthMenuMap">
         <result column="module_name" property="moduleName"/>
         <result column="menu_name" property="menuName"/>
         <result column="menu_id" property="menuId"/>
@@ -251,7 +251,7 @@
         <collection property="dataAuthList" column="{menuId = menu_id,roleId = role_id}" select="getAllDataAuth"/>
     </resultMap>
 
-    <select id="getMenuInfo" resultType="com.arvato.admin.vo.AuthMenuVo">
+    <select id="getMenuInfo" resultType="com.mei.zhuang.vo.sys.AuthMenuVo">
 		 select DISTINCT t.* from ( SELECT
 			t1.id menuId,
 			t1."name" menuName,
@@ -310,7 +310,7 @@
 		order by t1.order_num,t2.order_num
     </select>
 
-    <select id="getAllButtons" resultType="com.arvato.admin.vo.ButtonNode">
+    <select id="getAllButtons" resultType="com.mei.zhuang.vo.sys.ButtonNode">
         select distinct t.* from  (select
             t1.id,
             t1.code,
@@ -333,7 +333,7 @@
 		order by t1.order_num) t
     </select>
 
-    <select id="getAllDataAuth" resultType="com.arvato.admin.vo.DataAuthNode">
+    <select id="getAllDataAuth" resultType="com.mei.zhuang.vo.sys.DataAuthNode">
         select distinct
             t1.value,
             t1.text,

@@ -11,7 +11,7 @@ import java.util.Map;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-13
  */
 public interface EsShopCouponsTopupMapper extends BaseMapper<EsShopCouponsTopup> {

@@ -9,7 +9,7 @@ import com.mei.zhuang.entity.order.EsShopOperationLog;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-18
  */
 public interface EsShopOperationLogMapper extends BaseMapper<EsShopOperationLog> {

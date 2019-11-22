@@ -85,7 +85,7 @@
         </collection>
     </resultMap>
 
-    <select id="orderIdList" parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam"
+    <select id="orderIdList" parameterType="com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam"
             resultType="java.lang.Long">
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
@@ -96,7 +96,7 @@
         </if>
     </select>
 
-    <select id="orderIdList2" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam"
+    <select id="orderIdList2" parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam"
             resultType="java.lang.Long">
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
@@ -468,8 +468,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         from es_shop_order where es_shop_order.member_id=#{memberId} and status = #{status})
     </select>
 
-    <select id="getOldConsumeInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo"
-            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="getOldConsumeInfo" resultType="com.mei.zhuang.vo.data.trade.OrderCustTotalVo"
+            parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select sum(record.total) as oldConsumeAmount, sum(record.count) as oldClientCount
         from (select SUM(pay_price) as total ,count(member_id) as count, member_id
         from es_shop_order WHERE status NOT IN (0, 8)
@@ -500,8 +500,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="getTotalInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo"
-            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="getTotalInfo" resultType="com.mei.zhuang.vo.data.trade.OrderCustTotalVo"
+            parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select
         sum(record.total) as total, sum(record.count) as count
         from (
@@ -521,7 +521,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="selectUCustoCount" resultType="java.lang.Integer"
-            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select count( distinct member_id) from es_shop_order
         where 1 = 1
         <if test="startTime != null and startTime !=''.toString()">
@@ -538,7 +538,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="getNewOrderList" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -561,7 +561,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="getOldOrderList" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -590,7 +590,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="getAllOrderInfo" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -613,7 +613,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
 
     <select id="getOldOrderIfo" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -636,7 +636,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="getNewOrderInfo" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -659,7 +659,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
     <select id="selOrderIdsByGoodsAnParam" resultType="java.lang.Long"
-            parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam">
         select id from es_shop_order
         where 1=1
         <include refid="timeCondtion"/>
@@ -692,7 +692,7 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
     <select id="memberIdList" resultType="java.lang.Long"
-            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
         AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')

@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface MembersFegin {
 
-    @PostMapping(value = "/api/member/miniprogram", params = "shopId")
+
     EsMiniprogram getByShopId(@RequestParam("shopId") Long shopId);
 
-    @PostMapping(value = "/applet/getMemberById", params = "id")
+
     EsMember getMemberById(@RequestParam("id") Long id);
 
-    @PostMapping(value = "/applet/updateMemberOrderById")
+
     void updateMemberOrderById(@RequestBody EsMember member);
 
-    @PostMapping(value = "/api/member/memberNumber")
+
     Integer memberNumber(@RequestBody TradeAnalyzeParam param);
 
 

@@ -17,7 +17,7 @@ import java.io.Serializable;
  * 销售渠道表
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-12-14
  */
 @ApiModel("渠道")

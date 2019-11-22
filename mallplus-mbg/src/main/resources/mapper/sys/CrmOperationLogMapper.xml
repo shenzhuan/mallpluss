@@ -3,7 +3,7 @@
 <mapper namespace="com.mei.zhuang.dao.sys.CrmOperationLogMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmOperationLog">
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.CrmOperationLog">
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="user_name" property="userName"/>
@@ -17,7 +17,7 @@
         <result column="add_time" property="addTime"/>
     </resultMap>
 
-    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.sys.SysOpertionLogParam">
         select * from crm_operation_log log
         /*left join crm_sys_log_type t
         on log.operation_type_id = t.id*/
@@ -33,7 +33,7 @@
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
 
-    <select id="exportLogList" resultMap="BaseResultMap" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+    <select id="exportLogList" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.sys.SysOpertionLogParam">
         select * from crm_operation_log log
         /*left join crm_sys_log_type t
         on log.operation_type_id = t.id*/
@@ -48,7 +48,7 @@
 
     </select>
 
-    <select id="selectLogCount" resultType="java.lang.Long" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
+    <select id="selectLogCount" resultType="java.lang.Long" parameterType="com.mei.zhuang.vo.sys.SysOpertionLogParam">
         select count(*) from crm_operation_log log
         where 1=1
         <include refid="query_condition_where"/>

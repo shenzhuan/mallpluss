@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-13
  */
 public interface EsShopCouponsTopupGoodsMapper extends BaseMapper<EsShopCouponsTopupGoods> {

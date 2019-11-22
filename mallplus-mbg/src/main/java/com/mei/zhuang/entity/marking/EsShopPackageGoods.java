@@ -17,7 +17,7 @@ import java.util.List;
  * 套餐商品
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-06-24
  */
 @Data

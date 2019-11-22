@@ -39,7 +39,7 @@
             crm_sys_dept
     </select>
 
-    <select id="getStoreDict" resultType="com.arvato.common.msg.DictData">
+    <select id="getStoreDict" resultType="com.mei.zhuang.vo.DictData">
         select
         id as value,name as text
         from

@@ -11,7 +11,7 @@ import java.util.Map;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-01-15
  */
 public interface CrmSysStatusColorMapper extends BaseMapper<CrmSysStatusColor> {

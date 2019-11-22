@@ -9,7 +9,7 @@ import com.mei.zhuang.vo.sys.DataSourceDto;
  * 服务类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-08-22
  */
 public interface ICrmSysUserService extends IService<CrmSysUser> {

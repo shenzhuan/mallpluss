@@ -9,7 +9,7 @@ import com.mei.zhuang.entity.order.EsAppletTemplates;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-06-16
  */
 public interface EsAppletTemplatesMapper extends BaseMapper<EsAppletTemplates> {

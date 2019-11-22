@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.marking.EsShopFriendGift;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-08-07
  */
 public interface EsShopFriendGiftMapper extends BaseMapper<EsShopFriendGift> {

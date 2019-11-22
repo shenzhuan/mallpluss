@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2018-01-09
  */
 public interface CrmSysLoginLogMapper extends BaseMapper<CrmSysLoginLog> {

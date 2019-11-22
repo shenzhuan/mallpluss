@@ -14,7 +14,7 @@ import java.io.Serializable;
  * <p> 指定的优惠商品
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-02
  */
 @Data

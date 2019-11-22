@@ -3,7 +3,7 @@ package com.mei.zhuang.enums;
 /**
  * ${DESCRIPTION}
  *
- * @author arvato team
+ * @author meizhuang team
  * @create 2017-06-14 8:36
  */
 public enum TmallOperateEnum {

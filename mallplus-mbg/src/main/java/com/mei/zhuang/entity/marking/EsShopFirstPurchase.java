@@ -18,7 +18,7 @@ import java.util.List;
  * <p>首购礼
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-02
  */
 @Data

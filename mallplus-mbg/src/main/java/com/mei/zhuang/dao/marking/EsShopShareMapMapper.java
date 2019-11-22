@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.marking.EsShopShareMap;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-08-20
  */
 public interface EsShopShareMapMapper extends BaseMapper<EsShopShareMap> {

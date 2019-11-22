@@ -19,7 +19,7 @@ import java.util.List;
  * <p> 限时折扣主体表
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-02
  */
 @Data

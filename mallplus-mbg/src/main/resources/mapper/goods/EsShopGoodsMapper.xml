@@ -401,7 +401,7 @@
     </select>
 
     <select id="selRankTopList" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.goods.GoodsRankTopParam">
+            parameterType="com.mei.zhuang.vo.data.goods.GoodsRankTopParam">
         select * from es_shop_goods
         where 1 = 1
         and status != -1

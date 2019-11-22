@@ -17,7 +17,7 @@ import java.util.List;
  * 满额发券
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-13
  */
 @Data

@@ -81,7 +81,7 @@
 </select>
 
     <select id="OrderGoods" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam">
         select goods_id,sum(total)as total,title,thumb,count(goods_id) as count,sum(count) as goodscount from es_shop_order_goods where order_id in(
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
@@ -91,7 +91,7 @@
     </select>
 
     <select id="purchaseGoods" resultMap="BaseResultMap"
-            parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam">
         select member_id,count(goods_id) as goodscount,goods_id from es_shop_order_goods where order_id in(
         select id from es_shop_order
         WHERE status NOT IN (0, 8)

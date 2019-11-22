@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.sys.CrmSysResourceAuthority;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-10-16
  */
 public interface CrmSysResourceAuthorityMapper extends BaseMapper<CrmSysResourceAuthority> {

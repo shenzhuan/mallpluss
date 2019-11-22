@@ -13,7 +13,7 @@ import java.util.List;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-23
  */
 public interface EsShopCartMapper extends BaseMapper<EsShopCart> {

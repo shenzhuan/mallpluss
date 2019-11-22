@@ -17,11 +17,11 @@
         <result column="version" property="version"/>
         <result column="dept_no" property="deptNo"/>
     </resultMap>
-    <resultMap id="deptDict" type="com.arvato.admin.dto.DeptDictData">
+    <resultMap id="deptDict" type="com.mei.zhuang.vo.sys.DeptDictData">
         <result column="p_id" property="pId"></result>
     </resultMap>
 
-    <select id="getDeptTree" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="getDeptTree" resultType="com.mei.zhuang.vo.ZTreeNode">
 	    SELECT
             m1.id,
             (
@@ -40,7 +40,7 @@
             m1.num,m1.id
 	</select>
 
-    <select id="getDeptTreeByOrgType" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="getDeptTreeByOrgType" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
         id, coalesce(p_id,0) pId,name
         FROM
@@ -68,7 +68,7 @@
         ORDER BY num,id
     </select>
 
-    <select id="dpetTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="dpetTreeListByDeptId" resultType="com.mei.zhuang.vo.ZTreeNode">
         SELECT
             m1.id AS id,
             (
@@ -119,7 +119,7 @@
         </foreach>
     </select>
 
-    <select id="initDeptDatasByCurrentUser" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="initDeptDatasByCurrentUser" resultType="com.mei.zhuang.vo.ZTreeNode">
         select
         a.id,
         coalesce(p_id,-1) pId,

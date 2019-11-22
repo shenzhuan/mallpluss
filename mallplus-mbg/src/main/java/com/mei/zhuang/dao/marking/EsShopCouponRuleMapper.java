@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.marking.EsShopCouponRule;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-28
  */
 public interface EsShopCouponRuleMapper extends BaseMapper<EsShopCouponRule> {

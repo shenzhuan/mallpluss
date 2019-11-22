@@ -11,7 +11,7 @@ import java.util.List;
  * 服务类
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-01-16
  */
 public interface ISysDbResourceService extends IService<SysDbResource> {

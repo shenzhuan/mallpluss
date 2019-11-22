@@ -19,12 +19,11 @@ import com.mei.zhuang.vo.sys.DataAuthNode;
 import com.mei.zhuang.vo.sys.RoleAuthMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,20 +33,20 @@ import java.util.Map;
 @Slf4j
 public class MenuBiz {
 
-    @Autowired
+    @Resource
     private CrmSysMenuMapper crmSysMenuMapper;
 
-    @Autowired
+    @Resource
     private CrmSysDictMapper sysDictMapper;
 
-    @Autowired
+    @Resource
     private CrmSysRoleMapper roleMapper;
 
-    @Autowired
+    @Resource
     private CrmSysRoleMenuMapper roleMenuMapper;
 
-    @Value("${system.ssrsMenuCode}")
-    private String ssrsMenuCode;
+
+    private String ssrsMenuCode="ssrs/report/salesproportion,ssrs/report/counterkpi";
 
     /**
      * 新增菜单
@@ -234,7 +233,7 @@ public class MenuBiz {
         try {
             //String encodeName = Encryption.getEncryption(currentUser.getUsername());
             List<Integer> roleIdList = roleMapper.getRoleIdsByUserId(currentUser.getId());
-            System.out.println(currentUser.getId());
+
         /*//获取菜单列表
         List<CrmSysMenu> menuList = crmSysMenuMapper.leftMenu(roleIdList);
         System.out.println(menuList+"222");

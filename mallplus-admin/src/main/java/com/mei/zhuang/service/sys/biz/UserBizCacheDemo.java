@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class UserBizCacheDemo {
     private static final String KEY_ALL = "'sysUser-*'";
     @Autowired
     private CrmSysUserMapper userMapper;
-    @Autowired
+    @Resource
     private HttpServletRequest request;
 
     @Cacheable(key = KEY_ALL)

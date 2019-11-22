@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2017-10-16
  */
 @Data

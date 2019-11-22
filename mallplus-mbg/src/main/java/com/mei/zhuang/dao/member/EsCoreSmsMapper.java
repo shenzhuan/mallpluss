@@ -8,7 +8,7 @@ import com.mei.zhuang.entity.member.EsCoreSms;
  * Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-05-30
  */
 public interface EsCoreSmsMapper extends BaseMapper<EsCoreSms> {

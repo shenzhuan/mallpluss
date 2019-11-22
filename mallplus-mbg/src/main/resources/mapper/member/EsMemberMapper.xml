@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.member.api.orm.dao.EsMemberMapper">
+<mapper namespace="com.mei.zhuang.dao.member.EsMemberMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="EsMemberMap" type="com.mei.zhuang.entity.member.EsMember">
@@ -43,14 +43,14 @@
         <result column="open_card" property="openCard"/>
     </resultMap>
     <select id="memberNumber" resultType="java.lang.Integer"
-            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+            parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select count(*) from es_member where create_time &gt;= to_timestamp(#{param.startTime}, 'YYYY/MM/DD HH24:MI:SS')
         and create_time &lt;= to_timestamp(#{param.endTime}, 'YYYY/MM/DD HH24:MI:SS')
 
     </select>
 
     <select id="selTotalMember" resultType="java.lang.Integer"
-            parameterType="com.arvato.ec.common.vo.data.customer.CustGroupIndexParam">
+            parameterType="com.mei.zhuang.vo.data.customer.CustGroupIndexParam">
         select count(id) from es_member where shop_id = #{shopId}
         <!-- <if test="startTime != null and startTime !=''.toString()">
              and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')

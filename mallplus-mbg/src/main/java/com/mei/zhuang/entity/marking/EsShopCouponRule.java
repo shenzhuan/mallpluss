@@ -18,7 +18,7 @@ import java.util.List;
  * <p> 优惠券规则
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-04-28
  */
 @Data

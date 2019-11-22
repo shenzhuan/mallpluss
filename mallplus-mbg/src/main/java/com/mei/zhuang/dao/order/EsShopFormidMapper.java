@@ -12,7 +12,7 @@ import java.util.List;
  * 小程序formid Mapper 接口
  * </p>
  *
- * @author arvato team
+ * @author meizhuang team
  * @since 2019-06-26
  */
 public interface EsShopFormidMapper extends BaseMapper<EsShopFormid> {
