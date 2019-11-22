@@ -4,7 +4,7 @@ import com.mei.zhuang.search.dao.EsProductDao;
 import com.mei.zhuang.search.domain.EsProduct;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -15,9 +15,9 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class MallSearchApplicationTests {
-    @Autowired
+    @Resource
     private EsProductDao productDao;
-    @Autowired
+    @Resource
     private ElasticsearchTemplate elasticsearchTemplate;
     @Test
     public void contextLoads() {

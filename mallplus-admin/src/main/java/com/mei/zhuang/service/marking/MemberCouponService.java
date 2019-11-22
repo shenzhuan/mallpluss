@@ -1,12 +1,12 @@
 package com.mei.zhuang.service.marking;
 
-import com.arvato.ec.common.vo.marking.AllMemberCoupon;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.ec.common.vo.order.CouponFilterParam;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.vo.marking.AllMemberCoupon;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CouponFilterParam;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

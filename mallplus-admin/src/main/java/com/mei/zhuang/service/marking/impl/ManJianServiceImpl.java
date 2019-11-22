@@ -1,21 +1,21 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.marking.MjDcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopManjianGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopManjianMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopManjianRuleMapper;
-import com.arvato.service.marking.api.service.ManJianService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopManjianGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopManjianMapper;
+import com.mei.zhuang.dao.marking.EsShopManjianRuleMapper;
 import com.mei.zhuang.entity.marking.EsShopManjian;
 import com.mei.zhuang.entity.marking.EsShopManjianGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopManjianRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.ManJianService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.marking.MjDcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +95,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
         MjDcVo vo = new MjDcVo();
         EsShopManjian query = new EsShopManjian();
         query.setStatus(0);
-        EsShopManjian manjian = manjianMapper.selectOne(query);
+        EsShopManjian manjian = manjianMapper.selectOne(new QueryWrapper<>(query));
         BigDecimal totalAmount = new BigDecimal("0");//实付金额
         int count = 0;
 
@@ -115,7 +115,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
                  */
                 if (manjian.getType() == 1) {
                     List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                            new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                            new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
                     for (EsShopManjianRule rule : list) {
                         if (list != null && list.size() > 0 && totalAmount.compareTo(rule.getConsumptionAmount()) >= 0) {
                             vo.setBasicAmount(rule.getCouponAmount().add(vo.getBasicAmount()));
@@ -124,7 +124,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
                     }
                 } else {
                     List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                            new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                            new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
                     for (EsShopManjianRule rule : list) {
                         if (list != null && list.size() > 0 && count >= rule.getConsumptionAmount().intValue()) {
                             vo.setBasicAmount(rule.getCouponAmount().add(vo.getBasicAmount()));
@@ -154,7 +154,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
                      */
                     if (manjian.getType() == 1) {
                         List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                                new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                                new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
                         for (EsShopManjianRule rule : list) {
                             if (list != null && list.size() > 0 && totalSingAmount.compareTo(rule.getConsumptionAmount()) >= 0) {
                                 vo.setBasicAmount(rule.getCouponAmount().add(vo.getBasicAmount()));
@@ -163,7 +163,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
                         }
                     } else {
                         List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                                new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                                new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
                         for (EsShopManjianRule rule : list) {
                             if (list != null && list.size() > 0 && singCount >= rule.getConsumptionAmount().intValue()) {
                                 vo.setBasicAmount(rule.getCouponAmount().add(vo.getBasicAmount()));
@@ -216,7 +216,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
          */
         if (manjian.getType() == 1) {
             List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                    new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                    new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
             for (EsShopManjianRule rule : list) {
                 if (list != null && list.size() > 0 && totalSingAmount.compareTo(rule.getConsumptionAmount()) >= 0) {
                     return rule;
@@ -224,7 +224,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
             }
         } else {
             List<EsShopManjianRule> list = manjianRuleMapper.selectList(
-                    new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderBy("consumption_amount", false));
+                    new QueryWrapper<EsShopManjianRule>().eq("manjian_id", manjian.getId()).orderByDesc("consumption_amount"));
             for (EsShopManjianRule rule : list) {
                 if (list != null && list.size() > 0 && singCount >= rule.getConsumptionAmount().intValue()) {
                     return rule;
@@ -261,7 +261,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
 
     @Override
     public List<EsShopManjian> slelectMan() {
-        return manjianMapper.selectList(new QueryWrapper<EsShopManjian>().orderBy("id", false));
+        return manjianMapper.selectList(new QueryWrapper<EsShopManjian>().orderByDesc("id"));
     }
 
     @Override
@@ -288,13 +288,17 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopManjian entity) throws Exception {
+    public boolean save(EsShopManjian entity)  {
         // entity.setSource(1);
         // 0:启用 1：禁用
         entity.setStatus(1);
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
-        datetime(entity);
+        try {
+            datetime(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         manjianMapper.insert(entity);
         addExtrInfo(entity);
         return true;

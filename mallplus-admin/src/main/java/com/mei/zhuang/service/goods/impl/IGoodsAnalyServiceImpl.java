@@ -2,24 +2,20 @@ package com.mei.zhuang.service.goods.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.entity.CrmOperationLog;
-import com.arvato.ec.common.utils.DateCalendarUtils;
-import com.arvato.ec.common.utils.WX_HttpsUtil;
-import com.arvato.ec.common.vo.data.goods.*;
-import com.arvato.service.goods.api.feigin.MemberFegin;
-import com.arvato.service.goods.api.feigin.OrderFegin;
-import com.arvato.service.goods.api.orm.dao.CrmOperationLogMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsGroupService;
-import com.arvato.service.goods.api.service.IGoodsAnalyService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
+import com.mei.zhuang.dao.member.CrmOperationLogMapper;
+import com.mei.zhuang.dao.order.EsShopOrderMapper;
+import com.mei.zhuang.entity.CrmOperationLog;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.order.EsShopOrder;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.service.goods.EsShopGoodsGroupService;
+import com.mei.zhuang.service.goods.IGoodsAnalyService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.goods.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,15 +33,17 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
     @Resource
     private EsShopGoodsGroupService shopGoodsGroupService;
-    @Resource
-    private OrderFegin orderFegin;
-    @Resource
-    private MemberFegin memberFegin;
+
     @Resource
     private EsShopGoodsMapper esShopGoodsMapper;
 
     private String WeiXinPage="https://api.weixin.qq.com/datacube/getweanalysisappidvisitpage?access_token=%s";
-
+    @Resource
+    private EsShopGoodsMapper goodsMapper;
+    @Resource
+    private EsShopOrderMapper orderMapper;
+    @Resource
+    private ShopOrderService orderService;
     @Resource
     private CrmOperationLogMapper crmOperationLogMapper;
 
@@ -62,8 +60,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         if(ValidatorUtils.notEmpty(param.getShopId())){
             condition.eq("shop_id", param.getShopId());
         }
-        System.out.println(condition.toString()+"商品数量");
-        System.out.println(esShopGoodsMapper.selectList(condition).toString());
+
         return esShopGoodsMapper.selectList(condition);
 
     }
@@ -94,7 +91,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         BigDecimal refundTotalPrice = new BigDecimal("0.00");//退款总金额
 
 
-        List<EsShopOrder> orderList = orderFegin.selOrderListByGoodsAnay(param);
+        List<EsShopOrder> orderList = orderService.selOrderListByGoodsAnay(param);
         System.out.println(orderList.toString()+"总金额");
         for(EsShopOrder order : orderList){
             if(order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3){
@@ -106,7 +103,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         }
 
         //商品总销量
-        count4 = orderFegin.selGoodsTotalSaleCount(param);
+        count4 = orderService.selGoodsTotalSaleCount(param);
         System.out.println(count4+"銷量");
 
 
@@ -136,10 +133,10 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
             paramBefore.setEndTime(paramBefore.getEndTime() + " 23:59:59.999");
             System.out.println(paramBefore.getEndTime());
             //前一日商品销量数据
-            saleTotCountBefore = orderFegin.selGoodsTotalSaleCount(paramBefore);
+            saleTotCountBefore = orderService.selGoodsTotalSaleCount(paramBefore);
             System.out.println("昨天销售"+saleTotCountBefore);
             //前一日订单数据
-            List<EsShopOrder> beforeOrderList = orderFegin.selOrderListByGoodsAnay(paramBefore);
+            List<EsShopOrder> beforeOrderList = orderService.selOrderListByGoodsAnay(paramBefore);
             for(EsShopOrder item : beforeOrderList){
                 if(item.getStatus() == 1 || item.getStatus() == 2 || item.getStatus() == 3){
                     payTotalPriceBefore = payTotalPriceBefore.add(item.getPayPrice());
@@ -218,7 +215,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
         }
 
-        List<EsShopOrderGoods> orderGoodsList = orderFegin.selOrderGoodsByGoodsAnaly(param);
+        List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(param);
         if(orderGoodsList != null && orderGoodsList.size() != 0){
             orderGoodsList.forEach((og)->{
                 String refDate = DateUtil.format(og.getCreateTime(),DateUtils.DATE_PATTERN);
@@ -283,7 +280,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setSource(param.getSource());
         tempParam.setEndTime(param.getEndTime() + " 23:59:59.0");
 
-        List<EsShopOrderGoods> orderGoodsList = orderFegin.selOrderGoodsByGoodsAnaly(tempParam);
+        List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
         if(orderGoodsList!=null&&orderGoodsList.size()>0) {
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
@@ -335,7 +332,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setSource(param.getSource());
         tempParam.setEndTime(param.getEndTime() + " 23:59:59.0");
 
-        List<EsShopOrderGoods> orderGoodsList = orderFegin.selOrderGoodsByGoodsAnaly(tempParam);
+        List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
         if(orderGoodsList!=null&&orderGoodsList.size()>0) {
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
@@ -460,7 +457,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setSource(param.getSource());
         tempParam.setEndTime(param.getEndTime());
 
-        List<EsShopOrderGoods> orderGoodsList = orderFegin.selOrderGoodsByGoodsAnaly(tempParam);
+        List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
         if(orderGoodsList != null && orderGoodsList.size() != 0 ){
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
@@ -516,7 +513,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         param.setEndTime(param.getEndTime() + " 23:59:59.999");
         param.setStartTime(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS));
         //时间内订单商品
-        List<EsShopOrderGoods> orderLis = orderFegin.orderGoodsList(param);
+        List<EsShopOrderGoods> orderLis = orderService.orderGoodsList(param);
         System.out.println(orderLis.toString()+"数据");
 //转化成微信所需时间
        /* String wxNeedStartTime = DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);

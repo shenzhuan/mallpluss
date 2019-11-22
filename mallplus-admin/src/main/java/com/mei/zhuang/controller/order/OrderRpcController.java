@@ -1,8 +1,8 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.ec.common.vo.order.OrderStstic;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.vo.order.OrderStstic;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

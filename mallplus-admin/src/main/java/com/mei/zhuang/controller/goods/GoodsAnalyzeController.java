@@ -1,10 +1,12 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.ec.common.vo.data.goods.*;
-import com.arvato.service.goods.api.service.IGoodsAnalyService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.service.goods.IGoodsAnalyService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.goods.*;
+import com.mei.zhuang.vo.data.goods.GoodsTrendMapParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsCoreAddressMapper;
-import com.arvato.service.goods.api.service.EsCoreAddressService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsCoreAddressMapper;
 import com.mei.zhuang.entity.goods.EsCoreAddress;
+import com.mei.zhuang.service.goods.EsCoreAddressService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

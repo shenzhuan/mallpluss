@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderMapper">
+<mapper namespace="com.mei.zhuang.dao.order.EsShopOrderMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopOrder">
@@ -81,7 +81,7 @@
     </resultMap>
     <resultMap type="com.mei.zhuang.entity.order.EsShopOrder" id="orderDetailResult" extends="BaseResultMap">
         <collection property="orderGoodsList"
-                    resultMap="com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper.BaseResultMap">
+                    resultMap="com.mei.zhuang.dao.order.EsShopOrderGoodsMapper.BaseResultMap">
         </collection>
     </resultMap>
 
@@ -106,7 +106,7 @@
             and soure_type = #{source}
         </if>
     </select>
-    <!--  <resultMap id="tempVoResultMap" type="com.arvato.ec.common.vo.order.OrderCustTotalVo">
+    <!--  <resultMap id="tempVoResultMap" type="com.mei.zhuang.vo.order.OrderCustTotalVo">
           <result property="newClientCount" column="newClientCount"/>
           <result property="oldClientCount" column="oldClientCount"/>
           <result property="newConsumeAmount" column="newConsumeAmount"/>
@@ -144,7 +144,7 @@
 
     </select>
 
-    <select id="selectOrderList" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+    <select id="selectOrderList" parameterType="com.mei.zhuang.vo.order.OrderParam"
             resultMap="orderDetailResult">
         SELECT * from es_shop_order o LEFT join es_shop_order_goods og
         on o.id=og.order_id where 1=1
@@ -159,7 +159,7 @@
     </select>
 
 
-    <select id="getOrderListByCon" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+    <select id="getOrderListByCon" parameterType="com.mei.zhuang.vo.order.OrderParam"
             resultMap="BaseResultMap">
         SELECT * from es_shop_order o
         where 1=1
@@ -168,7 +168,7 @@
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
 
-    <select id="getCountByCon" parameterType="com.arvato.ec.common.vo.order.OrderParam" resultType="java.lang.Integer">
+    <select id="getCountByCon" parameterType="com.mei.zhuang.vo.order.OrderParam" resultType="java.lang.Integer">
         SELECT count(*) from es_shop_order o
         where 1=1
         <include refid="query_order_where"/>
@@ -176,7 +176,7 @@
 
 
 
-    <select id="selOrderByPage" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+    <select id="selOrderByPage" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.OrderParam">
         SELECT * from es_shop_order o
         where 1=1
         <include refid="query_order_where_bypage"/>
@@ -184,7 +184,7 @@
 
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
-    <select id="getCountByPage" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+    <select id="getCountByPage" resultType="java.lang.Integer" parameterType="com.mei.zhuang.vo.order.OrderParam">
         SELECT count(*) from es_shop_order o
         where 1=1
         <include refid="query_order_where_bypage"/>
@@ -196,7 +196,7 @@
     </update>
 
 
-    <select id="selectOrderCount" parameterType="com.arvato.ec.common.vo.order.OrderParam"
+    <select id="selectOrderCount" parameterType="com.mei.zhuang.vo.order.OrderParam"
             resultType="java.lang.Integer">
         SELECT count(1) from es_shop_order o LEFT join es_shop_order_goods og
         on o.id=og.order_id where 1=1
@@ -356,7 +356,7 @@
         WHERE member_id = #{memberId}
     </select>
 
-    <!--<select id="selectOrderListByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+    <!--<select id="selectOrderListByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultMap="BaseResultMap">
         SELECT * from es_shop_order o LEFT join es_shop_order_goods og
         on o.id=og.order_id where 1=1
@@ -370,7 +370,7 @@
         limit #{size} offset (#{current} - 1) * #{size}
     </select>-->
 
-    <select id="selectOrderListByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+    <select id="selectOrderListByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultMap="BaseResultMap">
         SELECT * from es_shop_order
         where 1=1
@@ -398,14 +398,14 @@
 
 
 
-    <!--<select id="selectOrderCountByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+    <!--<select id="selectOrderCountByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultType="java.lang.Integer">
         SELECT count(1) from es_shop_order o LEFT join es_shop_order_goods og
         on o.id=og.order_id where 1=1
         <include refid="query_order_where_by_applet"/>
     </select>-->
 
-    <select id="selectOrderCountByApplet" parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+    <select id="selectOrderCountByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultType="java.lang.Integer">
         SELECT count(1) from es_shop_order
         where 1=1
@@ -435,18 +435,18 @@
     </sql>
 
 
-    <select id="listOrderGroupByMemberId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+    <select id="listOrderGroupByMemberId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
        select count(id) totalCount ,sum(pay_price) totalPayAmount,member_id memberId from es_shop_order
        where status between  1 and 3 group by member_id
     </select>
 
-    <select id="listOrderGroupByManJianId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+    <select id="listOrderGroupByManJianId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
           select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
     where status between  1 and 3 and manjian_or_discountid is not null and manjian_info is not null group by manjian_or_discountid
 
     </select>
 
-    <select id="listOrderGroupByDiscountId"  resultType="com.arvato.ec.common.vo.order.OrderStstic">
+    <select id="listOrderGroupByDiscountId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
         select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
         where status between  1 and 3 and manjian_or_discountid is not null and discount_info is not null group by manjian_or_discountid
 
@@ -663,11 +663,11 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
 
     </select>
-    <select id="selectfriend"  resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.OrderParam">
+    <select id="selectfriend"  resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.OrderParam">
         select * from es_shop_order o where o.gift_giving=#{giftGiving}
     </select>
 
-    <select id="selectFriendListByApplet"  parameterType="com.arvato.ec.common.vo.order.AppletOrderParam"
+    <select id="selectFriendListByApplet"  parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultMap="BaseResultMap">
         SELECT * from es_shop_order
         where 1=1 and status!=8

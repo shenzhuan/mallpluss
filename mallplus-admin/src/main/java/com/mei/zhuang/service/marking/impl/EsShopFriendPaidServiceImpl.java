@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsShopFriendPaidMapper;
-import com.arvato.service.marking.api.service.EsShopFriendPaidService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopFriendPaidMapper;
+import com.mei.zhuang.service.marking.EsShopFriendPaidService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFriendPaid;
 import org.springframework.stereotype.Service;
 

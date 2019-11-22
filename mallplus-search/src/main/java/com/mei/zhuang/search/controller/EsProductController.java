@@ -8,7 +8,7 @@ import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @Api(tags = "EsProductController", description = "搜索商品管理")
 @RequestMapping("/esProduct")
 public class EsProductController {
-    @Autowired
+    @Resource
     private EsProductService esProductService;
 
     @ApiOperation(value = "导入所有数据库中商品到ES")

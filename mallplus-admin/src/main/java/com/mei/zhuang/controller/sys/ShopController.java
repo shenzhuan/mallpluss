@@ -1,16 +1,16 @@
 package com.mei.zhuang.controller.sys;
 
-import com.arvato.admin.service.IShopBrandService;
-import com.arvato.admin.service.IShopService;
-import com.arvato.admin.vo.ShopParam;
-import com.arvato.common.annotation.FieldText;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.annotation.FieldText;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.EsShopNew;
+import com.mei.zhuang.service.sys.IShopBrandService;
+import com.mei.zhuang.service.sys.IShopService;
+import com.mei.zhuang.utils.DateUtils;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.ShopParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -59,15 +59,15 @@ public class ShopController {
             if(result != null){
                 return result;
             }
-           /* EsShopBrand shopBrand = shopBrandService.selectById(entity.getBrandId());
+           /* EsShopBrand shopBrand = shopBrandService.getById(entity.getBrandId());
             if(ValidatorUtils.empty(shopBrand)){
                 return new CommonResult().success("系统数据错误！");
             }*/
             //验证店铺名称唯一性
-            if(null != shopService.selectOne(new QueryWrapper<>(new EsShopNew()).eq("name",entity.getName())) ){
+            if(null != shopService.getOne(new QueryWrapper<>(new EsShopNew()).eq("name",entity.getName())) ){
                 return new CommonResult().failed("已存在{"+ entity.getName() +"}店铺名称，请重新添加");
             }
-            entity.setBrandName(shopBrandService.selectById(entity.getBrandId()).getBrandName());
+            entity.setBrandName(shopBrandService.getById(entity.getBrandId()).getBrandName());
 
             //表的基础字段 与 admin 配置冲突
 //            entity.setCreateTime(new Date());
@@ -78,7 +78,7 @@ public class ShopController {
             entity.setCreateDate(DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
             entity.setUpdateDate(DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
 
-            if(shopService.insert(entity)){
+            if(shopService.save(entity)){
                 return new CommonResult().success("添加成功！");
             }
         }catch(Exception e){
@@ -134,7 +134,7 @@ public class ShopController {
     @PostMapping("/test/insert")
     public Object testSavePaySettings(@RequestBody EsShopNew shopNew){
         try{
-            return new CommonResult().success(this.shopService.insert(shopNew));
+            return new CommonResult().success(this.shopService.save(shopNew));
         }catch(Exception e){
             log.error("添加数据：%s", e.getMessage(), e);
         }
@@ -145,7 +145,7 @@ public class ShopController {
     @PostMapping("/selectById")
     public Object selectById(@ApiParam("店铺id") @RequestParam Long id){
         try{
-            EsShopNew shop = shopService.selectById(id);
+            EsShopNew shop = shopService.getById(id);
             if(shop == null){
                 return new CommonResult().success("没有此id的数据");
             }
@@ -198,7 +198,7 @@ public class ShopController {
             }
             EsShopNew esShopNew = new EsShopNew();
             esShopNew.setId(shopId);
-            return new CommonResult().success("success",shopService.selectOne(new QueryWrapper<>(esShopNew)));
+            return new CommonResult().success("success",shopService.getOne(new QueryWrapper<>(esShopNew)));
         }catch(Exception e){
             log.error("查询当前登录店铺的详情异常：%s", e.getMessage(), e);
             return new CommonResult().failed();

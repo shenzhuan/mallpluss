@@ -37,7 +37,21 @@ public class ImgBase64Util {
         wxPost(url,json,val);
         return  GetImageStr("d:/"+ val + ".png");
     }
-
+    public static String StringUtil(Long id){
+        Map<String, Object> date= getToken();
+        String url="https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+date.get("access_token");
+        HashMap<String, String> params = new HashMap<>();
+        params.put("scene", "id="+id+"");
+        params.put("page", "pages/goods/detail/index");
+        JSONObject json=JSONObject.parseObject(params.toString());
+        String val = "";
+        Random random = new Random();
+        for (int i = 0; i < 5; i++) {
+            val += String.valueOf(random.nextInt(10));
+        }
+        wxPost(url,json,val);
+        return  GetImageStr("d:/"+ val + ".png");
+    }
 
     public static Map<String, Object> getToken() {
         Map<String, Object> data = new HashMap<String, Object>();

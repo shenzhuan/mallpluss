@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.admin.vo.ShopParam;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.mei.zhuang.entity.sys.EsShopBrand;
 import com.mei.zhuang.entity.sys.EsShopNew;
+import com.mei.zhuang.vo.ShopParam;
 
 import java.util.List;
 

@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.order;
 
 import com.arvato.common.annotation.FieldText;
-import com.arvato.ec.common.vo.order.PaySettingParam;
-import com.arvato.service.order.api.service.ShopPaymentService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.vo.order.PaySettingParam;
+import com.mei.zhuang.service.order.ShopPaymentService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.mei.zhuang.entity.order.EsShopPayment;
 import io.swagger.annotations.Api;
@@ -93,7 +93,7 @@ public class TradeSettingsController {
             entity.setUpdateById(1l);//待完善
             entity.setIsDelete(0);
             entity.setRemainStaus(0);//余额支付状态
-            if (shopPaymentService.insert(entity)) {
+            if (shopPaymentService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -163,7 +163,7 @@ public class TradeSettingsController {
             entity.setUpdateTime(new Date());
             entity.setUpdateById(1l);//待完善
             entity.setRemainStaus(0);//余额支付状态
-            if (shopPaymentService.insert(entity)) {
+            if (shopPaymentService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -181,7 +181,7 @@ public class TradeSettingsController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("参数支付设置id不能为空");
             }
-            return new CommonResult().success(shopPaymentService.selectById(id));
+            return new CommonResult().success(shopPaymentService.getById(id));
         } catch (Exception e) {
             log.error("查询支付设置：%s", e.getMessage(), e);
         }

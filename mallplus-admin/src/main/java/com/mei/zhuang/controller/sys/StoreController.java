@@ -3,16 +3,16 @@ package com.mei.zhuang.controller.sys;
 import com.alibaba.fastjson.JSONObject;
 import com.arvato.admin.biz.StoreBiz;
 import com.arvato.admin.dto.StoreDictParam;
-import com.arvato.admin.orm.dao.CrmStoreMapper;
+import com.mei.zhuang.dao.sys.CrmStoreMapper;
 import com.arvato.common.msg.DictData;
 import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.controller.SysLog;
 import com.arvato.utils.constant.CommonConstant;
 import com.mei.zhuang.entity.sys.CrmSysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +31,9 @@ import java.util.List;
 @Slf4j
 public class StoreController extends BaseController {
 
-    @Autowired
+    @Resource
     private StoreBiz storeBiz;
-    @Autowired
+    @Resource
     private CrmStoreMapper storeMapper;
 
     @SysLog(MODULE = "门店", REMARK = "门店列表")

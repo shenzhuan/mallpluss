@@ -9,7 +9,7 @@ import com.mei.zhuang.entity.goods.EsDecorateTemplate;
  * @Description:
  */
 public interface EsDecorateTemplateService extends IService<EsDecorateTemplate> {
-    Object save(EsDecorateTemplate entity);
+    boolean save(EsDecorateTemplate entity);
 
     Object release(EsDecorateTemplate entity);
 }

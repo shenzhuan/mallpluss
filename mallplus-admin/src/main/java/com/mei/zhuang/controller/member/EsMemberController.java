@@ -1,19 +1,16 @@
 package com.mei.zhuang.controller.member;
 
 
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.service.member.api.feigin.OrderFeigin;
-import com.arvato.service.member.api.mq.Sender;
-import com.arvato.service.member.api.service.EsMemberService;
-import com.arvato.service.member.api.vo.query.QueryMemberParma;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.enums.SqlLike;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.member.EsMember;
+import com.mei.zhuang.service.member.EsMemberService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.query.QueryMemberParma;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,10 +30,8 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/member")
 public class EsMemberController {
 
-    @Resource
-    private OrderFeigin orderFeigin;
-    @Resource
-    private Sender sender;
+
+
     @Resource
     private EsMemberService memberService;
     private String MbluatURl="https://mbluat.acxiom.com.cn/mbl/member/getCustomer";
@@ -68,7 +63,7 @@ public class EsMemberController {
             //查询所有
             if (entity.getBuyCount() == 4) {
                 entityWrapper.ge("buy_count", 0);
-                entityWrapper.orderBy("create_time", false);
+                entityWrapper.orderByDesc("create_time");
             }
             //成交次数5+
             if (entity.getBuyCount() == 5) {
@@ -88,18 +83,18 @@ public class EsMemberController {
                     if (!matcher) {
                         return new CommonResult().failed("请输入正确的手机号");
                     }
-                    entityWrapper.like(true, "mobile", entity.getMobile(), SqlLike.CUSTOM);
+                    entityWrapper.like(true, "mobile", entity.getMobile());
                 }
             }
             if (entity.getSex() != null) {
                 entityWrapper.like("sex", entity.getSex());
             }
             if (entity.getComeFrom() != null) {
-                entityWrapper.like(true, "come_from", entity.getComeFrom(), SqlLike.CUSTOM);
+                entityWrapper.like(true, "come_from", entity.getComeFrom());
             }
 
 
-            return new CommonResult().success(memberService.selectPage(new Page<EsMember>(current, size), entityWrapper));
+            return new CommonResult().success(memberService.page(new Page<EsMember>(current, size), entityWrapper));
         } catch (Exception e) {
             log.error("根据条件查询所有会员列表：%s", e.getMessage(), e);
         }
@@ -142,7 +137,7 @@ public class EsMemberController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("会员id");
             }
-            if (memberService.deleteById(id)) {
+            if (memberService.removeById(id)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -157,7 +152,7 @@ public class EsMemberController {
     @PostMapping(value = "/detail")
     public Object getGoodsCategoryById(@RequestParam("id") Long id) {
         try {
-            EsMember newMember = memberService.selectById(id);
+            EsMember newMember = memberService.getById(id);
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("会员id");
             }
@@ -193,7 +188,7 @@ public class EsMemberController {
     @ApiOperation("手机号查询")
     @PostMapping(value = "/mobileselect")
     public EsMember mobileselect(@RequestParam long memberId) {
-        return memberService.selectById(memberId);
+        return memberService.getById(memberId);
     }
     @ApiOperation("修改")
     @PostMapping(value = "/updatemeber")
@@ -211,7 +206,7 @@ public class EsMemberController {
     @ApiOperation("mq手机")
     @PostMapping(value = "/mqphone")
     public String mqphone() {
-        sender.bindMobileMq("红红");
+
         return "success";
     }
 }

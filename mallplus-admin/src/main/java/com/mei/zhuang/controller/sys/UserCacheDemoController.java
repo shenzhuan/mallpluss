@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.sys;
 
 import com.arvato.admin.biz.UserBizCacheDemo;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmSysUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -19,7 +19,7 @@ import java.util.Map;
 @RequestMapping("userCacheDemo")
 public class UserCacheDemoController {
 
-    @Autowired
+    @Resource
     private UserBizCacheDemo userBizCacheDemo;
 
     @SysLog(MODULE = "用户缓存控制层", REMARK = "获取所有用户信息")

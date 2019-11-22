@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.service.ISysDbResourceService;
+import com.mei.zhuang.service.sys.ISysDbResourceService;
 import com.arvato.common.msg.DictData;
 import com.arvato.common.orm.dao.SysDbResourceMapper;
 import com.arvato.common.orm.model.SysDbResource;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

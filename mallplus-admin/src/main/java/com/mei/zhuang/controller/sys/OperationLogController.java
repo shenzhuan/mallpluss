@@ -1,23 +1,24 @@
 package com.mei.zhuang.controller.sys;
 
-import com.arvato.admin.biz.OperationLogBiz;
-import com.arvato.admin.vo.ExportParam;
-import com.arvato.admin.vo.SysOpertionLogParam;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.mei.zhuang.entity.sys.CrmOperationLog;
-import groovy.util.logging.Slf4j;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.entity.CrmOperationLog;
+import com.mei.zhuang.service.sys.biz.OperationLogBiz;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.DateUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.order.ExportParam;
+import com.mei.zhuang.vo.sys.SysOpertionLogParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
@@ -31,25 +32,10 @@ import java.util.Date;
 public class OperationLogController {
 
     //    private static
-    @Autowired
+    @Resource
     private OperationLogBiz operationLogBiz;
 
-    @SysLog(MODULE = "系统用户模块", REMARK = "根据条件查询所有操作日志列表")
-    @ApiOperation("根据条件查询所有操作日志列表")
-    @PostMapping(value = "/list")
-    @ResponseBody
-    public Object list(SysOpertionLogParam entity) {
-        try {
-            if (entity.getKeyword() != null) {
-                entity.setKeyword(entity.getKeyword().trim());
-            }
-            Page<CrmOperationLog> logList = operationLogBiz.selecPageList(entity);
-            return new CommonResult().success(logList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new CommonResult().failed();
-    }
+
 
     @SysLog(MODULE = "系统操作日志管理", REMARK = "根据条件导出所有操作日志列表")
     @ApiOperation("根据条件导出所有操作日志列表")

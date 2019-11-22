@@ -2,25 +2,25 @@ package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.RoleBiz;
-import com.arvato.admin.vo.ZTreeNode;
-import com.arvato.file_manage.util.BizResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.constant.CommonConstant;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ToolUtil;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.constant.CommonConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmSysDataAuth;
 import com.mei.zhuang.entity.sys.CrmSysRole;
 import com.mei.zhuang.entity.sys.CrmSysRoleMenu;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.RoleBiz;
+import com.mei.zhuang.util.ToolUtil;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.vo.BizResult;
+import com.mei.zhuang.vo.ZTreeNode;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("role")
 public class RoleController extends BaseController {
-    @Autowired
+    @Resource
     private RoleBiz roleBiz;
 
     @SysLog(MODULE = "用户角色", REMARK = "初始化数据信息")
@@ -56,7 +56,7 @@ public class RoleController extends BaseController {
         role.setName(name);
         PageHelper.startPage(current, size);
         List<CrmSysRole> crmSysRoles = roleBiz.selectRoleList(role);
-        role.setTotal((int) PageHelper.freeTotal());
+     //   role.setTotal((int) PageHelper.freeTotal());
         result.put("current", current);
         result.put("size", size);
         result.put("total", role.getTotal());

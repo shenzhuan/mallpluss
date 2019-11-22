@@ -12,7 +12,7 @@ import com.mei.zhuang.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 

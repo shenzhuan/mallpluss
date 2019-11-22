@@ -1,13 +1,14 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.marking.api.service.PackageGoodsService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopPackageGoods;
 import com.mei.zhuang.entity.marking.EsShopPackageGoodsSpec;
+import com.mei.zhuang.service.marking.PackageGoodsService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Api(value = "套餐商品管理", description = "", tags = {"套餐商品管理"})
@@ -40,14 +39,7 @@ public class PackageGoodsController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopPackageGoods> esPackageGoods = packageService.packageList(goods);
-            goods.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esPackageGoods);
-            map.put("size", size);
-            map.put("total", goods.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(packageService.packageList(goods)));
         } catch (Exception e) {
             log.error("根据条件查询所有套餐列表：%s", e.getMessage(), e);
         }

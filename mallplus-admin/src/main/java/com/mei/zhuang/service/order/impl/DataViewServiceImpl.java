@@ -2,26 +2,18 @@ package com.mei.zhuang.service.order.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.utils.DateCalendarUtils;
-import com.arvato.ec.common.utils.WX_HttpsUtil;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.data.trade.*;
-import com.arvato.service.order.api.enums.OrderStatus;
-import com.arvato.service.order.api.feigin.GoodsFegin;
-import com.arvato.service.order.api.feigin.MembersFegin;
-import com.arvato.service.order.api.orm.dao.EsShopCartMapper;
-import com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper;
-import com.arvato.service.order.api.orm.dao.EsShopOrderMapper;
-import com.arvato.service.order.api.service.DataViewService;
-import com.arvato.service.order.api.service.ShopOrderGoodsService;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.service.order.api.utils.OrderUtils;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.order.EsShopCartMapper;
+import com.mei.zhuang.dao.order.EsShopOrderGoodsMapper;
+import com.mei.zhuang.dao.order.EsShopOrderMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.order.EsShopOrder;
+import com.mei.zhuang.enums.OrderStatus;
+import com.mei.zhuang.service.order.*;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.data.trade.*;
+
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,11 +38,12 @@ public class DataViewServiceImpl implements DataViewService {
     @Resource
     private EsShopCartMapper cartMapper;
     @Resource
+    private GoodsFegin goodsFegin;
+    @Resource
     private MembersFegin memberFegin;
 
     private String  VisitUrl="https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token=%s";
-    @Resource
-    private GoodsFegin goodsFegin;
+
 
     @Override
     public DataViewVo viewVoList(TradeAnalyzeParam param) throws Exception {

@@ -2,14 +2,15 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.service.FirstPurchaseService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchase;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseRule;
+import com.mei.zhuang.service.marking.FirstPurchaseService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 首购礼管理
@@ -48,14 +47,7 @@ public class FirstPurchaseController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopFirstPurchase> esShopDiscount = firstPurchaseService.slelectPurchase();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopDiscount);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(firstPurchaseService.slelectPurchase()));
         } catch (Exception e) {
             log.error("根据条件查询所有首购礼列表：%s", e.getMessage(), e);
         }
@@ -71,7 +63,7 @@ public class FirstPurchaseController {
             entity.setGoodsSepcVoList(list);
             List<EsShopFirstPurchaseRule> rulelist = JSONObject.parseArray(entity.getPurchaseRuleList(), EsShopFirstPurchaseRule.class);
             entity.setFirstPurchaseRuleList(rulelist);
-            if (firstPurchaseService.save(entity) > 0) {
+            if (firstPurchaseService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -126,7 +118,7 @@ public class FirstPurchaseController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("首购礼id");
             }
-            EsShopFirstPurchase coupon = firstPurchaseService.selectById(id);
+            EsShopFirstPurchase coupon = firstPurchaseService.getById(id);
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询首购礼明细：%s", e.getMessage(), e);
@@ -221,7 +213,7 @@ public class FirstPurchaseController {
 //            }
 //
 //            // 1.基本信息
-//            EsShopFirstPurchase firstPurchase = firstPurchaseService.selectById(id);
+//            EsShopFirstPurchase firstPurchase = firstPurchaseService.getById(id);
 //            // 2.指定商品信息
 //            List<EsShopFirstPurchaseGoodsMap> firstPurchaseGoodsMapList = firstPurchaseService.selectgoodsid(id);
 //            List<Long> collect = firstPurchaseGoodsMapList.stream().map(EsShopFirstPurchaseGoodsMap::getGoodsId).collect(Collectors.toList());

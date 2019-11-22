@@ -4,7 +4,7 @@ import com.mallplus.mall.model.UmsMember;
 import com.mallplus.mall.portal.component.*;
 import com.mallplus.mall.portal.domain.MemberDetails;
 import com.mallplus.mall.portal.service.UmsMemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,7 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
+    @Resource
     private UmsMemberService memberService;
 
     @Override

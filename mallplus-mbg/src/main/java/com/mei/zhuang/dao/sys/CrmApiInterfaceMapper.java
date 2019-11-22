@@ -1,9 +1,10 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.admin.vo.ApiInterfaceVo;
-import com.arvato.common.vo.ZTreeNode;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.sys.CrmApiInterface;
+import com.mei.zhuang.vo.ApiInterfaceVo;
+import com.mei.zhuang.vo.ZTreeNode;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

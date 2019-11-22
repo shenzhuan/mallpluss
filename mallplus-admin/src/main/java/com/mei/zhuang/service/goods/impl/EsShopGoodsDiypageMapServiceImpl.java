@@ -1,8 +1,9 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsDiypageMapMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsDiypageMapService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsDiypageMapMapper;
+import com.mei.zhuang.service.goods.EsShopGoodsDiypageMapService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoodsDiyPageMap;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,6 @@ public class EsShopGoodsDiypageMapServiceImpl extends ServiceImpl<EsShopGoodsDiy
     public EsShopGoodsDiyPageMap select(Long goodsId) {
         EsShopGoodsDiyPageMap pageMap = new EsShopGoodsDiyPageMap();
         pageMap.setGoodsId(goodsId);
-        return esShopGoodsDiypageMapMapper.selectOne(pageMap);
+        return esShopGoodsDiypageMapMapper.selectOne(new QueryWrapper<>(pageMap));
     }
 }

@@ -1,9 +1,10 @@
 package com.mei.zhuang.dao.order;
 
-import com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam;
-import com.arvato.ec.common.vo.order.OrderParam;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam;
+import com.mei.zhuang.vo.order.OrderParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

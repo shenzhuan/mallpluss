@@ -1,13 +1,13 @@
 package com.mei.zhuang.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.goods.api.service.EsShopGoodsQRCodeService;
-import com.arvato.service.goods.api.service.EsStartAdvertisingImgService;
-import com.arvato.service.goods.api.service.EsStartAdvertisingService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.service.goods.EsShopGoodsQRCodeService;
+import com.mei.zhuang.service.goods.EsStartAdvertisingImgService;
+import com.mei.zhuang.service.goods.EsStartAdvertisingService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoodsQRCode;
 import com.mei.zhuang.entity.goods.EsStartAdvertising;
 import com.mei.zhuang.entity.goods.EsStartAdvertisingImg;
@@ -57,11 +57,11 @@ public class EsStartAdvertisingController {
                 return new CommonResult().failed("编号不得为空");
             }
             //已启用的广告不得删除
-            EsStartAdvertising esStartAdvertising = esStartAdvertisingService.selectById(id);
+            EsStartAdvertising esStartAdvertising = esStartAdvertisingService.getById(id);
             if (esStartAdvertising.getIsStart() == 1 || esStartAdvertising.getIsStart() == 2) {
                 return new CommonResult().failed("已启用广告不得删除");
             }
-            return new CommonResult().success("success", esStartAdvertisingService.deleteById(id));
+            return new CommonResult().success("success", esStartAdvertisingService.removeById(id));
         } catch (Exception e) {
             return new CommonResult().failed();
         }
@@ -104,11 +104,11 @@ public class EsStartAdvertisingController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请选择广告");
             }
-            EsStartAdvertising esStartAdvertising = esStartAdvertisingService.selectById(id);
+            EsStartAdvertising esStartAdvertising = esStartAdvertisingService.getById(id);
             if (esStartAdvertising != null) {
                 EsStartAdvertisingImg advertisingImg = new EsStartAdvertisingImg();
                 advertisingImg.setAdvertisingId(id);
-                List<EsStartAdvertisingImg> list = esStartAdvertisingImgService.selectList(new QueryWrapper<>(advertisingImg));
+                List<EsStartAdvertisingImg> list = esStartAdvertisingImgService.list(new QueryWrapper<>(advertisingImg));
                 if (list != null && list.size() > 0) {
                     esStartAdvertising.setListAdvertImg(list);
                 }
@@ -161,7 +161,7 @@ public class EsStartAdvertisingController {
             }
             EsShopGoodsQRCode qrCode = new EsShopGoodsQRCode();
             qrCode.setGoodsId(id);
-            return new CommonResult().success("success", esShopGoodsQRCodeService.selectOne(new QueryWrapper<>(qrCode)));
+            return new CommonResult().success("success", esShopGoodsQRCodeService.getOne(new QueryWrapper<>(qrCode)));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();
@@ -175,7 +175,7 @@ public class EsStartAdvertisingController {
         try {
             EsStartAdvertising startAdvertising = new EsStartAdvertising();
             startAdvertising.setIsStart(1);
-            return new CommonResult().success("success", esStartAdvertisingService.selectOne(new QueryWrapper<>(startAdvertising)));
+            return new CommonResult().success("success", esStartAdvertisingService.getOne(new QueryWrapper<>(startAdvertising)));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();

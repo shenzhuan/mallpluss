@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface EsActivatySmallBeautyBoxMapper extends BaseMapper<EsActivatySmallBeautyBox> {
 
-    List<EsActivatySmallBeautyBox> selList(Pagination page, EsActivatySmallBeautyBox entity);
+  //  List<EsActivatySmallBeautyBox> selList(Pagination page, EsActivatySmallBeautyBox entity);
 
     int count(EsActivatySmallBeautyBox entity);
 

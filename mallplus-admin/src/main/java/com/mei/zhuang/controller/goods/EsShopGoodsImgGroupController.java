@@ -1,10 +1,10 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsShopGoodsImgGroupService;
-import com.arvato.service.goods.api.service.EsShopGoodsImgService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.mei.zhuang.service.goods.EsShopGoodsImgGroupService;
+import com.mei.zhuang.service.goods.EsShopGoodsImgService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsShopGoodsImg;
 import com.mei.zhuang.entity.goods.EsShopGoodsImgGroup;
 import io.swagger.annotations.Api;

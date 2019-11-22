@@ -1,9 +1,10 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsCoreMessageMapper;
-import com.arvato.service.goods.api.service.EsCoreMessageService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsCoreMessageMapper;
 import com.mei.zhuang.entity.goods.EsCoreMessage;
+import com.mei.zhuang.service.goods.EsCoreMessageService;
 import org.springframework.stereotype.Service;
 
 @Service

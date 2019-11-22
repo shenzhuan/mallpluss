@@ -1,8 +1,9 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.admin.vo.ShopParam;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.sys.EsShopNew;
+import com.mei.zhuang.vo.ShopParam;
 
 import java.util.List;
 

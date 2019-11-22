@@ -2,12 +2,12 @@ package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
 import com.arvato.admin.biz.CalendarBiz;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtil;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +21,7 @@ import java.util.*;
 @RequestMapping("calendar")
 public class CalendarController extends BaseController {
 
-    @Autowired
+    @Resource
     private CalendarBiz calendarBiz;
 
     @SysLog(MODULE = "CRUD-日历控制层", REMARK = "获取日期数据")

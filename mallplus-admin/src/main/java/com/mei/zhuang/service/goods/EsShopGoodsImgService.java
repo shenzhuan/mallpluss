@@ -4,17 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.goods.EsShopGoodsImg;
 
 import java.util.List;
-import java.util.Map;
 
 public interface EsShopGoodsImgService extends IService<EsShopGoodsImg> {
 
-    /**
-     * 根据分组查询图片
-     *
-     * @param entity
-     * @return
-     */
-    Map<String, Object> selImg(EsShopGoodsImg entity);
 
     /**
      * 删除图片

@@ -1,10 +1,12 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsShopGoodsGroupService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.service.goods.EsShopGoodsGroupService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroup;
 import io.swagger.annotations.Api;
@@ -59,7 +61,9 @@ public class EsShopGoodsGroupController {
     @PostMapping(value = "/goodsLists")
     public Object goodsLists(EsShopGoodsGroup entity) {
         try {
-            return new CommonResult().success(shopGoodsGroupService.goodsgrouplist(entity));
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+
+            return new CommonResult().success(PageInfo.of(shopGoodsGroupService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("根据名称查询所有商品分组列表：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -165,7 +169,7 @@ public class EsShopGoodsGroupController {
         try {
             EsShopGoodsGroup group = new EsShopGoodsGroup();
             group.setStatus(1);
-            return new CommonResult().success("success", shopGoodsGroupService.selectList(new QueryWrapper<>(group)));
+            return new CommonResult().success("success", shopGoodsGroupService.list(new QueryWrapper<>(group)));
         } catch (Exception e) {
             log.error("查询所有已启用分组：%s", e.getMessage(), e);
             return new CommonResult().failed();

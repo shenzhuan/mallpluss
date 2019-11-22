@@ -1,6 +1,6 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.vo.order.EsShopCustAppletParam;
+import com.mei.zhuang.vo.order.EsShopCustAppletParam;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.order.EsShopCustomizedApplet;
 

@@ -1,16 +1,16 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.utils.ImgBase64Util;
-import com.arvato.service.marking.api.service.EsMemberActivatyRecordService;
-import com.arvato.service.marking.api.service.EsShopActivityService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsMemberActivatyRecord;
 import com.mei.zhuang.entity.marking.EsShopActivity;
 import com.mei.zhuang.entity.marking.EsShopActivityPrize;
+import com.mei.zhuang.service.marking.EsMemberActivatyRecordService;
+import com.mei.zhuang.service.marking.EsShopActivityService;
+import com.mei.zhuang.utils.ImgBase64Util;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -187,7 +187,7 @@ public class EsShopActivityController {
             @SuppressWarnings("resource")
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("用户抽奖记录列表");
-            List<EsMemberActivatyRecord> list = esMemberActivatyRecordService.selectList(new QueryWrapper<>(entity));
+            List<EsMemberActivatyRecord> list = esMemberActivatyRecordService.list(new QueryWrapper<>(entity));
             // 新增数据行，并且设置单元格数据
             int rowNum = 1;
             String[] headers = {  "编号", "时间", "昵称", "openid","状态","奖项","奖品" };

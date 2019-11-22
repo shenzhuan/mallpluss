@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.common.dto.SysTenantPagingData;
-import com.arvato.common.dto.SysTenantPagingParam;
-import com.arvato.common.msg.DictData;
-import com.arvato.common.orm.model.SysTenant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mei.zhuang.entity.sys.SysTenant;
+import com.mei.zhuang.vo.DictData;
+import com.mei.zhuang.vo.sys.SysTenantPagingData;
+import com.mei.zhuang.vo.sys.SysTenantPagingParam;
 
 import java.util.List;
 

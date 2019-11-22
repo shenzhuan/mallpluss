@@ -1,19 +1,18 @@
 package com.mei.zhuang.service.marking.impl;
 
 
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.feigin.GoodsServiceFegin;
-import com.arvato.service.marking.api.orm.dao.CoreSettingsMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopGoodsRulesMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopGoodsRulesSpecMapper;
-import com.arvato.service.marking.api.service.RulesSpecService;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopGoodsRulesMapper;
+import com.mei.zhuang.dao.marking.EsShopGoodsRulesSpecMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.marking.EsShopGoodsRules;
 import com.mei.zhuang.entity.marking.EsShopGoodsRulesSpec;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.service.marking.RulesSpecService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +35,9 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
     private EsShopGoodsRulesMapper rulesMapper;
     @Resource
     private EsShopGoodsRulesSpecMapper rulesSpecMapper;
+
     @Resource
-    private CoreSettingsMapper coreSettingsMapper;
-    @Resource
-    private GoodsServiceFegin goodsServiceFegin;
+    private EsShopGoodsService goodsService;
 
     @Transactional
     @Override
@@ -50,7 +48,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
         EsShopGoods goods = new EsShopGoods();
         goods.setTitle(entity.getGoodsname());
         goods.setId(entity.getGoodsId());
-        goodsServiceFegin.updateGoodsById(goods);
+        goodsService.updateById(goods);
         rulesSpecMapper.delete(new QueryWrapper<EsShopGoodsRulesSpec>().eq("rules_id", entity.getId()));
         rules(entity);
         return true;
@@ -58,7 +56,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopGoodsRules entitys) throws Exception {
+    public boolean save(EsShopGoodsRules entitys)  {
         EsShopGoods entity = new EsShopGoods();
         entity.setTitle(entitys.getGoodsname());
         entity.setType(4);
@@ -68,8 +66,8 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
         entity.setPutawayTime(System.currentTimeMillis()+"");
         entity.setStatus(-2);
         entity.setIsPutaway(1);
-        long goodsid = goodsServiceFegin.addGoods(entity);
-        entitys.setGoodsId(goodsid);
+         goodsService.save(entity);
+        entitys.setGoodsId(entity.getId());
         entitys.setCreateTime(new Date());
         rulesMapper.insert(entitys);
         rules(entitys);
@@ -93,7 +91,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
         String str[] = id.split(",");
         for (String st : str) {
             EsShopGoodsRules esShopGoodsRules = rulesMapper.selectById(Long.parseLong(st));
-            goodsServiceFegin.deleteGoodsById(esShopGoodsRules.getGoodsId());
+            goodsService.removeById(esShopGoodsRules.getGoodsId());
             esShopGoodsRules.setAccording(2);
             rulesMapper.updateById(esShopGoodsRules);
             rulesSpecMapper.delete(new QueryWrapper<EsShopGoodsRulesSpec>().eq("rules_id", Long.parseLong(st)));
@@ -129,7 +127,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
         for (EsShopCart cart1 : cartList) {
             EsShopGoodsRules query = new EsShopGoodsRules();
             query.setGoodsId(cart1.getGoodsId());
-            EsShopGoodsRules rules = rulesMapper.selectOne(query);
+            EsShopGoodsRules rules = rulesMapper.selectOne(new QueryWrapper<>(query));
             if (rules != null) {
                 count++;
                 List<EsShopGoodsRulesSpec> sepcs = rulesSpecMapper.selectList(new QueryWrapper<EsShopGoodsRulesSpec>().eq("rules_id", rules.getId()));

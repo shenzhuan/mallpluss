@@ -2,16 +2,16 @@ package com.mei.zhuang.controller.member;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.member.api.service.ISmsService;
-import com.arvato.service.member.api.vo.SmsParam;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.member.EsCoreSms;
 import com.mei.zhuang.entity.member.EsCoreSmsTemplate;
 import com.mei.zhuang.entity.member.SmsVariable;
+import com.mei.zhuang.service.member.ISmsService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.SmsParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -75,7 +75,7 @@ public class SmsController {
             }
             entity.setIsDelete(0);
             entity.setCreateTime(new Date());
-            if (smsService.insert(entity)) {
+            if (smsService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -110,7 +110,7 @@ public class SmsController {
             if(entity.getSmsName() == null){
                 return new CommonResult().paramFailed("短信模板名称不能为空");
             }
-            List<EsCoreSmsTemplate> list = smsService.selectList(new QueryWrapper<>(new EsCoreSmsTemplate())
+            List<EsCoreSmsTemplate> list = smsService.list(new QueryWrapper<>(new EsCoreSmsTemplate())
                     .eq("sms_name", entity.getSmsName()));
             for (EsCoreSmsTemplate template : list) {
                 if(template.getId().intValue() != entity.getId().intValue() && template.getSmsName().equals(entity.getSmsName())){
@@ -124,7 +124,7 @@ public class SmsController {
                 if(varList != null && varList.size() !=0 ){
                     SmsVariable smsVariable = varList.get(0);
                     //查找出 同类别
-                    EsCoreSmsTemplate template = this.smsService.selectOne(new QueryWrapper<>(new EsCoreSmsTemplate())
+                    EsCoreSmsTemplate template = this.smsService.getOne(new QueryWrapper<>(new EsCoreSmsTemplate())
                             .eq("template_type", smsVariable.getSmsTypeFunctionId())
                             .eq("status", 1)
                             .eq("is_delete", 0)
@@ -151,7 +151,7 @@ public class SmsController {
     @PostMapping("/selectById")
     public Object selectById(@ApiParam("短信模板id") @RequestParam Long id) {
         try {
-            EsCoreSmsTemplate shop = smsService.selectById(id);
+            EsCoreSmsTemplate shop = smsService.getById(id);
             if (shop == null) {
                 return new CommonResult().success("没有此id的数据");
             }

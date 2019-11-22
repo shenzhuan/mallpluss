@@ -1,9 +1,10 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.admin.dto.DeptDictData;
-import com.arvato.admin.vo.ZTreeNode;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.sys.CrmSysDept;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.DeptDictData;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

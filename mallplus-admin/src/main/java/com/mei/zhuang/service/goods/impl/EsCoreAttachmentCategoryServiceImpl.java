@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsCoreAttachmentCategoryMapper;
-import com.arvato.service.goods.api.service.EsCoreAttachmentCategoryService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsCoreAttachmentCategoryMapper;
 import com.mei.zhuang.entity.goods.EsCoreAttachmentCategory;
+import com.mei.zhuang.service.goods.EsCoreAttachmentCategoryService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

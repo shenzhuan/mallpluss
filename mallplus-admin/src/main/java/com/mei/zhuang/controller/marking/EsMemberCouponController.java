@@ -1,11 +1,12 @@
 package com.mei.zhuang.controller.marking;
 
-import com.arvato.service.marking.api.biz.ExcelExportUtil;
-import com.arvato.service.marking.api.service.MemberCouponService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.ExcelExportUtil;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
+import com.mei.zhuang.service.marking.MemberCouponService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,14 +37,7 @@ public class EsMemberCouponController {
                        @RequestParam(value = "size", defaultValue = "10") Integer size) {
         try {
             PageHelper.startPage(current, size);
-            List<Map<String, Object>> maps = memberCouponService.selectMemberCoupon(entity);
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", maps);
-            map.put("current", current);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(memberCouponService.selectMemberCoupon(entity)));
         } catch (Exception e) {
             log.error("查询发放记录：%s", e.getMessage(), e);
             return new CommonResult().failed();

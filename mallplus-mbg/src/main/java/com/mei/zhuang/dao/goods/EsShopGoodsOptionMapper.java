@@ -24,7 +24,7 @@ public interface EsShopGoodsOptionMapper extends BaseMapper<EsShopGoodsOption> {
 
     List<EsShopGoodsOption> selectOption(@Param("goodsId") Long goodsId);
 
-    List<EsShopGoodsOption> selPageList(Pagination page, EsShopGoodsOption entity);
+  //  List<EsShopGoodsOption> selPageList(Pagination page, EsShopGoodsOption entity);
 
     EsShopGoodsOption selOption(EsShopGoodsOption option);
 

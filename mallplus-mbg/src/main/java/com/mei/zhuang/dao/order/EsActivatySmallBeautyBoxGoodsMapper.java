@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EsActivatySmallBeautyBoxGoodsMapper extends BaseMapper<EsActivatySmallBeautyBoxGoods> {
 
-    List<EsActivatySmallBeautyBoxGoods> selList(Pagination page, EsActivatySmallBeautyBoxGoods entity);
+  //  List<EsActivatySmallBeautyBoxGoods> selList(Pagination page, EsActivatySmallBeautyBoxGoods entity);
 
     int count(EsActivatySmallBeautyBoxGoods entity);
 

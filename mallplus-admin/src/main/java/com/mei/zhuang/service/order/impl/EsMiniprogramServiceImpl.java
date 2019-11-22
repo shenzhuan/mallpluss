@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.order.impl;
 
 import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.service.order.api.orm.dao.EsMiniprogramMapper;
-import com.arvato.service.order.api.service.EsMiniprogramService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsMiniprogramMapper;
+import com.mei.zhuang.service.order.EsMiniprogramService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 @Service

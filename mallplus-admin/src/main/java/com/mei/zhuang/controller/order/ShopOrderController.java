@@ -1,31 +1,27 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.ec.common.utils.EntityInfoUtils;
-import com.arvato.ec.common.utils.RegexUtils;
-import com.arvato.ec.common.vo.data.customer.CustTendencyParam;
-import com.arvato.ec.common.vo.data.customer.CustTradeSuccessParam;
-import com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam;
-import com.arvato.ec.common.vo.data.goods.GoodsTrendMapParam;
-import com.arvato.ec.common.vo.data.trade.OrderCustTotalVo;
-import com.arvato.ec.common.vo.order.ExportParam;
-import com.arvato.ec.common.vo.order.OrderParam;
-import com.arvato.ec.common.vo.order.UserOrderDetail;
-import com.arvato.service.order.api.constant.OrderConstant;
-import com.arvato.service.order.api.enums.OrderStatus;
-import com.arvato.service.order.api.service.ShopDeliveryService;
-import com.arvato.service.order.api.service.ShopOrderGoodsService;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.constant.OrderConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsDeliveryAddresser;
 import com.mei.zhuang.entity.order.EsShopOrder;
 import com.mei.zhuang.entity.order.EsShopOrderBatchSendDetail;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.enums.OrderStatus;
+import com.mei.zhuang.service.order.ShopDeliveryService;
+import com.mei.zhuang.service.order.ShopOrderGoodsService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.customer.CustTendencyParam;
+import com.mei.zhuang.vo.data.customer.CustTradeSuccessParam;
+import com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam;
+import com.mei.zhuang.vo.data.goods.GoodsTrendMapParam;
+import com.mei.zhuang.vo.data.trade.OrderCustTotalVo;
+import com.mei.zhuang.vo.order.ExportParam;
+import com.mei.zhuang.vo.order.OrderParam;
+import com.mei.zhuang.vo.order.UserOrderDetail;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -93,7 +88,7 @@ public class ShopOrderController {
             if (ValidatorUtils.empty(remark)) {
                 return new CommonResult().paramFailed("订单备注 is empty");
             }
-            EsShopOrder newE = shopOrderService.selectById(id);
+            EsShopOrder newE = shopOrderService.getById(id);
             if(newE.getRemarkBuyer() != null){
                 newE.setRemarkBuyer(newE.getRemarkBuyer() + "|" + remark);
             }else{
@@ -122,7 +117,7 @@ public class ShopOrderController {
             if (status == null) {
                 return new CommonResult().paramFailed("订单状态不能为空");
             }
-            if(shopOrderService.selectById(id)==null){
+            if(shopOrderService.getById(id)==null){
                 return new CommonResult().failed("不存在id为{"+id+"}的订单");
             }
 
@@ -149,7 +144,7 @@ public class ShopOrderController {
             if (price.compareTo(BigDecimal.ZERO) <= 0) {
                 return new CommonResult().paramFailed("订单价格 不能为0或者是负数");
             }
-            EsShopOrder newE = shopOrderService.selectById(id);
+            EsShopOrder newE = shopOrderService.getById(id);
             if (newE.getStatus() != OrderStatus.INIT.getValue()) {
                 return new CommonResult().paramFailed("订单已支付，不能修改价格");
             }
@@ -172,7 +167,7 @@ public class ShopOrderController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("订单id is empty");
             }
-            EsShopOrder newE = shopOrderService.selectById(id);
+            EsShopOrder newE = shopOrderService.getById(id);
             if (newE.getStatus() != OrderStatus.INIT.getValue()) {
                 return new CommonResult().paramFailed("订单已支付，不能关闭");
             }
@@ -242,7 +237,7 @@ public class ShopOrderController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("订单id is empty");
             }
-            EsShopOrder order = shopOrderService.selectById(id);
+            EsShopOrder order = shopOrderService.getById(id);
             if (!ValidatorUtils.empty(order)) {
                 return new CommonResult().success(order);
             } else {
@@ -263,7 +258,7 @@ public class ShopOrderController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("订单id is empty");
             }
-            if (ValidatorUtils.empty(shopOrderService.selectById(id))) {
+            if (ValidatorUtils.empty(shopOrderService.getById(id))) {
                 return new CommonResult().failed("沒有此id：" + id + "的数据");
             }
             return new CommonResult().success(shopOrderService.detail(id));
@@ -284,7 +279,7 @@ public class ShopOrderController {
             }
 
             //业务处理
-            EsShopOrder tempOrder = shopOrderService.selectById(orderBatchSendDetail.getOrderId());
+            EsShopOrder tempOrder = shopOrderService.getById(orderBatchSendDetail.getOrderId());
             if(tempOrder == null){
                 return new CommonResult().failed("不存在id为{"+orderBatchSendDetail.getOrderId()+"}的订单");
             }
@@ -375,7 +370,7 @@ public class ShopOrderController {
     @ResponseBody
     public Object cancleDelivery(@ApiParam("订单id") @RequestParam Long id,
                                  @ApiParam(value = "订单备注", defaultValue = "我就是想取消") @RequestParam String remark) {
-        EsShopOrder order = shopOrderService.selectById(id);
+        EsShopOrder order = shopOrderService.getById(id);
         if(order == null){
             return new CommonResult().paramFailed("没有找到id为{"+id+"}的订单");
         }
@@ -428,7 +423,7 @@ public class ShopOrderController {
 
         */
 
-        /*EsShopOrder order = shopOrderService.selectById(orderBatchSendDetail.getOrderId());
+        /*EsShopOrder order = shopOrderService.getById(orderBatchSendDetail.getOrderId());
         if (order.getStatus() != OrderStatus.DELIVERED.getValue()) {
             return new CommonResult().paramFailed("已发货订单的物流信息才能修改");
         }
@@ -496,9 +491,9 @@ public class ShopOrderController {
             if (ValidatorUtils.empty(orderId)) {
                 return new CommonResult().paramFailed("orderId is empty");
             }
-            EsShopOrder order = shopOrderService.selectById(orderId);
+            EsShopOrder order = shopOrderService.getById(orderId);
             if (order != null) {
-                EsDeliveryAddresser esDeliveryAddresser = shopDeliveryService.selectById(order.getAddressId());
+                EsDeliveryAddresser esDeliveryAddresser = shopDeliveryService.getById(order.getAddressId());
                 if (esDeliveryAddresser != null) {
                     return new CommonResult().success(esDeliveryAddresser);
                 } else {
@@ -592,25 +587,14 @@ public class ShopOrderController {
     @ApiOperation("根据商品分析条件获取订单数据")
     @PostMapping("/selOrderByGoods")
     public List<EsShopOrder> selOrderListByGoodsAnay(@RequestBody GoodsAnalyzeParam param) {
-        //条件
-        QueryWrapper<EsShopOrder> condition = new QueryWrapper();
-        condition.notIn("status", OrderStatus.INIT.getValue(), OrderStatus.CLOSED.getValue());
-        if (ValidatorUtils.notEmpty(param.getStartTime()))
-            condition.ge("create_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)));
-        if (ValidatorUtils.notEmpty(param.getEndTime()))
-            condition.le("create_time", Timestamp.valueOf(param.getEndTime()));
-        if (ValidatorUtils.notEmpty(param.getSource()))
-            condition.eq("soure_type", param.getSource());
-       // condition.eq("shop_id", param.getShopId() != null ? param.getShopId() : 1);
-        System.out.println(condition+"数据");
-        return shopOrderService.selectList(condition);
+        return shopOrderService.selOrderListByGoodsAnay(param);
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "查找订单表字段信息")
     @ApiOperation("获得新用户订单数据")
     @PostMapping("/getNewCustOrderList")
     @ResponseBody
-    public List<EsShopOrder> getNewCustOrderList(@RequestBody  CustTendencyParam param) {
+    public List<EsShopOrder> getNewCustOrderList(@RequestBody CustTendencyParam param) {
         return shopOrderService.getNewCustOrderList(param);
     }
 

@@ -2,14 +2,15 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.service.DiscountService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopDiscount;
 import com.mei.zhuang.entity.marking.EsShopDiscountRule;
+import com.mei.zhuang.service.marking.DiscountService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 限时折扣管理
@@ -47,14 +46,7 @@ public class DiscountController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopDiscount> esShopDiscount = discountService.slelectDiscount();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopDiscount);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(discountService.slelectDiscount()));
         } catch (Exception e) {
             log.error("根据条件查询所有限时折扣列表：%s", e.getMessage(), e);
         }
@@ -109,7 +101,7 @@ public class DiscountController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("限时折扣id");
             }
-            EsShopDiscount manjian = discountService.selectById(id);
+            EsShopDiscount manjian = discountService.getById(id);
             if (discountService.deleteid(id) > 0) {
                 return new CommonResult().success();
             }
@@ -128,7 +120,7 @@ public class DiscountController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("限时折扣id");
             }
-            EsShopDiscount coupon = discountService.selectById(id);
+            EsShopDiscount coupon = discountService.getById(id);
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询限时折扣明细：%s", e.getMessage(), e);

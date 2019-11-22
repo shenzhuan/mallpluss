@@ -1,26 +1,26 @@
 package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.MenuBiz;
-import com.arvato.admin.vo.ZTreeNode;
-import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.file_manage.util.BizResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.constant.CommonConstant;
-import com.arvato.utils.util.ToolUtil;
+import com.mei.zhuang.constant.CommonConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmSysMenu;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.MenuBiz;
+import com.mei.zhuang.util.ToolUtil;
+import com.mei.zhuang.vo.BaseResponse;
+import com.mei.zhuang.vo.BizResult;
+import com.mei.zhuang.vo.ZTreeNode;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Api(value = "系统菜单", description = "", tags = {"系统菜单管理"})
 @RestController
 @RequestMapping("menu")
 public class MenuController extends BaseController {
-    @Autowired
+    @Resource
     private MenuBiz menuBiz;
 
     @SysLog(MODULE = "系统菜单", REMARK = "初始化数据")

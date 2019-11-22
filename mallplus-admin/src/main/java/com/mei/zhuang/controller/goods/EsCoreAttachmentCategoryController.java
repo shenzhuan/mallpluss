@@ -1,9 +1,9 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsCoreAttachmentCategoryService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.mei.zhuang.service.goods.EsCoreAttachmentCategoryService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsCoreAttachmentCategory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,7 +46,7 @@ public class EsCoreAttachmentCategoryController {
             if(ValidatorUtils.empty(entity.getName())){
                 return new CommonResult().failed("分组名称不得为空");
             }
-            return new CommonResult().success("success",coreAttachmentCategoryService.insert(entity));
+            return new CommonResult().success("success",coreAttachmentCategoryService.save(entity));
         }catch (Exception e){
             log.error("新增分组列表异常：",e);
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class EsCoreAttachmentCategoryController {
             if(id!=null && id==1){
                 return new CommonResult().failed("默认分组不得删除");
             }
-            return new CommonResult().success("success",coreAttachmentCategoryService.deleteById(id));
+            return new CommonResult().success("success",coreAttachmentCategoryService.removeById(id));
         }catch (Exception e){
             log.error("删除分组异常：",e);
             e.printStackTrace();

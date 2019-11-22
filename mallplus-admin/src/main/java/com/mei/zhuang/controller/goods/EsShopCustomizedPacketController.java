@@ -1,9 +1,12 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsShopCustomizedPacketServer;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.service.goods.EsShopCustomizedPacketServer;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsShopCustomizedPacket;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +38,9 @@ public class EsShopCustomizedPacketController {
             if (ValidatorUtils.empty(entity.getType())) {
                 return new CommonResult().failed("请指定类型");
             }
-            return new CommonResult().success("success", esShopCustomizedPacketServer.selPageList(entity));
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+            // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
+            return new CommonResult().success(PageInfo.of(esShopCustomizedPacketServer.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("查询套装包装列表异常：", e);
             return new CommonResult().failed();
@@ -55,7 +60,7 @@ public class EsShopCustomizedPacketController {
             }
             String time = sdf.format(new Date());
             entity.setCreateTime(sdf.parse(time));
-            return new CommonResult().success("success", esShopCustomizedPacketServer.insert(entity));
+            return new CommonResult().success("success", esShopCustomizedPacketServer.save(entity));
         } catch (Exception e) {
             log.error("查询新增套装包装异常：", e);
             return new CommonResult().failed();
@@ -70,7 +75,7 @@ public class EsShopCustomizedPacketController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success", esShopCustomizedPacketServer.selectById(id));
+            return new CommonResult().success("success", esShopCustomizedPacketServer.getById(id));
         } catch (Exception e) {
             log.error("查询查询套装包装详情异常：", e);
             return new CommonResult().failed();
@@ -100,7 +105,7 @@ public class EsShopCustomizedPacketController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success", esShopCustomizedPacketServer.deleteById(id));
+            return new CommonResult().success("success", esShopCustomizedPacketServer.removeById(id));
         } catch (Exception e) {
             log.error("删除套装包装异常：", e);
             return new CommonResult().failed();

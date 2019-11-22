@@ -1,9 +1,10 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.vo.data.trade.DataViewVo;
-import com.arvato.ec.common.vo.data.trade.EntityView;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.data.trade.TrendView;
+
+import com.mei.zhuang.vo.data.trade.DataViewVo;
+import com.mei.zhuang.vo.data.trade.EntityView;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.data.trade.TrendView;
 
 import java.util.List;
 import java.util.Map;

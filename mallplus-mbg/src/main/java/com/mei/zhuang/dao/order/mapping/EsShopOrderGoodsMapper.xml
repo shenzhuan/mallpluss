@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper">
+<mapper namespace="com.mei.zhuang.dao.order.EsShopOrderGoodsMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopOrderGoods">
@@ -57,7 +57,7 @@
     </select>
 
 
-    <select id="selOgByCondition" parameterType="com.arvato.ec.common.vo.order.OrderParam" resultType="java.lang.Long">
+    <select id="selOgByCondition" parameterType="com.mei.zhuang.vo.order.OrderParam" resultType="java.lang.Long">
         select DISTINCT(order_id) from es_shop_order_goods where 1=1
         and is_gifts = 0
         <if test="keyType==4">

@@ -1,11 +1,12 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsDecorateTemplateMapper;
-import com.arvato.service.goods.api.orm.dao.EsDecorateTemplatePageMapper;
-import com.arvato.service.goods.api.service.EsDecorateTemplateService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsDecorateTemplateMapper;
+import com.mei.zhuang.dao.goods.EsDecorateTemplatePageMapper;
 import com.mei.zhuang.entity.goods.EsDecorateTemplate;
 import com.mei.zhuang.entity.goods.EsDecorateTemplatePage;
+import com.mei.zhuang.service.goods.EsDecorateTemplateService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class EsDecorateTemplateServiceImpl extends ServiceImpl<EsDecorateTemplat
     private EsDecorateTemplatePageMapper decorateTemplatePageMapper;
 
     @Override
-    public Object save(EsDecorateTemplate entity) {
+    public boolean save(EsDecorateTemplate entity) {
         entity.setCreateTime(new Date());
         entity.setUpdateTime(new Date());
         entity.setType(1);
@@ -39,7 +40,7 @@ public class EsDecorateTemplateServiceImpl extends ServiceImpl<EsDecorateTemplat
         page.setShopId(entity.getShopId());
         page.setTemplateId(entity.getId());
 
-        return decorateTemplatePageMapper.insert(page);
+        return decorateTemplatePageMapper.insert(page)>0;
     }
 
     @Override

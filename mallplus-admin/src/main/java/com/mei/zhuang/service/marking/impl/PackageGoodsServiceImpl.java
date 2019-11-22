@@ -1,11 +1,11 @@
 package com.mei.zhuang.service.marking.impl;
 
 import com.arvato.service.marking.api.feigin.GoodsServiceFegin;
-import com.arvato.service.marking.api.orm.dao.EsShopPackageGoodsMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopPackageGoodsSpecMapper;
-import com.arvato.service.marking.api.service.PackageGoodsService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopPackageGoodsMapper;
+import com.mei.zhuang.dao.marking.EsShopPackageGoodsSpecMapper;
+import com.mei.zhuang.service.marking.PackageGoodsService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.marking.EsShopPackageGoods;
 import com.mei.zhuang.entity.marking.EsShopPackageGoodsSpec;

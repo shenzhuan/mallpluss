@@ -1,26 +1,26 @@
 package com.mei.zhuang.controller.goods;
 
 
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.constant.RedisConstant;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.constant.RedisConstant;
 import com.arvato.service.goods.api.feigin.OrderFegin;
 import com.arvato.service.goods.api.mq.Sender;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsGroupMapMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsOptionMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsCategoryService;
-import com.arvato.service.goods.api.service.EsShopGoodsService;
-import com.arvato.service.goods.api.service.EsShopSkuService;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
+import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.service.goods.EsShopSkuService;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroupMap;
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -52,14 +52,14 @@ public class EsSkuController {
     @Resource
     private OrderFegin orderFegin;
 
-    @Autowired
+    @Resource
     private Sender sender;
 
     @SysLog(MODULE = "商品规格管理", REMARK = "查询sku明细")
     @ApiOperation("查询sku明细")
     @PostMapping(value = "/detail")
     public EsShopGoodsOption getSkuById(@RequestParam("optionId") Long optionId) {
-        return skuService.selectById(optionId);
+        return skuService.getById(optionId);
     }
 
     @SysLog(MODULE = "商品规格管理", REMARK = "查询商品明细")
@@ -114,7 +114,7 @@ public class EsSkuController {
     @ApiOperation("添加商品")
     @PostMapping(value = "/addGoods")
     public long addGoods(@RequestBody EsShopGoods entity) {
-        shopGoodsService.insert(entity);
+        shopGoodsService.save(entity);
         return entity.getId();
     }
 

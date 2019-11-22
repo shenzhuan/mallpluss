@@ -1,13 +1,11 @@
 package com.mei.zhuang.service.marking;
 
 
-import com.arvato.ec.common.vo.marking.CodeResult;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopCodeGift;
 import com.mei.zhuang.entity.marking.EsShopCodeGiftRule;
-
-import java.util.Map;
+import com.mei.zhuang.vo.marking.CodeResult;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 
 /**
  * @Auther: shenzhuan
@@ -15,7 +13,7 @@ import java.util.Map;
  * @Description:
  */
 public interface CodeGiftService extends IService<EsShopCodeGift> {
-    boolean save(EsShopCodeGift entity) throws Exception;
+    boolean save(EsShopCodeGift entity) ;
 
     int updateShowStatus(Long ids, Integer status);
 
@@ -29,7 +27,7 @@ public interface CodeGiftService extends IService<EsShopCodeGift> {
     EsShopCodeGiftRule codegif(long codeGiftId);
     EsShopCodeGiftRule codegif2(String code);
 
-    Map<String,Object> selPageList(EsShopCodeGift entity);
+
 
     public CodeResult getCodeGoods(CartMarkingVo vo);
     public  void updateCodeStatus(String code, Integer status);

@@ -1,16 +1,16 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
+import com.mei.zhuang.utils.Weekutils;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopFullGiftGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopFullGiftMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopFullGiftRuleMapper;
-import com.arvato.service.marking.api.service.FullGiftService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.dao.marking.EsShopFullGiftGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopFullGiftMapper;
+import com.mei.zhuang.dao.marking.EsShopFullGiftRuleMapper;
+import com.mei.zhuang.service.marking.FullGiftService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
 import com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFullGiftRule;

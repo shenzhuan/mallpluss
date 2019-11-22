@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.CrmStoreMapper;
-import com.arvato.admin.service.ICrmStoreService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmStoreMapper;
+import com.mei.zhuang.service.sys.ICrmStoreService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.sys.CrmStore;
 import org.springframework.stereotype.Service;
 

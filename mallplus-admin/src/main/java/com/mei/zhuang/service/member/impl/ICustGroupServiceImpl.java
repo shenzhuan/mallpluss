@@ -3,19 +3,15 @@ package com.mei.zhuang.service.member.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.utils.DateCalendarUtils;
-import com.arvato.ec.common.utils.WX_HttpsUtil;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.data.customer.*;
-import com.arvato.ec.common.vo.data.trade.OrderCustTotalVo;
-import com.arvato.service.member.api.feigin.OrderFeigin;
-import com.arvato.service.member.api.service.EsMemberService;
-import com.arvato.service.member.api.service.ICustGroupService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
 import com.mei.zhuang.entity.order.EsShopOrder;
+import com.mei.zhuang.service.member.EsMemberService;
+import com.mei.zhuang.service.member.ICustGroupService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.data.customer.*;
+import com.mei.zhuang.vo.data.trade.OrderCustTotalVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,9 +44,9 @@ public class ICustGroupServiceImpl implements ICustGroupService {
 
     @Resource
     private EsMemberService memberService;
-
     @Resource
-    private OrderFeigin orderFeigin;
+    private ShopOrderService orderService;
+
 
 
     @Override
@@ -268,8 +264,8 @@ public class ICustGroupServiceImpl implements ICustGroupService {
 
         List<CustTendencyInfoVo> data = null;//最终返回数据
 
-        List<EsShopOrder> newOrderList = orderFeigin.getNewCustOrderList(param);
-        List<EsShopOrder> oldOrderList = orderFeigin.getOldCustOrderList(param);//接入订单老客户数据
+        List<EsShopOrder> newOrderList = orderService.getNewCustOrderList(param);
+        List<EsShopOrder> oldOrderList = orderService.getOldCustOrderList(param);//接入订单老客户数据
 
 //        private Integer dataType;//1.成交次数 2. 支付订单数 3. 客单价 4.支付金额
         Integer dataType = param.getDataType();
@@ -545,14 +541,14 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         CustTradeSuccessInfoVo newCust = null;
         CustTradeSuccessInfoVo oldCust = null;
 
-        List<EsShopOrder> allOrderList = orderFeigin.getAllOrderInfo(param);//待接入订单数据
-        List<EsShopOrder> newOrderList = orderFeigin.getNewOrderInfo(param);//待接入订单数据
-        List<EsShopOrder> oldOrderList = orderFeigin.getOldOrderInfo(param);//待接入订单数据
+        List<EsShopOrder> allOrderList = orderService.getAllOrderInfo(param);//待接入订单数据
+        List<EsShopOrder> newOrderList = orderService.getNewOrderInfo(param);//待接入订单数据
+        List<EsShopOrder> oldOrderList = orderService.getOldOrderInfo(param);//待接入订单数据
         all = this.getTradedInfoByOrderList(allOrderList);
         newCust = this.getTradedInfoByOrderList(newOrderList);
         oldCust = this.getTradedInfoByOrderList(oldOrderList);
 
-        OrderCustTotalVo orderCustTotalVo = orderFeigin.getCustOrderInfoByCon(param);//待接入订单数据
+        OrderCustTotalVo orderCustTotalVo = orderService.getCustOrderInfoByCon(param);//待接入订单数据
 
         all.setTradeSuccessCount(orderCustTotalVo.getCount());
         all.setCustCountToScale(100);

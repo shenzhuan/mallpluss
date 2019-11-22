@@ -1,20 +1,21 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopSingleGiftGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopSingleGiftMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopSingleGiftRuleMapper;
-import com.arvato.service.marking.api.service.SingleGiftService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopSingleGiftGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopSingleGiftMapper;
+import com.mei.zhuang.dao.marking.EsShopSingleGiftRuleMapper;
 import com.mei.zhuang.entity.marking.EsShopSingleGift;
 import com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopSingleGiftRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.SingleGiftService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,7 +105,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                         }
                                         EsShopSingleGiftRule q = new EsShopSingleGiftRule();
                                         q.setSingleGiftId(manjian.getId());
-                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(q);
+                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(new QueryWrapper<>(q));
                                         if (ValidatorUtils.notEmpty(rule.getMaxAmount()) && rule.getMaxAmount() > 0) {
                                             if (count1 > rule.getMaxAmount()) {
                                                 count1 = rule.getMaxAmount();
@@ -115,7 +116,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                     if (manjian.getType() == 3) {
                                         EsShopSingleGiftRule q = new EsShopSingleGiftRule();
                                         q.setSingleGiftId(manjian.getId());
-                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(q);
+                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(new QueryWrapper<>(q));
                                         int count2 = 0;
                                         for (EsShopCart cart : singCartList) {
                                             if (cart.getTotal() >= rule.getAlreadAmount()) {
@@ -176,7 +177,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                     if (manjian.getType() == 2) {
                                         EsShopSingleGiftRule q = new EsShopSingleGiftRule();
                                         q.setSingleGiftId(manjian.getId());
-                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(q);
+                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(new QueryWrapper<>(q));
                                         int count1 = 0;
                                         for (EsShopCart cart1 : singCartList1) {
                                             count1 = count1 + cart1.getTotal();
@@ -203,7 +204,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                     if (manjian.getType() == 3) {
                                         EsShopSingleGiftRule q = new EsShopSingleGiftRule();
                                         q.setSingleGiftId(manjian.getId());
-                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(q);
+                                        EsShopSingleGiftRule rule = singleGiftRuleMapper.selectOne(new QueryWrapper<>(q));
                                         int count1 = 0;
                                         for (EsShopCart cart1 : singCartList1) {
                                             if (cart1.getTotal() >= rule.getAlreadAmount()) {
@@ -348,7 +349,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
 
     @Override
     public List<EsShopSingleGift> slelectPurchase() {
-        return singleGiftMapper.selectList(new QueryWrapper<EsShopSingleGift>().orderBy("id", false));
+        return singleGiftMapper.selectList(new QueryWrapper<EsShopSingleGift>().orderByDesc("id"));
     }
 
     public void datetime(EsShopSingleGift en) throws Exception {
@@ -361,12 +362,16 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopSingleGift entity) throws Exception {
+    public boolean save(EsShopSingleGift entity)  {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
-        datetime((entity));
+        try {
+            datetime((entity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         singleGiftMapper.insert(entity);
         addExtrInfo(entity);
         return true;

@@ -2,15 +2,16 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.service.SingleGiftService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopSingleGift;
 import com.mei.zhuang.entity.marking.EsShopSingleGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopSingleGiftRule;
+import com.mei.zhuang.service.marking.SingleGiftService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 单品赠礼管理
@@ -48,14 +47,8 @@ public class SingleGiftController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopSingleGift> esShopDiscount = singleGiftService.slelectPurchase();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopDiscount);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+           // List<EsShopSingleGift> esShopDiscount = singleGiftService.slelectPurchase();
+            return new CommonResult().success(PageInfo.of(singleGiftService.slelectPurchase()));
         } catch (Exception e) {
             log.error("根据条件查询所有单品赠礼列表：%s", e.getMessage(), e);
         }
@@ -136,7 +129,7 @@ public class SingleGiftController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("单品赠礼id");
             }
-            return new CommonResult().success(singleGiftService.selectById(id));
+            return new CommonResult().success(singleGiftService.getById(id));
         } catch (Exception e) {
             log.error("查询单品赠礼明细：%s", e.getMessage(), e);
             return new CommonResult().failed();

@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.service.order.api.orm.dao.EsDeliveryAddresserMapper;
-import com.arvato.service.order.api.service.ShopDeliveryService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsDeliveryAddresserMapper;
+import com.mei.zhuang.service.order.ShopDeliveryService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsDeliveryAddresser;
 import org.springframework.stereotype.Service;
 

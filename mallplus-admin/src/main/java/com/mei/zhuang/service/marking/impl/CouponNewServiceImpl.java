@@ -1,16 +1,17 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsShopCouponGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponNewMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponNewRuleMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupGoodsMapper;
-import com.arvato.service.marking.api.service.CouponNewService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopCouponGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponNewMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponNewRuleMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponsTopupGoodsMapper;
 import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCouponNew;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
+import com.mei.zhuang.service.marking.CouponNewService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ import java.util.UUID;
 public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsShopCouponNew> implements CouponNewService {
 
     @Resource
-    private  EsShopCouponNewMapper couponNewMapper;
+    private EsShopCouponNewMapper couponNewMapper;
     @Resource
     private EsShopCouponNewRuleMapper couponNewRuleMapper;
     @Resource
@@ -92,16 +93,20 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCouponNew entity) throws  Exception {
-        if(entity.getStatus()==1){
-            if(entity.getActivityId()==1) {
-                date(entity);
+    public boolean save(EsShopCouponNew entity)  {
+        try {
+            if(entity.getStatus()==1){
+                if(entity.getActivityId()==1) {
+                    date(entity);
+                }
+                String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
+                entity.setCouponNewid(uuid);
+                couponNewMapper.insert(entity);
+                addsave(entity);
             }
-            String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
-            entity.setCouponNewid(uuid);
-            couponNewMapper.insert(entity);
-            addsave(entity);
-            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return true;
 
     }

@@ -1,14 +1,15 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.utils.ImgBase64Util;
-import com.arvato.service.marking.api.service.EsShopShareService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopShare;
 import com.mei.zhuang.entity.marking.EsShopShareMap;
+import com.mei.zhuang.service.marking.EsShopShareService;
+import com.mei.zhuang.utils.ImgBase64Util;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Api(value = "分享助力", description = "", tags = {"分享助力"})
@@ -39,14 +38,7 @@ public class ShareController {
                                       @RequestParam(value = "size", defaultValue = "10") Integer size) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopShare> esShopShares = service.ShareList();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopShares);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(service.ShareList()));
         } catch (Exception e) {
             log.error("根据条件查询分享助力列表：%s", e.getMessage(), e);
         }

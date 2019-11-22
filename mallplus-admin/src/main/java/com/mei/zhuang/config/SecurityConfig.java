@@ -9,7 +9,7 @@ import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysUserVo;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,12 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private ISysUserService sysUserService;
     @Resource
     private SysUserMapper userMapper;
-    @Autowired
+    @Resource
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
-    @Autowired
+    @Resource
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    @Autowired
+    @Resource
     private ApiContext apiContext;
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

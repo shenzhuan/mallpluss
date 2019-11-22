@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.service.order.api.orm.dao.EsCoreLogMapper">
+<mapper namespace="com.mei.zhuang.dao.order.EsCoreLogMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsCoreLog">
@@ -15,7 +15,7 @@
 
     </resultMap>
 
-    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.order.EsCoreLogParam">
+    <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.EsCoreLogParam">
         select * from es_core_log log
         left join es_core_log_type t
         on log.operation_type_id = t.id
@@ -32,7 +32,7 @@
 
     </select>
 
-    <select id="selectLogCount"  parameterType="com.arvato.ec.common.vo.order.EsCoreLogParam" resultType="java.lang.Integer">
+    <select id="selectLogCount"  parameterType="com.mei.zhuang.vo.order.EsCoreLogParam" resultType="java.lang.Integer">
         select count(*) from es_core_log log
         left join es_core_log_type t
         on log.operation_type_id = t.id

@@ -1,9 +1,10 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.CrmMemberMapper;
-import com.arvato.admin.service.ICrmMemberService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmMemberMapper;
 import com.mei.zhuang.entity.sys.CrmMember;
+import com.mei.zhuang.service.sys.ICrmMemberService;
 import org.springframework.stereotype.Service;
 
 /**

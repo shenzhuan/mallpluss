@@ -1,14 +1,14 @@
 package com.mei.zhuang.controller.order;
 
 import com.arvato.service.order.api.feigin.GoodsFegin;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxGiftBoxService;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxGoodsService;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxService;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxGiftBoxService;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxGoodsService;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
 import com.mei.zhuang.entity.member.EsMember;
@@ -67,7 +67,7 @@ public class AppletSmallBeautyBoxController {
             member.setId(entity.getMemberId());
             Long countNum = shopOrderService.selectExist(member);
             if(countNum>0){
-                EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.selectById(countNum);
+                EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.getById(countNum);
                 List<EsActivatySmallBeautyBox> list = esActivatySmallBeautyBoxService.selectList(new QueryWrapper<>());
                 if(list != null && list.size() > 0){
                     for (EsActivatySmallBeautyBox box : list) {
@@ -151,7 +151,7 @@ public class AppletSmallBeautyBoxController {
                     EsActivatySmallBeautyBoxGoods goods = new EsActivatySmallBeautyBoxGoods();
                     goods.setActivatyId(entity.getActivatyId());
                     goods.setProductCode(gb);
-                    lis.add(esActivatySmallBeautyBoxGoodsService.selectOne(new QueryWrapper<>(goods)));
+                    lis.add(esActivatySmallBeautyBoxGoodsService.getOne(new QueryWrapper<>(goods)));
                 }
                 return new CommonResult().success("success",lis);
             }else{
@@ -261,7 +261,7 @@ public class AppletSmallBeautyBoxController {
                 cart.setCreateTime(new Date());
                 cart.setOptionName(goodsOption.getTitle());
                 cart.setOptionId(goodsOption.getId());
-                return new CommonResult().success("success",shopOrderService.inserts(cart));
+                return new CommonResult().success("success",shopOrderService.saves(cart));
             }
             return new CommonResult().success("success",null);
         }catch (Exception e){

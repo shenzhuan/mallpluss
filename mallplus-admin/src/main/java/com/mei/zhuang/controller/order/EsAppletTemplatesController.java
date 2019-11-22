@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.order;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.order.api.service.EsAppletTemplateService;
-import com.arvato.service.order.api.service.impl.WechatApiService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.service.order.EsAppletTemplateService;
+import com.mei.zhuang.service.order.impl.WechatApiService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.order.EsAppletTemplates;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +50,7 @@ public class EsAppletTemplatesController {
             if (ValidatorUtils.empty(entity.getId())) {
                 return new CommonResult().failed("请指定编号");
             }
-            return esAppletTemplateService.selectOne(new QueryWrapper<>(entity));
+            return esAppletTemplateService.getOne(new QueryWrapper<>(entity));
         } catch (Exception e) {
             log.error("查询模版消息库详情接口：%s", e.getMessage(), e);
             return new CommonResult().failed();

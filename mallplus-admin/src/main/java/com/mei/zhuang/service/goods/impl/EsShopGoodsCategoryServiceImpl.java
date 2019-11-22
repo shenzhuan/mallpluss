@@ -1,14 +1,14 @@
 package com.mei.zhuang.service.goods.impl;
 
 
-import com.arvato.service.goods.api.orm.dao.*;
-import com.arvato.service.goods.api.service.EsShopGoodsCategoryService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
+import com.mei.zhuang.dao.goods.*;
 import com.mei.zhuang.entity.goods.*;
+import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,9 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
     @Override
     public Object getGoodsCategoryByPage(EsShopGoodsCategory entity) {
         try {
-            return new CommonResult().success(this.selectPage(new Page<EsShopGoodsCategory>(entity.getCurrent(), entity.getSize()), new QueryWrapper<>(entity)));
+            // page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>()
+            com.baomidou.mybatisplus.extension.plugins.pagination.Page<EsShopGoodsCategory> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(entity.getCurrent(),entity.getSize());
+            return new CommonResult().success(shopGoodsCategoryMapper.selectPage(page, new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有商品分类列表：%s", e.getMessage(), e);
         }
@@ -117,7 +119,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
                 entity.setThumb(entity.getThumb().replace("\"", ""));
             }
 
-            goodsCategoryService.insert(entity);
+            goodsCategoryService.save(entity);
             // 2.添加商品分类
             if (ValidatorUtils.notEmpty(entity.getGoodsIds())) {
                 //添加推荐商品
@@ -283,7 +285,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
                 shopGoodsCateMapMapper.delete(new QueryWrapper<>(querycate));
                 log.info("已从删除商品分类成功！");
             } else {
-                EsShopGoodsCategory esShopGoodsCategory = this.selectById(id);
+                EsShopGoodsCategory esShopGoodsCategory = shopGoodsCategoryMapper.selectById(id);
                 esShopGoodsCategory.setStatus(1);  //1:代表逻辑删除
                 this.updateById(esShopGoodsCategory);
                 log.info("将商品分类移动到回收站！");
@@ -302,7 +304,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("商品分类id");
             }
-            EsShopGoodsCategory coupon = this.selectById(id);
+            EsShopGoodsCategory coupon = shopGoodsCategoryMapper.selectById(id);
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询商品分类明细：%s", e.getMessage(), e);
@@ -351,7 +353,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
         Map<String, Object> result = new HashMap<>();
         Page<EsShopGoods> page = new Page<EsShopGoods>(current, size);
         //查询一级分类，分页查询
-        List<EsShopGoodsCategory> list = shopGoodsCategoryMapper.list(page,current, 5);
+        List<EsShopGoodsCategory> list = shopGoodsCategoryMapper.selectList(new QueryWrapper<>());
         for (EsShopGoodsCategory cate:list) {
             if(cate.getLevel()==0){
                 //查询二级分类

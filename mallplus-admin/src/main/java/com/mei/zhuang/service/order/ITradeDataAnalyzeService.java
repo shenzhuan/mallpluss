@@ -1,9 +1,10 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.data.trade.TradeDataByHeadVo;
-import com.arvato.ec.common.vo.data.trade.TradeDataEntity;
-import com.arvato.ec.common.vo.order.ExportParam;
+
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.data.trade.TradeDataByHeadVo;
+import com.mei.zhuang.vo.data.trade.TradeDataEntity;
+import com.mei.zhuang.vo.order.ExportParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;

@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.order;
 
 import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.service.order.api.orm.dao.EsCoreMessageTemplateMapper;
-import com.arvato.service.order.api.service.EsMiniprogramService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
+import com.mei.zhuang.service.order.EsMiniprogramService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class EsMiniprogramController {
     public Object selectMessageTemplate(EsMiniprogram entity) {
         try {
 
-            EsMiniprogram esMiniprogram = esMiniprogramService.selectOne(new QueryWrapper<>(entity));
+            EsMiniprogram esMiniprogram = esMiniprogramService.getOne(new QueryWrapper<>(entity));
             if (esMiniprogram != null && !esMiniprogram.equals("")) {
                 esMiniprogram.setListOrderTemplate(esCoreMessageTemplateMapper.selectList(new QueryWrapper<>()));
             }
@@ -70,7 +70,7 @@ public class EsMiniprogramController {
             if (ValidatorUtils.empty(entity.getAppSecret())) {
                 return new CommonResult().failed("请指定小程序APPSecret");
             }
-            return new CommonResult().success("success", esMiniprogramService.insert(entity));
+            return new CommonResult().success("success", esMiniprogramService.save(entity));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();

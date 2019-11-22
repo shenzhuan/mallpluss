@@ -1,16 +1,17 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsShopCouponGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponNewRuleMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupGoodsMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupMapper;
-import com.arvato.service.marking.api.service.CouponsTopupService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopCouponGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponNewRuleMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponsTopupGoodsMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponsTopupMapper;
 import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopup;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
+import com.mei.zhuang.service.marking.CouponsTopupService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +37,17 @@ public class CouponsTopupServiceImpl extends ServiceImpl<EsShopCouponsTopupMappe
     @Resource
     private EsShopCouponGoodsMapMapper goodsMapMapper;
 
-    public void datenew(EsShopCouponsTopup ent) throws Exception {
-        if(ent.getActivityStatus()==2){
-            if (ent.getTime() != null && !ent.getTime().equals("")) {
-                String[] times = ent.getTime().split(",");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                ent.setStartingTime(sdf.parse(times[0]));
-                ent.setEndTime(sdf.parse(times[1]));
+    public void datenew(EsShopCouponsTopup ent) {
+        try {
+            if(ent.getActivityStatus()==2){
+                if (ent.getTime() != null && !ent.getTime().equals("")) {
+                    String[] times = ent.getTime().split(",");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    ent.setStartingTime(sdf.parse(times[0]));
+                    ent.setEndTime(sdf.parse(times[1]));
+                }
             }
-        }
-        //活动开启
+            //活动开启
             if(ent.getActivityStatus()==1) {
                 if (ent.getTime() != null && !ent.getTime().equals("")) {
                     String[] times = ent.getTime().split(",");
@@ -60,12 +62,16 @@ public class CouponsTopupServiceImpl extends ServiceImpl<EsShopCouponsTopupMappe
                 }*/
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     //满额发券添加
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCouponsTopup entity) throws Exception {
+    public boolean save(EsShopCouponsTopup entity) {
             datenew(entity);
             String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
             entity.setCouponTopupid(uuid);
@@ -136,7 +142,7 @@ public class CouponsTopupServiceImpl extends ServiceImpl<EsShopCouponsTopupMappe
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addsave(EsShopCouponsTopup entity) throws Exception {
+    public void addsave(EsShopCouponsTopup entity)  {
 
         if(entity.getCouponsList()!=null&&entity.getCouponsList().size()>0){
             for(EsShopCouponNewRule ctr: entity.getCouponsList()){

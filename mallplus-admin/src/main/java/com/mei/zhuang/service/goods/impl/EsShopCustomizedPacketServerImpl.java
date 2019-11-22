@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopCustomizedPacketMapper;
-import com.arvato.service.goods.api.service.EsShopCustomizedPacketServer;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopCustomizedPacketMapper;
+import com.mei.zhuang.service.goods.EsShopCustomizedPacketServer;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopCustomizedPacket;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +19,4 @@ public class EsShopCustomizedPacketServerImpl extends ServiceImpl<EsShopCustomiz
     @Resource
     private EsShopCustomizedPacketMapper esShopCustomizedPacketMapper;
 
-    @Override
-    public Map<String, Object> selPageList(EsShopCustomizedPacket entity) {
-        Map<String,Object> map=new HashMap<String,Object>();
-        Page<EsShopCustomizedPacket> page = this.selectPage(new Page<EsShopCustomizedPacket>(entity.getCurrent(), entity.getSize()), new QueryWrapper<>(entity));
-        List<EsShopCustomizedPacket> list=esShopCustomizedPacketMapper.selPageList(page,entity.getType());
-        Integer count=esShopCustomizedPacketMapper.count(entity.getType());
-        map.put("rows", list);
-        map.put("total", count);
-        map.put("current", entity.getCurrent());
-        map.put("size", entity.getSize());
-        return map;
-    }
 }

@@ -1,9 +1,9 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.service.order.api.service.ShopDeliveryService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.mei.zhuang.service.order.ShopDeliveryService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.order.EsDeliveryAddresser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class ShopDeliveryController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("id is empty");
             }
-            EsDeliveryAddresser entity = deliveryService.selectById(id);
+            EsDeliveryAddresser entity = deliveryService.getById(id);
             if (!ValidatorUtils.empty(entity)) {
                 return new CommonResult().success(entity);
             } else {
@@ -52,7 +52,7 @@ public class ShopDeliveryController {
     @ResponseBody
     public Object saveAddressInfo(@ApiParam("收货地址信息") @RequestBody EsDeliveryAddresser entity) {
         try {
-            if (deliveryService.insert(entity)) {
+            if (deliveryService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {

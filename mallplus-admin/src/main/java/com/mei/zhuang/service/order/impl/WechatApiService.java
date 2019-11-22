@@ -1,15 +1,15 @@
 package com.mei.zhuang.service.order.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.utils.JsonUtils;
-import com.arvato.ec.common.utils.MyX509TrustManager;
-import com.arvato.ec.common.utils.WX_HttpsUtil;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.service.order.api.feigin.MembersFegin;
-import com.arvato.service.order.api.orm.dao.EsAppletTemplatesMapper;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.order.EsAppletTemplatesMapper;
 import com.mei.zhuang.entity.order.EsAppletTemplates;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.utils.JsonUtils;
+import com.mei.zhuang.utils.MyX509TrustManager;
+import com.mei.zhuang.utils.WX_HttpsUtil;
+import com.mei.zhuang.vo.EsMiniprogram;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -52,6 +52,7 @@ public class WechatApiService {
 
     @Resource
     private EsAppletTemplatesMapper templatesMapper;
+
     @Resource
     private MembersFegin membersFegin;
 

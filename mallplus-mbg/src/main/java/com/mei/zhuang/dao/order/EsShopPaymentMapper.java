@@ -1,8 +1,9 @@
 package com.mei.zhuang.dao.order;
 
-import com.arvato.ec.common.vo.order.PaySettingParam;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.order.EsShopPayment;
+import com.mei.zhuang.vo.order.PaySettingParam;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,9 +39,9 @@ import java.util.Map;
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
-    @Autowired
+    @Resource
     private UserDetailsService userDetailsService;
-    @Autowired
+    @Resource
     private JwtTokenUtil jwtTokenUtil;
 
     @Value("${jwt.tokenHeader}")
@@ -203,7 +203,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-        //    fopSystemOperationLogService.insert(sysLog);
+        //    fopSystemOperationLogService.save(sysLog);
         }
     }
 

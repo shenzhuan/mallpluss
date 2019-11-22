@@ -1,13 +1,14 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.service.RulesSpecService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopGoodsRules;
+import com.mei.zhuang.service.marking.RulesSpecService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /*
 商品规则
@@ -43,14 +42,7 @@ public class GoodsRulesController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopGoodsRules> esShopGoodsRules = rulesService.lsitrules(entity.getGoodsname());
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopGoodsRules);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(rulesService.lsitrules(entity.getGoodsname())));
         } catch (Exception e) {
             log.error("根据条件查询所有规则商品列表：%s", e.getMessage(), e);
         }

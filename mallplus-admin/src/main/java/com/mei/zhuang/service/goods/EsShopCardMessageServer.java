@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.goods.EsShopCardMessage;
 
 public interface EsShopCardMessageServer extends IService<EsShopCardMessage> {
 
-    Object save(EsShopCardMessage entity);
+    boolean save(EsShopCardMessage entity);
 
     Object updates(EsShopCardMessage entity);
 

@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.order.impl;
 
 import com.arvato.service.order.api.feigin.MarkingFegin;
-import com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper;
-import com.arvato.service.order.api.orm.dao.EsShopOrderMapper;
-import com.arvato.service.order.api.service.ShopOrderGoodsService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsShopOrderGoodsMapper;
+import com.mei.zhuang.dao.order.EsShopOrderMapper;
+import com.mei.zhuang.service.order.ShopOrderGoodsService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFriendGift;
 import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
 import com.mei.zhuang.entity.order.EsShopOrder;

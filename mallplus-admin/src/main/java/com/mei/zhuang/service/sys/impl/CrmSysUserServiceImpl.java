@@ -1,17 +1,18 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.constant.AdminCommonConstant;
-import com.arvato.admin.orm.dao.CrmSysUserMapper;
-import com.arvato.admin.orm.dao.CrmSysUserRoleMapper;
-import com.arvato.admin.service.ICrmSysUserService;
-import com.arvato.common.annotation.DynamicData;
-import com.arvato.common.dto.DataSourceDto;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.constant.AdminCommonConstant;
+import com.mei.zhuang.dao.sys.CrmSysUserMapper;
+import com.mei.zhuang.dao.sys.CrmSysUserRoleMapper;
 import com.mei.zhuang.entity.sys.CrmSysUser;
 import com.mei.zhuang.entity.sys.CrmSysUserRole;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mei.zhuang.service.sys.ICrmSysUserService;
+import com.mei.zhuang.vo.sys.DataSourceDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -25,13 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class CrmSysUserServiceImpl extends ServiceImpl<CrmSysUserMapper, CrmSysUser> implements ICrmSysUserService {
 
 
-    @Autowired
+    @Resource
     private CrmSysUserMapper crmSysUserMapper;
-    @Autowired
+    @Resource
     private CrmSysUserRoleMapper crmSysUserRoleMapper;
 
     @Transactional
-    @DynamicData
     @Override
     public void createTenantUserInfo(String username, DataSourceDto dataSourceDto){
         CrmSysUser sysUser = new CrmSysUser()

@@ -15,7 +15,7 @@ import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,7 +29,7 @@ import java.util.List;
 @MapperScan("com.zscat.mallplus.*.mapper*")
 public class MybatisPlusConfig {
     private static final List<String> IGNORE_TENANT_TABLES = ConstansValue.IGNORE_TENANT_TABLES;
-    @Autowired
+    @Resource
     private ApiContext apiContext;
 
     /**

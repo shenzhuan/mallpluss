@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.CrmHarassmentRightsMapper;
-import com.arvato.admin.service.ICrmHarassmentRightsService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmHarassmentRightsMapper;
+import com.mei.zhuang.service.sys.ICrmHarassmentRightsService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.sys.CrmHarassmentRights;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.arvato.admin.orm.dao.EsShopNewMapper">
+<mapper namespace="com.mei.zhuang.dao.sys.EsShopNewMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.EsShopNew">
@@ -28,7 +28,7 @@
         <result column="is_show_goods_evaluate" property="isShowGoodsEvaluate" />
     </resultMap>
     <resultMap id="shopItem" type="com.mei.zhuang.entity.sys.EsShopNew" extends="BaseResultMap">
-        <association property="shopBrand" javaType="com.mei.zhuang.entity.sys.EsShopBrand" resultMap="com.arvato.admin.orm.dao.EsShopBrandMapper.BaseResultMap"/>
+        <association property="shopBrand" javaType="com.mei.zhuang.entity.sys.EsShopBrand" resultMap="com.mei.zhuang.dao.sys.EsShopBrandMapper.BaseResultMap"/>
     </resultMap>
 
     <select id="selectShopListByParam" parameterType="com.arvato.admin.vo.ShopParam" resultMap="shopItem">

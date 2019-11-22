@@ -2,11 +2,11 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.marking.api.service.CouponNewService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopCouponNew;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
+import com.mei.zhuang.service.marking.CouponNewService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

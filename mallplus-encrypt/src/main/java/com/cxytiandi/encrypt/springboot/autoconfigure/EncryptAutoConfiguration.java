@@ -4,7 +4,7 @@ import com.cxytiandi.encrypt.algorithm.EncryptAlgorithm;
 import com.cxytiandi.encrypt.core.EncryptionConfig;
 import com.cxytiandi.encrypt.core.EncryptionFilter;
 import com.cxytiandi.encrypt.springboot.init.ApiEncryptDataInit;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -23,10 +23,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(EncryptionConfig.class)
 public class EncryptAutoConfiguration {
 
-    @Autowired
+    @Resource
     private EncryptionConfig encryptionConfig;
 
-    @Autowired(required = false)
+    @Resource(required = false)
     private EncryptAlgorithm encryptAlgorithm;
 
     /**

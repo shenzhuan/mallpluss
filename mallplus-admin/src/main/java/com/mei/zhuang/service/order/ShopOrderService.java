@@ -1,20 +1,21 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.entity.Table.TableColumnInfo;
-import com.arvato.ec.common.vo.data.customer.CustTendencyParam;
-import com.arvato.ec.common.vo.data.customer.CustTradeSuccessParam;
-import com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam;
-import com.arvato.ec.common.vo.data.goods.GoodsTrendMapParam;
-import com.arvato.ec.common.vo.data.trade.OrderCustTotalVo;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.order.*;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.plugins.Page;
+import com.mei.zhuang.entity.Table.TableColumnInfo;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsShopCart;
 import com.mei.zhuang.entity.order.EsShopOrder;
 import com.mei.zhuang.entity.order.EsShopOrderBatchSendDetail;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.vo.data.customer.CustTendencyParam;
+import com.mei.zhuang.vo.data.customer.CustTradeSuccessParam;
+import com.mei.zhuang.vo.data.goods.GoodsAnalyzeParam;
+import com.mei.zhuang.vo.data.goods.GoodsTrendMapParam;
+import com.mei.zhuang.vo.data.trade.OrderCustTotalVo;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.order.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -39,8 +40,8 @@ public interface ShopOrderService extends IService<EsShopOrder> {
     EsShopOrder detail(Long id);
 
     OrderDetail orderDetail(Long id);
-
     Page<EsShopOrder> selectPageExt(OrderParam entity);
+    Page<EsShopOrder> selectPageExtByApplet(AppletOrderParam appletOrderParam);
 
     List<EsShopOrder> selectfriend(OrderParam entity);
 
@@ -96,13 +97,6 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
 
     Object linkToBuy(CartParam cartParam);
-
-    /**
-     * 小程序的订单列表
-     * @param appletOrderParam
-     * @return
-     */
-    Page<EsShopOrder> selectPageExtByApplet(AppletOrderParam appletOrderParam);
 
 
 
@@ -189,6 +183,10 @@ public interface ShopOrderService extends IService<EsShopOrder> {
     List<Integer> paymentNumber(EsShopOrder entity);
 
     List<EsShopOrder> selCountDateDetail(EsShopOrder entity);
+
+    List<EsShopOrder> selOrderListByGoodsAnay(GoodsAnalyzeParam param);
+
+    void sendTemplate(String openid, String formId, Long shopId, String s, String nickname, Long id);
 }
 
 

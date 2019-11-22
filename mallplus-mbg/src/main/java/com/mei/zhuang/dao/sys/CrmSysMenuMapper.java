@@ -1,11 +1,12 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.admin.vo.AuthMenuVo;
-import com.arvato.admin.vo.ButtonNode;
-import com.arvato.admin.vo.DataAuthNode;
-import com.arvato.admin.vo.ZTreeNode;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.sys.CrmSysMenu;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.AuthMenuVo;
+import com.mei.zhuang.vo.sys.ButtonNode;
+import com.mei.zhuang.vo.sys.DataAuthNode;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

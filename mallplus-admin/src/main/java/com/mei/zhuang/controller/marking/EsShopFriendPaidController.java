@@ -1,10 +1,10 @@
 package com.mei.zhuang.controller.marking;
 
 
-import com.arvato.service.marking.api.service.EsShopFriendPaidService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.service.marking.EsShopFriendPaidService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.marking.EsShopFriendPaid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +38,7 @@ public class EsShopFriendPaidController {
 
         try {
             if (entity.getId() == null) {
-                return new CommonResult().success("success", esShopFriendPaidService.insert(entity));
+                return new CommonResult().success("success", esShopFriendPaidService.save(entity));
             } else {
                 return new CommonResult().success("success", esShopFriendPaidService.updateById(entity));
             }
@@ -55,7 +55,7 @@ public class EsShopFriendPaidController {
     @PostMapping("/detail")
     public Object detail(EsShopFriendPaid entity) {
         try {
-            return new CommonResult().success("success", esShopFriendPaidService.selectOne(new QueryWrapper<>()));
+            return new CommonResult().success("success", esShopFriendPaidService.getOne(new QueryWrapper<>()));
         } catch (Exception e) {
             log.error("朋友代付异常：", e);
             e.printStackTrace();

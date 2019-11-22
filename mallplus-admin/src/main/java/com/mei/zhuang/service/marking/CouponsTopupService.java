@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 2019-05-13
  */
 public interface CouponsTopupService extends IService<EsShopCouponsTopup> {
-    boolean save(EsShopCouponsTopup entity) throws  Exception;
+    boolean save(EsShopCouponsTopup entity);
     boolean update(EsShopCouponsTopup entity) throws Exception;
     //商品通用删除
     Integer deletegoodsid(Long arg0, String arg1);

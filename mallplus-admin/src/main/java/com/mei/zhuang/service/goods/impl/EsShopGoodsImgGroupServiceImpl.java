@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsImgGroupMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsImgGroupService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsImgGroupMapper;
+import com.mei.zhuang.service.goods.EsShopGoodsImgGroupService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoodsImgGroup;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

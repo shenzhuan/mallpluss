@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.service.order.api.orm.dao.EsCoreMessageTemplateMapper;
-import com.arvato.service.order.api.service.EsCoreMessageTemplateService;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
+import com.mei.zhuang.service.order.EsCoreMessageTemplateService;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.order.EsCoreMessageTemplate;
 import io.swagger.annotations.Api;

@@ -1,20 +1,19 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.marking.api.biz.CouponTime;
-import com.arvato.service.marking.api.biz.TestCSVUtil;
-import com.arvato.service.marking.api.service.CouponManualService;
-import com.arvato.service.marking.api.service.impl.CouponManualServiceImpl;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopCouponManual;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
+import com.mei.zhuang.service.marking.CouponManualService;
+import com.mei.zhuang.service.marking.impl.CouponManualServiceImpl;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -48,14 +46,7 @@ public class CouponManualController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<Map<String, Object>> selectmanual = manualService.selectmanual(entity);
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashedMap();
-            map.put("current", current);
-            map.put("size", size);
-            map.put("rows", selectmanual);
-            map.put("total", entity.getTotal());
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(manualService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("根据条件查询所有手工券列表：%s", e.getMessage(), e);
         }
@@ -121,7 +112,7 @@ public class CouponManualController {
     @PostMapping(value = "/statusManual")
     public Object deleteManual(@ApiParam("手工发券id") @RequestParam long id, @RequestParam Integer statusissue) {
         try {
-            EsShopCouponManual manual = manualService.selectById(id);
+            EsShopCouponManual manual = manualService.getById(id);
             //活动开启 1，立即开启，2指定时间，3关闭
             if(manual.getActivityOpen()==2) {
                 if (statusissue == 2) {

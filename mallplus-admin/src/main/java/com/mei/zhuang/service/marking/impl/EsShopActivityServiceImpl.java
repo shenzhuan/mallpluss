@@ -1,15 +1,15 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsMemberActivatyRecordMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopActivityMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopActivityPrizeMapper;
-import com.arvato.service.marking.api.service.EsShopActivityService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.dao.marking.EsMemberActivatyRecordMapper;
+import com.mei.zhuang.dao.marking.EsShopActivityMapper;
+import com.mei.zhuang.dao.marking.EsShopActivityPrizeMapper;
 import com.mei.zhuang.entity.marking.EsMemberActivatyRecord;
 import com.mei.zhuang.entity.marking.EsShopActivity;
 import com.mei.zhuang.entity.marking.EsShopActivityPrize;
+import com.mei.zhuang.service.marking.EsShopActivityService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,8 +33,8 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
     @Override
     public Map<String, Object> selPageList(EsShopActivity entity) {
         Map<String,Object> map=new HashMap<String,Object>();
-        Page<EsShopActivity> page = new Page<EsShopActivity>(entity.getCurrent(), entity.getSize());
-        List<EsShopActivity> list=esShopActivityMapper.selPageList(page,entity);
+        PageHelper.startPage(entity.getCurrent(), entity.getSize());
+        List<EsShopActivity> list=esShopActivityMapper.selPageList(entity);
         EsMemberActivatyRecord esMemberActivatyRecord = new EsMemberActivatyRecord();
 
         if(list != null){
@@ -102,7 +102,7 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
                 num=0;
             }
             entity.setWinRate(num);
-            this.insert(entity);
+            this.save(entity);
             return true;
         }
         return false;
@@ -131,7 +131,7 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
 
     @Override
     public boolean deletes(Long id) {
-        if(this.deleteById(id)){
+        if(this.removeById(id)){
             EsShopActivityPrize prize = new EsShopActivityPrize();
             prize.setActivatyId(id);
             esShopActivityPrizeMapper.delete(new QueryWrapper<>(prize));

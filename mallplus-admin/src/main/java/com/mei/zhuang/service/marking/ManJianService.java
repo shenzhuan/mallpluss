@@ -1,12 +1,12 @@
 package com.mei.zhuang.service.marking;
 
-import com.arvato.ec.common.vo.marking.MjDcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopManjian;
 import com.mei.zhuang.entity.marking.EsShopManjianGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopManjianRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.vo.marking.MjDcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public interface ManJianService extends IService<EsShopManjian> {
 
     MjDcVo matchManjian(List<EsShopCart> cartList) throws Exception;
-    boolean save(EsShopManjian entity) throws Exception;
+    boolean save(EsShopManjian entity) ;
 
     int updateShowStatus(Long ids, Integer status);
 

@@ -1,20 +1,20 @@
 package com.mei.zhuang.service.marking.impl;
 
 import com.arvato.ec.common.exception.BusinessException;
-import com.arvato.ec.common.utils.Weekutils;
+import com.mei.zhuang.utils.Weekutils;
 import com.arvato.ec.common.vo.marking.AllMemberCoupon;
 import com.arvato.ec.common.vo.marking.CouponStatus;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.ec.common.vo.order.CouponFilterParam;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CouponFilterParam;
 import com.arvato.service.marking.api.feigin.OrderFegin;
 import com.arvato.service.marking.api.mq.Sender;
-import com.arvato.service.marking.api.orm.dao.*;
-import com.arvato.service.marking.api.service.MemberCouponService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.*;
+import com.mei.zhuang.service.marking.MemberCouponService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.DateUtils;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
 import com.mei.zhuang.entity.order.EsShopCart;
@@ -206,7 +206,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
             boolean falg = true;
             Date nowD = new Date();
             if (topup.getActivityOpen() == 2) {
-                Date date = sdf.parse(com.arvato.ec.common.utils.DateUtils.addDateHour(topup.getTime(), 1));
+                Date date = sdf.parse(com.mei.zhuang.utils.DateUtils.addDateHour(topup.getTime(), 1));
                 if (date.getTime() < nowD.getTime()) {
                     falg = false;
                 }

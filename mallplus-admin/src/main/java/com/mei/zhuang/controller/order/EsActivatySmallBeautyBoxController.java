@@ -1,14 +1,15 @@
 package com.mei.zhuang.controller.order;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.order.api.feigin.GoodsFegin;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxGiftBoxService;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxGoodsService;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxGiftBoxService;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxGoodsService;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxService;
+import com.mei.zhuang.service.order.GoodsFegin;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBox;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGiftBox;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGoods;
@@ -75,7 +76,7 @@ public class EsActivatySmallBeautyBoxController {
             long begin = Long.parseLong(entity.getStartTime());
             long end = Long.parseLong(entity.getEndTime());
             //判断时间段内是否有进行中的活动
-            List<EsActivatySmallBeautyBox> list =esActivatySmallBeautyBoxService.selectList(new QueryWrapper<>());
+            List<EsActivatySmallBeautyBox> list =esActivatySmallBeautyBoxService.list(new QueryWrapper<>());
             if(list != null && list.size() !=0) {
                 for (EsActivatySmallBeautyBox box : list) {
                     long beginTime = Long.parseLong(box.getStartTime());//开始时间
@@ -90,7 +91,7 @@ public class EsActivatySmallBeautyBoxController {
                 }
             }
             entity.setCreateTime(new Date());
-            return new CommonResult().success("success",esActivatySmallBeautyBoxService.insert(entity));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxService.save(entity));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -105,7 +106,7 @@ public class EsActivatySmallBeautyBoxController {
             if(ValidatorUtils.empty(id)){
                 return new CommonResult().failed("请指定活动编号");
             }
-            return new CommonResult().success("success",esActivatySmallBeautyBoxService.selectById(id));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxService.getById(id));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -180,7 +181,7 @@ public class EsActivatySmallBeautyBoxController {
 
                 if(goods.getId() == null ){
                     //新增
-                    bool = esActivatySmallBeautyBoxGoodsService.insert(goods);
+                    bool = esActivatySmallBeautyBoxGoodsService.save(goods);
                 }else{
                     //修改
                     bool = esActivatySmallBeautyBoxGoodsService.updateById(goods);
@@ -208,7 +209,7 @@ public class EsActivatySmallBeautyBoxController {
 
                 if(goods.getId() == null ){
                     //新增
-                    bool = esActivatySmallBeautyBoxGoodsService.insert(goods);
+                    bool = esActivatySmallBeautyBoxGoodsService.save(goods);
                 }else{
                     //修改
                     bool = esActivatySmallBeautyBoxGoodsService.updateById(goods);
@@ -229,7 +230,7 @@ public class EsActivatySmallBeautyBoxController {
             if(ValidatorUtils.empty(id)){
                 return new CommonResult().failed("请指定产品编号");
             }
-            return new CommonResult().success("success",esActivatySmallBeautyBoxGoodsService.deleteById(id));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxGoodsService.removeById(id));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -275,7 +276,7 @@ public class EsActivatySmallBeautyBoxController {
                 return new CommonResult().failed("请指定所属活动");
             }
             entity.setCreateTime(new Date());
-            esActivatySmallBeautyBoxGiftBoxService.insert(entity);
+            esActivatySmallBeautyBoxGiftBoxService.save(entity);
             String[] attr =entity.getProductCode().split(",");
 
             return new CommonResult().success("success",goodsFegin.insSmallBeautyBoxCust(entity.getBoxName(),entity.getBoxCode(),entity.getBoxImg(),entity.getVituralStock(),entity.getBoxMoney(),entity.getId(),attr[0]));
@@ -293,7 +294,7 @@ public class EsActivatySmallBeautyBoxController {
             if(ValidatorUtils.empty(id)){
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success",esActivatySmallBeautyBoxGiftBoxService.selectById(id));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxGiftBoxService.getById(id));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -326,7 +327,7 @@ public class EsActivatySmallBeautyBoxController {
                 return new CommonResult().failed("请指定编号");
             }
             goodsFegin.delSmallBeautyBoxCust(id);
-            return new CommonResult().success("success",esActivatySmallBeautyBoxGiftBoxService.deleteById(id));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxGiftBoxService.removeById(id));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -342,10 +343,10 @@ public class EsActivatySmallBeautyBoxController {
                 return new CommonResult().failed("请指定编号");
             }
             boolean bool=false;
-            EsActivatySmallBeautyBoxGiftBox boxGiftBox = esActivatySmallBeautyBoxGiftBoxService.selectById(id);
+            EsActivatySmallBeautyBoxGiftBox boxGiftBox = esActivatySmallBeautyBoxGiftBoxService.getById(id);
             boxGiftBox.setId(null);
             boxGiftBox.setCreateTime(new Date());
-            bool = esActivatySmallBeautyBoxGiftBoxService.insert(boxGiftBox);
+            bool = esActivatySmallBeautyBoxGiftBoxService.save(boxGiftBox);
             EsActivatySmallBeautyBoxGiftBox box = new EsActivatySmallBeautyBoxGiftBox();
             box.setBoxCode(boxGiftBox.getBoxCode());
             box.setActivatyId(boxGiftBox.getActivatyId());
@@ -353,7 +354,7 @@ public class EsActivatySmallBeautyBoxController {
             box.setProductCode(boxGiftBox.getProductCode());
             Long ids = null;
             if(bool ==true){
-                List<EsActivatySmallBeautyBoxGiftBox> list =esActivatySmallBeautyBoxGiftBoxService.selectList(new QueryWrapper<>(box));
+                List<EsActivatySmallBeautyBoxGiftBox> list =esActivatySmallBeautyBoxGiftBoxService.list(new QueryWrapper<>(box));
                 for (EsActivatySmallBeautyBoxGiftBox goxs:list) {
                     if(ids == null){
                         ids=goxs.getId();
@@ -377,7 +378,7 @@ public class EsActivatySmallBeautyBoxController {
     @PostMapping("/selectActivaty")
     public Object selectActivaty(){
         try{
-            return new CommonResult().success("success",esActivatySmallBeautyBoxService.selectList(new QueryWrapper<>()));
+            return new CommonResult().success("success",esActivatySmallBeautyBoxService.list(new QueryWrapper<>()));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
@@ -388,7 +389,7 @@ public class EsActivatySmallBeautyBoxController {
     @PostMapping("/updvituralStock")
     public boolean updvituralStock(@RequestParam("id")Long id,@RequestParam("vituralStock")Integer vituralStock){
         try{
-            EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.selectById(id);
+            EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.getById(id);
             giftBox.setVituralStock(giftBox.getVituralStock()-vituralStock);
             return esActivatySmallBeautyBoxGiftBoxService.updateById(giftBox);
         }catch (Exception e){

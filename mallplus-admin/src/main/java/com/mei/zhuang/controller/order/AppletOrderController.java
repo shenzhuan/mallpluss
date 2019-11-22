@@ -2,32 +2,30 @@ package com.mei.zhuang.controller.order;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.exception.BusinessException;
-import com.arvato.ec.common.utils.JsonUtils;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.OmsOrderVo;
-import com.arvato.ec.common.vo.order.*;
-import com.arvato.service.order.api.enums.OrderStatus;
-import com.arvato.service.order.api.feigin.MembersFegin;
-import com.arvato.service.order.api.mq.Sender;
-import com.arvato.service.order.api.orm.dao.EsCoreMessageTemplateMapper;
-import com.arvato.service.order.api.orm.dao.EsShopFormidMapper;
-import com.arvato.service.order.api.service.EsShopCustomizedAppletService;
-import com.arvato.service.order.api.service.ShopOrderGoodsService;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.service.order.api.service.impl.WechatApiService;
-import com.arvato.service.order.api.utils.TemplateData;
-import com.arvato.service.order.api.utils.WX_TemplateMsgUtil;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
+import com.mei.zhuang.dao.order.EsShopFormidMapper;
 import com.mei.zhuang.entity.order.*;
+import com.mei.zhuang.enums.OrderStatus;
+import com.mei.zhuang.exception.BusinessException;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.order.EsShopCustomizedAppletService;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.service.order.ShopOrderGoodsService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.service.order.impl.WechatApiService;
+import com.mei.zhuang.util.WX_TemplateMsgUtil;
+import com.mei.zhuang.utils.JsonUtils;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.OmsOrderVo;
+import com.mei.zhuang.vo.TemplateData;
+import com.mei.zhuang.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -59,8 +57,7 @@ public class AppletOrderController {
     private RedisRepository redisRepository;
     @Resource
     private EsShopCustomizedAppletService esShopCustomizedAppletService;
-    @Autowired
-    private Sender sender;
+
     @Resource
     private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
     @Resource
@@ -302,7 +299,7 @@ public class AppletOrderController {
             for (Long id:resultList) {
                 EsShopCustomizedApplet applet = new EsShopCustomizedApplet();
                 applet.setCartId(id);
-                esShopCustomizedAppletService.delete(new QueryWrapper<>(applet));//删除定制服务
+                esShopCustomizedAppletService.remove(new QueryWrapper<>(applet));//删除定制服务
             }
 
             return new CommonResult().success(count);
@@ -365,7 +362,7 @@ public class AppletOrderController {
     @RequestMapping(value = "/saveOrder", method = RequestMethod.POST)
     public Object saveOrder(@RequestBody EsShopOrder order) {
         try {
-//            orderService.insert(order);
+//            orderService.save(order);
             if (orderService.saveOrder(order)) {
                 return new CommonResult().success("保存成功");
             }
@@ -384,7 +381,7 @@ public class AppletOrderController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("订单id is empty");
             }
-            EsShopOrder newE = orderService.selectById(id);
+            EsShopOrder newE = orderService.getById(id);
             if (newE.getStatus() != OrderStatus.INIT.getValue()) {
                 return new CommonResult().paramFailed("订单已支付，不能关闭");
             }
@@ -438,7 +435,7 @@ public class AppletOrderController {
             return new CommonResult().failed("前置参数错误，memberId不能为空");
         }
         query.setFormId(formId);
-        EsShopFormid entity = formidMapper.selectOne(query);
+        EsShopFormid entity = formidMapper.selectOne(new QueryWrapper<>(query));
         //校验formId是否已经存在
         if (entity != null) {
             return new CommonResult().failed("前置参数错误，formId已经存在 formId：" + formId);
@@ -516,12 +513,12 @@ public class AppletOrderController {
         for (Object id : ids){
             log.info("同步失敗訂單:"+id);
             OmsOrderVo orderVo = new OmsOrderVo();
-            EsShopOrder order = orderService.selectById((Serializable) id);
+            EsShopOrder order = orderService.getById((Serializable) id);
             orderVo.setOrder(order);
             orderVo.setMember(memberFegin.getMemberById(order.getMemberId()));
-            orderVo.setOrderGoodsList(orderGoodsService.selectList(new QueryWrapper<>(new EsShopOrderGoods())
+            orderVo.setOrderGoodsList(orderGoodsService.list(new QueryWrapper<>(new EsShopOrderGoods())
                     .eq("order_id", order.getId())));
-            sender.createOrderMq(orderVo);
+
         }
         return new CommonResult().success();
     }
@@ -533,12 +530,12 @@ public class AppletOrderController {
         for (Object id : ids){
             log.info("同步失敗訂單:"+id);
             OmsOrderVo orderVo = new OmsOrderVo();
-            EsShopOrder order = orderService.selectById((Serializable) id);
+            EsShopOrder order = orderService.getById((Serializable) id);
             orderVo.setOrder(order);
             orderVo.setMember(memberFegin.getMemberById(order.getMemberId()));
-            orderVo.setOrderGoodsList(orderGoodsService.selectList(new QueryWrapper<>(new EsShopOrderGoods())
+            orderVo.setOrderGoodsList(orderGoodsService.list(new QueryWrapper<>(new EsShopOrderGoods())
                     .eq("order_id", order.getId())));
-            sender.createOrderMq(orderVo);
+
         }
         return new CommonResult().success();
     }

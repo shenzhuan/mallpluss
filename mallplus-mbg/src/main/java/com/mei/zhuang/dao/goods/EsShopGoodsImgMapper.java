@@ -15,7 +15,7 @@ public interface EsShopGoodsImgMapper extends BaseMapper<EsShopGoodsImg> {
      * @param entity
      * @return
      */
-    List<EsShopGoodsImg> selImg(Pagination page, EsShopGoodsImg entity);
+  //  List<EsShopGoodsImg> selImg(Pagination page, EsShopGoodsImg entity);
 
 
 

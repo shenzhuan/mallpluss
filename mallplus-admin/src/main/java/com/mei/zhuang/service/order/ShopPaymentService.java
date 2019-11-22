@@ -1,10 +1,8 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.vo.order.PayParam;
-import com.arvato.ec.common.vo.order.PaySettingParam;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.mei.zhuang.entity.order.EsShopPayment;
+import com.mei.zhuang.vo.order.PayParam;
 
 /**
  * @Auther: Tiger
@@ -19,5 +17,4 @@ public interface ShopPaymentService extends IService<EsShopPayment> {
 
     boolean updateStatus(PayParam param);
 
-    Page<EsShopPayment> selectPageList(PaySettingParam paySettingParam);
 }

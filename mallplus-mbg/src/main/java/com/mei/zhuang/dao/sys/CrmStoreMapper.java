@@ -1,9 +1,10 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.admin.dto.StoreDictParam;
-import com.arvato.common.msg.DictData;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mei.zhuang.entity.sys.CrmStore;
+import com.mei.zhuang.vo.DictData;
+import com.mei.zhuang.vo.sys.StoreDictParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

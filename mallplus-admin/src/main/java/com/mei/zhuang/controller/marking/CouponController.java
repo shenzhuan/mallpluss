@@ -2,17 +2,18 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponNewRuleMapper;
-import com.arvato.service.marking.api.service.CouponService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.dao.marking.EsShopCouponNewRuleMapper;
 import com.mei.zhuang.entity.marking.EsShopCoupon;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponRule;
+import com.mei.zhuang.service.marking.CouponService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -49,13 +50,8 @@ public class CouponController {
                                   @RequestParam(value = "size", defaultValue = "10") Integer size) {
         try {
             PageHelper.startPage(current, size);
-            Map<String, Object> map = couponService.selectmapcoupon(entity);
-            entity.setTotal((int) PageHelper.freeTotal());
-            map.put("current", current);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            return new CommonResult().success(map);
 
+            return new CommonResult().success(PageInfo.of(couponService.list(new QueryWrapper<>(entity))));
 
         } catch (Exception e) {
             log.error("根据条件查询所有优惠券列表：%s", e.getMessage(), e);
@@ -153,7 +149,7 @@ public class CouponController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("优惠券id");
             }
-            EsShopCoupon esCoupon = couponService.selectById(id);
+            EsShopCoupon esCoupon = couponService.getById(id);
             if(esCoupon.getStatusOpen().equals("1")){
                 return new CommonResult().failed("启用不可删除");
             }else{
@@ -197,7 +193,7 @@ public class CouponController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("优惠券id");
             }
-            EsShopCoupon esCoupon = couponService.selectById(id);
+            EsShopCoupon esCoupon = couponService.getById(id);
             if(esCoupon.getStatusOpen()=="1"){
                 return new CommonResult().failed("活动开启不可编辑");
             }else {
@@ -274,14 +270,8 @@ public class CouponController {
                                   @RequestParam(value = "size", defaultValue = "5") Integer size) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopCoupon> selectcoupon = couponService.selectcoupon(entity);
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap();
-            map.put("rows", selectcoupon);
-            map.put("total", entity.getTotal());
-            map.put("size", size);
-            map.put("current", current);
-            return new CommonResult().success(map);
+
+            return new CommonResult().success(PageInfo.of(couponService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("优惠券选择查询：%s", e.getMessage(), e);
         }
@@ -296,7 +286,7 @@ public class CouponController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("优惠券id");
             }
-            //EsShopCoupon esShopCoupon = couponService.selectById(id);
+            //EsShopCoupon esShopCoupon = couponService.getById(id);
          /*   if (esShopCoupon.getStatus() == 1) {
                 return new CommonResult().failed("属于未生效状态,不可直接更改状态，请到编辑修改活动时间");
             } else if (esShopCoupon.getStatus() == 3) {

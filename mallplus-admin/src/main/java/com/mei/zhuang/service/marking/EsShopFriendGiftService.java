@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
 
 public interface EsShopFriendGiftService {
 
-    Integer save(EsShopFriendGift friendGift);
+    boolean save(EsShopFriendGift friendGift);
 
     Integer update(EsShopFriendGift friendGift);
 

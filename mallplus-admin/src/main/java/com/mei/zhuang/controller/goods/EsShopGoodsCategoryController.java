@@ -1,11 +1,11 @@
 package com.mei.zhuang.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.goods.api.service.EsShopGoodsCategoryService;
-import com.arvato.service.goods.api.service.EsShopGoodsService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsShopGoodsCategory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

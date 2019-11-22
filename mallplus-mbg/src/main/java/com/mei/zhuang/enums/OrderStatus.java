@@ -8,25 +8,20 @@ package com.mei.zhuang.enums;
 public enum OrderStatus {
 
 
-    //   订单状态：12->待付款；2->待发货；3->已发货；4->已完成；5->售后订单 6->已关闭；
-    INIT(12),//待付款
-    PayNotNotice(1),//支付成功，没有回掉
-    TO_DELIVER(2),//待发货
-    DELIVERED(3),  // 待收货
-    TO_COMMENT(4),//待评价
-    TRADE_SUCCESS(5), // 已完成
-
-    RIGHT_APPLY(6), // 维权中
-    RIGHT_APPLYF_SUCCESS(7), // 维权已完成
-    TO_SHARE(8),  // 待分享
-    REFUNDING(13),  // 申请退款
-    REFUND(14),  // 已退款
+    //    订单状态：0->待付款；1->待发货；2->待收货；3->已完成；->4已退款；->5维权中；->6维权已完成；->7已取消；->8已关闭；->9无效订单；
+    INIT(0),//待付款
+    TO_DELIVER(1),//待发货
+    DELIVERED(2),  // 待收货
+    TRADE_SUCCESS(3), // 已完成
+    REFUND(4),  // 已退款
+    RIGHT_APPLY(5), // 维权中
+    RIGHT_APPLYF_SUCCESS(6), // 维权已完成
     //    CANCELED(7),
-    CLOSED(15), // 已关闭 // 已取消 统一
-    INVALID(16),//无效订单
-    DELETED(17);//已删除
-
-
+    CLOSED(8), // 已关闭 // 已取消 统一
+    INVALID(9),//无效订单
+    DELETED(10),//已删除
+    PARTDELIVE(11),//部分发货状态
+    RECEIVE(12); //待领取
 
     private int value;
 

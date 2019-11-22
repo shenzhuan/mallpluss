@@ -1,15 +1,18 @@
 package com.mei.zhuang.service.goods.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.arvato.service.goods.api.orm.dao.EsStartAdvertisingImgMapper;
-import com.arvato.service.goods.api.orm.dao.EsStartAdvertisingMapper;
-import com.arvato.service.goods.api.service.EsStartAdvertisingService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.dao.goods.EsStartAdvertisingImgMapper;
+import com.mei.zhuang.dao.goods.EsStartAdvertisingMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsStartAdvertising;
 import com.mei.zhuang.entity.goods.EsStartAdvertisingImg;
+import com.mei.zhuang.service.goods.EsStartAdvertisingService;
+import com.mei.zhuang.vo.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,21 +35,9 @@ public class EsStartAdvertisingServiceImpl extends ServiceImpl<EsStartAdvertisin
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
-    public Map<String,Object> select(EsStartAdvertising entity) {
-        Map<String,Object> map = new HashMap<String,Object>();
-        Page<EsShopGoods> page = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
-        try{
-            List<EsStartAdvertising> list=esStartAdvertisingMapper.select(page,entity);
-            Integer count=esStartAdvertisingMapper.count(entity);
-            map.put("rows", list);
-            map.put("total", count);
-            map.put("current", entity.getCurrent());
-            map.put("size", entity.getSize());
-            return map;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public Object select(EsStartAdvertising entity) {
+        PageHelper.startPage(entity.getCurrent(), entity.getSize());
+        return new CommonResult().success(PageInfo.of(esStartAdvertisingMapper.selectList(new QueryWrapper<EsStartAdvertising>())));
 
     }
 
@@ -56,9 +47,9 @@ public class EsStartAdvertisingServiceImpl extends ServiceImpl<EsStartAdvertisin
 
             String time=sdf.format(new Date());
             entity.setCreateTime(sdf.parse(time));
-           boolean bool= this.insert(entity);
+           Integer bool= esStartAdvertisingMapper.insert(entity);
 
-            EsStartAdvertising es=this.selectOne(new QueryWrapper<>(entity));
+            EsStartAdvertising es=esStartAdvertisingMapper.selectOne(new QueryWrapper<>(entity));
             if(es!=null){
                 if(entity.getListAdvertImg()!=null&&entity.getListAdvertImg().size()>0){
                     for (EsStartAdvertisingImg es1:entity.getListAdvertImg()) {
@@ -67,7 +58,7 @@ public class EsStartAdvertisingServiceImpl extends ServiceImpl<EsStartAdvertisin
                     }
                 }
             }
-            return bool;
+            return bool>0;
         }catch (Exception e){
             e.printStackTrace();
             return false;

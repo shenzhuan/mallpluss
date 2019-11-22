@@ -1,32 +1,29 @@
 package com.mei.zhuang.service.member.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.constant.RedisConstant;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.data.customer.CustGroupIndexParam;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.order.OrderStstic;
-import com.arvato.service.member.api.config.SmsConfig;
-import com.arvato.service.member.api.feigin.MarkingFegin;
-import com.arvato.service.member.api.feigin.OrderFeigin;
-import com.arvato.service.member.api.mq.Sender;
-import com.arvato.service.member.api.orm.dao.EsCoreSmsMapper;
-import com.arvato.service.member.api.orm.dao.EsMemberMapper;
-import com.arvato.service.member.api.orm.dao.EsMiniprogramMapper;
-import com.arvato.service.member.api.service.EsMemberService;
-import com.arvato.service.member.api.util.CommonUtil;
-import com.arvato.service.member.api.util.MiniAESUtil;
-import com.arvato.service.member.api.util.SmsUtils;
-import com.arvato.service.member.api.vo.LoginVo;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.json.JsonUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.constant.RedisConstant;
+import com.mei.zhuang.dao.member.EsCoreSmsMapper;
+import com.mei.zhuang.dao.member.EsMemberMapper;
+import com.mei.zhuang.dao.order.EsMiniprogramMapper;
 import com.mei.zhuang.entity.member.EsCoreSms;
 import com.mei.zhuang.entity.member.EsMember;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.EsMemberService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.util.JsonUtil;
+import com.mei.zhuang.util.MiniAESUtil;
+import com.mei.zhuang.utils.CommonUtil;
+import com.mei.zhuang.utils.SmsUtils;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.LoginVo;
+import com.mei.zhuang.vo.data.customer.CustGroupIndexParam;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.order.OrderStstic;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -47,8 +44,7 @@ import java.util.concurrent.CompletableFuture;
 public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> implements EsMemberService {
 
     String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-    @Resource
-    private MarkingFegin markingFegin;
+
     @Resource
     private EsMemberMapper memberMapper;
     @Resource
@@ -56,14 +52,12 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     @Resource
     private RedisRepository redisRepository;
     @Resource
-    private OrderFeigin orderFeigin;
+    private ShopOrderService orderService;
     @Resource
     EsCoreSmsMapper smsMapper;
-    @Resource
-    private SmsConfig smsConfig;
+
     private String REDIS_KEY_PREFIX_AUTH_CODE = "bindPhone:authCode:";
-    @Autowired
-    private Sender sender;
+
 
 
     @Override
@@ -105,7 +99,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
             }
             EsMember queryOpenid = new EsMember();
             queryOpenid.setOpenid(sessionData.getString("openid"));
-            EsMember userVo = memberMapper.selectOne(queryOpenid);
+            EsMember userVo = memberMapper.selectOne(new QueryWrapper<>(queryOpenid));
             EsMember umsMember = new EsMember();
             umsMember.setProvince(me.get("province").toString());
             umsMember.setCity(me.get("city").toString());
@@ -141,7 +135,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
                 umsMember.setBinding(1);
                 umsMember.setMobileVerified(1);
                 memberMapper.insert(umsMember);
-                sender.appletRegisterMq(umsMember);
+
                 resultObj.put("userInfo", umsMember);
                 resultObj.put("userId", umsMember.getId());
                 redisRepository.del(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
@@ -166,13 +160,13 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
                 memberMapper.updateById(userVo);
                 resultObj.put("userInfo", userVo);
                 resultObj.put("userId", userVo.getId());
-                sender.appletLoginMq(umsMember.getNickname());
+
                 redisRepository.del(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
             }
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    markingFegin.sendNewCoupon(umsMember.getId(), 1);
+                   // markingFegin.sendNewCoupon(umsMember.getId(), 1);
                 } catch (Exception e) {
                     log.error("發送新人券失败：{}", e.getMessage());
                 }
@@ -190,7 +184,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     public EsMiniprogram getByShopId(Long shopId) {
         EsMiniprogram query = new EsMiniprogram();
         query.setShopId(shopId);
-        return miniprogramMapper.selectOne(query);
+        return miniprogramMapper.selectOne(new QueryWrapper<>(query));
     }
 
     @Override
@@ -208,8 +202,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
         memberMapper.updateById(member);
         EsMember newMember = memberMapper.selectById(memberId);
         redisRepository.set(String.format(RedisConstant.MEMBER, member.getId() + ""), newMember);
-        sender.bindMobileMq(phone);
-        sender.appletRegisterMq(newMember);
+
         return 1;
     }
 
@@ -229,7 +222,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
         redisRepository.willExpire(REDIS_KEY_PREFIX_AUTH_CODE + phone, 60);
         EsCoreSms querySms = new EsCoreSms();
         querySms.setStatus(1);
-        EsCoreSms coreSms  = smsMapper.selectOne(querySms);
+        EsCoreSms coreSms  = smsMapper.selectOne(new QueryWrapper<>(querySms));
         //异步调用阿里短信接口发送短信
         CompletableFuture.runAsync(() -> {
             try {
@@ -256,7 +249,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateMemberOrderInfo() {
-        List<OrderStstic> orders = orderFeigin.listOrderGroupByMemberId();
+        List<OrderStstic> orders = orderService.listOrderGroupByMemberId();
         for (OrderStstic o : orders) {
             EsMember member = new EsMember();
             member.setId(o.getMemberId());
@@ -287,23 +280,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
         return memberMapper.memberselect(param1,param2);
     }
 
-    /**
-     * 获取当天发送验证码次数
-     * 限制号码当天次数
-     *
-     * @param phone
-     * @return
-     */
-    private void checkTodaySendCount(String phone) {
-        Object value = redisRepository.get(countKey(phone));
-        if (value != null) {
-            Integer count = Integer.valueOf(value.toString());
-            if (count > smsConfig.getDayCount()) {
-                throw new IllegalArgumentException("已超过当天最大次数");
-            }
-        }
 
-    }
 
     private String countKey(String phone) {
         return "sms:count:" + LocalDate.now().toString() + ":" + phone;

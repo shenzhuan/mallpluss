@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.order;
 
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.data.trade.TrafficAnalysis;
-import com.arvato.ec.common.vo.data.trade.TrafficAnalysisParam;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysis;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysisParam;
 
 import java.util.List;
 import java.util.Map;

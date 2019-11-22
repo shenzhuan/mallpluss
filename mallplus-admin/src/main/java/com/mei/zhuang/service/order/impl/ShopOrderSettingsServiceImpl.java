@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.service.order.api.orm.dao.EsShopOrderSettingsMapper;
-import com.arvato.service.order.api.service.ShopOrderSettingsService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsShopOrderSettingsMapper;
+import com.mei.zhuang.service.order.ShopOrderSettingsService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsShopOrderSettings;
 import org.springframework.stereotype.Service;
 

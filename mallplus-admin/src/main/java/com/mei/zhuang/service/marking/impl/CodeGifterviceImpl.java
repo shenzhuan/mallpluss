@@ -1,33 +1,30 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
-import com.arvato.ec.common.vo.marking.CodeResult;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopCodeGiftGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCodeGiftMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCodeGiftRuleMapper;
-import com.arvato.service.marking.api.service.CodeGiftService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopCodeGiftGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopCodeGiftMapper;
+import com.mei.zhuang.dao.marking.EsShopCodeGiftRuleMapper;
 import com.mei.zhuang.entity.marking.EsShopCodeGift;
 import com.mei.zhuang.entity.marking.EsShopCodeGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCodeGiftRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.CodeGiftService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.CodeResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -48,7 +45,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
         CodeResult codeResult = new CodeResult();
         EsShopCodeGiftRule query = new EsShopCodeGiftRule();
         query.setCode(vo.getCode());
-        EsShopCodeGiftRule rule = fullGiftRuleMapper.selectOne(query);
+        EsShopCodeGiftRule rule = fullGiftRuleMapper.selectOne(new QueryWrapper<>(query));
         if (rule!=null) {
             if (rule.getStatus() == 2 && rule.getActivityType()==2) {
                 codeResult.setStatus(4);
@@ -231,38 +228,31 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
     }
 
 
-    @Override
-    public Map<String, Object> selPageList(EsShopCodeGift entity) {
-        Page<EsShopCodeGift> page = new Page<EsShopCodeGift>(entity.getCurrent(), entity.getSize());
-        Map<String, Object> map = new HashMap<String, Object>();
-        List<EsShopCodeGift> list = fullGiftMapper.selPageList(page, entity);
-        Integer count = fullGiftMapper.count(entity);
-        map.put("rows", list);
-        map.put("total", count);
-        map.put("current", entity.getCurrent());
-        map.put("size", entity.getSize());
-        return map;
-    }
 
-    public void datetime(EsShopCodeGift en) throws Exception {
 
-        String[] times = en.getTime().split(",");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        en.setExpiryBeginTime(sdf.parse(times[0]));
-        en.setExpiryEndTime(sdf.parse(times[1]));
-        Date tim = sdf.parse(sdf.format(new Date()));
-        if (tim.before(en.getExpiryBeginTime())) {
-            en.setStatus(2);
-        } else if (tim.after(en.getExpiryBeginTime()) && tim.before(en.getExpiryEndTime())) {
-            en.setStatus(1);
-        } else if (tim.after(en.getExpiryEndTime())) {
-            en.setStatus(2);
+    public void datetime(EsShopCodeGift en)  {
+        try {
+            String[] times = en.getTime().split(",");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            en.setExpiryBeginTime(sdf.parse(times[0]));
+            en.setExpiryEndTime(sdf.parse(times[1]));
+            Date tim = sdf.parse(sdf.format(new Date()));
+            if (tim.before(en.getExpiryBeginTime())) {
+                en.setStatus(2);
+            } else if (tim.after(en.getExpiryBeginTime()) && tim.before(en.getExpiryEndTime())) {
+                en.setStatus(1);
+            } else if (tim.after(en.getExpiryEndTime())) {
+                en.setStatus(2);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCodeGift entity) throws Exception {
+    public boolean save(EsShopCodeGift entity)  {
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
         datetime(entity);
@@ -272,7 +262,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
     }
 
 
-    private void addExtrInfo(EsShopCodeGift entity) throws IOException {
+    private void addExtrInfo(EsShopCodeGift entity)  {
         //商品模式，风格 1 全部商品 2 指定商品 3 不指定商品
         if (entity.getGoodsMode() == 2 || entity.getGoodsMode() == 3) {
             if (entity.getGoodsSepcVoList() != null && entity.getGoodsSepcVoList().size() > 0) {

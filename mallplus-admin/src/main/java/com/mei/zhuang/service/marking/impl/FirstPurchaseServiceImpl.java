@@ -1,16 +1,16 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
+import com.mei.zhuang.utils.Weekutils;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopFirstPurchaseGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopFirstPurchaseMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopFirstPurchaseRuleMapper;
-import com.arvato.service.marking.api.service.FirstPurchaseService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.dao.marking.EsShopFirstPurchaseGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopFirstPurchaseMapper;
+import com.mei.zhuang.dao.marking.EsShopFirstPurchaseRuleMapper;
+import com.mei.zhuang.service.marking.FirstPurchaseService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchase;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseRule;
@@ -230,7 +230,7 @@ public class FirstPurchaseServiceImpl extends ServiceImpl<EsShopFirstPurchaseMap
 
     @Override
     public List<EsShopFirstPurchase> slelectPurchase() {
-        return firstPurchaseMapper.selectList(new QueryWrapper<EsShopFirstPurchase>().orderBy("id", false));
+        return firstPurchaseMapper.selectList(new QueryWrapper<EsShopFirstPurchase>().orderByDesc("id"));
     }
 
     public void datetime(EsShopFirstPurchase en) throws Exception {
@@ -242,15 +242,19 @@ public class FirstPurchaseServiceImpl extends ServiceImpl<EsShopFirstPurchaseMap
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer save(EsShopFirstPurchase entity) throws Exception {
+    public boolean save(EsShopFirstPurchase entity)  {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
-        datetime(entity);
+        try {
+            datetime(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         firstPurchaseMapper.insert(entity);
         addExtrInfo(entity);
-        return 1;
+        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)

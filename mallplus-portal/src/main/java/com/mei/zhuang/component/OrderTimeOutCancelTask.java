@@ -13,7 +13,7 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +27,10 @@ import java.util.Map;
 @Component
 public class OrderTimeOutCancelTask {
     private Logger logger = LoggerFactory.getLogger(OrderTimeOutCancelTask.class);
-    @Autowired
+    @Resource
     private IOmsOrderService portalOrderService;
     @Resource
-    private RedisUtil redisUtil;
+    private RedisRepository redisUtil;
     @Resource
     private PmsProductMapper productMapper;
     @Resource

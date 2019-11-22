@@ -1,11 +1,14 @@
 package com.mei.zhuang.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.goods.api.service.EsShopCardMessageServer;
-import com.arvato.service.goods.api.service.EsShopCustomizedCardService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.service.goods.EsShopCardMessageServer;
+import com.mei.zhuang.service.goods.EsShopCustomizedCardService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsShopCardMessage;
 import com.mei.zhuang.entity.goods.EsShopCardMessageCut;
 import com.mei.zhuang.entity.goods.EsShopCustomizedCard;
@@ -36,7 +39,9 @@ public class EsShopCustomizedCardController {
     @PostMapping("/list")
     public Object list(EsShopCustomizedCard entity) {
         try {
-            return new CommonResult().success("success", esShopCustomizedCardService.selCardPage(entity));
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+            // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
+            return new CommonResult().success(PageInfo.of(esShopCustomizedCardService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("查询定制卡片列表异常：", e);
@@ -49,7 +54,7 @@ public class EsShopCustomizedCardController {
     @PostMapping("/save")
     public Object save(EsShopCustomizedCard entity) {
         try {
-            return new CommonResult().success("success", esShopCustomizedCardService.insert(entity));
+            return new CommonResult().success("success", esShopCustomizedCardService.save(entity));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("新增定制卡片列表异常：", e);
@@ -62,7 +67,7 @@ public class EsShopCustomizedCardController {
     @PostMapping("/detail")
     public Object detail(@RequestParam("id") Long id) {
         try {
-            return new CommonResult().success("success", esShopCustomizedCardService.selectById(id));
+            return new CommonResult().success("success", esShopCustomizedCardService.getById(id));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("查询定制卡片详情异常：", e);
@@ -94,7 +99,7 @@ public class EsShopCustomizedCardController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success", esShopCustomizedCardService.deleteById(id));
+            return new CommonResult().success("success", esShopCustomizedCardService.removeById(id));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("删除定制卡片异常：", e);
@@ -108,7 +113,7 @@ public class EsShopCustomizedCardController {
     public Object saveDetail(EsShopCustomizedCard entity) {
         try {
             entity.setId(Long.parseLong("1"));
-            return new CommonResult().success("success", esShopCustomizedCardService.insert(entity));
+            return new CommonResult().success("success", esShopCustomizedCardService.save(entity));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("新增卡片描述异常：", e);
@@ -137,7 +142,7 @@ public class EsShopCustomizedCardController {
     @PostMapping("/selectDetail")
     public Object selectDetail() {
         try {
-            return new CommonResult().success("success", esShopCustomizedCardService.selectById(1));
+            return new CommonResult().success("success", esShopCustomizedCardService.getById(1));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("查询卡片描述异常：", e);

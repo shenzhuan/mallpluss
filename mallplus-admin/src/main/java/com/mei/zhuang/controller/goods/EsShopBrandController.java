@@ -1,9 +1,9 @@
 package com.mei.zhuang.controller.goods;
 
 
-import com.arvato.service.goods.api.service.EsShopBrandService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.service.goods.EsShopBrandService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopBrand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

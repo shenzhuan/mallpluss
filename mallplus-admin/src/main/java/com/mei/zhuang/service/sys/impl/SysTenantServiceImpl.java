@@ -1,25 +1,19 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.config.SysTenantInitConfig;
-import com.arvato.admin.service.ISysTenantService;
-import com.arvato.common.dto.SysTenantPagingData;
-import com.arvato.common.dto.SysTenantPagingParam;
-import com.arvato.common.msg.DictData;
-import com.arvato.common.orm.dao.SysDbResourceMapper;
-import com.arvato.common.orm.dao.SysTenantMapper;
-import com.arvato.common.orm.model.SysDbResource;
-import com.arvato.common.orm.model.SysTenant;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ShellUtil;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.SysDbResourceMapper;
+import com.mei.zhuang.dao.sys.SysTenantMapper;
+import com.mei.zhuang.entity.sys.SysTenant;
+import com.mei.zhuang.service.sys.ISysTenantService;
+import com.mei.zhuang.vo.DictData;
+import com.mei.zhuang.vo.sys.SysTenantPagingData;
+import com.mei.zhuang.vo.sys.SysTenantPagingParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import javax.annotation.Resource;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 /**
@@ -34,9 +28,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant> implements ISysTenantService {
 
-    @Autowired
-    private SysTenantInitConfig sysTenantInitConfig;
-    @Autowired
+  //  @Resource
+   // private SysTenantInitConfig sysTenantInitConfig;
+    @Resource
     private SysDbResourceMapper sysDbResourceMapper;
 
     @Override
@@ -61,11 +55,11 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public void initTenant(SysTenant sysTenant) {
-        ShellUtil shellUtil = new ShellUtil(sysTenantInitConfig.getDbRemoteIp(),sysTenantInitConfig.getDbRemotePort(),sysTenantInitConfig.getDbRemoteAccount(),sysTenantInitConfig.getDbRemotePass());
+        /*ShellUtil shellUtil = new ShellUtil(sysTenantInitConfig.getDbRemoteIp(),sysTenantInitConfig.getDbRemotePort(),sysTenantInitConfig.getDbRemoteAccount(),sysTenantInitConfig.getDbRemotePass());
 
         try {
             SysDbResource dbResource = sysDbResourceMapper.selectById(sysTenant.getDbResourceId());
-            String tenantSchemaBak = String.format("%s/tenant_%s_%s_%s.bak",sysTenantInitConfig.getDbBakPath(),dbResource.getDbName(),sysTenant.getDbSchema(),DateUtil.format(new Date(),DateUtil.YYYYMMDDHHMMSS));
+            String tenantSchemaBak = String.format("%s/tenant_%s_%s_%s.bak",sysTenantInitConfig.getDbBakPath(),dbResource.getDbName(),sysTenant.getDbSchema(), DateUtil.format(new Date(),DateUtil.YYYYMMDDHHMMSS));
             String[] initCmd = new String[]{
                     String.format("cp %s/crm_template.bak %s",sysTenantInitConfig.getDbBakPath(),tenantSchemaBak),
                     String.format("sed -i \"s/#createSchemaCommand#/create schema \\\""+sysTenant.getDbSchema()+"\\\";/g\" %s",tenantSchemaBak),
@@ -83,7 +77,7 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
                     shellUtil.disconnect();
                 }
             },1000*60);
-        }
+        }*/
 
 
     }

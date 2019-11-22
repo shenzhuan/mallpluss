@@ -1,9 +1,10 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.CrmDeptCreditListMapper;
-import com.arvato.admin.service.ICrmDeptCreditListService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmDeptCreditListMapper;
 import com.mei.zhuang.entity.sys.CrmDeptCreditList;
+import com.mei.zhuang.service.sys.ICrmDeptCreditListService;
 import org.springframework.stereotype.Service;
 
 /**

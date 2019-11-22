@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsQRCodeMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsQRCodeService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsQRCodeMapper;
+import com.mei.zhuang.service.goods.EsShopGoodsQRCodeService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoodsQRCode;
 import org.springframework.stereotype.Service;
 

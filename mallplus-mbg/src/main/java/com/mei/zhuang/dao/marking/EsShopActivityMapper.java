@@ -1,7 +1,6 @@
 package com.mei.zhuang.dao.marking;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.marking.EsShopActivity;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public interface EsShopActivityMapper extends BaseMapper<EsShopActivity> {
 
-    List<EsShopActivity> selPageList(Pagination page, EsShopActivity entity);
+    List<EsShopActivity> selPageList(EsShopActivity entity);
 
     Integer count(EsShopActivity entity);
 

@@ -1,17 +1,17 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.CrmHarassmentRightsMapper;
-import com.arvato.admin.orm.dao.CrmPreventHarassmentConfigMapper;
-import com.arvato.admin.service.ICrmPreventHarassmentConfigService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmHarassmentRightsMapper;
+import com.mei.zhuang.dao.sys.CrmPreventHarassmentConfigMapper;
 import com.mei.zhuang.entity.sys.CrmHarassmentRights;
 import com.mei.zhuang.entity.sys.CrmPreventHarassmentConfig;
+import com.mei.zhuang.service.sys.ICrmPreventHarassmentConfigService;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +28,13 @@ public class CrmPreventHarassmentConfigServiceImpl
 		extends ServiceImpl<CrmPreventHarassmentConfigMapper, CrmPreventHarassmentConfig>
 		implements ICrmPreventHarassmentConfigService {
 
-	@Autowired
+	@Resource
 	private CrmHarassmentRightsMapper rightsMapper;
 
 	@Override
 	public void reset() {
 		List<CrmPreventHarassmentConfig> configList = this
-				.selectList(new QueryWrapper<>(new CrmPreventHarassmentConfig() {
+				.list(new QueryWrapper<>(new CrmPreventHarassmentConfig() {
 					{
 						this.setStatus("1");
 					}

@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsImgGroupMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsImgMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsImgService;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsImgGroupMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsImgMapper;
+import com.mei.zhuang.service.goods.EsShopGoodsImgService;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsImg;
 import io.swagger.annotations.Api;
@@ -26,19 +26,7 @@ public class EsShopGoodsImgServiceImpl extends ServiceImpl<EsShopGoodsImgMapper,
     @Resource
     private EsShopGoodsImgGroupMapper esShopGoodsImgGroupMapper;
 
-    @Override
-    public Map<String, Object> selImg(EsShopGoodsImg entity) {
-        //分页
-        Map<String,Object> map=new HashMap<String,Object>();
-        Page<EsShopGoods> page = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
-        List<EsShopGoodsImg> list=esShopGoodsImgMapper.selImg(page,entity);
-        Integer count=esShopGoodsImgMapper.selCountImg(entity);
-        map.put("rows", list);
-        map.put("total", count);
-        map.put("current", entity.getCurrent());
-        map.put("size", entity.getSize());
-        return map;
-    }
+
 
     @Override
     public Integer delImg(Long id) {

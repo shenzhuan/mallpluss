@@ -1,12 +1,13 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopCardMessageCutMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopCardMessageMapper;
-import com.arvato.service.goods.api.service.EsShopCardMessageServer;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopCardMessageCutMapper;
+import com.mei.zhuang.dao.goods.EsShopCardMessageMapper;
 import com.mei.zhuang.entity.goods.EsShopCardMessage;
 import com.mei.zhuang.entity.goods.EsShopCardMessageCut;
+import com.mei.zhuang.service.goods.EsShopCardMessageServer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,9 +18,11 @@ public class EsShopCardMessageServerImpl extends ServiceImpl<EsShopCardMessageMa
     @Resource
     private EsShopCardMessageCutMapper esShopCardMessageCutMapper;
 
+    @Resource
+    private  EsShopCardMessageMapper esShopCardMessageMapper;
     @Override
-    public Object save(EsShopCardMessage entity) {
-       if(this.insert(entity)){
+    public boolean save(EsShopCardMessage entity) {
+       if(esShopCardMessageMapper.insert(entity)>0){
            if(entity.getListCut()!=null && entity.getListCut().size()>0){
                EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
                messageCut.setCardMessageId(entity.getId());
@@ -59,7 +62,7 @@ public class EsShopCardMessageServerImpl extends ServiceImpl<EsShopCardMessageMa
     @Override
     public EsShopCardMessage selPageList() {
 
-        EsShopCardMessage message=this.selectOne(new QueryWrapper<>());
+        EsShopCardMessage message=esShopCardMessageMapper.selectOne(new QueryWrapper<>());
         if(message!=null){
             EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
             messageCut.setCardMessageId(message.getId());

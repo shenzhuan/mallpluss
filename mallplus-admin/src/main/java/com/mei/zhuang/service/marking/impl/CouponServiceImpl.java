@@ -1,13 +1,13 @@
 package com.mei.zhuang.service.marking.impl;
 
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.orm.dao.EsMemberCouponMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponRuleMapper;
-import com.arvato.service.marking.api.service.CouponService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsMemberCouponMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponRuleMapper;
+import com.mei.zhuang.service.marking.CouponService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopCoupon;
 import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCouponRule;

@@ -1,7 +1,7 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.*;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.service.goods.*;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopCustomizedBasic;
 import com.mei.zhuang.entity.goods.EsShopCustomizedPacket;
 import io.swagger.annotations.Api;
@@ -59,28 +59,28 @@ public class OrderCustMakingController {
     @ApiOperation("获得封套/包装盒信息")
     @PostMapping(value = "/getPackInfo")
     public List<EsShopCustomizedPacket> getPackInfoList(@ApiParam @RequestParam("套装ids") List<Long> packIds) {
-        return this.esShopCustomizedPacketServer.selectBatchIds(packIds);
+        return (List<EsShopCustomizedPacket>) this.esShopCustomizedPacketServer.listByIds(packIds);
     }
 
     @SysLog(MODULE = "定制服务管理", REMARK = "查询单个定制服务")
     @ApiOperation("获得封套/包装盒信息")
     @PostMapping(value = "/getPackInfoByOne")
     public EsShopCustomizedPacket getPackInfo(@ApiParam @RequestParam("套装id") Long packId) {
-        return this.esShopCustomizedPacketServer.selectById(packId);
+        return this.esShopCustomizedPacketServer.getById(packId);
     }
 
     @SysLog(MODULE = "定制服务管理", REMARK = "查询单个定制服务")
     @ApiOperation("获得封套/包装盒信息")
     @PostMapping("/getCustBasicById")
     public EsShopCustomizedBasic getCustBasicById(@ApiParam @RequestParam("定字基础id") Long basic) {
-        return this.esShopCustomizedBasicService.selectById(basic);
+        return this.esShopCustomizedBasicService.getById(basic);
     }
 
     @SysLog(MODULE = "定制服务管理", REMARK = "查询单个定制服务")
     @ApiOperation("获得封套/包装盒信息")
     @PostMapping("/getCustBasicByIds")
     public List<EsShopCustomizedBasic> getCustBasicByIds(@ApiParam @RequestParam("定字基础ids") List<Long> basicIds) {
-        return this.esShopCustomizedBasicService.selectBatchIds(basicIds);
+        return (List<EsShopCustomizedBasic>) this.esShopCustomizedBasicService.listByIds(basicIds);
     }
 
 }

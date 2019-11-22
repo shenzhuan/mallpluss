@@ -1,13 +1,14 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.service.order.api.feigin.GoodsFegin;
-import com.arvato.service.order.api.orm.dao.EsActivatySmallBeautyBoxGiftBoxMapper;
-import com.arvato.service.order.api.orm.dao.EsActivatySmallBeautyBoxMapper;
-import com.arvato.service.order.api.service.EsActivatySmallBeautyBoxGiftBoxService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.mei.zhuang.dao.order.EsActivatySmallBeautyBoxGiftBoxMapper;
+import com.mei.zhuang.dao.order.EsActivatySmallBeautyBoxMapper;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxGiftBoxService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBox;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGiftBox;
+import com.mei.zhuang.service.order.GoodsFegin;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

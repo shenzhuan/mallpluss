@@ -3,15 +3,14 @@ package com.mei.zhuang.service.order.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.utils.DateCalendarUtils;
-import com.arvato.ec.common.utils.WX_HttpsUtil;
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.data.trade.*;
-import com.arvato.service.order.api.feigin.MembersFegin;
-import com.arvato.service.order.api.service.TrafficAnalysiService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.service.order.TrafficAnalysiService;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysis;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysisParam;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysisParamVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,8 +23,7 @@ import java.util.*;
 @Service
 public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
 
-    @Resource
-    private MembersFegin memberFegin;
+
     //分享人数
     private String SharedUrl = "https://api.weixin.qq.com/datacube/getweanalysisappidvisitdistribution?access_token=%s";
 
@@ -35,6 +33,8 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
     //浏览量
     private String VisitUrl = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token=%s";
 
+    @Resource
+    private MembersFegin membersFegin;
 
     public void PublicDaView(TradeAnalyzeParam param, Map<String, TrafficAnalysisParam> dataMap, List<TrafficAnalysisParam> TrendList) throws Exception {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -389,7 +389,7 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             String wxNeedStartTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
             String wxNeedEndTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
             //微信 获取token
-            EsMiniprogram miniprogram = memberFegin.getByShopId(param.getShopId() == null ? 1 : param.getShopId());
+            EsMiniprogram miniprogram = membersFegin.getByShopId(param.getShopId() == null ? 1 : param.getShopId());
             String code = WX_HttpsUtil.wxGetQrcode(miniprogram.getAppid(), miniprogram.getAppSecret());
             JSONObject tokenObj = WX_HttpsUtil.httpsRequest(code, "GET", null);
             String token = tokenObj.getString("access_token");

@@ -1,10 +1,11 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopBrandMapper;
-import com.arvato.service.goods.api.service.EsShopBrandService;
-import com.arvato.utils.CommonResult;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopBrandMapper;
 import com.mei.zhuang.entity.goods.EsShopBrand;
+import com.mei.zhuang.service.goods.EsShopBrandService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

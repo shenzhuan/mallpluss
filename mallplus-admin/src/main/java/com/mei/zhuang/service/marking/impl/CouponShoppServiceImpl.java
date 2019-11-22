@@ -1,16 +1,17 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsShopCouponGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponNewRuleMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponShoppingMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponsTopupGoodsMapper;
-import com.arvato.service.marking.api.service.CouponShoppingService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopCouponGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponNewRuleMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponShoppingMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponsTopupGoodsMapper;
 import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponShopping;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
+import com.mei.zhuang.service.marking.CouponShoppingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,31 +33,36 @@ public class CouponShoppServiceImpl extends ServiceImpl<EsShopCouponShoppingMapp
     @Resource
   private EsShopCouponGoodsMapMapper goodsMapMapper;
 
-  public void date(EsShopCouponShopping ent) throws Exception {
+  public void date(EsShopCouponShopping ent)  {
       //活动关闭
-      if(ent.getActivitiesOpen()==2) {
-          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-          if (ent.getTime()!= null&&!ent.getTime().equals("")) {
-              String[] times = ent.getTime().split(",");
-              ent.setStartingTime(sdf.parse(times[0]));
-              ent.setEndTime(sdf.parse(times[1]));
-          }
-      }
-      if(ent.getActivitiesOpen()==1){
-          if (ent.getTime()!= null&&!ent.getTime().equals("")) {
-              String[] times = ent.getTime().split(",");
+      try {
+          if(ent.getActivitiesOpen()==2) {
               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-              ent.setStartingTime(sdf.parse(times[0]));
-              ent.setEndTime(sdf.parse(times[1]));
+              if (ent.getTime()!= null&&!ent.getTime().equals("")) {
+                  String[] times = ent.getTime().split(",");
+                  ent.setStartingTime(sdf.parse(times[0]));
+                  ent.setEndTime(sdf.parse(times[1]));
+              }
           }
+          if(ent.getActivitiesOpen()==1){
+              if (ent.getTime()!= null&&!ent.getTime().equals("")) {
+                  String[] times = ent.getTime().split(",");
+                  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                  ent.setStartingTime(sdf.parse(times[0]));
+                  ent.setEndTime(sdf.parse(times[1]));
+              }
           }
+      }catch (Exception e){
+          e.printStackTrace();
+      }
+
 
   }
 
   //购物发券添加
   @Transactional(rollbackFor = Exception.class)
   @Override
-  public boolean save(EsShopCouponShopping entity) throws Exception {
+  public boolean save(EsShopCouponShopping entity)  {
       date(entity);
       String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
       entity.setCouponShopid(uuid);

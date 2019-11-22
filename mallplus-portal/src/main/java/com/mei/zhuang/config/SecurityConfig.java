@@ -10,7 +10,7 @@ import com.mei.zhuang.util.JsonUtils;
 import com.mei.zhuang.vo.MemberDetails;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.vo.Rediskey;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,13 +40,13 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
+    @Resource
     private IUmsMemberService memberService;
-    @Autowired
+    @Resource
     private RedisService redisService;
-    @Autowired
+    @Resource
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
-    @Autowired
+    @Resource
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Override

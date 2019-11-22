@@ -1,14 +1,17 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.constant.RedisConstant;
-import com.arvato.service.goods.api.service.EsShopDiypageService;
-import com.arvato.service.goods.api.service.EsShopDiypageTemplateCategoryService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.constant.RedisConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopDiypage;
+import com.mei.zhuang.service.goods.EsShopDiypageService;
+import com.mei.zhuang.service.goods.EsShopDiypageTemplateCategoryService;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,13 +60,13 @@ public class EsShopDiypageController {
             }
             EsShopDiypage diypage = new EsShopDiypage();
             diypage.setName(entity.getName());
-            EsShopDiypage es = diypageService.selectOne(new QueryWrapper<>(diypage));
+            EsShopDiypage es = diypageService.getOne(new QueryWrapper<>(diypage));
             if (es != null) {
                 return new CommonResult().failed("名称重复");
             }
             String da = sdf.format(new Date());
             entity.setCreateTime(sdf.parse(da));
-            diypageService.insert(entity);
+            diypageService.save(entity);
             if (entity.getType() == 2 && entity.getStatus() == 1) {
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), entity);
             }
@@ -82,12 +85,12 @@ public class EsShopDiypageController {
             boolean bool = false;
             //判断状态是否为禁用状态
             List<Long> idList = new ArrayList<>();
-            EsShopDiypage div = diypageService.selectById(id);
+            EsShopDiypage div = diypageService.getById(id);
             if (div.getStatus() != 0) {
                 return new CommonResult().failed("分类未禁用不得删除");
             }
             idList.add(id);
-            bool = diypageService.deleteBatchIds(idList);
+            bool = diypageService.removeByIds(idList);
             return new CommonResult().success("success", bool);
         } catch (Exception e) {
             log.error("删除自定义页面配置：%s", e.getMessage(), e);
@@ -103,7 +106,7 @@ public class EsShopDiypageController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请选择对应页面配置项");
             }
-            return new CommonResult().success("success", diypageService.selectById(id));
+            return new CommonResult().success("success", diypageService.getById(id));
         } catch (Exception e) {
             log.error("查询明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -151,7 +154,9 @@ public class EsShopDiypageController {
             if(ValidatorUtils.empty(entity.getType())){
                 return new CommonResult().failed("请指定页面类型");
             }
-            return new CommonResult().success("success", diypageService.selDiyPage(entity));
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+
+            return new CommonResult().success(PageInfo.of(diypageService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             return new CommonResult().failed();
         }
@@ -163,7 +168,10 @@ public class EsShopDiypageController {
     @PostMapping("/selDiyPageDetail")
     public Object selDiyPageDetail(EsShopDiypage entity) {
         try {
-            return new CommonResult().success("success", diypageService.selDiyPageDetail(entity));
+            entity.setType(4);
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+
+            return new CommonResult().success(PageInfo.of(diypageService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             return new CommonResult().failed();
         }
@@ -218,7 +226,7 @@ public class EsShopDiypageController {
             page.setType(typeId);
             list.add(page);
             if (page.getType() == 2 && page.getStatus() == 1) {
-                redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), diypageService.selectById(id));
+                redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), diypageService.getById(id));
             }
             return new CommonResult().success("success", diypageService.updateBatchById(list));
         } catch (Exception e) {
@@ -236,7 +244,7 @@ public class EsShopDiypageController {
             if (entity.getType() == 5) {
                 entity.setStatus(1);
             }
-            List<EsShopDiypage> list = diypageService.selectList(new QueryWrapper<>(entity));
+            List<EsShopDiypage> list = diypageService.list(new QueryWrapper<>(entity));
             return new CommonResult().success("success", list);
         } catch (Exception e) {
             return new CommonResult().failed();

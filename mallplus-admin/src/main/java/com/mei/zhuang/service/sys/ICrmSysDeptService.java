@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.admin.dto.DeptDictData;
-import com.arvato.admin.vo.ZTreeNode;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.sys.CrmSysDept;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.DeptDictData;
 
 import java.util.List;
 

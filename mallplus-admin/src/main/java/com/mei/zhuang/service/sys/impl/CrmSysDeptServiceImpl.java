@@ -1,19 +1,20 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.dto.DeptDictData;
-import com.arvato.admin.orm.dao.CrmSysDataAuthMapper;
-import com.arvato.admin.orm.dao.CrmSysDeptMapper;
-import com.arvato.admin.orm.dao.CrmSysUserMapper;
-import com.arvato.admin.orm.dao.CrmSysUserRoleMapper;
-import com.arvato.admin.service.ICrmSysDeptService;
-import com.arvato.admin.vo.ZTreeNode;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.CrmSysDataAuthMapper;
+import com.mei.zhuang.dao.sys.CrmSysDeptMapper;
+import com.mei.zhuang.dao.sys.CrmSysUserMapper;
+import com.mei.zhuang.dao.sys.CrmSysUserRoleMapper;
 import com.mei.zhuang.entity.sys.CrmSysDept;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.ICrmSysDeptService;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.DeptDictData;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,16 +31,16 @@ import java.util.Map;
 @Service
 public class CrmSysDeptServiceImpl extends ServiceImpl<CrmSysDeptMapper, CrmSysDept> implements ICrmSysDeptService {
 
-    @Autowired
+    @Resource
     private CrmSysDeptMapper crmSysDeptMapper;
 
-    @Autowired
+    @Resource
     private CrmSysUserRoleMapper userRoleMapper;
 
-    @Autowired
+    @Resource
     private CrmSysDataAuthMapper dataAuthMapper;
 
-    @Autowired
+    @Resource
     private CrmSysUserMapper sysUserMapper;
 
 

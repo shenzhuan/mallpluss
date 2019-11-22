@@ -2,12 +2,12 @@ package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
 import com.arvato.admin.biz.ChannelBiz;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.controller.SysLog;
 import com.arvato.utils.constant.CommonConstant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ChannelController {
 
-    @Autowired
+    @Resource
     private ChannelBiz channelBiz;
 
     /**

@@ -1,7 +1,8 @@
 package com.mei.zhuang.service.goods;
 
-import com.arvato.ec.common.vo.data.goods.*;
+
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.vo.data.goods.*;
 
 import java.util.List;
 

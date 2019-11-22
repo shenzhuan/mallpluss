@@ -1,23 +1,23 @@
 package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.UserBiz;
-import com.arvato.common.dto.DataSourceDto;
-import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.file_manage.util.BizResult;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.constant.CommonConstant;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.constant.CommonConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.UserBiz;
+import com.mei.zhuang.vo.BaseResponse;
+import com.mei.zhuang.vo.BizResult;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.sys.DataSourceDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ import java.util.Map;
 @RequestMapping("user")
 public class UserController extends BaseController {
 
-    @Autowired
+    @Resource
     private UserBiz userBiz;
 
 
@@ -50,7 +50,7 @@ public class UserController extends BaseController {
         Map<String,Object> result = new HashMap<String,Object>();
         PageHelper.startPage(current,size);
         List<CrmSysUser> crmSysUsers = userBiz.selectUserList(user);
-        user.setTotal((int) PageHelper.freeTotal());
+        //user.setTotal((int) PageHelper.freeTotal());
         result.put("total", user.getTotal());
         result.put("rows",crmSysUsers);
         result.put("size",size);
@@ -82,7 +82,7 @@ public class UserController extends BaseController {
     @SysLog(MODULE = "系统用户模块", REMARK = "保存用户信息")
     @ApiOperation("保存用户信息")
     @PostMapping(value = "/saveUser")
-    public BizResult saveUser( CrmSysUser user) {
+    public BizResult saveUser(CrmSysUser user) {
         CrmSysUser currentUser = super.getCurrentUser();
         user.setCreateUserId(currentUser.getId());
         DataSourceDto dataSourceDto = getDataSourceDto();

@@ -1,22 +1,22 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.service.ICrmSysUserService;
-import com.arvato.admin.service.ISysPlatformUserService;
-import com.arvato.common.dto.DataSourceDto;
-import com.arvato.common.dto.SysPlatformUserPagingData;
-import com.arvato.common.dto.SysPlatformUserPagingParam;
-import com.arvato.common.orm.dao.SysDbResourceMapper;
-import com.arvato.common.orm.dao.SysPlatformUserMapper;
-import com.arvato.common.orm.dao.SysTenantMapper;
-import com.arvato.common.orm.model.SysDbResource;
-import com.arvato.common.orm.model.SysPlatformUser;
-import com.arvato.common.orm.model.SysTenant;
-import com.arvato.utils.constant.UserConstant;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.constant.UserConstant;
+import com.mei.zhuang.dao.sys.SysDbResourceMapper;
+import com.mei.zhuang.dao.sys.SysPlatformUserMapper;
+import com.mei.zhuang.dao.sys.SysTenantMapper;
+import com.mei.zhuang.entity.sys.SysDbResource;
+import com.mei.zhuang.entity.sys.SysPlatformUser;
+import com.mei.zhuang.entity.sys.SysTenant;
+import com.mei.zhuang.service.sys.ICrmSysUserService;
+import com.mei.zhuang.service.sys.ISysPlatformUserService;
+import com.mei.zhuang.vo.sys.DataSourceDto;
+import com.mei.zhuang.vo.sys.SysPlatformUserPagingData;
+import com.mei.zhuang.vo.sys.SysPlatformUserPagingParam;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,13 +31,13 @@ import java.util.List;
 @Service
 public class SysPlatformUserServiceImpl extends ServiceImpl<SysPlatformUserMapper, SysPlatformUser> implements ISysPlatformUserService {
 
-    @Autowired
+    @Resource
     private SysTenantMapper sysTenantMapper;
-    @Autowired
+    @Resource
     private SysDbResourceMapper sysDbResourceMapper;
-    @Autowired
+    @Resource
     private ICrmSysUserService crmSysUserService;
-    @Autowired
+    @Resource
     private SysPlatformUserMapper mapper;
 
     @Override

@@ -1,21 +1,22 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.utils.Weekutils;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.ec.common.vo.marking.MjDcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.service.marking.api.orm.dao.EsShopDiscountGoodsMapMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopDiscountMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopDiscountRuleMapper;
-import com.arvato.service.marking.api.service.DiscountService;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopDiscountGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopDiscountMapper;
+import com.mei.zhuang.dao.marking.EsShopDiscountRuleMapper;
 import com.mei.zhuang.entity.marking.EsShopDiscount;
 import com.mei.zhuang.entity.marking.EsShopDiscountGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopDiscountRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.DiscountService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.marking.MjDcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,7 +129,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
         MjDcVo vo = new MjDcVo();
         vo.setBasicAmount(new BigDecimal(0));
         query.setStatus(0);
-        EsShopDiscount manjian = discountMapper.selectOne(query);
+        EsShopDiscount manjian = discountMapper.selectOne(new QueryWrapper<>(query));
 
         BigDecimal totalAmount = new BigDecimal("0");//实付金额
         int count = 0;
@@ -148,7 +149,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
                  */
                 if (manjian.getType() == 1) {
                     List<EsShopDiscountRule> list = discountRuleMapper.selectList(
-                            new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderBy("consumption_amount", false));
+                            new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderByDesc("consumption_amount"));
                     for (EsShopDiscountRule rule : list) {
                         if (list != null && list.size() > 0 && totalAmount.compareTo(rule.getConsumptionAmount()) >= 0) {
                             vo.setBasicAmount(totalAmount.multiply(new BigDecimal(10).subtract(rule.getDiscountAmount())).divide(new BigDecimal(10)));
@@ -157,7 +158,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
                     }
                 } else {
                     List<EsShopDiscountRule> list = discountRuleMapper.selectList(
-                            new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderBy("consumption_amount", false));
+                            new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderByDesc("consumption_amount"));
                     for (EsShopDiscountRule rule : list) {
                         if (list != null && list.size() > 0 && count >= rule.getConsumptionAmount().intValue()) {
                             vo.setBasicAmount(totalAmount.multiply(new BigDecimal(10).subtract(rule.getDiscountAmount())).divide(new BigDecimal(10)));
@@ -187,7 +188,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
                      */
                     if (manjian.getType() == 1) {
                         List<EsShopDiscountRule> list = discountRuleMapper.selectList(
-                                new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderBy("consumption_amount", false));
+                                new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderByDesc("consumption_amount"));
                         for (EsShopDiscountRule rule : list) {
                             if (list != null && list.size() > 0 && totalSingAmount.compareTo(rule.getConsumptionAmount()) >= 0) {
                                 vo.setBasicAmount(totalSingAmount.multiply(new BigDecimal(10).subtract(rule.getDiscountAmount())).divide(new BigDecimal(10)));
@@ -196,7 +197,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
                         }
                     } else {
                         List<EsShopDiscountRule> list = discountRuleMapper.selectList(
-                                new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderBy("consumption_amount", false));
+                                new QueryWrapper<EsShopDiscountRule>().eq("discount_id", manjian.getId()).orderByDesc("consumption_amount"));
                         for (EsShopDiscountRule rule : list) {
                             if (list != null && list.size() > 0 && singCount >= rule.getConsumptionAmount().intValue()) {
                                 vo.setBasicAmount(totalSingAmount.multiply(new BigDecimal(10).subtract(rule.getDiscountAmount())).divide(new BigDecimal(10)));
@@ -251,13 +252,17 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopDiscount entity) throws Exception {
+    public boolean save(EsShopDiscount entity)  {
         entity.setSource(1);
         // 1：未启用 0：启用
         entity.setStatus(1);
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
-        datetime((entity));
+        try {
+            datetime((entity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // 新增限时折扣主体信息
         discountMapper.insert(entity);
 
@@ -325,6 +330,6 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
 
     @Override
     public List<EsShopDiscount> slelectDiscount() {
-        return discountMapper.selectList(new QueryWrapper<EsShopDiscount>().orderBy("id", false));
+        return discountMapper.selectList(new QueryWrapper<EsShopDiscount>().orderByDesc("id"));
     }
 }

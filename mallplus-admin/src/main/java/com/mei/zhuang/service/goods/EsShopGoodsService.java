@@ -1,14 +1,14 @@
 package com.mei.zhuang.service.goods;
 
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.goods.EsShopGoodsParam;
-import com.arvato.ec.common.vo.goods.GoodsDetail;
-import com.arvato.ec.common.vo.goods.GoodsQuery;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.goods.EsShopDiypage;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsSpec;
 import com.mei.zhuang.entity.goods.EsShopGoodsSpecItem;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.goods.EsShopGoodsParam;
+import com.mei.zhuang.vo.goods.GoodsDetail;
+import com.mei.zhuang.vo.goods.GoodsQuery;
 
 import java.util.List;
 import java.util.Map;

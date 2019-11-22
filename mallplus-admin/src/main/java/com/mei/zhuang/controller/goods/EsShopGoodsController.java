@@ -2,23 +2,22 @@ package com.mei.zhuang.controller.goods;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.goods.EsShopGoodsParam;
-import com.arvato.ec.common.vo.goods.GoodsQuery;
-import com.arvato.service.goods.api.mq.Sender;
-import com.arvato.service.goods.api.service.*;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.*;
+import com.mei.zhuang.service.goods.*;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.goods.EsShopGoodsParam;
+import com.mei.zhuang.vo.goods.GoodsQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,8 +44,7 @@ public class EsShopGoodsController {
     private EsShopGoodsOptionService optionService;
     @Resource
     private EsShopGoodsCategoryService esShopGoodsCategoryService;
-    @Autowired
-    private Sender sender;
+
     @Resource
     private EsShopGoodsSpecService esShopGoodsSpecService;
     @Resource
@@ -190,7 +188,6 @@ public class EsShopGoodsController {
 
             Object obj = shopGoodsService.saveGoods(entity);
             if (obj != null) {
-                sender.createGoodsMq(entity);
                 return new CommonResult().success("success", new Date());
             } else {
                 return new CommonResult().success("fail", new Date());
@@ -301,13 +298,8 @@ public class EsShopGoodsController {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             PageHelper.startPage(entity.getCurrent(), entity.getSize());
-            List<EsShopGoods> selectgiftsgoods = shopGoodsService.selectgiftsgoods(entity.getTitle());
-            entity.setTotal((int) PageHelper.freeTotal());
-            map.put("rows", selectgiftsgoods);
-            map.put("current", entity.getCurrent());
-            map.put("size", entity.getSize());
-            map.put("total", entity.getTotal());
-            return new CommonResult().success(map);
+
+            return new CommonResult().success(PageInfo.of(shopGoodsService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("查询商品明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -420,7 +412,7 @@ public class EsShopGoodsController {
             EsShopGoodsCategory category = new EsShopGoodsCategory();
             category.setStatus(1);
             category.setLevel(0);
-            return esShopGoodsCategoryService.selectList(new QueryWrapper<>(category));
+            return esShopGoodsCategoryService.list(new QueryWrapper<>(category));
         } catch (Exception e) {
             log.error("查询一级分类异常：", e.getMessage(), e);
             return new CommonResult().failed();
@@ -661,7 +653,7 @@ public class EsShopGoodsController {
             }
             EsShopGoodsOption option = new EsShopGoodsOption();
             option.setGoodsId(entity.getGoodsId());
-            List<EsShopGoodsOption> list = optionService.selectList(new QueryWrapper<>(option));
+            List<EsShopGoodsOption> list = optionService.list(new QueryWrapper<>(option));
             for (EsShopGoodsOption options:list) {
                 if(options.getVirtualStock() == null ||options.getVirtualStock().equals("")){
                     virtualStock=0;
@@ -669,7 +661,7 @@ public class EsShopGoodsController {
                     virtualStock += options.getVirtualStock();
                 }
             }
-            EsShopGoods esShopGoods = shopGoodsService.selectById(entity.getGoodsId());
+            EsShopGoods esShopGoods = shopGoodsService.getById(entity.getGoodsId());
             if(esShopGoods.getStatus() == 3){
                 if(virtualStock>0){
                     esShopGoods.setStatus(1);
@@ -713,7 +705,7 @@ public class EsShopGoodsController {
             goods.setDisplayOrder(0);
             goods.setDefaultSpec("规格:规格值");
             goods.setCreateTime(new Date());
-            bool = shopGoodsService.insert(goods);
+            bool = shopGoodsService.save(goods);
             //1添加规格规格值
             //2.添加规格
             EsShopGoodsSpec spec = new EsShopGoodsSpec();
@@ -721,7 +713,7 @@ public class EsShopGoodsController {
             spec.setIsMainSpec(1);
             spec.setTitle("规格");
             spec.setDisplayOrder(0);
-            bool = esShopGoodsSpecService.insert(spec);
+            bool = esShopGoodsSpecService.save(spec);
             //3.添加规格值
             EsShopGoodsSpecItem specItem = new EsShopGoodsSpecItem();
             specItem.setGoodsId(goods.getId());
@@ -734,7 +726,7 @@ public class EsShopGoodsController {
             specItem.setTypeword("1");
             specItem.setMoney(goods.getPrice());
             specItem.setTitleItem(spec.getTitle());
-            bool = esShopGoodsSpecItemService.insert(specItem);
+            bool = esShopGoodsSpecItemService.save(specItem);
             //3.option
             EsShopGoodsOption option = new EsShopGoodsOption();
             option.setGoodsName(goods.getTitle());
@@ -752,7 +744,7 @@ public class EsShopGoodsController {
             option.setThumb(boxImg);
             option.setGoodsCode(boxCode);
             option.setProductsn(productSn);//条码
-            bool = optionService.insert(option);
+            bool = optionService.save(option);
         }catch (Exception e){
             e.printStackTrace();
             bool =false;
@@ -775,7 +767,7 @@ public class EsShopGoodsController {
             //查询商品id
             EsShopGoods goods = new EsShopGoods();
             goods.setSmallBeautyBoxId(id);
-            EsShopGoods esShopGoods = shopGoodsService.selectOne(new QueryWrapper<>(goods));
+            EsShopGoods esShopGoods = shopGoodsService.getOne(new QueryWrapper<>(goods));
             //1.添加商品
             goods.setTitle(boxName);
             goods.setGoodsCode(boxCode);
@@ -790,7 +782,7 @@ public class EsShopGoodsController {
             //2.添加规格
             EsShopGoodsSpec spec = new EsShopGoodsSpec();
             spec.setGoodsId(goods.getId());
-            EsShopGoodsSpec specs = esShopGoodsSpecService.selectOne(new QueryWrapper<>(spec));
+            EsShopGoodsSpec specs = esShopGoodsSpecService.getOne(new QueryWrapper<>(spec));
             spec.setIsMainSpec(1);
             spec.setDisplayOrder(0);
             spec.setId(specs.getId());
@@ -798,7 +790,7 @@ public class EsShopGoodsController {
             //3.添加规格值
             EsShopGoodsSpecItem specItem = new EsShopGoodsSpecItem();
             specItem.setGoodsId(goods.getId());
-            EsShopGoodsSpecItem specItem1 = esShopGoodsSpecItemService.selectOne(new QueryWrapper<>(specItem));
+            EsShopGoodsSpecItem specItem1 = esShopGoodsSpecItemService.getOne(new QueryWrapper<>(specItem));
             specItem.setSpecId(spec.getId());
             specItem.setDisplayOrder(0);
             specItem.setShow("1");
@@ -811,7 +803,7 @@ public class EsShopGoodsController {
             //3.option
             EsShopGoodsOption option = new EsShopGoodsOption();
             option.setGoodsId(goods.getId());
-            EsShopGoodsOption opt = optionService.selectOne(new QueryWrapper<>(option));
+            EsShopGoodsOption opt = optionService.getOne(new QueryWrapper<>(option));
             option.setGoodsName(goods.getTitle());
             option.setSpecIds(specItem.getId().toString());
             option.setTitle(specItem.getTitle());
@@ -841,7 +833,7 @@ public class EsShopGoodsController {
     public boolean delSmallBeautyBoxCust(@RequestParam("id")Long id) {
         EsShopGoods goods = new EsShopGoods();
         goods.setSmallBeautyBoxId(id);//定制礼盒id
-        return shopGoodsService.delete(new QueryWrapper<>(goods));
+        return shopGoodsService.remove(new QueryWrapper<>(goods));
     }
 
     @SysLog(MODULE = "商品管理", REMARK = "查询小美盒中的定制礼盒")
@@ -850,7 +842,7 @@ public class EsShopGoodsController {
     public EsShopGoods goodsDetail(@RequestParam("id")Long id) {
         EsShopGoods goods = new EsShopGoods();
         goods.setSmallBeautyBoxId(id);//定制礼盒id
-        return shopGoodsService.selectOne(new QueryWrapper<>(goods));
+        return shopGoodsService.getOne(new QueryWrapper<>(goods));
     }
 
     @SysLog(MODULE = "商品管理", REMARK = "查询sku")
@@ -859,7 +851,7 @@ public class EsShopGoodsController {
     public EsShopGoodsOption goodsOption(@RequestParam("goodsId")Long goodsId){
         EsShopGoodsOption option = new EsShopGoodsOption();
         option.setGoodsId(goodsId);
-        return optionService.selectOne(new QueryWrapper<>(option));
+        return optionService.getOne(new QueryWrapper<>(option));
     }
 
     //商品状态详情
@@ -876,8 +868,8 @@ public class EsShopGoodsController {
         if(ValidatorUtils.notEmpty(param.getShopId())){
             condition.eq("shop_id", param.getShopId());
         }
-        System.out.println(shopGoodsService.selectList(condition).toString()+shopGoodsService.selectList(condition).size()+"daxioa");
-        return shopGoodsService.selectList(condition);
+
+        return shopGoodsService.list(condition);
 
     }
 

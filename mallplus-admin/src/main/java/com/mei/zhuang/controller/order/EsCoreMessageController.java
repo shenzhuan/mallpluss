@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.service.order.api.service.EsAppletTemplateService;
-import com.arvato.service.order.api.service.EsCoreMessageTemplateService;
-import com.arvato.service.order.api.service.impl.WechatApiService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.service.order.EsAppletTemplateService;
+import com.mei.zhuang.service.order.EsCoreMessageTemplateService;
+import com.mei.zhuang.service.order.impl.WechatApiService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.order.EsAppletTemplates;
 import com.mei.zhuang.entity.order.EsCoreMessageTemplate;
 import io.swagger.annotations.Api;
@@ -83,7 +83,7 @@ public class EsCoreMessageController {
             if (ValidatorUtils.empty(entity.getTemplateId())) {
                 return new CommonResult().failed("请选择模板");
             }
-            EsAppletTemplates esAppletTemplates = esAppletTemplateService.selectById(entity.getTemplateId());
+            EsAppletTemplates esAppletTemplates = esAppletTemplateService.getById(entity.getTemplateId());
             if (esAppletTemplates != null) {
                 entity.setOriginalTemplateId(esAppletTemplates.getTemplateId());
             }
@@ -124,7 +124,7 @@ public class EsCoreMessageController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定ID");
             }
-            EsCoreMessageTemplate esCoreMessage = esCoreMessageTemplateService.selectById(id);
+            EsCoreMessageTemplate esCoreMessage = esCoreMessageTemplateService.getById(id);
             esCoreMessage.setAppletTemplatesList(esAppletTemplateService.selectList(new QueryWrapper<>()));
             return new CommonResult().success("success", esCoreMessage);
         } catch (Exception e) {
@@ -144,13 +144,13 @@ public class EsCoreMessageController {
             if (ValidatorUtils.empty(entity.getTemplateId())) {
                 return new CommonResult().failed("请选择模板");
             }
-            EsAppletTemplates esAppletTemplates = esAppletTemplateService.selectById(entity.getTemplateId());
+            EsAppletTemplates esAppletTemplates = esAppletTemplateService.getById(entity.getTemplateId());
             if (esAppletTemplates != null) {
                 entity.setOriginalTemplateId(esAppletTemplates.getTemplateId());
             }
             String time = sdf.format(new Date());
             entity.setCreateTime(sdf.parse(time));
-            return new CommonResult().success("success", esCoreMessageTemplateService.insert(entity));
+            return new CommonResult().success("success", esCoreMessageTemplateService.save(entity));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();

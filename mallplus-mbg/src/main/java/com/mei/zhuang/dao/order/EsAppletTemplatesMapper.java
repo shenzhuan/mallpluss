@@ -17,6 +17,6 @@ import java.util.List;
  */
 public interface EsAppletTemplatesMapper extends BaseMapper<EsAppletTemplates> {
 
-    List<EsAppletTemplates> select(Pagination page, EsAppletTemplates entity);
+   // List<EsAppletTemplates> select(Pagination page, EsAppletTemplates entity);
     Integer count();
 }

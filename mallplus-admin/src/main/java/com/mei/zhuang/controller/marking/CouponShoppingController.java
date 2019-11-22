@@ -2,13 +2,14 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.marking.api.service.CouponShoppingService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponShopping;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
+import com.mei.zhuang.service.marking.CouponShoppingService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Api(value = "购物发券管理", description = "", tags = {"购物发券管理"})
@@ -131,14 +130,7 @@ public class CouponShoppingController {
                               @RequestParam(value = "size", defaultValue = "10") Integer size) {
         try {
             PageHelper.startPage(current, size);
-            List<Map<String, Object>> shopping = couponshopService.selectshopping();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", shopping);
-            map.put("size", size);
-            map.put("current", current);
-            map.put("total", entity.getTotal());
-            return new CommonResult().success(map);
+            return new CommonResult().success(PageInfo.of(couponshopService.selectshopping()));
         } catch (Exception e) {
             log.error("购物发券查询：%s", e.getMessage(), e);
             return new CommonResult().failed();

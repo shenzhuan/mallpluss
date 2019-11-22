@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.common.orm.dao.SysTenantMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysTenant">
+        <id column="id" property="id" />
+        <result column="tenant_name" property="tenantName" />
+        <result column="db_resource_id" property="dbResourceId" />
+        <result column="db_schema" property="dbSchema" />
+        <result column="brand_name" property="brandName" />
+        <result column="brand_logo" property="brandLogo" />
+        <result column="company_name" property="companyName" />
+        <result column="company_tel" property="companyTel" />
+        <result column="company_email" property="companyEmail" />
+        <result column="company_address" property="companyAddress" />
+        <result column="status" property="status" />
+    </resultMap>
+
+
+    <resultMap id="pagingData" type="com.arvato.common.dto.SysTenantPagingData">
+        <result column="tenant_name" property="tenantName" />
+        <result column="db_resource_name" property="dbResourceName" />
+        <result column="db_schema" property="dbSchema" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <resultMap id="sysTenantInfo" type="com.arvato.common.dto.SysTenantInfo">
+        <result column="id" property="id" />
+        <result column="db_name" property="dbName" />
+        <result column="db_schema" property="dbSchema" />
+    </resultMap>
+
+
+
+    <select id="getValidTenantByIds" resultMap="BaseResultMap">
+        select * from sys_tenant st where st.status = '0' and st.id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectDataSourceById" resultType="com.arvato.common.dto.DataSourceDto">
+        select sttemp.id as "tenantId",sr.db_name as "dataSource",sttemp.db_schema as "schema"
+        from (select st.id,st.db_schema,st.db_resource_id from sys_tenant st where st.id = #{tenantId} and st.status='0' limit 1) sttemp
+        join sys_db_resource sr on sttemp.db_resource_id = sr.id
+    </select>
+
+    <select id="getPagingTotal" resultType="int">
+        select count(1) from sys_tenant
+        <include refid="pagingWhere"></include>
+    </select>
+    <select id="getPagingList" resultMap="pagingData">
+        select id ,tenant_name,
+               (select source_name from sys_db_resource where id=sys_tenant.db_resource_id) as db_resource_name,
+               db_schema,
+               to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
+               status
+        from sys_tenant
+        <include refid="pagingWhere"></include>
+        order by id desc
+        limit #{param.limit} offset #{param.offset}
+    </select>
+
+    <sql id="pagingWhere">
+        <where>
+            <if test="param.tenantName != null and param.tenantName != ''">
+                and tenant_name like concat('%',#{param.tenantName},'%')
+            </if>
+            <if test="param.dbResourceId != null">
+                and db_resource_id = #{param.dbResourceId}
+            </if>
+            <if test="param.dbSchema != null and param.dbSchema != ''">
+                and db_schema = #{param.dbSchema}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getDictList" resultType="com.arvato.common.msg.DictData">
+        select id as "value",tenant_name as "text" from sys_tenant order by tenant_name
+    </select>
+
+    <select id="getTenantInfoById" resultMap="sysTenantInfo">
+        select id,
+               (select db_name from sys_db_resource where id=sys_tenant.db_resource_id) as db_name,
+               db_schema
+        from sys_tenant where id=#{id}
+    </select>
+</mapper>

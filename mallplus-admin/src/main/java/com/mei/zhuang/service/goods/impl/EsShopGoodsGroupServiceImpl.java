@@ -1,21 +1,18 @@
 package com.mei.zhuang.service.goods.impl;
 
 
-import com.arvato.ec.common.vo.data.goods.*;
-import com.arvato.service.goods.api.feigin.OrderFegin;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsCateMapMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsGroupMapMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsGroupMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsGroupService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsCateMapMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroup;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroupMap;
+import com.mei.zhuang.service.goods.EsShopGoodsGroupService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -46,35 +46,10 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
     private EsShopGoodsGroupService goodsGroupService;
     @Resource
     private EsShopGoodsGroupMapper goodsGroupMapper;
-    @Resource
-    private OrderFegin orderFegin;
 
 
-    @ApiOperation("根据条件查询所有商品分组列表")
-    @Override
-    public Object getGoodsGroupByPage(EsShopGoodsGroup entity) {
-        try {
-            return new CommonResult().success(this.selectPage(new Page<EsShopGoodsGroup>(entity.getCurrent(), entity.getSize()), new QueryWrapper<>(entity)));
-        } catch (Exception e) {
-            log.error("根据条件查询所有商品分组列表：%s", e.getMessage(), e);
-        }
-        return new CommonResult().failed();
-    }
 
-    @ApiOperation("根据名称查询商品")
-    @Override
-    public Map<String, Object> goodsgrouplist(EsShopGoodsGroup esShopGoodsGroup) {
-        Map<String, Object> result = new HashMap<>();
-        Page<EsShopGoods> page = new Page<EsShopGoods>(esShopGoodsGroup.getCurrent(), esShopGoodsGroup.getSize());
-        List<EsShopGoodsGroup> list = goodsGroupMapper.list(page, esShopGoodsGroup.getCurrent(), esShopGoodsGroup.getSize(), esShopGoodsGroup.getName());
-        int count = goodsGroupMapper.count();
-        result.put("rows", list);
-        result.put("total", count);
-        result.put("current", esShopGoodsGroup.getCurrent());
-        result.put("size", esShopGoodsGroup.getSize());
-        return result;
 
-    }
 
 
     @ApiOperation("选择商品分类查询")
@@ -101,7 +76,7 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
             Date date = sdf.parse(str);
             entity.setCreateTime(date);
             // 1.添加分组信息
-            goodsGroupService.insert(entity);
+            goodsGroupService.save(entity);
             // 2.添加商品分组
             if (ValidatorUtils.notEmpty(entity.getGoodsIds())) {
                 String[] goodsIds = entity.getGoodsIds().split(",");
@@ -224,7 +199,7 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
     public Object getGoodsGroupById(Long id) {
         try {
 
-            EsShopGoodsGroup coupon = this.selectById(id);
+            EsShopGoodsGroup coupon = goodsGroupMapper.selectById(id);
             if (coupon != null) {
                 List<EsShopGoodsGroupMap> list = shopGoodsGroupMapMapper.selEsShopGoodsGroupMap(coupon.getId());
                 List<EsShopGoods> lists = new ArrayList<EsShopGoods>();

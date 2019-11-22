@@ -1,15 +1,15 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.EsShopBrandMapper;
-import com.arvato.admin.orm.dao.EsShopNewMapper;
-import com.arvato.admin.service.IShopService;
-import com.arvato.admin.utils.ShopTypeCharacterUtils;
-import com.arvato.admin.vo.ShopParam;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.EsShopBrandMapper;
+import com.mei.zhuang.dao.sys.EsShopNewMapper;
 import com.mei.zhuang.entity.sys.EsShopBrand;
 import com.mei.zhuang.entity.sys.EsShopNew;
+import com.mei.zhuang.service.sys.IShopService;
+import com.mei.zhuang.util.ShopTypeCharacterUtils;
+import com.mei.zhuang.vo.ShopParam;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,7 +37,7 @@ public class ShopSettingsServiceImpl extends ServiceImpl<EsShopNewMapper, EsShop
             item.setTypeEn(ShopTypeCharacterUtils.getChByShopType(item.getTypeId()));
         }
 
-        page.setAsc(entity.getIsAsc() == 0 ? false : true);
+       // page.setAsc(entity.getIsAsc() == 0 ? false : true);
         page.setRecords(list);
         page.setTotal(shopMapper.selectShopCountByParam(entity));
         return page;

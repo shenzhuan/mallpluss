@@ -1,7 +1,7 @@
 package com.mei.zhuang.service.marking;
 
 
-import com.arvato.ec.common.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchase;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseGoodsMap;
@@ -15,7 +15,7 @@ import java.util.List;
  * @Description:
  */
 public interface FirstPurchaseService extends IService<EsShopFirstPurchase> {
-    Integer save(EsShopFirstPurchase entity) throws Exception;
+    boolean save(EsShopFirstPurchase entity) ;
 
     int updateShowStatus(Long ids, Integer status);
 

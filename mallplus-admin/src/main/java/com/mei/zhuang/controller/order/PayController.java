@@ -2,24 +2,24 @@ package com.mei.zhuang.controller.order;
 
 
 import com.arvato.ec.common.vo.EsMiniprogram;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import com.arvato.service.order.api.enums.OrderStatus;
 import com.arvato.service.order.api.feigin.GoodsFegin;
 import com.arvato.service.order.api.feigin.MarkingFegin;
 import com.arvato.service.order.api.feigin.MembersFegin;
-import com.arvato.service.order.api.orm.dao.EsShopOrderGoodsMapper;
-import com.arvato.service.order.api.orm.dao.EsShopOrderMapper;
-import com.arvato.service.order.api.orm.dao.EsShopPaymentMapper;
-import com.arvato.service.order.api.service.ShopOrderService;
+import com.mei.zhuang.dao.order.EsShopOrderGoodsMapper;
+import com.mei.zhuang.dao.order.EsShopOrderMapper;
+import com.mei.zhuang.dao.order.EsShopPaymentMapper;
+import com.mei.zhuang.service.order.ShopOrderService;
 import com.arvato.service.order.api.utils.*;
 import com.arvato.service.order.api.utils.DateUtils;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.*;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.*;
 import com.arvato.utils.util.CharUtil;
 import com.arvato.utils.util.IpAddressUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsShopOrder;
@@ -110,7 +110,7 @@ public class PayController {
         queryPay.setType(1);
         queryPay.setIsDelete(0);
         EsShopPayment payment = paymentMapper.selectOne(queryPay);
-        EsShopOrder orderInfo = orderService.selectById(orderId);
+        EsShopOrder orderInfo = orderService.getById(orderId);
         if (null == miniprogram || payment==null) {
             return new CommonResult().failed("支付参数为空");
         }
@@ -398,7 +398,7 @@ public class PayController {
     public static void main(String[] args) {
         String a ="广东省";
         System.out.println(a.substring(0,2));
-        System.out.println(com.arvato.utils.date.DateUtils.addDay(new Date(),-5));
+        System.out.println(com.mei.zhuang.utils.DateUtils.addDay(new Date(),-5));
         System.out.println(System.currentTimeMillis());
     }
 }

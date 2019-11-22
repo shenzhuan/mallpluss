@@ -1,9 +1,9 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.service.marking.api.service.EsShopFriendGiftService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.service.marking.EsShopFriendGiftService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopFriendGift;
 import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
 import io.swagger.annotations.Api;

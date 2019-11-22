@@ -1,28 +1,24 @@
 package com.mei.zhuang.controller.sys;
 
 
-import com.arvato.admin.constant.AdminCommonConstant;
-import com.arvato.admin.constant.SysPlatformUserStatus;
-import com.arvato.admin.constant.SysTenantStatus;
-import com.arvato.admin.dto.SysPlatformUserPostData;
-import com.arvato.admin.dto.SysPlatformUserPutData;
-import com.arvato.admin.service.ISysPlatformUserService;
-import com.arvato.common.dto.SysPlatformUserPagingData;
-import com.arvato.common.dto.SysPlatformUserPagingParam;
-import com.arvato.common.msg.DictData;
-import com.arvato.common.orm.model.SysPlatformUser;
-import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.common.vo.returnformat.TableData;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.StringHelper;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.constant.AdminCommonConstant;
+import com.mei.zhuang.constant.SysPlatformUserStatus;
+import com.mei.zhuang.constant.SysTenantStatus;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.entity.sys.SysPlatformUser;
+import com.mei.zhuang.service.sys.ISysPlatformUserService;
+import com.mei.zhuang.util.StringHelper;
+import com.mei.zhuang.vo.BaseResponse;
+import com.mei.zhuang.vo.DictData;
+import com.mei.zhuang.vo.sys.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = {"平台账户管理CRUD接口"})
@@ -30,7 +26,7 @@ import java.util.List;
 @RequestMapping("/sysPlatformUsers")
 public class SysPlatformUserController {
 
-    @Autowired
+    @Resource
     private ISysPlatformUserService service;
 
     @SysLog(MODULE = "平台账户管理CRUD接口", REMARK = "平台账户列表")
@@ -69,7 +65,7 @@ public class SysPlatformUserController {
                 "请填写6-16位字符，不能包含空格、中文"
         );
         Assert.isTrue(
-                this.service.selectCount(new QueryWrapper<>(
+                this.service.count(new QueryWrapper<>(
                         new SysPlatformUser().setUsername(tenantPostData.getUsername())
                 )) == 0,
                 "该账号已被使用"
@@ -83,7 +79,7 @@ public class SysPlatformUserController {
                 .setPassword(tenantPostData.getPassword())
                 .setManageTenantIds(tenantPostData.getManageTenantIds())
                 .setStatus(SysPlatformUserStatus.NORMAL.getStatus());
-        this.service.insert(sysPlatformUser);
+        this.service.save(sysPlatformUser);
 
         this.service.platformUserInit(sysPlatformUser);
 

@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.common.dto.SysPlatformUserPagingData;
-import com.arvato.common.dto.SysPlatformUserPagingParam;
-import com.arvato.common.orm.model.SysPlatformUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mei.zhuang.entity.sys.SysPlatformUser;
+import com.mei.zhuang.vo.sys.SysPlatformUserPagingData;
+import com.mei.zhuang.vo.sys.SysPlatformUserPagingParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.mei.zhuang.service.marking;
 
 
-import com.arvato.ec.common.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
 import com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap;

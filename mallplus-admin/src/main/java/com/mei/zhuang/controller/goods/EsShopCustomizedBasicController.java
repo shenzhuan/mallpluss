@@ -1,11 +1,13 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsShopCustomizedBasicService;
-import com.arvato.service.goods.api.service.EsShopCustomizedLegendService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.service.goods.EsShopCustomizedBasicService;
+import com.mei.zhuang.service.goods.EsShopCustomizedLegendService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopCustomizedBasic;
 import com.mei.zhuang.entity.goods.EsShopCustomizedLegend;
 import io.swagger.annotations.Api;
@@ -39,7 +41,9 @@ public class EsShopCustomizedBasicController {
     @PostMapping("/list")
     private Object selLegendPage(EsShopCustomizedLegend entity) {
         try {
-            return new CommonResult().success("success", esShopCustomizedLegendService.selLegendPage(entity));
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+            // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
+            return new CommonResult().success(PageInfo.of(esShopCustomizedLegendService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("查询样图上传列表常:", e);
             return new CommonResult().failed();
@@ -55,7 +59,7 @@ public class EsShopCustomizedBasicController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success", esShopCustomizedLegendService.selectById(id));
+            return new CommonResult().success("success", esShopCustomizedLegendService.getById(id));
         } catch (Exception e) {
             log.error("查询样图上传列表详情异常:", e);
             return new CommonResult().failed();
@@ -73,7 +77,7 @@ public class EsShopCustomizedBasicController {
             }
             String time = sdf.format(new Date());
             entity.setCreateTime(sdf.parse(time));
-            return new CommonResult().success("success", esShopCustomizedLegendService.insert(entity));
+            return new CommonResult().success("success", esShopCustomizedLegendService.save(entity));
         } catch (Exception e) {
             log.error("新增样图上传异常:", e);
             return new CommonResult().failed();
@@ -105,7 +109,7 @@ public class EsShopCustomizedBasicController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            return new CommonResult().success("success", esShopCustomizedLegendService.deleteById(id));
+            return new CommonResult().success("success", esShopCustomizedLegendService.removeById(id));
         } catch (Exception e) {
             log.error("修改样图上传异常:", e);
             return new CommonResult().failed();
@@ -118,7 +122,7 @@ public class EsShopCustomizedBasicController {
     @PostMapping("/detailBasic")
     private Object detailBasic(EsShopCustomizedBasic entity) {
         try {
-            return new CommonResult().success("success", esShopCustomizedBasicService.selectOne(new QueryWrapper<>()));
+            return new CommonResult().success("success", esShopCustomizedBasicService.getOne(new QueryWrapper<>()));
         } catch (Exception e) {
             log.error("新增刻字服务基本信息异常:", e);
             return new CommonResult().failed();
@@ -148,7 +152,7 @@ public class EsShopCustomizedBasicController {
             if (ValidatorUtils.empty(entity.getTitle())) {
                 return new CommonResult().failed("请指定标题");
             }
-            return new CommonResult().success("success", esShopCustomizedBasicService.insert(entity));
+            return new CommonResult().success("success", esShopCustomizedBasicService.save(entity));
         } catch (Exception e) {
             log.error("新增刻字服务基本信息异常:", e);
             return new CommonResult().failed();
@@ -177,7 +181,7 @@ public class EsShopCustomizedBasicController {
     @PostMapping("/selBasicInfoByIds")
     private Object selBasicInfoByIds(List<Long> basicIds) {
         try {
-            return new CommonResult().success("success", esShopCustomizedBasicService.selectBatchIds(basicIds));
+            return new CommonResult().success("success", esShopCustomizedBasicService.listByIds(basicIds));
         } catch (Exception e) {
             log.error("查询刻字服务Basic:", e);
             return new CommonResult().failed();

@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.common.dto.DataSourceDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.vo.sys.DataSourceDto;
 
 /**
  * <p>

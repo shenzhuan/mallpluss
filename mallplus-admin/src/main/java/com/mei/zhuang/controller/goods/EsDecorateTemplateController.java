@@ -1,8 +1,8 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.service.goods.api.service.EsDecorateTemplateService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+import com.mei.zhuang.service.goods.EsDecorateTemplateService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsDecorateTemplate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,7 +53,7 @@ public class EsDecorateTemplateController {
     @DeleteMapping(value = "/delete{brandid}")
     public Object deleteBrand(@PathVariable Long brandid) {
         try {
-            return new CommonResult().success(decorateTemplateService.selectById(brandid));
+            return new CommonResult().success(decorateTemplateService.getById(brandid));
         } catch (Exception e) {
             log.error("删除自定义页面配置：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -65,7 +65,7 @@ public class EsDecorateTemplateController {
     @PostMapping(value = "/detail{brandid}")
     public Object detailBrand(@PathVariable Long brandid) {
         try {
-            return decorateTemplateService.selectById(brandid);
+            return decorateTemplateService.getById(brandid);
         } catch (Exception e) {
             log.error("查询明细：%s", e.getMessage(), e);
             return new CommonResult().failed();

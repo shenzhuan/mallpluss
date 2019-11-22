@@ -1,13 +1,13 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.ec.common.vo.order.PayParam;
-import com.arvato.ec.common.vo.order.PaySettingParam;
-import com.arvato.service.order.api.orm.dao.EsShopOperationLogMapper;
-import com.arvato.service.order.api.orm.dao.EsShopPayLogMapper;
-import com.arvato.service.order.api.orm.dao.EsShopPaymentMapper;
-import com.arvato.service.order.api.service.ShopPaymentService;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.vo.order.PayParam;
+import com.mei.zhuang.vo.order.PaySettingParam;
+import com.mei.zhuang.dao.order.EsShopOperationLogMapper;
+import com.mei.zhuang.dao.order.EsShopPayLogMapper;
+import com.mei.zhuang.dao.order.EsShopPaymentMapper;
+import com.mei.zhuang.service.order.ShopPaymentService;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsShopOperationLog;
 import com.mei.zhuang.entity.order.EsShopPayment;
 import org.springframework.stereotype.Service;
@@ -77,13 +77,5 @@ public class ShopPaymentServiceImpl extends ServiceImpl<EsShopPaymentMapper, EsS
         return shopOperationLogMapper.insert(log) > 0;
     }
 
-    @Override
-    public Page<EsShopPayment> selectPageList(PaySettingParam paySettingParam) {
-        Page<EsShopPayment> page = new Page<EsShopPayment>(paySettingParam.getCurrent(), paySettingParam.getSize());
-        page.setAsc(paySettingParam.getIsAsc() == 0 ? false : true);
-        List<EsShopPayment> paymentList = this.shopPaymentMapper.selectPageList(paySettingParam);
-        page.setRecords(paymentList);
-        page.setTotal(paymentList == null ? 0 : paymentList.size());
-        return page;
-    }
+
 }

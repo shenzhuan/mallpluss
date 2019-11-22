@@ -103,7 +103,7 @@ public interface EsShopGoodsMapper extends BaseMapper<EsShopGoods> {
      */
     List<EsShopGoods> selectgiftsgoods(@Param("title") String title);
 
-  //  List<EsShopGoods> selGoodsPageList(Pagination page, GoodsQuery esShopGoods);
+    List<EsShopGoods> selGoodsPageList( GoodsQuery esShopGoods);
 
     List<EsShopGoods> selGoodsPageLists(GoodsQuery esShopGoods);
 
@@ -125,13 +125,13 @@ public interface EsShopGoodsMapper extends BaseMapper<EsShopGoods> {
     @ApiOperation("修改商品上架时间")
     Integer updPutawayTime(@Param("id") Long id, @Param("putawayTime") Long putawayTime);
 
-  //  List<EsShopGoods> selGoodsPutaway(Pagination page, GoodsQuery entity);
+    List<EsShopGoods> selGoodsPutaway( GoodsQuery entity);
 
     Integer selGoodsPutawayCount(GoodsQuery entity);
 
     List<EsShopGoods> selectSaleByDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-  //  List<EsShopGoods> lists(Pagination page, GoodsQuery esShopGoods);
+    List<EsShopGoods> lists( GoodsQuery esShopGoods);
     int counts(GoodsQuery esShopGoods);
 
     List<EsShopGoods> selRankTopList(GoodsRankTopParam param);

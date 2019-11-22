@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.marking;
 
 import com.arvato.service.marking.api.feigin.MembersFegin;
-import com.arvato.service.marking.api.orm.dao.*;
-import com.arvato.service.marking.api.service.EsShopShareMemberService;
-import com.arvato.service.marking.api.service.EsShopShareService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.dao.marking.*;
+import com.mei.zhuang.service.marking.EsShopShareMemberService;
+import com.mei.zhuang.service.marking.EsShopShareService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
@@ -61,7 +61,7 @@ public class AppletShareController {
     public Object preOrderMarking(@RequestParam("id") Long id,@RequestParam("memberId")Long memberId) {
         try {
 
-            EsShopShare esShopShare = esShopShareService.selectById(id);
+            EsShopShare esShopShare = esShopShareService.getById(id);
             if(esShopShare != null){
                 //判断活动是否开启
                 if(esShopShare.getStatus() == 1){
@@ -147,7 +147,7 @@ public class AppletShareController {
                                         shareMember.setShareNum(0);
                                         shareMember.setIsClose(0);
                                         shareMember.setIsConfirm(1);
-                                        esShopShareMemberService.insert(shareMember);
+                                        esShopShareMemberService.save(shareMember);
                                         esShopShare.setShareMemberId(shareMember.getId());
                                         esShopShare.setMember(memberFegin.detail(memberId));
                                         esShopShare.setIsClose(0);
@@ -174,8 +174,8 @@ public class AppletShareController {
     public Object shareAndGive(@RequestParam("shareMemberId") Long shareMemberId) {
         try{
             //分享次数+1
-            EsShopShareMember shareMember =esShopShareMemberService.selectById(shareMemberId);
-            EsShopShare share = esShopShareService.selectById(shareMember.getShareId());
+            EsShopShareMember shareMember =esShopShareMemberService.getById(shareMemberId);
+            EsShopShare share = esShopShareService.getById(shareMember.getShareId());
             if(shareMember.getShareNum() >=share.getGiftNumber()){
                 EsShopShareMember shareMember1 = new EsShopShareMember();
                 shareMember1.setId(shareMemberId);
@@ -216,8 +216,8 @@ public class AppletShareController {
     @PostMapping(value = "/selShareDetail")
     public Object selShareDetail(@RequestParam("shareMemberId") Long shareMemberId) {
         try{
-            EsShopShareMember shareMember =esShopShareMemberService.selectById(shareMemberId);
-            EsShopShare share = esShopShareService.selectById(shareMember.getShareId());
+            EsShopShareMember shareMember =esShopShareMemberService.getById(shareMemberId);
+            EsShopShare share = esShopShareService.getById(shareMember.getShareId());
             share.setShareMemberId(shareMemberId);
             return new CommonResult().success("success",share);
         }catch (Exception e){
@@ -233,8 +233,8 @@ public class AppletShareController {
             if(ValidatorUtils.empty(shareMemberId)){
                 return new CommonResult().failed("请指定用户发起活动id");
             }
-            EsShopShareMember shareMember = esShopShareMemberService.selectById(shareMemberId);
-            EsShopShare share =  esShopShareService.selectById(shareMember.getShareId());
+            EsShopShareMember shareMember = esShopShareMemberService.getById(shareMemberId);
+            EsShopShare share =  esShopShareService.getById(shareMember.getShareId());
             if(share.getHelpNumber().equals(shareMember.getShareNum())){
                 //判断是否已发送奖品
                 EsMemberCoupon coupon = new EsMemberCoupon();
@@ -285,7 +285,7 @@ public class AppletShareController {
             shareMember.setShareId(shareId);
             shareMember.setLaunchMemberId(memberId);
             List<EsShopShareMember> list =esShopShareMemberService.selectList(new QueryWrapper<>(shareMember));
-            EsShopShare esShopShare = esShopShareService.selectById(shareId);
+            EsShopShare esShopShare = esShopShareService.getById(shareId);
             //判断是否已达上限
             if(esShopShare.getMemberNumber()<=list.size()){
                 return new CommonResult().failed("发起助力次数已达上限");
@@ -300,7 +300,7 @@ public class AppletShareController {
             shareMember.setIsClose(0);
             shareMember.setShareNum(0);
             shareMember.setIsConfirm(1);
-            esShopShareMemberService.insert(shareMember);
+            esShopShareMemberService.save(shareMember);
             return new CommonResult().success("success",shareMember);
         }catch (Exception e){
             log.error("发起新一轮助力：%s", e.getMessage(), e);
@@ -314,8 +314,8 @@ public class AppletShareController {
     public Object helperSetUp(@RequestParam("shareMemberId") Long shareMemberId,@RequestParam("memberId")Long memberId) {
         try{
 
-            EsShopShareMember shareMember =esShopShareMemberService.selectById(shareMemberId);
-            EsShopShare share = esShopShareService.selectById(shareMember.getShareId());
+            EsShopShareMember shareMember =esShopShareMemberService.getById(shareMemberId);
+            EsShopShare share = esShopShareService.getById(shareMember.getShareId());
             if(shareMember.getLaunchMemberId().equals(memberId)){
                 return new CommonResult().failed("不能给自己助力");
             }
@@ -325,7 +325,7 @@ public class AppletShareController {
             Integer count =esShopShareMemberAssistanceMapper.selectCount(new QueryWrapper<>(assistance));
 
             //1.助力位是否已满
-            EsShopShareMember shareMember1 = esShopShareMemberService.selectById(shareMemberId);
+            EsShopShareMember shareMember1 = esShopShareMemberService.getById(shareMemberId);
             if(share.getHelpNumber().equals(shareMember1.getShareNum())){
                 return new CommonResult().failed(5,"好友助力位已满");
             }

@@ -1,14 +1,14 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsOptionMapper;
-import com.arvato.service.goods.api.orm.dao.EsShopGoodsSpecItemMapper;
-import com.arvato.service.goods.api.service.EsShopGoodsOptionService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.mei.zhuang.entity.goods.EsShopGoods;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
+import com.mei.zhuang.dao.goods.EsShopGoodsSpecItemMapper;
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
 import com.mei.zhuang.entity.goods.EsShopGoodsSpecItem;
+import com.mei.zhuang.service.goods.EsShopGoodsOptionService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,13 +40,13 @@ public class EsShopGoodsOptionServiceImpl  extends ServiceImpl<EsShopGoodsOption
         EsShopGoodsOption option = new EsShopGoodsOption();
         option.setGoodsId(entity.getGoodsId());
         try{
-            Page<EsShopGoods> page = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
-            List<EsShopGoodsOption> listOption = optionMapper.selPageList(page,entity);
+            Page<EsShopGoodsOption> page = new Page<EsShopGoodsOption>(entity.getCurrent(), entity.getSize());
+            IPage<EsShopGoodsOption> listOption = optionMapper.selectPage(page,new QueryWrapper<>(entity));
             //查询所有item;
             List<EsShopGoodsSpecItem> listSpecItem = esShopGoodsSpecItemMapper.selectSpecItemsGoodsId(entity.getGoodsId());
             if(listSpecItem != null){
                 for (EsShopGoodsSpecItem specItem:listSpecItem) {
-                    for (EsShopGoodsOption goodsOption:listOption) {
+                    for (EsShopGoodsOption goodsOption:listOption.getRecords()) {
                         String[] attr =goodsOption.getSpecIds().split(",");
                         for (int i=0 ; i<attr.length; i++){
                             if(Long.parseLong(attr[i]) == specItem.getId()){

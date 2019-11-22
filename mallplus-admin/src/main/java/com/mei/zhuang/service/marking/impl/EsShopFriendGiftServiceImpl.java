@@ -1,12 +1,12 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsShopFriendGiftCardMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopFriendGiftMapper;
-import com.arvato.service.marking.api.service.EsShopFriendGiftService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopFriendGiftCardMapper;
+import com.mei.zhuang.dao.marking.EsShopFriendGiftMapper;
 import com.mei.zhuang.entity.marking.EsShopFriendGift;
 import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
+import com.mei.zhuang.service.marking.EsShopFriendGiftService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,10 +22,10 @@ public class EsShopFriendGiftServiceImpl extends ServiceImpl<EsShopFriendGiftMap
 
 
     @Override
-    public Integer save(EsShopFriendGift friendGift) {
+    public boolean save(EsShopFriendGift friendGift) {
         friendGiftMapper.insert(friendGift);
         giftcard(friendGift);
-        return 1;
+        return true;
     }
 
     public void giftcard(EsShopFriendGift friendGift){

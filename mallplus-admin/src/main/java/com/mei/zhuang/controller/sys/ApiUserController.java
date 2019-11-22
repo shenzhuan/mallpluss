@@ -1,29 +1,30 @@
 package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.ApiInterfaceBiz;
-import com.arvato.admin.biz.ApiUserBiz;
-import com.arvato.admin.constant.AdminCommonConstant;
-import com.arvato.admin.orm.dao.CrmApiUserMapper;
-import com.arvato.admin.orm.dao.CrmApiUserPermissionMapper;
-import com.arvato.admin.orm.dao.CrmSysDictMapper;
-import com.arvato.admin.vo.ApiInterfaceVo;
-import com.arvato.common.dto.SysDictRequestdDto;
-import com.arvato.common.vo.ZTreeNode;
-import com.arvato.common.vo.returnformat.Result;
-import com.arvato.utils.annotation.SysLog;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.constant.AdminCommonConstant;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.dao.sys.CrmApiUserMapper;
+import com.mei.zhuang.dao.sys.CrmApiUserPermissionMapper;
+import com.mei.zhuang.dao.sys.CrmSysDictMapper;
 import com.mei.zhuang.entity.sys.CrmApiUser;
 import com.mei.zhuang.entity.sys.CrmApiUserPermission;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.ApiInterfaceBiz;
+import com.mei.zhuang.service.sys.biz.ApiUserBiz;
+import com.mei.zhuang.vo.ApiInterfaceVo;
+import com.mei.zhuang.vo.Result;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.SysDictRequestdDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +40,15 @@ import java.util.Map;
 @Slf4j
 public class ApiUserController extends BaseController {
 
-    @Autowired
+    @Resource
     private CrmSysDictMapper sysDictMapper;
-    @Autowired
+    @Resource
     private CrmApiUserMapper apiUserMapper;
-    @Autowired
+    @Resource
     private CrmApiUserPermissionMapper apiUserPermissionMapper;
-    @Autowired
+    @Resource
     private ApiUserBiz apiUserBiz;
-    @Autowired
+    @Resource
     private ApiInterfaceBiz apiInterfaceBiz;
 
     @SysLog(MODULE = "接口调用用户管理", REMARK = "获取用户状态、用户类型列表")
@@ -213,7 +214,7 @@ public class ApiUserController extends BaseController {
      */
     private boolean checkAccountRepeat(String account) {
         try {
-            CrmApiUser apiUser = apiUserMapper.selectOne(new CrmApiUser().setAccount(account));
+            CrmApiUser apiUser = apiUserMapper.selectOne(new QueryWrapper<>(new CrmApiUser().setAccount(account)));
             if (apiUser != null) {
                 log.info("账号重复，不能添加");
                 return true;

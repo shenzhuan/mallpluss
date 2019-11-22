@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arvato.common.orm.dao.SysPlatformUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysPlatformUser">
+        <result column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="login_error_count" property="loginErrorCount" />
+        <result column="manage_tenant_ids" property="manageTenantIds" javaType="int[]" jdbcType="ARRAY" typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+        <result column="user_type" property="userType" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+        <result column="create_time" property="createTime" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+
+    <resultMap id="pagingData" type="com.arvato.common.dto.SysPlatformUserPagingData">
+        <result column="manage_tenant_names" property="manageTenantNames" javaType="string" jdbcType="ARRAY" typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <update id="recordLastLoginTimeAndResetLoginErrorCount">
+         update sys_platform_user set last_login_time = #{lastTime},login_error_count = 0 where id = #{userId}
+    </update>
+
+    <update id="lockAccount">
+        update sys_platform_user set status = '1' where id = #{userId}
+    </update>
+    <update id="updatestatus">
+        update sys_platform_user set status=#{status} where username=#{username}
+         </update>
+
+    <select id="selectByUsername" resultMap="BaseResultMap">
+      select * from sys_platform_user spu where spu.username = #{username}
+    </select>
+
+
+    <select id="getPagingTotal" resultType="int">
+        select count(1) from sys_platform_user
+        <include refid="pagingWhere"></include>
+    </select>
+    <select id="getPagingList" resultMap="pagingData">
+        select id ,username,
+               array(select tenant_name from sys_tenant where id = any(sys_platform_user.manage_tenant_ids)) as manage_tenant_names,
+               to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
+               status
+        from sys_platform_user
+        <include refid="pagingWhere"></include>
+        order by id desc
+        limit #{param.limit} offset #{param.offset}
+    </select>
+
+    <sql id="pagingWhere">
+        <where>
+            user_type='0'
+            <if test="param.username != null and param.username != ''">
+                and username like concat('%',#{param.username},'%')
+            </if>
+            <if test="param.manageTenantId != null">
+                and #{param.manageTenantId} = any(manage_tenant_ids)
+            </if>
+        </where>
+    </sql>
+</mapper>

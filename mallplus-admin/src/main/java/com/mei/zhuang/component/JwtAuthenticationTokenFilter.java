@@ -7,7 +7,7 @@ import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,9 +36,9 @@ import java.util.Map;
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
-    @Autowired
+    @Resource
     private UserDetailsService userDetailsService;
-    @Autowired
+    @Resource
     private JwtTokenUtil jwtTokenUtil;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;

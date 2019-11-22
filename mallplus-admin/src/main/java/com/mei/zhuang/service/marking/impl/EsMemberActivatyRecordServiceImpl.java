@@ -1,15 +1,14 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.orm.dao.EsMemberActivatyRecordMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopActivityPrizeMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponMapper;
-import com.arvato.service.marking.api.service.EsMemberActivatyRecordService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.dao.marking.EsMemberActivatyRecordMapper;
+import com.mei.zhuang.dao.marking.EsShopActivityPrizeMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponMapper;
 import com.mei.zhuang.entity.marking.EsMemberActivatyRecord;
 import com.mei.zhuang.entity.marking.EsShopActivityPrize;
 import com.mei.zhuang.entity.marking.EsShopCoupon;
+import com.mei.zhuang.service.marking.EsMemberActivatyRecordService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -46,8 +45,8 @@ public class EsMemberActivatyRecordServiceImpl extends ServiceImpl<EsMemberActiv
             entity.setEndTimeD( new Date(lt));
         }
         Map<String,Object> map = new HashMap<String,Object>();
-        Page<EsMemberActivatyRecord> page = this.selectPage(new Page<EsMemberActivatyRecord>(entity.getCurrent(), entity.getSize()), new QueryWrapper<>(entity));
-        List<EsMemberActivatyRecord> selPageList = esMemberActivatyRecordMapper.selPageList(page,entity);
+        PageHelper.startPage(entity.getCurrent(), entity.getSize());
+        List<EsMemberActivatyRecord> selPageList = esMemberActivatyRecordMapper.selPageList(entity);
         if(selPageList != null && selPageList.size()>0){
             for (EsMemberActivatyRecord record:selPageList) {
                 if(record.getIsWin() == 1){

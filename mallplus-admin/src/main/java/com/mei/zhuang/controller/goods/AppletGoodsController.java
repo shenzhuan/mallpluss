@@ -1,15 +1,15 @@
 package com.mei.zhuang.controller.goods;
 
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.constant.RedisConstant;
-import com.arvato.ec.common.vo.goods.GoodsQuery;
-import com.arvato.service.goods.api.service.*;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.constant.RedisConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.*;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.goods.*;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.goods.GoodsQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -104,7 +104,7 @@ public class AppletGoodsController {
             Map<String, Object> map = goodsService.searchGoods(keywords);
             map.put("current", current);
             map.put("size", size);
-            map.put("total", (int) PageHelper.freeTotal());
+         //   map.put("total", (int) PageHelper.);
             return new CommonResult().success(map);
 
         } catch (Exception e) {
@@ -120,7 +120,7 @@ public class AppletGoodsController {
         if (ValidatorUtils.empty(id)) {
             return new CommonResult().paramFailed();
         }
-        EsShopGoods goods = goodsService.selectById(id);
+        EsShopGoods goods = goodsService.getById(id);
         if (goods != null && ValidatorUtils.empty(goods.getCategoryId())) {
             return new CommonResult().success(new ArrayList<EsShopGoods>());
         }
@@ -181,10 +181,10 @@ public class AppletGoodsController {
             EsShopDiypage diypage = new EsShopDiypage();
             diypage.setStatus(1);
             diypage.setType(2);
-            // EsShopDiypage newDiy = esShopDiypageService.selectOne(new QueryWrapper<>(diypage));
+            // EsShopDiypage newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
             EsShopDiypage newDiy = (EsShopDiypage) redisRepository.get(String.format(RedisConstant.EsShopDiypage, 12));
             if (ValidatorUtils.empty(newDiy)) {
-                newDiy = esShopDiypageService.selectOne(new QueryWrapper<>(diypage));
+                newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), newDiy);
             }
             return new CommonResult().success("success", newDiy);
@@ -214,7 +214,7 @@ public class AppletGoodsController {
         try {
             entity.setType(3);
             entity.setStatus(1);
-            return new CommonResult().success("success", esShopDiypageService.selectOne(new QueryWrapper<>(entity)));
+            return new CommonResult().success("success", esShopDiypageService.getOne(new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("查询自定义页面首页异常：", e.getMessage(), e);
             return new CommonResult().failed();
@@ -230,7 +230,7 @@ public class AppletGoodsController {
             }
             entity.setType(5);
             entity.setStatus(1);
-            return new CommonResult().success("success", esShopDiypageService.selectOne(new QueryWrapper<>(entity)));
+            return new CommonResult().success("success", esShopDiypageService.getOne(new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("查询自定义页面首页异常：", e.getMessage(), e);
             return new CommonResult().failed();
@@ -244,21 +244,21 @@ public class AppletGoodsController {
             //查询立即启用广告和定时启用广告
             EsStartAdvertising esStartAdvertising = new EsStartAdvertising();
             esStartAdvertising.setIsStart(1);
-            EsStartAdvertising list = esStartAdvertisingService.selectOne(new QueryWrapper<>(esStartAdvertising));
+            EsStartAdvertising list = esStartAdvertisingService.getOne(new QueryWrapper<>(esStartAdvertising));
             if (list != null) {
                 EsStartAdvertisingImg img = new EsStartAdvertisingImg();
                 img.setAdvertisingId(list.getId());
-                list.setListAdvertImg(esStartAdvertisingImgService.selectList(new QueryWrapper<>(img)));
+                list.setListAdvertImg(esStartAdvertisingImgService.list(new QueryWrapper<>(img)));
                 return new CommonResult().success("success", list);
             }
             esStartAdvertising.setIsStart(2);
-            list = esStartAdvertisingService.selectOne(new QueryWrapper<>(esStartAdvertising));
+            list = esStartAdvertisingService.getOne(new QueryWrapper<>(esStartAdvertising));
             if (list != null) {
                 //判断启用时间是否超过当前时间
                 if (Long.parseLong(list.getStartTime()) <= System.currentTimeMillis()) {
                     EsStartAdvertisingImg img = new EsStartAdvertisingImg();
                     img.setAdvertisingId(list.getId());
-                    list.setListAdvertImg(esStartAdvertisingImgService.selectList(new QueryWrapper<>(img)));
+                    list.setListAdvertImg(esStartAdvertisingImgService.list(new QueryWrapper<>(img)));
                     return new CommonResult().success("success", list);
                 }
 
@@ -281,13 +281,13 @@ public class AppletGoodsController {
         List<EsShopCustomizedCard> listCard = new ArrayList<EsShopCustomizedCard>();
         List<EsShopCustomizedPacket> listPackBox = new ArrayList<EsShopCustomizedPacket>();
         Map<String, Object> map = new HashMap<String, Object>();
-        EsShopGoods goods = goodsService.selectById(id);
+        EsShopGoods goods = goodsService.getById(id);
         if (goods.getLetterStatus() == 1) {
             if (goods.getLetterIds() != null && !goods.getLetterIds().equals("")) {
                 String[] attr = goods.getLetterIds().split(",");
                 for (int i = 0; i < attr.length; i++) {
                     if (attr[i] != null && !attr[i].equals("")) {
-                        EsShopCustomizedLegend legend = esShopCustomizedLegendService.selectById(Long.parseLong(attr[i]));
+                        EsShopCustomizedLegend legend = esShopCustomizedLegendService.getById(Long.parseLong(attr[i]));
                         if (legend != null) {
                             listLegend.add(legend);
                         }
@@ -302,7 +302,7 @@ public class AppletGoodsController {
             if (goods.getPacketContent() != null && !goods.getPacketContent().equals("")) {
                 String[] attr = goods.getPacketContent().split(",");
                 for (int i = 0; i < attr.length; i++) {
-                    EsShopCustomizedPacket packet = esShopCustomizedPacketServer.selectById(Long.parseLong(attr[i]));
+                    EsShopCustomizedPacket packet = esShopCustomizedPacketServer.getById(Long.parseLong(attr[i]));
                     if (packet != null) {
                         if (packet.getType() == 1) {
                             listPacket.add(packet);
@@ -321,7 +321,7 @@ public class AppletGoodsController {
                 String[] attr = goods.getCardContent().split(",");
                 for (int i = 0; i < attr.length; i++) {
                     if (attr[i] != null && !attr[i].equals("") && !attr[i].equals("1")) {
-                        EsShopCustomizedCard card = esShopCustomizedCardService.selectById(Long.parseLong(attr[i]));
+                        EsShopCustomizedCard card = esShopCustomizedCardService.getById(Long.parseLong(attr[i]));
                         if (card != null) {
                             listCard.add(card);
                         }
@@ -331,7 +331,7 @@ public class AppletGoodsController {
                 }
             }
         }
-        EsShopCustomizedBasic basic = esShopCustomizedBasicService.selectOne(new QueryWrapper<>());
+        EsShopCustomizedBasic basic = esShopCustomizedBasicService.getOne(new QueryWrapper<>());
         map.put("card", listCard);
         map.put("pagket", listPacket);
         map.put("pagkBox", listPackBox);

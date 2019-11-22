@@ -1,8 +1,9 @@
 package com.mei.zhuang.dao.member;
 
 
-import com.arvato.ec.common.entity.CrmOperationLog;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mei.zhuang.entity.CrmOperationLog;
 
 /**
  * <p>

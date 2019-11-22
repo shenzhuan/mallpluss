@@ -4,19 +4,19 @@ package com.mei.zhuang.controller.sys;
 import com.arvato.admin.constant.SysTenantStatus;
 import com.arvato.admin.dto.SysTenantPostData;
 import com.arvato.admin.dto.SysTenantPutData;
-import com.arvato.admin.service.ISysTenantService;
+import com.mei.zhuang.service.sys.ISysTenantService;
 import com.arvato.common.dto.SysTenantPagingData;
 import com.arvato.common.dto.SysTenantPagingParam;
 import com.arvato.common.msg.DictData;
 import com.arvato.common.orm.model.SysTenant;
 import com.arvato.common.vo.returnformat.BaseResponse;
 import com.arvato.common.vo.returnformat.TableData;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +27,7 @@ import java.util.List;
 @RequestMapping("/sysTenants")
 public class SysTenantController {
 
-    @Autowired
+    @Resource
     private ISysTenantService service;
 
     @SysLog(MODULE = "租户管理CRUD接口", REMARK = "租户列表")

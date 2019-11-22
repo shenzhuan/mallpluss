@@ -1,17 +1,13 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.ec.common.utils.DateCalendarUtils;
-import com.arvato.ec.common.vo.data.trade.*;
-import com.arvato.ec.common.vo.order.ExportParam;
-import com.arvato.service.order.api.enums.OrderStatus;
-import com.arvato.service.order.api.service.ITradeDataAnalyzeService;
-import com.arvato.service.order.api.service.ShopOrderService;
-import com.arvato.service.order.api.utils.OrderUtils;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.order.EsShopOrder;
+import com.mei.zhuang.enums.OrderStatus;
+import com.mei.zhuang.service.order.ITradeDataAnalyzeService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.*;
+import com.mei.zhuang.vo.data.trade.*;
+import com.mei.zhuang.vo.order.ExportParam;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -248,7 +244,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
             condition.le("create_time", Timestamp.valueOf(param.getEndTime()));
         if (ValidatorUtils.notEmpty(param.getSource()))
             condition.eq("soure_type", param.getSource());
-        return shopOrderService.selectList(condition);
+        return shopOrderService.list(condition);
     }
 
     private TradeDataByHeadVo getTradeHeadDataVoByOrderList(List<EsShopOrder> orderList, TradeAnalyzeParam param) {

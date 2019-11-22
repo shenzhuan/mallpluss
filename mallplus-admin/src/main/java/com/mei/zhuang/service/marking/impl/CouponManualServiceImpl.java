@@ -1,15 +1,15 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.biz.TestCSVUtil;
-import com.arvato.service.marking.api.feigin.MembersFegin;
-import com.arvato.service.marking.api.mq.Sender;
-import com.arvato.service.marking.api.orm.dao.*;
-import com.arvato.service.marking.api.service.CouponManualService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.controller.marking.TestCSVUtil;
+import com.mei.zhuang.dao.marking.*;
+import com.mei.zhuang.dao.member.EsMemberMapper;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
+import com.mei.zhuang.service.marking.CouponManualService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -48,12 +48,11 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
     private EsShopCouponManualUserMapper manualUserMapper;
     @Resource
     private EsMemberCouponMapper couponMapper;
-    @Resource
-    private MembersFegin membersFegin;
+
     @Resource
     private EsShopCouponMapper escouponMapper;
     @Resource
-    private Sender sender;
+    private EsMemberMapper memberMapper;
 
     private int cou;
 
@@ -112,15 +111,19 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
 
     @Transactional(rollbackFor =Exception.class )
     @Override
-    public boolean save(EsShopCouponManual entity) throws Exception {
+    public boolean save(EsShopCouponManual entity)  {
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
         entity.setCouponManualid(uuid);
-        datetime(entity);
-        couponManualMapper.insert(entity);
-        csvfile(entity);
-        addsave(entity);
-        if(entity.getMessage()==3){
+        try {
+            datetime(entity);
+            couponManualMapper.insert(entity);
+            csvfile(entity);
+            addsave(entity);
+            if(entity.getMessage()==3){
                 sendManualCoupon(entity.getMessage(), entity.getId());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return true;
     }
@@ -164,7 +167,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                         time2.cancel();
                     }
                     if (cou == 0) {
-                        List<EsMember> memberselect = membersFegin.memberselect(10,current);
+                        List<EsMember> memberselect = memberMapper.memberselect(10,current);
                         Integer sum = memberselect.size();
                         current += 10;
                         if(memberselect.size()==0){
@@ -245,7 +248,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     time2.cancel();
                 }
                 if(cou==0){
-                    List<EsMember> memberselect = membersFegin.memberselect(0, 0);
+                    List<EsMember> memberselect = memberMapper.memberselect(0, 0);
                     //current += 100;
                 /*    if(memberselect.size()==0){
                         System.out.println("用户已发完---");
@@ -363,7 +366,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     couponMapper.insert(member);
 
                 }
-                sender.acceptCouponMq("");
+
                 coupon.setStock((coupon.getStock() - coupon3) > 0 ? (coupon.getStock() - coupon3) : 0);
                 escouponMapper.updateById(coupon);
             }

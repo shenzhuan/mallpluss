@@ -1,24 +1,25 @@
 package com.mei.zhuang.controller.marking;
 
-import com.arvato.ec.common.vo.marking.AllMemberCoupon;
-import com.arvato.ec.common.vo.marking.CodeResult;
-import com.arvato.ec.common.vo.marking.MjDcVo;
-import com.arvato.ec.common.vo.order.CartMarkingVo;
-import com.arvato.ec.common.vo.order.CouponFilterParam;
-import com.arvato.ec.common.vo.order.OrderStstic;
-import com.arvato.service.marking.api.feigin.MembersFegin;
-import com.arvato.service.marking.api.feigin.OrderFegin;
-import com.arvato.service.marking.api.orm.dao.EsShopActivityPrizeMapper;
-import com.arvato.service.marking.api.orm.dao.EsShopCouponMapper;
-import com.arvato.service.marking.api.service.*;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.marking.EsShopActivityPrizeMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponMapper;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
 import com.mei.zhuang.entity.order.EsShopCart;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.service.marking.*;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.AllMemberCoupon;
+import com.mei.zhuang.vo.marking.CodeResult;
+import com.mei.zhuang.vo.marking.MjDcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CouponFilterParam;
+import com.mei.zhuang.vo.order.OrderStstic;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ import java.util.*;
 @Api(value = "小程序营销管理", description = "", tags = {"小程序营销管理"})
 public class AppletMarkingController {
     @Resource
-    private OrderFegin orderFegin;
+    private ShopOrderService orderFegin;
     @Resource
     private MemberCouponService memberCouponService;
     @Resource
@@ -92,7 +93,7 @@ public class AppletMarkingController {
     @ApiOperation("根据用户id获得该用户的所有优惠券信息")
     @PostMapping(value = "/applet/selectListByMemberId", params = "memberId")
     public List<EsMemberCoupon> selectListByMemberId(@RequestParam("memberId") Long memberId) {
-        return memberCouponService.selectList(new QueryWrapper<EsMemberCoupon>().eq("member_id", memberId));
+        return memberCouponService.list(new QueryWrapper<EsMemberCoupon>().eq("member_id", memberId));
     }
 
     @ApiOperation("获得用户不同状态的所有优惠券")
@@ -328,7 +329,7 @@ public class AppletMarkingController {
             long time=System.currentTimeMillis();//当前时间时间戳
             EsShopActivity esShopActivity = new EsShopActivity();
             esShopActivity.setId(id);
-            EsShopActivity actavaty=esShopActivityService.selectOne(new QueryWrapper<>(esShopActivity));
+            EsShopActivity actavaty=esShopActivityService.getOne(new QueryWrapper<>(esShopActivity));
             if(actavaty != null){
                 if(actavaty.getActivityStartTime()<=time){
                     if(actavaty.getActivityEndTime()>=time){
@@ -359,12 +360,12 @@ public class AppletMarkingController {
                 return new CommonResult().failed("请指定活动编号");
             }
             EsMemberActivatyRecord record = new EsMemberActivatyRecord();
-            EsShopActivity activity =esShopActivityService.selectById(entity.getId());
+            EsShopActivity activity =esShopActivityService.getById(entity.getId());
             if(activity != null){
                 EsShopActivityPrize prize = new EsShopActivityPrize();
                 prize.setActivatyId(entity.getId());
                 List<EsShopActivityPrize> list = esShopActivityPrizeMapper.selectList(new QueryWrapper<>(prize));
-                EsMember esMember = membersFegin.detail(entity.getMemberId());
+                EsMember esMember = membersFegin.getMemberById(entity.getMemberId());
                 //添加未中奖率
                 prize.setWinning(activity.getWinRate());
                 prize.setId(activity.getId());
@@ -411,7 +412,7 @@ public class AppletMarkingController {
                 record = new EsMemberActivatyRecord();
                 record.setMemberId(entity.getMemberId());
                 record.setActivatyId(entity.getId());
-                Integer count=esMemberActivatyRecordService.selectCount(new QueryWrapper<>(record));
+                Integer count=esMemberActivatyRecordService.count(new QueryWrapper<>(record));
                 if(count != null){
                     count=activity.getParticipantNum().compareTo(count);
                     if(count == -1 || count == 0){
@@ -424,7 +425,7 @@ public class AppletMarkingController {
                 record.setMemberId(entity.getMemberId());
                 record.setActivatyId(entity.getId());
                 record.setIsWin(1);
-                Integer recordCount=esMemberActivatyRecordService.selectCount(new QueryWrapper<>(record));
+                Integer recordCount=esMemberActivatyRecordService.count(new QueryWrapper<>(record));
                 if(recordCount != null){
                     recordCount=activity.getWinNum().compareTo(recordCount);
                     if(recordCount == -1 || recordCount == 0){
@@ -441,7 +442,7 @@ public class AppletMarkingController {
                 record = new EsMemberActivatyRecord();
                 record.setMemberId(entity.getMemberId());
                 record.setActivatyId(entity.getId());
-                List<EsMemberActivatyRecord> esMemberActivatyRecordList = esMemberActivatyRecordService.selectList(new QueryWrapper<>(record));
+                List<EsMemberActivatyRecord> esMemberActivatyRecordList = esMemberActivatyRecordService.list(new QueryWrapper<>(record));
                 //次数统计
                 Integer number = 0;
                 if(esMemberActivatyRecordList != null){
@@ -484,7 +485,7 @@ public class AppletMarkingController {
                                esMemberCoupon.setCouponId(coupon.getId());
                                EsShopActivityPrize activityPrize =  esShopActivityPrizeMapper.selectById(prize.getId());
                                if(activityPrize.getUpperLimit() != null && activityPrize.getUpperLimit()>0){
-                                   Integer num = memberCouponService.selectCount(new QueryWrapper<>(esMemberCoupon));
+                                   Integer num = memberCouponService.count(new QueryWrapper<>(esMemberCoupon));
                                    if(num>=activityPrize.getUpperLimit()){
                                        //单人中奖个数上限
                                        return new CommonResult().success("success",selIsWinn(entity.getId(),record1));
@@ -530,14 +531,14 @@ public class AppletMarkingController {
                                //券说明
                                memberCoupon.setDescription("抽奖有礼中奖优惠卷：" + coupon.getId() + "，推送节点" );
                                memberCoupon.setStatus(1);
-                               memberCouponService.insert(memberCoupon);
+                               memberCouponService.save(memberCoupon);
                                EsShopCoupon esShopCoupon = new EsShopCoupon();
                                esShopCoupon.setId(coupon.getId());
                                esShopCoupon.setStock(coupon.getStock()-1);
                                esShopCouponMapper.updateById(esShopCoupon);
                                map.put("isWinn",1);//中奖
                                map.put("Winn",prize);
-                               esMemberActivatyRecordService.insert(record1);
+                               esMemberActivatyRecordService.save(record1);
                                //发送模版消息
                               /* String[] attr = activity.getPrizeNotice().split(",");
                                esMember.setFormid(entity.getFormId());
@@ -579,7 +580,7 @@ public class AppletMarkingController {
         if(ValidatorUtils.empty(entity.getActivatyId())){
             return new CommonResult().failed("活动编号为空");
         }
-        return new CommonResult().success("success",esMemberActivatyRecordService.selectList(new QueryWrapper<>(entity)));
+        return new CommonResult().success("success",esMemberActivatyRecordService.list(new QueryWrapper<>(entity)));
     }
 
 
@@ -612,7 +613,7 @@ public class AppletMarkingController {
         }
         EsShopShare esShopShare = new EsShopShare();
         esShopShare.setId(id);
-        EsShopShare share = esShopShareService.selectOne(new QueryWrapper<>(esShopShare));
+        EsShopShare share = esShopShareService.getOne(new QueryWrapper<>(esShopShare));
         if(share != null){
             if(share.getStatus() == 1){
                 int num1 =share.getActivitystartTime().compareTo(new Date());
@@ -633,8 +634,8 @@ public class AppletMarkingController {
     public Object sendTemplate(@RequestParam("memberId")Long memberId,@RequestParam("activatyId")Long activatyId,@RequestParam("formId")String formId) {
         //发送模版消息
         try{
-            EsMember esMember = membersFegin.detail(memberId);
-            EsShopActivity activity =esShopActivityService.selectById(activatyId);
+            EsMember esMember = membersFegin.getMemberById(memberId);
+            EsShopActivity activity =esShopActivityService.getById(activatyId);
             String[] attr = activity.getPrizeNotice().split(",");
             esMember.setIds(Long.parseLong(attr[0]));
             orderFegin.sendTemplate(esMember.getOpenid(),formId,esMember.getShopId(),attr[0],esMember.getNickname(),esMember.getId());
@@ -656,12 +657,12 @@ public class AppletMarkingController {
             integers.add(pr.getLocation());
         }
         map.put("isWinn",0);//未中奖
-        map.put("NoWinn",esShopActivityService.selectById(id));
+        map.put("NoWinn",esShopActivityService.getById(id));
         map.put("Winn",integers);
         record1.setIsWin(0);
         record1.setPrizeLevel(null);
         record1.setPrizeName(null);
-        esMemberActivatyRecordService.insert(record1);
+        esMemberActivatyRecordService.save(record1);
         return map;
     }
 

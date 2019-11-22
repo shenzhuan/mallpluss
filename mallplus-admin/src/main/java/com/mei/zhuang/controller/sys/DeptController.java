@@ -1,24 +1,24 @@
 package com.mei.zhuang.controller.sys;
 
-import com.arvato.admin.dto.DeptDictData;
-import com.arvato.admin.enums.DeptType;
-import com.arvato.admin.service.*;
-import com.arvato.admin.vo.ZTreeNode;
-import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.file_manage.util.BizResult;
-import com.arvato.file_manage.util.Result;
-import com.arvato.utils.annotation.SysLog;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmDeptCreditList;
 import com.mei.zhuang.entity.sys.CrmMember;
 import com.mei.zhuang.entity.sys.CrmSysDept;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.enums.DeptType;
+import com.mei.zhuang.service.sys.*;
+import com.mei.zhuang.vo.BaseResponse;
+import com.mei.zhuang.vo.BizResult;
+import com.mei.zhuang.vo.Result;
+import com.mei.zhuang.vo.ZTreeNode;
+import com.mei.zhuang.vo.sys.DeptDictData;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,15 +30,15 @@ import java.util.Map;
 @RequestMapping("depts")
 public class DeptController extends BaseController {
 
-    @Autowired
+    @Resource
     private ICrmSysDeptService deptService;
-    @Autowired
+    @Resource
     private ICrmStoreService storeService;
-    @Autowired
+    @Resource
     private ICrmDeptCreditListService deptCreditListService;
-    @Autowired
+    @Resource
     private ICrmMemberService memberService;
-    @Autowired
+    @Resource
     private ICrmSysUserService sysUserService;
 
     @SysLog(MODULE = "部门管理", REMARK = "获取部门关系信息")
@@ -77,17 +77,17 @@ public class DeptController extends BaseController {
     @PostMapping
     public BizResult save(@RequestBody CrmSysDept dept) {
         Assert.isTrue(
-                this.deptService.selectCount(new QueryWrapper<>(new CrmSysDept() {{
+                this.deptService.count(new QueryWrapper<>(new CrmSysDept() {{
                     this.setDeptNo(dept.getDeptNo());
                 }})) == 0,
                 "组织编码已存在"
         );
 
-        Assert.isTrue(deptService.insert(dept), "操作失败");
+        Assert.isTrue(deptService.save(dept), "操作失败");
         //白名单设置
         if (dept.getCrmDeptCreditList() != null && dept.getCrmDeptCreditList().getType().equals("1")) {
             dept.getCrmDeptCreditList().setDeptId(dept.getId());
-            Assert.isTrue(this.deptCreditListService.insert(dept.getCrmDeptCreditList()), "操作失败");
+            Assert.isTrue(this.deptCreditListService.save(dept.getCrmDeptCreditList()), "操作失败");
         }
         //门店详情设置
         if (dept.getOrgType() == 3) {
@@ -95,7 +95,7 @@ public class DeptController extends BaseController {
             dept.getStore().setDeptId(dept.getPId());
             dept.getStore().setName(dept.getName());
             dept.getStore().setStoreNo(dept.getDeptNo());
-            Assert.isTrue(this.storeService.insert(dept.getStore()), "操作失败");
+            Assert.isTrue(this.storeService.save(dept.getStore()), "操作失败");
         }
         return Result.success();
     }
@@ -110,13 +110,13 @@ public class DeptController extends BaseController {
         //设置白名单
         if (dept.getCrmDeptCreditList() != null && dept.getCrmDeptCreditList().getType().equals("1")) {
             if (
-                    this.deptCreditListService.selectCount(new QueryWrapper<>(new CrmDeptCreditList() {{
+                    this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) == 0
                     ) {
                 dept.getCrmDeptCreditList().setDeptId(dept.getId());
                 Assert.isTrue(
-                        this.deptCreditListService.insert(dept.getCrmDeptCreditList()),
+                        this.deptCreditListService.save(dept.getCrmDeptCreditList()),
                         "操作失败"
                 );
             }
@@ -124,12 +124,12 @@ public class DeptController extends BaseController {
         //取消白名单
         if (dept.getCrmDeptCreditList() != null && !dept.getCrmDeptCreditList().getType().equals("1")) {
             if (
-                    this.deptCreditListService.selectCount(new QueryWrapper<>(new CrmDeptCreditList() {{
+                    this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) > 0
                     ) {
                 Assert.isTrue(
-                        this.deptCreditListService.delete(new QueryWrapper<>(new CrmDeptCreditList() {{
+                        this.deptCreditListService.remove(new QueryWrapper<>(new CrmDeptCreditList() {{
                             this.setDeptId(dept.getId());
                         }})),
                         "操作失败"
@@ -151,10 +151,10 @@ public class DeptController extends BaseController {
     @Transactional(rollbackFor = Exception.class)
     @DeleteMapping(value = "/{id}")
     public BizResult deleteDept(@ApiParam("部门id") @PathVariable Integer id) {
-        CrmSysDept dept = this.deptService.selectById(id);
+        CrmSysDept dept = this.deptService.getById(id);
 
         Assert.isTrue(
-                sysUserService.selectCount(new QueryWrapper<>(new CrmSysUser() {{
+                sysUserService.count(new QueryWrapper<>(new CrmSysUser() {{
                     this.setDeptId(dept.getId());
                 }})) == 0,
                 "该组织下已有系统用户，不能删除"
@@ -162,7 +162,7 @@ public class DeptController extends BaseController {
 
         if (dept.getOrgType() == 3) {
             Assert.isTrue(
-                    memberService.selectCount(new QueryWrapper<>(new CrmMember() {{
+                    memberService.count(new QueryWrapper<>(new CrmMember() {{
                         this.setStoreId(dept.getId());
                     }})) == 0,
                     "该门店下已有会员，不能删除"
@@ -170,17 +170,17 @@ public class DeptController extends BaseController {
         }
 
         //删除组织
-        Assert.isTrue(this.deptService.deleteById(dept.getId()), "操作失败");
+        Assert.isTrue(this.deptService.removeById(dept.getId()), "操作失败");
         //删除白名单的经销商
         if (dept.getOrgType() == 2) {
             if (
-                    this.deptCreditListService.selectCount(new QueryWrapper<>(new CrmDeptCreditList() {{
+                    this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) > 0
                     ) {
 
                 Assert.isTrue(
-                        this.deptCreditListService.delete(new QueryWrapper<>(new CrmDeptCreditList() {{
+                        this.deptCreditListService.remove(new QueryWrapper<>(new CrmDeptCreditList() {{
                             this.setDeptId(dept.getId());
                         }})),
                         "操作失败"
@@ -190,10 +190,10 @@ public class DeptController extends BaseController {
         //删除门店详情
         if (dept.getOrgType() == 3) {
             if (
-                    this.storeService.selectById(dept.getId()) != null
+                    this.storeService.getById(dept.getId()) != null
                     ) {
                 Assert.isTrue(
-                        this.storeService.deleteById(dept.getId()),
+                        this.storeService.removeById(dept.getId()),
                         "操作失败"
                 );
             }
@@ -206,17 +206,17 @@ public class DeptController extends BaseController {
     @ApiOperation("通过id获取部门信息")
     @GetMapping(value = "/{id}")
     public BizResult getDeptById(@ApiParam("部门id") @PathVariable Integer id) {
-        CrmSysDept dept = deptService.selectById(id);
+        CrmSysDept dept = deptService.getById(id);
         //白名单
         dept.setCrmDeptCreditList(
-                this.deptCreditListService.selectOne(new QueryWrapper<>(new CrmDeptCreditList() {{
+                this.deptCreditListService.getOne(new QueryWrapper<>(new CrmDeptCreditList() {{
                     this.setDeptId(dept.getId());
                 }}))
         );
         //门店详情
         if (dept.getOrgType() == 3) {
             dept.setStore(
-                    this.storeService.selectById(dept.getId())
+                    this.storeService.getById(dept.getId())
             );
         }
         return Result.success(dept);
@@ -240,7 +240,7 @@ public class DeptController extends BaseController {
         List<String> group4 = new ArrayList<String>();
         List<String> store = new ArrayList<String>();
 
-        CrmSysDept dept = deptService.selectById(currentUser.getDeptId());
+        CrmSysDept dept = deptService.getById(currentUser.getDeptId());
         if (DeptType.AREA.getValue().equals(dept.getOrgType())) {
             group1.add(dept.getName());
         } else if (DeptType.REGION.getValue().equals(dept.getOrgType())) {
@@ -252,7 +252,7 @@ public class DeptController extends BaseController {
         }
         //判断门店是否是直属直营
         while (dept.getOrgType().intValue() > 0) {
-            dept = deptService.selectById(dept.getPId());
+            dept = deptService.getById(dept.getPId());
         }
         if ("直属直营".equals(dept.getName())) {
             storeType.add("直属直营");

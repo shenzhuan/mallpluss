@@ -1,15 +1,16 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.arvato.service.marking.api.service.FullGiftService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
 import com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFullGiftRule;
+import com.mei.zhuang.service.marking.FullGiftService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,14 +42,8 @@ public class ChooseGiftController {
     ) {
         try {
             PageHelper.startPage(current, size);
-            List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
-            entity.setTotal((int) PageHelper.freeTotal());
-            Map<String, Object> map = new HashMap<>();
-            map.put("rows", esShopDiscount);
-            map.put("size", size);
-            map.put("total", entity.getTotal());
-            map.put("current", current);
-            return new CommonResult().success(map);
+           // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
+            return new CommonResult().success(PageInfo.of(fullGiftService.slelectPurchase2()));
         } catch (Exception e) {
             log.error("根据条件查询所有选赠礼列表：%s", e.getMessage(), e);
         }
@@ -156,7 +151,7 @@ public class ChooseGiftController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("选赠礼id");
             }
-            EsShopFullGift coupon = fullGiftService.selectById(id);
+            EsShopFullGift coupon = fullGiftService.getById(id);
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询选赠礼明细：%s", e.getMessage(), e);

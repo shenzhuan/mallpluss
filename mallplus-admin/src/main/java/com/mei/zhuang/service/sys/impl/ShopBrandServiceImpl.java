@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.sys.impl;
 
-import com.arvato.admin.orm.dao.EsShopBrandMapper;
-import com.arvato.admin.service.IShopBrandService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.sys.EsShopBrandMapper;
+import com.mei.zhuang.service.sys.IShopBrandService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.sys.EsShopBrand;
 import org.springframework.stereotype.Service;
 

@@ -1,22 +1,24 @@
 package com.mei.zhuang.service.goods.impl;
 
 
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.ec.common.constant.RedisConstant;
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.goods.EsShopGoodsParam;
-import com.arvato.ec.common.vo.goods.GoodsDetail;
-import com.arvato.ec.common.vo.goods.GoodsQuery;
-import com.arvato.service.goods.api.config.ImgBase64Util;
-import com.arvato.service.goods.api.orm.dao.*;
-import com.arvato.service.goods.api.service.EsShopGoodsService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.util.ValidatorUtils;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.constant.RedisConstant;
+import com.mei.zhuang.dao.goods.*;
 import com.mei.zhuang.entity.goods.*;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ImgBase64Util;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.goods.EsShopGoodsParam;
+import com.mei.zhuang.vo.goods.GoodsDetail;
+import com.mei.zhuang.vo.goods.GoodsQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +86,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
     @Override
     public Object getGoodsByPage(EsShopGoods entity) {
         try {
-            Page<EsShopGoods> page = this.selectPage(new Page<EsShopGoods>(entity.getCurrent(), entity.getSize()), new QueryWrapper<>(entity));
+            Page p =new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
+            IPage<EsShopGoods> page = esShopGoodsMapper.selectPage(p, new QueryWrapper<>(entity));
 
             for (EsShopGoods lis : page.getRecords()) {
                 //根据商品分类id查询商品分类名称
@@ -168,7 +171,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             if (entity.getIsPutaway() == 0) {
                 entity.setStatus(-2);
             }
-            this.insert(entity);
+            this.save(entity);
             if (entity.getId() != null) {
                 EsShopGoodsQRCode qrCode = new EsShopGoodsQRCode();
                 qrCode.setGoodsId(entity.getId());
@@ -641,7 +644,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("商品id");
             }
-            if (this.deleteById(id)) {
+            if (this.removeById(id)) {
                 redisRepository.del(String.format(RedisConstant.GOODSDETAIL, id + ""));
                 redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
                 return new CommonResult().success();
@@ -679,7 +682,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("商品id");
             }
-            EsShopGoods coupon = this.selectById(id);
+            EsShopGoods coupon = this.getById(id);
             if (coupon != null) {
                 if (coupon.getRecomGoodsId() != null && !coupon.getRecomGoodsId().equals("")) {
                     String[] ids = coupon.getRecomGoodsId().split(",");
@@ -739,7 +742,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 coupon.setDiypageList(esShopDiypageMapper.selectAll());
                 EsShopGoodsDiyPageMap pageMap = new EsShopGoodsDiyPageMap();
                 pageMap.setGoodsId(id);
-                coupon.setDiypageALl(esShopGoodsDiypageMapMapper.selectOne(pageMap));
+                coupon.setDiypageALl(esShopGoodsDiypageMapMapper.selectOne(new QueryWrapper<>(pageMap)));
             }
 
 
@@ -956,16 +959,17 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
     @Override
     public Map<String, Object> goodsListByCatePageList(GoodsQuery esShopGoods) {
-        Page<EsShopGoods> page = new Page<EsShopGoods>(esShopGoods.getCurrent(), esShopGoods.getSize());
+
         Map<String, Object> result = new HashMap<>();
         try {
-            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList(page, esShopGoods);
+            PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
+            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList(esShopGoods);
             for (EsShopGoods goods : list){
                 if(ValidatorUtils.notEmpty(goods.getDefaultSpec())) {
                     EsShopGoodsOption query = new EsShopGoodsOption();
                     query.setGoodsId(goods.getId());
                     query.setSpecs(goods.getDefaultSpec());
-                    EsShopGoodsOption option = esShopGoodsOptionMapper.selectOne(query);
+                    EsShopGoodsOption option = esShopGoodsOptionMapper.selectOne(new QueryWrapper<>(query));
                     goods.setOption(option);
                 }
             }
@@ -995,9 +999,9 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
     @Override
     public Map<String, Object> selGoodsPutaway(GoodsQuery goodsQuery) {
         Map<String, Object> map = new HashMap<String, Object>();
-        Page<EsShopGoods> page = new Page<EsShopGoods>(goodsQuery.getCurrent(), goodsQuery.getSize());
         try {
-            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPutaway(page, goodsQuery);
+            PageHelper.startPage(goodsQuery.getCurrent(), goodsQuery.getSize());
+            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPutaway( goodsQuery);
             Integer count = esShopGoodsMapper.selGoodsPutawayCount(goodsQuery);
             map.put("rows", list);
             map.put("total", count);
@@ -1054,7 +1058,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                     esShopGoods.setCategoryId(null);
                 }
             }
-            List<EsShopGoods> list = esShopGoodsMapper.lists(page, esShopGoods);
+            PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
+            List<EsShopGoods> list = esShopGoodsMapper.lists( esShopGoods);
             int count = esShopGoodsMapper.counts(esShopGoods);
             result.put("rows", list);
             result.put("total", count);
@@ -1071,8 +1076,6 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
     @Override
     public Map<String, Object> selGoodsPageList(GoodsQuery esShopGoods) {
-        Page<EsShopGoods> page = new Page<EsShopGoods>(esShopGoods.getCurrent(), esShopGoods.getSize());
-
         Map<String, Object> result = new HashMap<>();
         try {
             if (esShopGoods.getCategoryId() != null && !esShopGoods.getCategoryId().equals("")) {
@@ -1080,7 +1083,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                     esShopGoods.setCategoryId(null);
                 }
             }
-            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList(page, esShopGoods);
+            PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
+            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList( esShopGoods);
             for (EsShopGoods es : list) {
                 if (es.getStatus() == null) {
                 } else {
@@ -1190,7 +1194,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                                 .map(EsShopGoodsCategoryRecom::getGoodsId).distinct()
                                 .collect(Collectors.toList());
                         Page<EsShopGoods> page = new Page<EsShopGoods>(0, recomCategoryNum);
-                        recomGoodsList = esShopGoodsMapper.selectPage(page, new QueryWrapper<EsShopGoods>().notIn("type", 3).in("id", stIdList2).in("status", statusList).notIn("id",id).orderBy("display_order",false));
+                        recomGoodsList = esShopGoodsMapper.selectPage(page, new QueryWrapper<EsShopGoods>().notIn("type", 3).in("id", stIdList2).in("status", statusList).notIn("id",id).orderByDesc("display_order")).getRecords();
 
                     }
                 }

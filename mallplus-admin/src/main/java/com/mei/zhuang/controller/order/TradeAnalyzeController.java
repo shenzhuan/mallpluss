@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.order.ExportParam;
-import com.arvato.service.order.api.service.ITradeDataAnalyzeService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
-import com.arvato.utils.date.DateUtil;
-import com.arvato.utils.date.DateUtils;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.service.order.ITradeDataAnalyzeService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.DateUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.order.ExportParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

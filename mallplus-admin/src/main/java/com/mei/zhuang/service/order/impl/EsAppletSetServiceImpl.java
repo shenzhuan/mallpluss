@@ -1,10 +1,10 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.arvato.service.order.api.orm.dao.EsAppletSetMapper;
-import com.arvato.service.order.api.orm.dao.EsCoreMessageTemplateMapper;
-import com.arvato.service.order.api.service.EsAppletSetService;
-import com.baomidou.mybatisplus.mapper.QueryWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsAppletSetMapper;
+import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
+import com.mei.zhuang.service.order.EsAppletSetService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsAppletSet;
 import com.mei.zhuang.entity.order.EsCoreMessageTemplate;
 import io.swagger.annotations.Api;

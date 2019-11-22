@@ -1,9 +1,11 @@
 package com.mei.zhuang.controller.member;
 
-import com.arvato.ec.common.vo.data.customer.*;
-import com.arvato.service.member.api.service.ICustGroupService;
-import com.arvato.utils.CommonResult;
-import com.arvato.utils.annotation.SysLog;
+
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.service.member.ICustGroupService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.customer.*;
+import com.mei.zhuang.vo.data.customer.CustPropsParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
