@@ -10,11 +10,12 @@ import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroupMap;
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
 import com.mei.zhuang.service.goods.EsShopGoodsService;
 import com.mei.zhuang.service.goods.EsShopSkuService;
 import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.JsonUtils;
 import com.mei.zhuang.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,7 +47,7 @@ public class EsSkuController {
     @Resource
     private EsShopGoodsGroupMapMapper goodsGroupMapMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private ShopOrderService orderFegin;
 
@@ -64,7 +65,7 @@ public class EsSkuController {
     public EsShopGoods getGoodsById(@RequestParam("goodsId") Long goodsId) {
         EsShopGoods goods = null;
         try {
-            goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, goodsId + ""));
+            goods = (EsShopGoods) JsonUtils.fromJson(redisRepository.get(String.format(RedisConstant.GOODS, goodsId + "")),EsShopGoods.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getId())) {
                 goods = goodsMapper.selectById(goodsId);
                 if (goods != null) {
@@ -101,8 +102,8 @@ public class EsSkuController {
     @ApiOperation("更新商品sku")
     @PostMapping(value = "/updateSkuById")
     public Object updateSkuById(@RequestBody EsShopGoodsOption entity) {
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getGoodsId() + ""));
-        redisRepository.del(String.format(RedisConstant.GOODS, entity.getGoodsId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, entity.getGoodsId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODS, entity.getGoodsId() + ""));
         return skuService.updateById(entity);
     }
 
@@ -118,8 +119,8 @@ public class EsSkuController {
     @ApiOperation("更新商品")
     @PostMapping(value = "/updateGoodsById")
     public Object updateGoodsById(@RequestBody EsShopGoods entity) {
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getId() + ""));
-        redisRepository.del(String.format(RedisConstant.GOODS, entity.getId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, entity.getId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODS, entity.getId() + ""));
         return shopGoodsService.updateById(entity);
     }
 
@@ -127,8 +128,8 @@ public class EsSkuController {
     @ApiOperation("删除规则商品的关联商品")
     @PostMapping(value = "/deleteGoodsById")
     public Object deleteGoodsById(@RequestParam Long id) {
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, id + ""));
-        redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, id + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODS, id + ""));
         return shopGoodsService.removeById(id);
     }
 

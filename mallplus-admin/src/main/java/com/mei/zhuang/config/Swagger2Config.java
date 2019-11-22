@@ -22,15 +22,15 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.zscat.mallplus"))
+                .apis(RequestHandlerSelectors.basePackage("com.mei.zhuang"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("mall后台系统")
-                .description("mall后台模块")
+                .title("美妆商城后台系统")
+                .description("美妆商城后台系统")
                 .contact("zscat")
                 .version("1.0")
                 .build();

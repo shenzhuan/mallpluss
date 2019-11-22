@@ -6,11 +6,12 @@ import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
 import com.mei.zhuang.entity.goods.*;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.goods.*;
 import com.mei.zhuang.service.order.GoodsFegin;
 import com.mei.zhuang.service.order.ShopOrderService;
 import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.JsonUtils;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class GoodsFeiginImpl implements GoodsFegin {
     @Resource
     private EsShopGoodsGroupMapMapper goodsGroupMapMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private EsShopCustomizedPacketServer esShopCustomizedPacketServer;
     @Resource
@@ -65,7 +66,7 @@ public class GoodsFeiginImpl implements GoodsFegin {
     public EsShopGoods getGoodsById(Long goodsId) {
         EsShopGoods goods = null;
         try {
-            goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, goodsId + ""));
+            goods = (EsShopGoods) JsonUtils.fromJson(redisRepository.get(String.format(RedisConstant.GOODS, goodsId + "")),EsShopGoods.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getId())) {
                 goods = goodsMapper.selectById(goodsId);
                 if (goods != null) {
@@ -100,15 +101,15 @@ public class GoodsFeiginImpl implements GoodsFegin {
 
     @Override
     public void updateSkuById(EsShopGoodsOption entity) {
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getGoodsId() + ""));
-        redisRepository.del(String.format(RedisConstant.GOODS, entity.getGoodsId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, entity.getGoodsId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODS, entity.getGoodsId() + ""));
         skuService.updateById(entity);
     }
 
     @Override
     public void updateGoodsById(EsShopGoods entity) {
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getId() + ""));
-        redisRepository.del(String.format(RedisConstant.GOODS, entity.getId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, entity.getId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODS, entity.getId() + ""));
         shopGoodsService.updateById(entity);
     }
 

@@ -1,5 +1,6 @@
 package com.mei.zhuang.service.member.impl;
 
+import com.mei.zhuang.utils.JsonUtils;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
@@ -76,7 +77,12 @@ public class RedisUtil {
     public Boolean expire(String key, long timeout, TimeUnit unit) {
         return redisTemplate.expire(key, timeout, unit);
     }
-
+    public Boolean expire(String key, long timeout) {
+        return redisTemplate.expire(key, timeout,TimeUnit.SECONDS);
+    }
+    public Long willExpire(final String key) {
+        return redisTemplate.getExpire(key);
+    }
     /**
      * 设置过期时间
      *
@@ -192,6 +198,15 @@ public class RedisUtil {
         redisTemplate.opsForValue().set(key, value);
     }
 
+    /**
+     * 添加到缓存
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    public void set(final String key, final Object value) {
+        redisTemplate.opsForValue().set(key, JsonUtils.toJsonStr(value));
+    }
     /**
      * 获取指定 key 的值
      *

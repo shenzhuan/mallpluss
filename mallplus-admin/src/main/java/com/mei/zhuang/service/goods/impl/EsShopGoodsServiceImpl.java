@@ -9,10 +9,11 @@ import com.github.pagehelper.PageHelper;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.dao.goods.*;
 import com.mei.zhuang.entity.goods.*;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.goods.EsShopGoodsService;
 import com.mei.zhuang.utils.DateUtil;
 import com.mei.zhuang.utils.ImgBase64Util;
+import com.mei.zhuang.utils.JsonUtils;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
@@ -67,7 +68,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
     @Resource
     private EsShopGoodsGroupMapper esShopGoodsGroupMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private EsShopGoodsQRCodeMapper esShopGoodsQRCodeMapper;
     @Resource
@@ -350,8 +351,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 goodsRecomMapper.insert(recom);
             }
         }
-        redisRepository.del(String.format(RedisConstant.GOODS, entity.getId() + ""));
-        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getId()));
+        redisRepository.delete(String.format(RedisConstant.GOODS, entity.getId() + ""));
+        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, entity.getId()));
     }
 
     @ApiOperation("更新商品")
@@ -640,8 +641,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 return new CommonResult().paramFailed("商品id");
             }
             if (this.removeById(id)) {
-                redisRepository.del(String.format(RedisConstant.GOODSDETAIL, id + ""));
-                redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
+                redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, id + ""));
+                redisRepository.delete(String.format(RedisConstant.GOODS, id + ""));
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -780,8 +781,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             } else {
                 obj = esShopGoodsMapper.updEsShopGoodsStatus(var, status, null);
             }
-            redisRepository.del(String.format(RedisConstant.GOODSDETAIL, ids + ""));
-            redisRepository.del(String.format(RedisConstant.GOODS, ids + ""));
+            redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, ids + ""));
+            redisRepository.delete(String.format(RedisConstant.GOODS, ids + ""));
             return new CommonResult().success("success", new Date());
 
         } catch (Exception e) {
@@ -801,8 +802,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             String str = sdf.format(da);
             Date date = sdf.parse(str);
             Integer count = esShopGoodsMapper.updEsShopGoodsIsDel(var, date);
-            redisRepository.del(String.format(RedisConstant.GOODSDETAIL, ids + ""));
-            redisRepository.del(String.format(RedisConstant.GOODS, ids + ""));
+            redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, ids + ""));
+            redisRepository.delete(String.format(RedisConstant.GOODS, ids + ""));
             return new CommonResult().success("success", count);
         } catch (Exception e) {
             log.error("删除商品（逻辑删除）异常：", e.getMessage(), e);
@@ -848,8 +849,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                         EsShopGoodsGroup group = new EsShopGoodsGroup();
                         group.setGoodsId(id);
                         esShopGoodsGroupMapper.delete(new QueryWrapper<>(group));
-                        redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
-                        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, id + ""));
+                        redisRepository.delete(String.format(RedisConstant.GOODS, id + ""));
+                        redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, id + ""));
                     }
 
                 }
@@ -872,8 +873,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 for (int i = 0; i < id.length; i++) {
                     Long var = Long.parseLong(id[i]);
                     esShopGoodsMapper.updEsShopGoodsStatus(var, status, null);
-                    redisRepository.del(String.format(RedisConstant.GOODSDETAIL, var + ""));
-                    redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
+                    redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, var + ""));
+                    redisRepository.delete(String.format(RedisConstant.GOODS, id + ""));
                 }
                 return new CommonResult().success("success", new Date());
             }
@@ -1144,7 +1145,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
     private GoodsDetail getGoodsDetail(Long id) {
         GoodsDetail vo;
         vo = new GoodsDetail();
-        EsShopGoods goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, id + ""));
+        EsShopGoods goods = (EsShopGoods) JsonUtils.fromJson(redisRepository.get(String.format(RedisConstant.GOODS, id + "")),EsShopGoods.class);
         if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getId())) {
             goods = esShopGoodsMapper.selectById(id);
             if (goods != null) {

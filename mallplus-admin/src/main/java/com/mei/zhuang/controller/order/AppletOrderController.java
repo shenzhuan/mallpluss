@@ -8,7 +8,7 @@ import com.mei.zhuang.dao.order.EsShopFormidMapper;
 import com.mei.zhuang.entity.order.*;
 import com.mei.zhuang.enums.OrderStatus;
 import com.mei.zhuang.exception.BusinessException;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.order.EsShopCustomizedAppletService;
 import com.mei.zhuang.service.order.MembersFegin;
 import com.mei.zhuang.service.order.ShopOrderGoodsService;
@@ -54,7 +54,7 @@ public class AppletOrderController {
     @Resource
     private EsShopFormidMapper formidMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private EsShopCustomizedAppletService esShopCustomizedAppletService;
 
@@ -512,7 +512,7 @@ public class AppletOrderController {
     @ApiOperation("同步失敗訂單到MQ")
     @PostMapping("/synOrder")
     public Object synOrder() {
-        List<Object> ids = redisRepository.getList("order_error_ids", 1, 100);
+        List<Object> ids = Collections.singletonList(redisRepository.lRange("order_error_ids", 1, 100));
         for (Object id : ids) {
             log.info("同步失敗訂單:" + id);
             OmsOrderVo orderVo = new OmsOrderVo();
@@ -529,7 +529,7 @@ public class AppletOrderController {
     @ApiOperation("好友赠礼")
     @PostMapping("/friendsGift")
     public Object friendsGift() {
-        List<Object> ids = redisRepository.getList("order_error_ids", 1, 100);
+        List<Object> ids = Collections.singletonList(redisRepository.lRange("order_error_ids", 1, 100));
         for (Object id : ids) {
             log.info("同步失敗訂單:" + id);
             OmsOrderVo orderVo = new OmsOrderVo();

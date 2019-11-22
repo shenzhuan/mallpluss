@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@MapperScan({"com.zscat.mallplus.mapper", "com.zscat.mallplus.ums.mapper", "com.zscat.mallplus.sms.mapper", "com.zscat.mallplus.cms.mapper", "com.zscat.mallplus.sys.mapper", "com.zscat.mallplus.oms.mapper", "com.zscat.mallplus.pms.mapper"})
+@MapperScan({"com.mei.zhuang.dao" })
 @EnableTransactionManagement
 public class MallAdminApplication {
     public static void main(String[] args) {

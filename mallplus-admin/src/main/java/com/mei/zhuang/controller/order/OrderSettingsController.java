@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.mei.zhuang.constant.OrderConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrderSettings;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.order.ShopOrderSettingsService;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
@@ -37,7 +37,7 @@ public class OrderSettingsController {
     private ShopOrderSettingsService shopOrderSettingsService;
 
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
 
     @SysLog(MODULE = "订单设置管理", REMARK = "查询订单设置")
     @ApiOperation("查询订单设置")

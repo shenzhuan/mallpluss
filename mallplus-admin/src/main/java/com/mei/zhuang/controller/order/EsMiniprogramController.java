@@ -2,8 +2,8 @@ package com.mei.zhuang.controller.order;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.dao.member.EsMiniprogramMapper;
 import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
-import com.mei.zhuang.service.order.EsMiniprogramService;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.vo.EsMiniprogram;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 public class EsMiniprogramController {
 
     @Resource
-    private EsMiniprogramService esMiniprogramService;
+    private EsMiniprogramMapper esMiniprogramService;
     @Resource
     private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
 
@@ -33,7 +33,7 @@ public class EsMiniprogramController {
     public Object selectMessageTemplate(EsMiniprogram entity) {
         try {
 
-            EsMiniprogram esMiniprogram = esMiniprogramService.getOne(new QueryWrapper<>(entity));
+            EsMiniprogram esMiniprogram = esMiniprogramService.selectOne(new QueryWrapper<>(entity));
             if (esMiniprogram != null && !esMiniprogram.equals("")) {
                 esMiniprogram.setListOrderTemplate(esCoreMessageTemplateMapper.selectList(new QueryWrapper<>()));
             }
@@ -70,7 +70,7 @@ public class EsMiniprogramController {
             if (ValidatorUtils.empty(entity.getAppSecret())) {
                 return new CommonResult().failed("请指定小程序APPSecret");
             }
-            return new CommonResult().success("success", esMiniprogramService.save(entity));
+            return new CommonResult().success("success", esMiniprogramService.insert(entity));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //Spring boot方式
 @EnableTransactionManagement
 @Configuration
-@MapperScan("com.zscat.mallplus.*.mapper*")
+@MapperScan("com.mei.zhuang.dao")
 public class MybatisPlusConfig {
 
 

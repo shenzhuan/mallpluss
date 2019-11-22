@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.dao.order.EsAppletTemplatesMapper;
 import com.mei.zhuang.entity.order.EsAppletTemplates;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.order.MembersFegin;
 import com.mei.zhuang.utils.JsonUtils;
 import com.mei.zhuang.utils.MyX509TrustManager;
@@ -58,7 +58,7 @@ public class WechatApiService {
     /*@Resource
     private DistributedLock lock;*/
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
 
     public WechatApiService() {
         RequestConfig config = RequestConfig.custom()
@@ -229,7 +229,7 @@ public class WechatApiService {
             int expiresIn = (int) resultMap.get("expires_in");
 
             //redisRepository.set(key, accessToken);
-            redisRepository.setExpire(key, accessToken, expiresIn);
+            redisRepository.expire(key, expiresIn);
             return accessToken;
         } finally {
             //   lock.releaseLock(lockKey);
@@ -272,7 +272,7 @@ public class WechatApiService {
             String ticket = (String) resultMap.get("ticket");
             int expiresIn = (int) resultMap.get("expires_in");
 
-            redisRepository.setExpire(key, ticket, expiresIn);
+            redisRepository.expire(key, expiresIn);
 
             return ticket;
         } finally {

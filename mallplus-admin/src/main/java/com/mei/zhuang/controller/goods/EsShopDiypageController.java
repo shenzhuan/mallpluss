@@ -7,9 +7,9 @@ import com.github.pagehelper.PageInfo;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopDiypage;
-import com.mei.zhuang.redis.template.RedisRepository;
 import com.mei.zhuang.service.goods.EsShopDiypageService;
 import com.mei.zhuang.service.goods.EsShopDiypageTemplateCategoryService;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
@@ -41,7 +41,9 @@ public class EsShopDiypageController {
     @Resource
     private EsShopDiypageTemplateCategoryService categoryService;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
+   // @Resource
+  //  private RedisUtil redisRepository;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @SysLog(MODULE = "自定义页面配置", REMARK = "添加自定义页面配置")

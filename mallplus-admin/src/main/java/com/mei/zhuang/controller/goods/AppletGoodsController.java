@@ -5,8 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.*;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.goods.*;
+import com.mei.zhuang.utils.JsonUtils;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.vo.goods.GoodsQuery;
@@ -44,7 +45,7 @@ public class AppletGoodsController {
     @Resource
     private EsStartAdvertisingImgService esStartAdvertisingImgService;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private EsShopCustomizedLegendService esShopCustomizedLegendService;
     @Resource
@@ -185,7 +186,7 @@ public class AppletGoodsController {
             diypage.setStatus(1);
             diypage.setType(2);
             // EsShopDiypage newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
-            EsShopDiypage newDiy = (EsShopDiypage) redisRepository.get(String.format(RedisConstant.EsShopDiypage, 12));
+            EsShopDiypage newDiy = (EsShopDiypage) JsonUtils.fromJson(redisRepository.get(String.format(RedisConstant.EsShopDiypage, 12)),EsShopDiypage.class);
             if (ValidatorUtils.empty(newDiy)) {
                 newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), newDiy);

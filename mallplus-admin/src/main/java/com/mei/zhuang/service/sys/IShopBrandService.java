@@ -1,7 +1,7 @@
 package com.mei.zhuang.service.sys;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.mei.zhuang.entity.sys.EsShopBrand;
+import com.mei.zhuang.entity.goods.EsShopBrand;
 
 /**
  * @Auther: Tiger

@@ -2,7 +2,7 @@ package com.mei.zhuang.service.sys;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.mei.zhuang.entity.sys.EsShopBrand;
+import com.mei.zhuang.entity.goods.EsShopBrand;
 import com.mei.zhuang.entity.sys.EsShopNew;
 import com.mei.zhuang.vo.ShopParam;
 

@@ -19,7 +19,7 @@ import com.mei.zhuang.entity.order.*;
 import com.mei.zhuang.enums.OrderGoodsStatus;
 import com.mei.zhuang.enums.OrderStatus;
 import com.mei.zhuang.exception.BusinessException;
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.order.*;
 import com.mei.zhuang.util.WX_TemplateMsgUtil;
 import com.mei.zhuang.utils.*;
@@ -61,7 +61,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Resource
     private EsShopOrderSettingsMapper orderSettingsMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private EsShopOrderMapper orderMapper;
     @Resource
@@ -2631,8 +2631,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         if (goods != null && goods.getId() != null) {
 
             if (stockCnf.equals(goods.getStockCnf())) {
-                redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
-                redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
+                redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
+                redisRepository.delete(String.format(RedisConstant.GOODS, goods.getId() + ""));
                 EsShopGoods newGoods = new EsShopGoods();
                 newGoods.setId(goods.getId());
                 if (!ValidatorUtils.empty(item.getOptionId()) && item.getOptionId() > 0) {
@@ -2684,8 +2684,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             for (EsShopOrderGoods item : itemList) {
                 EsShopGoods goods = goodsFegin.getGoodsById(item.getGoodsId());
                 if (goods != null && goods.getId() != null && goods.getStockCnf() != 2) {
-                    redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
-                    redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
+                    redisRepository.delete(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
+                    redisRepository.delete(String.format(RedisConstant.GOODS, goods.getId() + ""));
                     if (goods.getStatus() == 3) {
                         EsShopGoods newGoods = new EsShopGoods();
                         newGoods.setId(goods.getId());

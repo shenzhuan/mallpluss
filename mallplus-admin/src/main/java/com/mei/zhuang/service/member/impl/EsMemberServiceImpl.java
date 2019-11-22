@@ -6,10 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.dao.member.EsCoreSmsMapper;
 import com.mei.zhuang.dao.member.EsMemberMapper;
-import com.mei.zhuang.dao.order.EsMiniprogramMapper;
+import com.mei.zhuang.dao.member.EsMiniprogramMapper;
 import com.mei.zhuang.entity.member.EsCoreSms;
 import com.mei.zhuang.entity.member.EsMember;
-import com.mei.zhuang.redis.template.RedisRepository;
 import com.mei.zhuang.service.member.EsMemberService;
 import com.mei.zhuang.service.order.ShopOrderService;
 import com.mei.zhuang.util.JsonUtil;
@@ -51,7 +50,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     @Resource
     private EsMiniprogramMapper miniprogramMapper;
     @Resource
-    private RedisRepository redisRepository;
+    private RedisUtil redisRepository;
     @Resource
     private ShopOrderService orderService;
     private String REDIS_KEY_PREFIX_AUTH_CODE = "bindPhone:authCode:";
@@ -135,7 +134,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
 
                 resultObj.put("userInfo", umsMember);
                 resultObj.put("userId", umsMember.getId());
-                redisRepository.del(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
+                redisRepository.delete(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
             } else {
                 if (ValidatorUtils.notEmpty(uInfo) && ValidatorUtils.notEmpty(uInfo.get("unionId"))) {
                     userVo.setUnionid(uInfo.get("unionId").toString());
@@ -158,7 +157,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
                 resultObj.put("userInfo", userVo);
                 resultObj.put("userId", userVo.getId());
 
-                redisRepository.del(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
+                redisRepository.delete(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
             }
 
             CompletableFuture.runAsync(() -> {
@@ -215,7 +214,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
         }
         //短信验证码缓存15分钟，
         redisRepository.set(REDIS_KEY_PREFIX_AUTH_CODE + phone, sb.toString());
-        redisRepository.willExpire(REDIS_KEY_PREFIX_AUTH_CODE + phone, 60);
+        redisRepository.expire(REDIS_KEY_PREFIX_AUTH_CODE + phone, 60);
         EsCoreSms querySms = new EsCoreSms();
         querySms.setStatus(1);
         EsCoreSms coreSms = smsMapper.selectOne(new QueryWrapper<>(querySms));
