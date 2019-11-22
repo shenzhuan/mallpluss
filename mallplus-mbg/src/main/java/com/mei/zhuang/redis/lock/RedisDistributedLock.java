@@ -2,7 +2,6 @@ package com.mei.zhuang.redis.lock;
 
 
 import lombok.extern.slf4j.Slf4j;
-import javax.annotation.Resource;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,7 @@ import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -106,7 +106,7 @@ public class RedisDistributedLock extends AbstractDistributedLock {
                 // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
                 // 集群模式
                 if (nativeConnection instanceof JedisCluster) {
-                    return (Long) ((JedisCluster) nativeConnection).eval(UNLOCK_LUA, keys, args);
+                 //   return (Long) ((JedisCluster) nativeConnection).eval(UNLOCK_LUA, keys, args);
                 }
 
                 // 单机模式

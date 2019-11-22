@@ -16,13 +16,13 @@ import java.util.Map;
  * @Description:
  */
 public interface FullGiftService extends IService<EsShopFullGift> {
-    Integer save(EsShopFullGift entity) throws Exception;
+    boolean save(EsShopFullGift entity) ;
 
     int updateShowStatus(Long ids, Integer status);
 
     List<EsShopFullGift> selectrule();
 
-    boolean update(EsShopFullGift entity) throws Exception;
+    boolean update(EsShopFullGift entity) ;
 
     //满赠商品明细
     List<EsShopFullGiftGoodsMap> selectgift(Long fullGiftId);

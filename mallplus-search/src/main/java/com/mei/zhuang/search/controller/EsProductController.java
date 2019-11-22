@@ -4,14 +4,14 @@ package com.mei.zhuang.search.controller;
 import com.mei.zhuang.search.domain.EsProduct;
 import com.mei.zhuang.search.domain.EsProductRelatedInfo;
 import com.mei.zhuang.search.service.EsProductService;
-import com.zscat.mallplus.utils.CommonResult;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import javax.annotation.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**

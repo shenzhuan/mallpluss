@@ -4,7 +4,7 @@ package com.mei.zhuang.util;
 import com.mei.zhuang.bo.ColumnDO;
 import com.mei.zhuang.bo.TableDO;
 import com.mei.zhuang.config.Constant;
-import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.mei.zhuang.exception.BusinessException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.IOUtils;
@@ -142,7 +142,7 @@ public class GenUtils {
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
             } catch (IOException e) {
-                throw new ApiMallPlusException("渲染模板失败，表名：" + tableDO.getTableName(), e);
+                throw new BusinessException("渲染模板失败，表名：" + tableDO.getTableName(), e);
             }
         }
     }
@@ -176,7 +176,7 @@ public class GenUtils {
         try {
             return new PropertiesConfiguration("generator.properties");
         } catch (org.apache.commons.configuration.ConfigurationException e) {
-            throw new ApiMallPlusException("获取配置文件失败，", e);
+            throw new BusinessException("获取配置文件失败，", e);
         }
     }
 

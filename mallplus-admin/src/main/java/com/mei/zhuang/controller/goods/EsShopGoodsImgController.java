@@ -34,7 +34,7 @@ public class EsShopGoodsImgController {
     @PostMapping("/selImg")
     public Object selImg(EsShopGoodsImg entity) {
 
-        return new CommonResult().success("success", esShopGoodsImgService.selImg(entity));
+        return new CommonResult().success("success", esShopGoodsImgService.selImgs(entity));
     }
 
     @SysLog(MODULE = "图片管理", REMARK = "删除图片")

@@ -113,7 +113,15 @@ public class DateUtils {
         r += "前";
         return r;
     }
-
+    public static String timeToStr(Long time, String pattern) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        if (time.toString().length() < 13) {
+            time = time * 1000L;
+        }
+        Date date = new Date(time);
+        String value = dateFormat.format(date);
+        return value;
+    }
     public static String addDay(Date s, int n) {
 
         SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd");
@@ -320,7 +328,31 @@ public class DateUtils {
         }
         return null;
     }
+    /**
+     * 给时间加上几个小时
+     * @param day 当前时间 格式：yyyy-MM-dd HH:mm:ss
+     * @param hour 需要加的时间
+     * @return
+     */
+    public static String addDateHour(String day, int hour){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = format.parse(day);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (date == null)
+            return "";
 
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, hour);// 24小时制
+        date = cal.getTime();
+        cal = null;
+        return format.format(date);
+
+    }
     public static void main(String[] args) throws Exception {
         String month="201705";
         System.out.println(getMinDateMonth(month));

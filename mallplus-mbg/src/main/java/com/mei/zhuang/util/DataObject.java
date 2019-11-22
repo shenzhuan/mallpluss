@@ -72,24 +72,8 @@ public class DataObject extends LinkedHashMap<String,Object>{
         return returnMap;
     }
 
-	public static <T> T map2Bean(Map<String, Object> map, Class<T> clazz) {
-        T bean = null;
-        try {
-            bean = clazz.newInstance();
-            org.apache.commons.beanutils.BeanUtils.populate(bean, map);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return bean;
-    }
 
-    public <T> T castToBean(Class<T> clazz) {
-        return map2Bean(this, clazz);
-    }
+
 
     /**
      * 名称是否为XPath表达式
@@ -218,7 +202,7 @@ public class DataObject extends LinkedHashMap<String,Object>{
 
     /**
      * 递归转换所有的Map为ElasticDataObject
-     * @param key
+     * @param
      * @param mapValue
      * @return
      */

@@ -271,7 +271,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
         List<EsShopFullGiftRule> relfullGiftRuleList = new ArrayList<>();
         boolean falg = false;
         List<EsShopFullGiftRule> list = fullGiftRuleMapper.selectList(
-                new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderBy("full_level", false));
+                new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderByDesc("full_level"));
         if (list != null && list.size() > 0) {
             for (EsShopFullGiftRule rule : list) {
                 if (rule.getConditions() == 1 && totalSingAmount.compareTo(rule.getPrice()) >= 0 && singCount >= rule.getAmount()) {
@@ -371,7 +371,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                 relManjianList.add(manjian);
             }*/
             List<EsShopFullGiftRule> list = fullGiftRuleMapper.selectList(
-                    new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderBy("full_level", false));
+                    new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderByDesc("full_level"));
             if (list != null && list.size() > 0) {
                 for (EsShopFullGiftRule rule : list) {
                     if (rule.getConditions() == 1 && totalSingAmount.compareTo(rule.getPrice()) >= 0 && singCount >= rule.getAmount()) {
@@ -408,8 +408,12 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(EsShopFullGift entity) throws Exception {
-        datetime(entity);
+    public boolean update(EsShopFullGift entity)  {
+        try {
+            datetime(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         entity.setUpdateTime(new Date());
         fullGiftMapper.updateById(entity);
         fullGiftGoodsMapMapper.delete(new QueryWrapper<EsShopFullGiftGoodsMap>().eq("full_gift_id", entity.getId()));
@@ -452,12 +456,12 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
 
     @Override
     public List<EsShopFullGift> slelectPurchase() {
-        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",2).orderBy("id", false));
+        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",2).orderByDesc("id"));
     }
 
     @Override
     public List<EsShopFullGift> slelectPurchase2() {
-        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",1).orderBy("id", false));
+        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",1).orderByDesc("id"));
     }
 
     public void datetime(EsShopFullGift en) throws Exception {
@@ -469,16 +473,20 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer save(EsShopFullGift entity) throws Exception {
+    public boolean save(EsShopFullGift entity)  {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
-        datetime(entity);
+        try {
+            datetime(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         fullGiftMapper.insert(entity);
         // 扩展信息
         addExtrInfo(entity);
-        return 1;
+        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface EsAppletSetService extends IService<EsAppletSet> {
 
-    Integer save(EsAppletSet entity);
+    boolean save(EsAppletSet entity);
 
     List<EsAppletSet> select();
 

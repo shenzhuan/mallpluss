@@ -1,6 +1,6 @@
 package com.mei.zhuang.util;
 
-import com.zscat.mallplus.utils.ValidatorUtils;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

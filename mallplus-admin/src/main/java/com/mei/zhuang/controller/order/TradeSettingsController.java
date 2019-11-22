@@ -1,14 +1,16 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.common.annotation.FieldText;
-import com.mei.zhuang.vo.order.PaySettingParam;
-import com.mei.zhuang.service.order.ShopPaymentService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mei.zhuang.annotation.FieldText;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopPayment;
+import com.mei.zhuang.service.order.ShopPaymentService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.order.PaySettingParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,7 +45,7 @@ public class TradeSettingsController {
     public Object list(PaySettingParam paySettingParam) {
         try {
             //非空处理
-            return new CommonResult().success(shopPaymentService.selectPageList(paySettingParam));
+            return new CommonResult().success(shopPaymentService.page(new Page<>(paySettingParam.getCurrent(),paySettingParam.getSize()),new QueryWrapper<EsShopPayment>()));
         } catch (Exception e) {
             log.error("查询支付设置列表：%s", e.getMessage(), e);
         }
@@ -75,7 +77,7 @@ public class TradeSettingsController {
             temp.setType(entity.getType());
             temp.setStatus(entity.getStatus());
             temp.setIsDelete(0);
-            if (this.shopPaymentService.selectCount(new QueryWrapper<>(temp)) > 1) {
+            if (this.shopPaymentService.count(new QueryWrapper<>(temp)) > 1) {
                 return new CommonResult().success("一个店铺只能存在同一类型的一种支付方式");
             }
 
@@ -131,7 +133,7 @@ public class TradeSettingsController {
             temp.setType(entity.getType());
             temp.setStatus(entity.getStatus());
             temp.setIsDelete(0);
-            if (this.shopPaymentService.selectCount(new QueryWrapper<>(temp)) > 1) {
+            if (this.shopPaymentService.count(new QueryWrapper<>(temp)) > 1) {
                 return new CommonResult().success("一个店铺只能存在同一类型的一种支付方式");
             }
             entity.setUpdateById(1l);//待完善

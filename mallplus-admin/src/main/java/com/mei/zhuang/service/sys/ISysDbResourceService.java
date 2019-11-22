@@ -1,8 +1,8 @@
 package com.mei.zhuang.service.sys;
 
-import com.arvato.common.msg.DictData;
-import com.arvato.common.orm.model.SysDbResource;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mei.zhuang.entity.sys.SysDbResource;
+import com.mei.zhuang.vo.DictData;
 
 import java.util.List;
 

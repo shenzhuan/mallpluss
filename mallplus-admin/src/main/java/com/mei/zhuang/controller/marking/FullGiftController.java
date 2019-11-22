@@ -85,7 +85,7 @@ public class FullGiftController {
             entity.setFullGiftGoodsList(list3);
             entity.setFullGiftList(list4);
 
-            if (fullGiftService.save(entity) > 0) {
+            if (fullGiftService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {

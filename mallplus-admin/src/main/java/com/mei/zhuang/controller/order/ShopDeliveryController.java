@@ -84,7 +84,7 @@ public class ShopDeliveryController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("id is empty");
             }
-            if (deliveryService.deleteById(id)) {
+            if (deliveryService.removeById(id)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {

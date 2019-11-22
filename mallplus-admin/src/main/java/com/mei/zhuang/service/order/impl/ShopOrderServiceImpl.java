@@ -107,6 +107,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Resource
     private MarkingFegin markingFegin;
 
+    @Resource
+    private EsActivatySmallBeautyBoxGiftBoxService esActivatySmallBeautyBoxGiftBoxService;
 
     public Map<String, Object> homeStatic() {
 
@@ -3416,6 +3418,13 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void updvituralStock(Long smallBeautyBoxId, Integer total) {
+        EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.getById(smallBeautyBoxId);
+        giftBox.setVituralStock(giftBox.getVituralStock()-total);
+         esActivatySmallBeautyBoxGiftBoxService.updateById(giftBox);
     }
 
 }

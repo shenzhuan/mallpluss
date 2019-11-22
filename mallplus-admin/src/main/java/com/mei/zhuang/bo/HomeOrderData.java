@@ -1,6 +1,5 @@
 package com.mei.zhuang.bo;
 
-import com.zscat.mallplus.vo.OrderStatusCount;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,5 +22,4 @@ public class HomeOrderData implements Serializable {
     BigDecimal monthOrderPay = new BigDecimal(0); //本月销售总额
     int weekOrderCount = 0; // 本月订单
     BigDecimal weekOrderPay = new BigDecimal(0); //本月销售总额
-    private OrderStatusCount orderStatusCount;
 }

@@ -23,8 +23,8 @@ public class EsAppletSetServiceImpl extends ServiceImpl<EsAppletSetMapper, EsApp
     private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
 
     @Override
-    public Integer save(EsAppletSet entity) {
-        return esAppletSetMapper.insert(entity);
+    public boolean save(EsAppletSet entity) {
+        return esAppletSetMapper.insert(entity)>0;
     }
 
     @Override

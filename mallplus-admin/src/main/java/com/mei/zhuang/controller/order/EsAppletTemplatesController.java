@@ -69,7 +69,7 @@ public class EsAppletTemplatesController {
             String[] attr = ids.split(",");
             Boolean bool = false;
             for (int i = 0; i < attr.length; i++) {
-                bool = esAppletTemplateService.deleteById(Long.parseLong(attr[i]));
+                bool = esAppletTemplateService.removeById(Long.parseLong(attr[i]));
             }
             return new CommonResult().success("success", bool);
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class EsAppletTemplatesController {
         try {
             EsAppletTemplates appletTemplates = new EsAppletTemplates();
             appletTemplates.setStatus(1);
-            return new CommonResult().success("success", esAppletTemplateService.selectList(new QueryWrapper<>(appletTemplates)));
+            return new CommonResult().success("success", esAppletTemplateService.list(new QueryWrapper<>(appletTemplates)));
         } catch (Exception e) {
             log.error("查询所有模版不分页接口：%s", e.getMessage(), e);
             return new CommonResult().failed();

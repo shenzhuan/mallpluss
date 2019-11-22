@@ -1,16 +1,17 @@
 package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.ChannelBiz;
+import com.mei.zhuang.constant.CommonConstant;
 import com.mei.zhuang.controller.SysLog;
-import com.arvato.utils.constant.CommonConstant;
+import com.mei.zhuang.service.sys.biz.ChannelBiz;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @Author: Meng.Liu1@arvato.com

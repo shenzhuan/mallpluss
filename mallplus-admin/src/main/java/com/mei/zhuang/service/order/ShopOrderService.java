@@ -187,6 +187,8 @@ public interface ShopOrderService extends IService<EsShopOrder> {
     List<EsShopOrder> selOrderListByGoodsAnay(GoodsAnalyzeParam param);
 
     void sendTemplate(String openid, String formId, Long shopId, String s, String nickname, Long id);
+
+    void updvituralStock(Long smallBeautyBoxId, Integer total);
 }
 
 

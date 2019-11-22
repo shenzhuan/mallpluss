@@ -1,25 +1,21 @@
 package com.mei.zhuang.controller.sys;
 
 
-import com.arvato.admin.constant.SysTenantStatus;
-import com.arvato.admin.dto.SysTenantPostData;
-import com.arvato.admin.dto.SysTenantPutData;
-import com.mei.zhuang.service.sys.ISysTenantService;
-import com.arvato.common.dto.SysTenantPagingData;
-import com.arvato.common.dto.SysTenantPagingParam;
-import com.arvato.common.msg.DictData;
-import com.arvato.common.orm.model.SysTenant;
-import com.arvato.common.vo.returnformat.BaseResponse;
-import com.arvato.common.vo.returnformat.TableData;
-import com.mei.zhuang.controller.SysLog;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.constant.SysTenantStatus;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.entity.sys.SysTenant;
+import com.mei.zhuang.service.sys.ISysTenantService;
+import com.mei.zhuang.vo.BaseResponse;
+import com.mei.zhuang.vo.DictData;
+import com.mei.zhuang.vo.sys.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import javax.annotation.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = {"租户管理CRUD接口"})
@@ -80,7 +76,7 @@ public class SysTenantController {
         );
 
         Assert.isTrue(
-                this.service.selectCount(new QueryWrapper<>(
+                this.service.count(new QueryWrapper<>(
                         new SysTenant().setTenantName(tenantPostData.getTenantName())
                 )) == 0,
                 "租户名称已存在"
@@ -91,7 +87,7 @@ public class SysTenantController {
                 "租户schema只能包含数组，字母，下划线"
         );
         Assert.isTrue(
-                this.service.selectCount(new QueryWrapper<>(
+                this.service.count(new QueryWrapper<>(
                         new SysTenant()
                                 .setDbResourceId(tenantPostData.getDbResourceId())
                                 .setDbSchema(tenantPostData.getDbSchema())
@@ -100,7 +96,7 @@ public class SysTenantController {
         );
 
         Assert.isTrue(
-                this.service.selectCount(new QueryWrapper<>(
+                this.service.count(new QueryWrapper<>(
                         new SysTenant().setBrandName(tenantPostData.getBrandName())
                 )) == 0,
                 "该品牌已经入驻"
@@ -117,7 +113,7 @@ public class SysTenantController {
                 .setCompanyEmail(tenantPostData.getCompanyEmail())
                 .setCompanyAddress(tenantPostData.getCompanyAddress())
                 .setStatus(SysTenantStatus.ENABLE.getStatus());
-        this.service.insert(sysTenant);
+        this.service.save(sysTenant);
 
         this.service.initTenant(sysTenant);
 
@@ -146,7 +142,7 @@ public class SysTenantController {
         );
 
         Assert.isTrue(
-                this.service.selectCount(
+                this.service.count(
                         new QueryWrapper<>(
                                 new SysTenant().setTenantName(tenantPutData.getTenantName())
                         ).notIn("id", tenantPutData.getId())
@@ -154,7 +150,7 @@ public class SysTenantController {
                 "租户名称已存在"
         );
         Assert.isTrue(
-                this.service.selectCount(
+                this.service.count(
                         new QueryWrapper<>(
                                 new SysTenant().setBrandName(tenantPutData.getBrandName())
                         ).notIn("id", tenantPutData.getId())
@@ -196,7 +192,7 @@ public class SysTenantController {
     @ApiOperation("获取租户详情")
     @GetMapping("/{id}")
     public BaseResponse<SysTenant> getById(@PathVariable("id") int id) {
-        return BaseResponse.successResponnse(this.service.selectById(id));
+        return BaseResponse.successResponnse(this.service.getById(id));
     }
 
     @SysLog(MODULE = "租户管理CRUD接口", REMARK = "租户字典")

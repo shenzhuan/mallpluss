@@ -2,7 +2,7 @@ package com.mei.zhuang.component;
 
 
 import com.mei.zhuang.util.JsonUtils;
-import com.zscat.mallplus.utils.CommonResult;
+import com.mei.zhuang.vo.CommonResult;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException e) throws IOException, ServletException {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println(JsonUtils.objectToJson(new CommonResult().forbidden(e.getMessage())));
+        response.getWriter().println(JsonUtils.objectToJson(new CommonResult().failed(e.getMessage())));
         response.getWriter().flush();
     }
 }

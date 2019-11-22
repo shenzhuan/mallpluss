@@ -1,15 +1,18 @@
 package com.mei.zhuang.controller.marking;
 
-import com.arvato.service.marking.api.feigin.MembersFegin;
-import com.mei.zhuang.dao.marking.*;
-import com.mei.zhuang.service.marking.EsShopShareMemberService;
-import com.mei.zhuang.service.marking.EsShopShareService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.utils.ValidatorUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.dao.marking.EsMemberCouponMapper;
+import com.mei.zhuang.dao.marking.EsShopCouponMapper;
+import com.mei.zhuang.dao.marking.EsShopShareMapMapper;
+import com.mei.zhuang.dao.marking.EsShopShareMemberAssistanceMapper;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
+import com.mei.zhuang.service.marking.EsShopShareMemberService;
+import com.mei.zhuang.service.marking.EsShopShareService;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +99,7 @@ public class AppletShareController {
                                     shareMember.setShareId(id);
                                     shareMember.setLaunchMemberId(memberId);
                                     EsShopShareMember esShopShareMember = esShopShareMemberService.selListOrderBy(shareMember);
-                                    esShopShare.setMemberNumberCount(esShopShareMemberService.selectCount(new QueryWrapper<>(shareMember)));//用户发起次数
+                                    esShopShare.setMemberNumberCount(esShopShareMemberService.count(new QueryWrapper<>(shareMember)));//用户发起次数
                                     if(esShopShareMember != null && !esShopShareMember.equals("") ){
                                         esShopShare.setShareMemberId(esShopShareMember.getId());
                                         EsShopShareMemberAssistance assistance = new EsShopShareMemberAssistance();
@@ -104,13 +107,13 @@ public class AppletShareController {
                                         List<EsShopShareMemberAssistance> assistanceList = esShopShareMemberAssistanceMapper.selectList(new QueryWrapper<>(assistance));
                                         List<EsMember> list = new ArrayList<EsMember>();
                                         for (EsShopShareMemberAssistance ass:assistanceList) {
-                                            EsMember member =memberFegin.detail(ass.getAssisMemberId());
+                                            EsMember member =memberFegin.getMemberById(ass.getAssisMemberId());
                                             list.add(member);
                                         }
                                         esShopShare.setShareMemberId(esShopShareMember.getId());
                                         esShopShare.setMemberList(list);
                                         if(esShopShareMember.getIsClose() == 0){
-                                            esShopShare.setMember(memberFegin.detail(memberId));
+                                            esShopShare.setMember(memberFegin.getMemberById(memberId));
                                             esShopShare.setIsClose(0);//1任务完成 0没完成
                                             esShopShare.setIsConfirm(esShopShareMember.getIsConfirm());
                                             return new CommonResult().success("success",esShopShare);
@@ -122,7 +125,7 @@ public class AppletShareController {
                                             shareMember = new EsShopShareMember();
                                             shareMember.setShareId(id);
                                             shareMember.setLaunchMemberId(memberId);
-                                            List<EsShopShareMember> lists =esShopShareMemberService.selectList(new QueryWrapper<>(shareMember));
+                                            List<EsShopShareMember> lists =esShopShareMemberService.list(new QueryWrapper<>(shareMember));
                                             //判断是否已达上限
                                             if(esShopShare.getMemberNumber()<=lists.size()){
                                                 esShopShare.setCountNumber(3);
@@ -135,7 +138,7 @@ public class AppletShareController {
                                         shareMember = new EsShopShareMember();
                                         shareMember.setShareId(id);
                                         shareMember.setLaunchMemberId(memberId);
-                                        List<EsShopShareMember> lists =esShopShareMemberService.selectList(new QueryWrapper<>(shareMember));
+                                        List<EsShopShareMember> lists =esShopShareMemberService.list(new QueryWrapper<>(shareMember));
                                         //判断是否已达上限
                                         if(esShopShare.getMemberNumber()<=lists.size()){
                                             esShopShare.setCountNumber(3);
@@ -149,7 +152,7 @@ public class AppletShareController {
                                         shareMember.setIsConfirm(1);
                                         esShopShareMemberService.save(shareMember);
                                         esShopShare.setShareMemberId(shareMember.getId());
-                                        esShopShare.setMember(memberFegin.detail(memberId));
+                                        esShopShare.setMember(memberFegin.getMemberById(memberId));
                                         esShopShare.setIsClose(0);
                                         esShopShare.setIsConfirm(1);
                                         return new CommonResult().success("success",esShopShare);
@@ -195,7 +198,7 @@ public class AppletShareController {
                 //发券
                 shareMap.setShareId(share.getId());
                 shareMap.setWinningType(1);
-                shareMap = esShopShareMapMapper.selectOne(shareMap);
+                shareMap = esShopShareMapMapper.selectOne(new QueryWrapper<>(shareMap));
                 shareMap.setMemberId(shareMember.getLaunchMemberId());
                 shareMap.setShareMemberId(shareMemberId);
                 Boolean bool = giveCoupop(shareMap);
@@ -246,7 +249,7 @@ public class AppletShareController {
                     //发送优惠卷
                     shareMap.setShareId(shareMember.getShareId());
                     shareMap.setWinningType(1);
-                    shareMap = esShopShareMapMapper.selectOne(shareMap);
+                    shareMap = esShopShareMapMapper.selectOne(new QueryWrapper<>(shareMap));
                     shareMap.setMemberId(shareMember.getLaunchMemberId());
                     shareMap.setShareMemberId(shareMemberId);
                     for (int i = 0; i < share.getGiftNumber(); i++) {
@@ -284,7 +287,7 @@ public class AppletShareController {
             EsShopShareMember shareMember = new EsShopShareMember();
             shareMember.setShareId(shareId);
             shareMember.setLaunchMemberId(memberId);
-            List<EsShopShareMember> list =esShopShareMemberService.selectList(new QueryWrapper<>(shareMember));
+            List<EsShopShareMember> list =esShopShareMemberService.list(new QueryWrapper<>(shareMember));
             EsShopShare esShopShare = esShopShareService.getById(shareId);
             //判断是否已达上限
             if(esShopShare.getMemberNumber()<=list.size()){
@@ -333,7 +336,7 @@ public class AppletShareController {
             //2.最多重复助力次数是否已满
             shareMember1 = new EsShopShareMember();
             shareMember1.setLaunchMemberId(shareMember.getLaunchMemberId());
-            List<EsShopShareMember> shareMemberList = esShopShareMemberService.selectList(new QueryWrapper<>(shareMember1));
+            List<EsShopShareMember> shareMemberList = esShopShareMemberService.list(new QueryWrapper<>(shareMember1));
             Integer countNum=0;
             for (EsShopShareMember esShopShareMember:shareMemberList) {
                 assistance = new EsShopShareMemberAssistance();
@@ -428,7 +431,7 @@ public class AppletShareController {
                                 EsShopShareMap shareMap = new EsShopShareMap();
                                 shareMap.setShareId(share.getId());
                                 shareMap.setWinningType(2);
-                                shareMap = esShopShareMapMapper.selectOne(shareMap);
+                                shareMap = esShopShareMapMapper.selectOne(new QueryWrapper<>(shareMap));
                                 shareMap.setMemberId(memberId);
                                 shareMap.setShareMemberId(shareMemberId);
                                 for (int i = 0; i <share.getPowerGiven() ; i++) {
@@ -493,7 +496,7 @@ public class AppletShareController {
                                         EsShopShareMap shareMap = new EsShopShareMap();
                                         shareMap.setShareId(share.getId());
                                         shareMap.setWinningType(2);
-                                        shareMap = esShopShareMapMapper.selectOne(shareMap);
+                                        shareMap = esShopShareMapMapper.selectOne(new QueryWrapper<>(shareMap));
                                         shareMap.setMemberId(memberId);
                                         shareMap.setShareMemberId(shareMemberId);
                                         for (int i = 0; i <share.getPowerGiven() ; i++) {

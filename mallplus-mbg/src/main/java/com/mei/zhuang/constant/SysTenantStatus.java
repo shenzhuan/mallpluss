@@ -1,6 +1,6 @@
 package com.mei.zhuang.constant;
 
-import com.arvato.common.msg.DictData;
+import com.mei.zhuang.vo.DictData;
 
 import java.util.ArrayList;
 import java.util.Arrays;

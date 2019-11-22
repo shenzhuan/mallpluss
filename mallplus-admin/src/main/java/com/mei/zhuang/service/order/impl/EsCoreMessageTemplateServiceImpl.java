@@ -1,11 +1,11 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
-import com.mei.zhuang.service.order.EsCoreMessageTemplateService;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mei.zhuang.entity.goods.EsShopGoods;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
 import com.mei.zhuang.entity.order.EsCoreMessageTemplate;
+import com.mei.zhuang.service.order.EsCoreMessageTemplateService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +26,8 @@ public class EsCoreMessageTemplateServiceImpl extends ServiceImpl<EsCoreMessageT
     public Map<String, Object> select(EsCoreMessageTemplate entity) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Page<EsShopGoods> page = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
-            List<EsCoreMessageTemplate> list = esCoreMessageTemplateMapper.select(page,entity);
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
+            List<EsCoreMessageTemplate> list = esCoreMessageTemplateMapper.selectList(new QueryWrapper<>(entity));
             int count = esCoreMessageTemplateMapper.count(entity);
             result.put("rows", list);
             result.put("total", count);

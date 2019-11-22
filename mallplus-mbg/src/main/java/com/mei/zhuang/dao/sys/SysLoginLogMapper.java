@@ -1,7 +1,7 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.common.orm.model.SysLoginLog;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mei.zhuang.entity.sys.SysLoginLog;
 import org.apache.ibatis.annotations.Param;
 
 /**

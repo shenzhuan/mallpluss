@@ -1,30 +1,26 @@
 package com.mei.zhuang.controller.order;
 
 
-import com.arvato.ec.common.vo.EsMiniprogram;
-import com.mei.zhuang.vo.order.CartMarkingVo;
-import com.arvato.service.order.api.enums.OrderStatus;
-import com.arvato.service.order.api.feigin.GoodsFegin;
-import com.arvato.service.order.api.feigin.MarkingFegin;
-import com.arvato.service.order.api.feigin.MembersFegin;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.dao.order.EsShopOrderGoodsMapper;
 import com.mei.zhuang.dao.order.EsShopOrderMapper;
 import com.mei.zhuang.dao.order.EsShopPaymentMapper;
-import com.mei.zhuang.service.order.ShopOrderService;
-import com.arvato.service.order.api.utils.*;
-import com.arvato.service.order.api.utils.DateUtils;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.*;
-import com.arvato.utils.util.CharUtil;
-import com.arvato.utils.util.IpAddressUtil;
-import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsShopOrder;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
 import com.mei.zhuang.entity.order.EsShopPayment;
+import com.mei.zhuang.enums.OrderStatus;
+import com.mei.zhuang.service.order.GoodsFegin;
+import com.mei.zhuang.service.order.MarkingFegin;
+import com.mei.zhuang.service.order.MembersFegin;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.util.*;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.EsMiniprogram;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -109,7 +105,7 @@ public class PayController {
         queryPay.setShopId(shopId);
         queryPay.setType(1);
         queryPay.setIsDelete(0);
-        EsShopPayment payment = paymentMapper.selectOne(queryPay);
+        EsShopPayment payment = paymentMapper.selectOne(new QueryWrapper<>(queryPay));
         EsShopOrder orderInfo = orderService.getById(orderId);
         if (null == miniprogram || payment==null) {
             return new CommonResult().failed("支付参数为空");
@@ -272,7 +268,7 @@ public class PayController {
             EsShopOrder param = new EsShopOrder();
             param.setOrderNo(out_trade_no);
             System.out.println(param);
-            List<EsShopOrder> list = orderService.selectList(new QueryWrapper<EsShopOrder>().eq("order_no",out_trade_no));
+            List<EsShopOrder> list = orderService.list(new QueryWrapper<EsShopOrder>().eq("order_no",out_trade_no));
             EsShopOrder orderInfo = list.get(0);
             if (result_code.equalsIgnoreCase("FAIL")) {
                 //订单编号

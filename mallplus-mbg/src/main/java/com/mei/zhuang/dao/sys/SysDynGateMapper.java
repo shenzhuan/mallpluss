@@ -1,7 +1,8 @@
 package com.mei.zhuang.dao.sys;
 
-import com.arvato.common.orm.model.SysDynGate;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mei.zhuang.entity.sys.SysDynGate;
 
 /**
  * <p>

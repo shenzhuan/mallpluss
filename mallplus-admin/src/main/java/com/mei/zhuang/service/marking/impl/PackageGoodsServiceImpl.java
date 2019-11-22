@@ -1,14 +1,14 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.service.marking.api.feigin.GoodsServiceFegin;
-import com.mei.zhuang.dao.marking.EsShopPackageGoodsMapper;
-import com.mei.zhuang.dao.marking.EsShopPackageGoodsSpecMapper;
-import com.mei.zhuang.service.marking.PackageGoodsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopPackageGoodsMapper;
+import com.mei.zhuang.dao.marking.EsShopPackageGoodsSpecMapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.marking.EsShopPackageGoods;
 import com.mei.zhuang.entity.marking.EsShopPackageGoodsSpec;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.service.marking.PackageGoodsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,21 +27,25 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
     private EsShopPackageGoodsSpecMapper packageGoodsSpecMapper;
 
     @Resource
-    private GoodsServiceFegin goodsServiceFegin;
+    private EsShopGoodsService goodsServiceFegin;
 
-    public void datetime(EsShopPackageGoods en) throws Exception {
-        if(en.getTime()!=null) {
-            String[] times = en.getTime().split(",");
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            en.setStartingTime(sdf.parse(times[0]));
-            en.setEndTime(sdf.parse(times[1]));
-            System.out.println(en.getTime());
-        }
+    public void datetime(EsShopPackageGoods en)  {
+       try {
+           if(en.getTime()!=null) {
+               String[] times = en.getTime().split(",");
+               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+               en.setStartingTime(sdf.parse(times[0]));
+               en.setEndTime(sdf.parse(times[1]));
+               System.out.println(en.getTime());
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopPackageGoods entity) throws Exception {
+    public boolean save(EsShopPackageGoods entity)  {
         EsShopGoods goods = new EsShopGoods();
         goods.setTitle(entity.getPackageName());
         goods.setType(5);
@@ -53,16 +57,20 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
         goods.setCreateTime(new Date());
         goods.setStatus(-2);
         goods.setIsPutaway(1);
-        long goodsid = goodsServiceFegin.addGoods(goods);
-        entity.setGoodId(goodsid);
-        datetime(entity);
+        goodsServiceFegin.save(goods);
+        entity.setGoodId(goods.getId());
+        try {
+            datetime(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         PackageGoodsMapper.insert(entity);
         addspec(entity);
         return true;
     }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(EsShopPackageGoods entity) throws Exception {
+    public boolean update(EsShopPackageGoods entity)  {
         EsShopPackageGoods PackageGoods = PackageGoodsMapper.selectById(entity.getId());
         datetime(entity);
         entity.setGoodId(PackageGoods.getGoodId());
@@ -70,7 +78,7 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
         EsShopGoods goods = new EsShopGoods();
         goods.setTitle(entity.getPackageName());
         goods.setId(entity.getGoodId());
-        goodsServiceFegin.updateGoodsById(goods);
+        goodsServiceFegin.updateById(goods);
 
         packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id",entity.getId()));
         addspec(entity);
@@ -82,7 +90,7 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
         String sid [] =id.split(",");
         for(String pid:sid) {
             EsShopPackageGoods PackageGoods = PackageGoodsMapper.selectById(Long.parseLong(pid));
-            goodsServiceFegin.deleteGoodsById(PackageGoods.getGoodId());
+            goodsServiceFegin.removeById(PackageGoods.getGoodId());
             PackageGoods.setAccording(2);
             PackageGoodsMapper.updateById(PackageGoods);
             packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id",Integer.parseInt(pid)));

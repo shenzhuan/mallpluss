@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 2019-05-18
  */
 public interface CouponManualService extends IService<EsShopCouponManual> {
-    boolean save(EsShopCouponManual esShopCouponManual) throws Exception;
+    boolean save(EsShopCouponManual esShopCouponManual) ;
     Integer deleteManual(long id);
     boolean update(EsShopCouponManual esShopCouponManual) throws Exception;
 

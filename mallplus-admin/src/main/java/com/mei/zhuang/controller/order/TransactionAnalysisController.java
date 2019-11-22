@@ -1,10 +1,10 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.ec.common.vo.data.dataview.TransactionAnalysisVo;
-import com.mei.zhuang.service.order.ShopOrderService;
-import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrder;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.vo.CommonResult;
+import com.mei.zhuang.vo.data.dataview.TransactionAnalysisVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

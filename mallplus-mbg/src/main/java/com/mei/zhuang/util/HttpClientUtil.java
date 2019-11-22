@@ -2,11 +2,6 @@ package com.mei.zhuang.util;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpStatus;
@@ -31,9 +26,6 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -44,7 +36,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.net.ssl.SSLContext;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.CodingErrorAction;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -402,59 +393,7 @@ public class HttpClientUtil {
 		return charset;
 	}
 
-	/**
-	 * http请求，
-	 * xml报文  application/xml
-	 * @param url
-	 * @param charset 编码
-	 * @return
-	 */
-	public static Map<String,String> postXml(String url,String xmlstr ,String charset){
-		Map<String,String> returnMap=new HashMap<String,String>();
-		HttpClient httpclient = new HttpClient();
-		httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*10);//建立链接超时时间10秒
-		PostMethod method  = new PostMethod(url);
-		method.getParams().setParameter(HttpMethodParams.SO_TIMEOUT, 1000*30);//响应等待超时时间30秒
-		try{
 
-			RequestEntity requestEntity = new StringRequestEntity(xmlstr, "application/xml",  charset);
-			method.setRequestEntity(requestEntity);
-
-			method.getParams().setContentCharset(charset);
-			method.addRequestHeader("Content-Type", "application/xml");
-
-			httpclient.executeMethod(method);
-			int code = method.getStatusCode();
-			String backinfo = new String(method.getResponseBodyAsString());
-
-			log.info("http响应 HttpStatus "+code);
-			log.info("http响应返回字符值 "+backinfo);
-
-			if (code == HttpStatus.SC_OK) {
-				if (!StringUtils.isBlank(backinfo)) {
-					returnMap.put(success_key, success_value);
-					returnMap.put(returnStr,backinfo );
-				}else{
-					returnMap.put(success_key, success_value);
-					returnMap.put(returnStr,returnStr_value );
-				}
-			}else{
-				log.info("http响应失败 HttpStatus "+code);
-				returnMap.put(success_key, "fasle");
-				returnMap.put(returnStr,backinfo );
-				returnMap.put("mes", "http not SC_OK 响应返回错误");
-			}
-			return returnMap;
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("xmlHttpClient Exception ", e);
-			returnMap.put(success_key, "fasle");
-			returnMap.put("mes", "http响应出现系统错误:"+e.getMessage());
-			return returnMap;
-		} finally {
-			method.releaseConnection();
-		}
-	}
 
 
 	/**
@@ -547,37 +486,7 @@ public class HttpClientUtil {
 		return excute(new HttpGet(url),charset,byte[].class);
 	}
 
-	/**
-	 * @author Martin
-	 * @param url
-	 * @param charset
-	 * @param textParam 表单文本
-	 * @param fileParam 表单文件
-	 * @return
-	 */
-	public static String postFile(String url, String charset, Map<String,String> textParam, Map<String,File> fileParam){
-		log.info("httpClient.postFile,url:{},textParam:{},fileParam:{}",url,textParam,fileParam);
 
-		MultipartEntityBuilder multipartEntityBuilder= MultipartEntityBuilder.create();
-		multipartEntityBuilder.setCharset(Charset.forName(charset));
-
-		if(org.apache.commons.collections.MapUtils.isNotEmpty(fileParam)){
-			for(String paramName:fileParam.keySet()){
-				multipartEntityBuilder.addPart(paramName,new FileBody(fileParam.get(paramName)));
-			}
-		}
-
-		if(org.apache.commons.collections.MapUtils.isNotEmpty(textParam)){
-			for(String paramName:textParam.keySet()){
-				multipartEntityBuilder.addPart(paramName,new StringBody(textParam.get(paramName), ContentType.TEXT_PLAIN.withCharset(charset)));
-			}
-		}
-
-		HttpPost httpPost=new HttpPost(url);
-		httpPost.setEntity(multipartEntityBuilder.build());
-
-		return excute(httpPost,charset);
-	}
 
 	public static void main(String[] args) throws IOException {
 		Map<String,String> param=new HashMap<>();

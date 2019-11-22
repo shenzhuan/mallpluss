@@ -1,6 +1,5 @@
 package com.mei.zhuang.service.member.impl;
 
-import javax.annotation.Resource;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
@@ -8,6 +7,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.1 (GitHub文档: https://github.com/whvcse/RedisRepository )
  */
 @Service
-public class RedisRepository {
+public class RedisUtil {
 	@Resource
 	private StringRedisTemplate redisTemplate;
 

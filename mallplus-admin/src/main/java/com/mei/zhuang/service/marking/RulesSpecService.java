@@ -15,7 +15,7 @@ import java.util.List;
  * @Description:
  */
 public interface RulesSpecService extends IService<EsShopGoodsRules> {
-    boolean save(EsShopGoodsRules entity) throws Exception;
+    boolean save(EsShopGoodsRules entity) ;
 
     Integer deleterule(String id);
 

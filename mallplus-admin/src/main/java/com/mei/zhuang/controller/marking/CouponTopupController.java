@@ -134,7 +134,7 @@ public class CouponTopupController {
         try {
             PageHelper.startPage(current, size);
             List<Map<String, Object>> maps = couponService.selectTopup(topup);
-            topup.setTotal((int) PageHelper.freeTotal());
+          //  topup.setTotal((int) PageHelper.freeTotal());
             Map<String, Object> map = new HashMap<>();
             map.put("rows", maps);
             map.put("total", topup.getTotal());

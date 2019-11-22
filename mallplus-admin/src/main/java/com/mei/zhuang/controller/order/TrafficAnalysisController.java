@@ -1,10 +1,10 @@
 package com.mei.zhuang.controller.order;
 
-import com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam;
-import com.arvato.ec.common.vo.data.trade.TrafficAnalysisParam;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.service.order.TrafficAnalysiService;
 import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
+import com.mei.zhuang.vo.data.trade.TrafficAnalysisParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

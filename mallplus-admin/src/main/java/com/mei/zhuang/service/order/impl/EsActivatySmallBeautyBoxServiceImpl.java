@@ -1,15 +1,15 @@
 package com.mei.zhuang.service.order.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.dao.order.EsActivatySmallBeautyBoxGiftBoxMapper;
 import com.mei.zhuang.dao.order.EsActivatySmallBeautyBoxGoodsMapper;
 import com.mei.zhuang.dao.order.EsActivatySmallBeautyBoxMapper;
-import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBox;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGiftBox;
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGoods;
+import com.mei.zhuang.service.order.EsActivatySmallBeautyBoxService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,7 +34,7 @@ public class EsActivatySmallBeautyBoxServiceImpl extends ServiceImpl<EsActivatyS
     public Map<String, Object> selPageList(EsActivatySmallBeautyBox entity) {
         Page<EsActivatySmallBeautyBox> page = new Page<EsActivatySmallBeautyBox>(entity.getCurrent(),entity.getSize());
         Map<String,Object> result = new HashMap<String,Object>();
-        List<EsActivatySmallBeautyBox> selList = esActivatySmallBeautyBoxMapper.selList(page,entity);
+        List<EsActivatySmallBeautyBox> selList = esActivatySmallBeautyBoxMapper.selList(entity);
         int count = esActivatySmallBeautyBoxMapper.count(entity);
         result.put("rows", selList);
         result.put("total", count);

@@ -1,5 +1,6 @@
 package com.mei.zhuang.vo.sys;
 
+import com.mei.zhuang.vo.BaseResponse;
 import lombok.Data;
 
 import java.util.List;

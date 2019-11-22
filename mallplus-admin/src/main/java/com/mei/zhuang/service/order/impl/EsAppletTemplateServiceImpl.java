@@ -1,11 +1,11 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.mei.zhuang.dao.order.EsAppletTemplatesMapper;
-import com.mei.zhuang.service.order.EsAppletTemplateService;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mei.zhuang.entity.goods.EsShopGoods;
+import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.dao.order.EsAppletTemplatesMapper;
 import com.mei.zhuang.entity.order.EsAppletTemplates;
+import com.mei.zhuang.service.order.EsAppletTemplateService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -20,9 +20,9 @@ public class EsAppletTemplateServiceImpl extends ServiceImpl<EsAppletTemplatesMa
     private EsAppletTemplatesMapper esAppletTemplatesMapper;
     @Override
     public Map<String, Object> select(EsAppletTemplates entity) {
-        Page<EsShopGoods> page = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
         Map<String,Object> map=new HashMap<String,Object>();
-        List<EsAppletTemplates> list=esAppletTemplatesMapper.select(page,entity);
+        PageHelper.startPage(entity.getCurrent(), entity.getSize());
+        List<EsAppletTemplates> list=esAppletTemplatesMapper.selectList(new QueryWrapper<>(entity));
         Integer count=esAppletTemplatesMapper.count();
         map.put("rows", list);
         map.put("total", count);

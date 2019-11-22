@@ -1,6 +1,6 @@
 package com.mei.zhuang.vo.sys;
 
-import com.arvato.common.msg.PagingParam;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

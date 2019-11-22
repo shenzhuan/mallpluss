@@ -1,9 +1,9 @@
 package com.mei.zhuang.redis;
 
-import com.arvato.common.redis.properties.CacheManagerProperties;
-import com.arvato.common.redis.template.RedisRepository;
-import com.arvato.common.redis.util.RedisObjectSerializer;
-import javax.annotation.Resource;
+
+import com.mei.zhuang.redis.properties.CacheManagerProperties;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.redis.util.RedisObjectSerializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -17,7 +17,11 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;

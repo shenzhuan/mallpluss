@@ -3,8 +3,7 @@ package com.mei.zhuang.controller.goods;
 
 import com.mei.zhuang.redis.template.RedisRepository;
 import com.mei.zhuang.constant.RedisConstant;
-import com.arvato.service.goods.api.feigin.OrderFegin;
-import com.arvato.service.goods.api.mq.Sender;
+
 import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
@@ -12,6 +11,7 @@ import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
 import com.mei.zhuang.service.goods.EsShopGoodsService;
 import com.mei.zhuang.service.goods.EsShopSkuService;
 import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.service.order.ShopOrderService;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
@@ -50,10 +50,9 @@ public class EsSkuController {
     @Resource
     private RedisRepository redisRepository;
     @Resource
-    private OrderFegin orderFegin;
+    private ShopOrderService orderFegin;
 
-    @Resource
-    private Sender sender;
+
 
     @SysLog(MODULE = "商品规格管理", REMARK = "查询sku明细")
     @ApiOperation("查询sku明细")
@@ -133,14 +132,14 @@ public class EsSkuController {
     public Object deleteGoodsById(@RequestParam Long id) {
         redisRepository.del(String.format(RedisConstant.GOODSDETAIL, id + ""));
         redisRepository.del(String.format(RedisConstant.GOODS, id + ""));
-        return shopGoodsService.deleteById(id);
+        return shopGoodsService.removeById(id);
     }
 
     //@SysLog(MODULE = "商品规格管理", REMARK = "减sku库存")
     @ApiOperation("减sku库存")
     @PostMapping(value = "/decrSkuStock")
     public int decrSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total,@RequestParam("goodsId") Long goodsId,@RequestParam("type") Integer type) {
-        sender.goodsStockUpdateMq("减sku库存");
+
         //判断是否是定制礼盒
         EsShopGoods goods = goodsMapper.selectById(goodsId);
         if(type == 6){
@@ -153,7 +152,7 @@ public class EsSkuController {
     @ApiOperation("减商品库存")
     @PostMapping(value = "/decrGoodsStock")
     public int decrGoodsStock(@RequestParam("goodsId") Long goodsId, @RequestParam("total") Integer total) {
-        sender.goodsStockUpdateMq("减商品库存");
+
         return goodsMapper.decrGoodsStock(goodsId, total);
     }
 
@@ -161,7 +160,7 @@ public class EsSkuController {
     @ApiOperation("增加商品Sku库存")
     @PostMapping(value = "/addSkuStock")
     void addSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total,@RequestParam("goodsId") Long goodsId) {
-        sender.goodsStockUpdateMq("增加商品Sku库存");
+
         skuMapper.addSkuStock(optionId, total);
     }
 
@@ -169,7 +168,7 @@ public class EsSkuController {
     @ApiOperation("增加商品库存")
     @PostMapping(value = "/addGoodsStock")
     void addGoodsStock(@RequestParam("goodsId") Long goodsId, @RequestParam("total") Integer total) {
-        sender.goodsStockUpdateMq("增加商品库存");
+
         goodsMapper.addGoodsStock(goodsId, total);
     }
 }

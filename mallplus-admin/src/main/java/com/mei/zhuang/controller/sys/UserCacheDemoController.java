@@ -1,15 +1,16 @@
 package com.mei.zhuang.controller.sys;
 
-import com.arvato.admin.biz.UserBizCacheDemo;
+
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.UserBizCacheDemo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 

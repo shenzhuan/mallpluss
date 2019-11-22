@@ -1,14 +1,14 @@
 package com.mei.zhuang.controller.order;
 
-import com.mei.zhuang.redis.template.RedisRepository;
-import com.arvato.service.order.api.constant.OrderConstant;
-import com.mei.zhuang.service.order.ShopOrderSettingsService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.mei.zhuang.constant.OrderConstant;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrderSettings;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.order.ShopOrderSettingsService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -47,7 +47,7 @@ public class OrderSettingsController {
             EsShopOrderSettings settings = new EsShopOrderSettings();
             settings.setShopId(1l);
 //            settings.setShopId(shopId);
-            List<EsShopOrderSettings> list = shopOrderSettingsService.selectList(new QueryWrapper<>(settings));
+            List<EsShopOrderSettings> list = shopOrderSettingsService.list(new QueryWrapper<>(settings));
             return new CommonResult().success(list.get(0));
         } catch (Exception e) {
             log.error("查询订单设置：%s", e.getMessage(), e);
@@ -111,7 +111,7 @@ public class OrderSettingsController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("参数订单设置id不能为空");
             }
-            if (shopOrderSettingsService.deleteById(id)) {
+            if (shopOrderSettingsService.removeById(id)) {
                 return new CommonResult().success("成功删除id为：" + id);
             }
         } catch (Exception e) {

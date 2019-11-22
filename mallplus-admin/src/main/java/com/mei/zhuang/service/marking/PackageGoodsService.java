@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface PackageGoodsService extends IService<EsShopPackageGoods> {
-    boolean save(EsShopPackageGoods entity) throws Exception;
+    boolean save(EsShopPackageGoods entity) ;
 
-    boolean update(EsShopPackageGoods entity) throws Exception;
+    boolean update(EsShopPackageGoods entity) ;
 
     Integer deletePackage(String id);
     //批量修改状态

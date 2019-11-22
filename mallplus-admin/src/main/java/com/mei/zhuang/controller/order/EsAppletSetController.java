@@ -34,8 +34,8 @@ public class EsAppletSetController {
             if (ValidatorUtils.empty(entity.getAppSecret())) {
                 return new CommonResult().failed("小程序密钥不得为空");
             }
-            Integer num = esAppletSetService.save(entity);
-            return new CommonResult().success("success", num);
+             esAppletSetService.save(entity);
+            return new CommonResult().success("success", 1);
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();

@@ -65,7 +65,7 @@ public class EsCoreMessageController {
     @PostMapping("/selectAll")
     public Object selectAll() {
         try {
-            return new CommonResult().success("success", esCoreMessageTemplateService.selectList(new QueryWrapper<>()));
+            return new CommonResult().success("success", esCoreMessageTemplateService.list(new QueryWrapper<>()));
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed();
@@ -107,7 +107,7 @@ public class EsCoreMessageController {
             for (int i = 0; i < idAttr.length; i++) {
                 EsCoreMessageTemplate template = new EsCoreMessageTemplate();
                 template.setId(Long.parseLong(idAttr[i]));
-                bool = esCoreMessageTemplateService.deleteById(template);
+                bool = esCoreMessageTemplateService.removeById(template);
             }
             return new CommonResult().success("success", bool);
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class EsCoreMessageController {
                 return new CommonResult().failed("请指定ID");
             }
             EsCoreMessageTemplate esCoreMessage = esCoreMessageTemplateService.getById(id);
-            esCoreMessage.setAppletTemplatesList(esAppletTemplateService.selectList(new QueryWrapper<>()));
+            esCoreMessage.setAppletTemplatesList(esAppletTemplateService.list(new QueryWrapper<>()));
             return new CommonResult().success("success", esCoreMessage);
         } catch (Exception e) {
             e.printStackTrace();

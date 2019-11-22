@@ -1,20 +1,20 @@
 package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSONObject;
-import com.arvato.admin.biz.DictBiz;
-import com.mei.zhuang.dao.sys.CrmSysDictMapper;
-import com.arvato.common.vo.returnformat.TableData;
-import com.arvato.file_manage.util.BizResult;
+import com.mei.zhuang.constant.CommonConstant;
 import com.mei.zhuang.controller.SysLog;
-import com.arvato.utils.constant.CommonConstant;
+import com.mei.zhuang.dao.sys.CrmSysDictMapper;
 import com.mei.zhuang.entity.sys.CrmSysDict;
 import com.mei.zhuang.entity.sys.CrmSysUser;
+import com.mei.zhuang.service.sys.biz.DictBiz;
+import com.mei.zhuang.vo.BizResult;
+import com.mei.zhuang.vo.sys.TableData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 

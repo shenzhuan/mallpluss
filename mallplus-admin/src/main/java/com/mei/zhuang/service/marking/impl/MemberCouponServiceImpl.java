@@ -1,24 +1,24 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.arvato.ec.common.exception.BusinessException;
-import com.mei.zhuang.utils.Weekutils;
-import com.arvato.ec.common.vo.marking.AllMemberCoupon;
-import com.arvato.ec.common.vo.marking.CouponStatus;
-import com.mei.zhuang.vo.order.CartMarkingVo;
-import com.mei.zhuang.vo.order.CouponFilterParam;
-import com.arvato.service.marking.api.feigin.OrderFegin;
-import com.arvato.service.marking.api.mq.Sender;
-import com.mei.zhuang.dao.marking.*;
-import com.mei.zhuang.service.marking.MemberCouponService;
-import com.mei.zhuang.utils.DateUtil;
-import com.mei.zhuang.utils.DateUtils;
-import com.mei.zhuang.utils.ValidatorUtils;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.*;
 import com.mei.zhuang.entity.marking.*;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
 import com.mei.zhuang.entity.order.EsShopCart;
 import com.mei.zhuang.entity.order.EsShopOrderGoods;
+import com.mei.zhuang.exception.BusinessException;
+import com.mei.zhuang.service.marking.MemberCouponService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.util.DateUtils;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.AllMemberCoupon;
+import com.mei.zhuang.vo.marking.CouponStatus;
+import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.mei.zhuang.vo.order.CouponFilterParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +43,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
     private EsMemberCouponMapper couponMapper;
 
     @Resource
-    private OrderFegin orderfegin;
+    private ShopOrderService orderfegin;
     @Resource
     private EsShopCouponNewMapper couponNewMapper;
     @Resource
@@ -67,8 +67,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
     private EsShopCouponShoppingMapper couponShoppingMapper;
     @Resource
     private EsShopCouponManualMapper couponManualMapper;
-    @Resource
-    private Sender sender;
+
 
     @Resource
     private EsShopCouponManualUserMapper manualUserMapper;
@@ -206,7 +205,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
             boolean falg = true;
             Date nowD = new Date();
             if (topup.getActivityOpen() == 2) {
-                Date date = sdf.parse(com.mei.zhuang.utils.DateUtils.addDateHour(topup.getTime(), 1));
+                Date date = sdf.parse(DateUtils.addDateHour(topup.getTime(), 1));
                 if (date.getTime() < nowD.getTime()) {
                     falg = false;
                 }
@@ -274,7 +273,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
                     member.setStatus(1);
                     couponMapper.insert(member);
                 }
-                sender.acceptCouponMq("");
+
                 coupon.setStock((coupon.getStock() - coupon3) > 0 ? (coupon.getStock() - coupon3) : 0);
                 rule.setInventory(Math.toIntExact((rule.getInventory() - coupon3) > 0 ? (rule.getInventory() - coupon3) : 0l));
                 couponNewRuleMapper.update(rule, new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
@@ -388,7 +387,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
             member.setStatus(1);
             couponMapper.insert(member);
         }
-        sender.acceptCouponMq("");
+
 
         topup.setInventory(Math.toIntExact((topup.getInventory() - coupon3) > 0 ? (topup.getInventory() - coupon3) : 0));
         coupon.setStock((coupon.getStock() - coupon3) > 0 ? (coupon.getStock() - coupon3) : 0);
@@ -617,7 +616,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
             member.setStatus(1);
             couponMapper.insert(member);
         }
-        sender.acceptCouponMq("");
+
         topup.setRepertory(Math.toIntExact((topup.getRepertory() - coupon3) > 0 ? topup.getRepertory() - coupon3 : 0));
         coupon.setStock((coupon.getStock() - coupon3) > 0 ? (coupon.getStock() - coupon3) : 0);
         rule.setInventory(Math.toIntExact((rule.getInventory() - coupon3) > 0 ? rule.getInventory() - coupon3 : 0l));
