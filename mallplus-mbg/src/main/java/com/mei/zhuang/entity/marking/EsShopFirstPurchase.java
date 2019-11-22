@@ -1,9 +1,9 @@
 package com.mei.zhuang.entity.marking;
 
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -28,7 +28,9 @@ import java.util.List;
 public class EsShopFirstPurchase extends Model<EsShopFirstPurchase> {
 
     private static final long serialVersionUID = 1L;
-
+    //赠品添加
+    @TableField(exist = false)
+    List<EsShopFirstPurchaseRule> firstPurchaseRuleList;
     /**
      * 时间间隔
      */
@@ -121,7 +123,6 @@ public class EsShopFirstPurchase extends Model<EsShopFirstPurchase> {
      * 状态1 启用 2 禁用
      */
     private Integer status;
-
     @TableField("update_time")
     private Date updateTime;
     private Integer source;
@@ -129,22 +130,18 @@ public class EsShopFirstPurchase extends Model<EsShopFirstPurchase> {
     private List<GoodsSepcVo> goodsSepcVoList;
     @TableField(exist = false)
     private String selectgoods;
-
     /*  @TableField(exist = false)
     private String songGoodsIds;*/
     //活动时间
     @TableField(exist = false)
     private String time;
-
     @TableField("small_program")
     private Integer smallProgram;
-    @TableField(exist =  false)
+    @TableField(exist = false)
     private Integer total;
-    //赠品添加
-    @TableField(exist =  false)
-    List<EsShopFirstPurchaseRule> firstPurchaseRuleList;
     @TableField(exist = false)
     private String purchaseRuleList;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

@@ -1,7 +1,6 @@
 package com.mei.zhuang.utils;
 
 import com.alibaba.fastjson.JSON;
-
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -22,35 +21,36 @@ import java.util.Set;
 public class ImgBase64Util {
 
 
-    public static String StringUtil(Long id,String wxUrl){
-        Map<String, Object> date= getToken();
-        String url="https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+date.get("access_token");
+    public static String StringUtil(Long id, String wxUrl) {
+        Map<String, Object> date = getToken();
+        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + date.get("access_token");
         HashMap<String, String> params = new HashMap<>();
-        params.put("scene", "id="+id+"");
+        params.put("scene", "id=" + id + "");
         params.put("page", wxUrl);
-        JSONObject json=JSONObject.parseObject(params.toString());
+        JSONObject json = JSONObject.parseObject(params.toString());
         String val = "";
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
             val += String.valueOf(random.nextInt(10));
         }
-        wxPost(url,json,val);
-        return  GetImageStr("d:/"+ val + ".png");
+        wxPost(url, json, val);
+        return GetImageStr("d:/" + val + ".png");
     }
-    public static String StringUtil(Long id){
-        Map<String, Object> date= getToken();
-        String url="https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+date.get("access_token");
+
+    public static String StringUtil(Long id) {
+        Map<String, Object> date = getToken();
+        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + date.get("access_token");
         HashMap<String, String> params = new HashMap<>();
-        params.put("scene", "id="+id+"");
+        params.put("scene", "id=" + id + "");
         params.put("page", "pages/goods/detail/index");
-        JSONObject json=JSONObject.parseObject(params.toString());
+        JSONObject json = JSONObject.parseObject(params.toString());
         String val = "";
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
             val += String.valueOf(random.nextInt(10));
         }
-        wxPost(url,json,val);
-        return  GetImageStr("d:/"+ val + ".png");
+        wxPost(url, json, val);
+        return GetImageStr("d:/" + val + ".png");
     }
 
     public static Map<String, Object> getToken() {
@@ -87,7 +87,7 @@ public class ImgBase64Util {
 
 
     //第二步写入图片
-    public static  void wxPost(String uri, JSONObject paramJson, String fileName) {
+    public static void wxPost(String uri, JSONObject paramJson, String fileName) {
         try {
             URL url = new URL(uri);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -104,7 +104,7 @@ public class ImgBase64Util {
             printWriter.flush();
             // 开始获取数据
             BufferedInputStream bis = new BufferedInputStream(httpURLConnection.getInputStream());
-            File file=new File("d:/"+ fileName + ".png");// /Users/shenzhuan/logs/
+            File file = new File("d:/" + fileName + ".png");// /Users/shenzhuan/logs/
             OutputStream os = new FileOutputStream(file);
             int len;
             byte[] arr = new byte[1024];
@@ -122,7 +122,8 @@ public class ImgBase64Util {
     }
 
     /**
-     *  图片转化成base64字符串
+     * 图片转化成base64字符串
+     *
      * @param imgFile - 转换的图片路径
      * @return imgStr --图片转换后的二进制字节
      */

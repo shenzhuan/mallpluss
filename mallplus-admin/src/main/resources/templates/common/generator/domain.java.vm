@@ -5,28 +5,28 @@ import lombok.Data;
 
 .${module }.model;
 
-        /**
-         * @Description:${comments}
-         *
-         * @author ${author}
-         * @email ${email}
-         * @date ${datetime}
-         */
-        @Data
-        @TableName("${tableName}")
-        public class ${Module}${className} extends BaseEntity implements Serializable{
-        private static final long serialVersionUID=1L;
+/**
+ * @Description:${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Data
+@TableName("${tableName}")
+public class ${Module}${className} extends BaseEntity implements Serializable{
+private static final long serialVersionUID=1L;
 
-    #foreach ($column in $columns)
+#foreach ($column in $columns)
 
-            @ApiModelProperty(value="$column.comments")
-        #if($column.columnName == $pk.columnName)
-                @TableId(value="$column.columnName",type=IdType.AUTO)
-        #end
-        #if($column.columnName != $pk.columnName)
-                @TableField("$column.columnName")
-        #end
-            private $column.attrType $column.attrname;
+@ApiModelProperty(value = "$column.comments")
+    #if($column.columnName == $pk.columnName)
+    @TableId(value = "$column.columnName", type = IdType.AUTO)
     #end
+    #if($column.columnName != $pk.columnName)
+    @TableField("$column.columnName")
+    #end
+private $column.attrType $column.attrname;
+#end
 
-        }
+}

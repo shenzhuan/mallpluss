@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class GoodsSaleCount {
-    private String createTime ;
-    private Integer salesCount ;
+    private String createTime;
+    private Integer salesCount;
 }

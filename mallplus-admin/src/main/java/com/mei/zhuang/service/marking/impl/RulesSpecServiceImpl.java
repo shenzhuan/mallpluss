@@ -56,17 +56,17 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopGoodsRules entitys)  {
+    public boolean save(EsShopGoodsRules entitys) {
         EsShopGoods entity = new EsShopGoods();
         entity.setTitle(entitys.getGoodsname());
         entity.setType(4);
         entity.setPrice(entitys.getPrice());
         //goods.setCategoryId(coreConfig.getValue());
         entity.setCreateTime(new Date());
-        entity.setPutawayTime(System.currentTimeMillis()+"");
+        entity.setPutawayTime(System.currentTimeMillis() + "");
         entity.setStatus(-2);
         entity.setIsPutaway(1);
-         goodsService.save(entity);
+        goodsService.save(entity);
         entitys.setGoodsId(entity.getId());
         entitys.setCreateTime(new Date());
         rulesMapper.insert(entitys);
@@ -85,6 +85,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
             }
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deleterule(String id) {
@@ -165,7 +166,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
                                 sanmeCount++;
                             }
                         }
-                        if (falg2  && sanmeCount<=1) {
+                        if (falg2 && sanmeCount <= 1) {
                             newRule = rules;
                             break;
                         }
@@ -186,7 +187,7 @@ public class RulesSpecServiceImpl extends ServiceImpl<EsShopGoodsRulesMapper, Es
     public Integer delete(long goodsId, int according) {
         EsShopGoodsRules esShopGoodsRules = rulesMapper.selectById(goodsId);
         esShopGoodsRules.setAccording(according);
-        return  rulesMapper.updateById(esShopGoodsRules);
+        return rulesMapper.updateById(esShopGoodsRules);
     }
 
     @Override

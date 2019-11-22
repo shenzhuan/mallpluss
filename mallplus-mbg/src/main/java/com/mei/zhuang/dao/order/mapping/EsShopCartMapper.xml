@@ -23,7 +23,8 @@
         where member_id = #{memberId}
     </select>
 
-    <select id="shopNumber" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="shopNumber" resultType="java.lang.Long"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
   select member_id from es_shop_cart where
   create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
   AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') group by member_id

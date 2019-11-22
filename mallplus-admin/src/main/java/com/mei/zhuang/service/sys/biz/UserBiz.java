@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 public class UserBiz {
+    @Autowired
+    SysPlatformUserMapper mapper;
     private CrmSysUserMapper crmSysUserMapper;
     private CrmSysUserRoleMapper crmSysUserRoleMapper;
     private CrmSysDictMapper sysDictMapper;
@@ -39,16 +41,10 @@ public class UserBiz {
     private CrmSysMenuMapper crmSysMenuMapper;
     @Autowired
     private SysPlatformUserMapper sysPlatformUserMapper;
-
-
     @Autowired
     private SysPlatUserBiz sysPlatUserBiz;
-
     @Autowired
     private ISysPlatformUserService sysPlatformUserService;
-    @Autowired
-    SysPlatformUserMapper mapper;
-
     @Value("${system.userManagerMenuCode}")
     private String userManagerMenuCode;
     @Value("${masterdbsource.dbname}")
@@ -70,19 +66,25 @@ public class UserBiz {
         this.crmSysMenuMapper = crmSysMenuMapper;
     }
 
+    public static void main(String[] args) {
+        System.out.println(new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode("123321"));
+        //  System.out.println(new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode("123321"));
+    }
+
     /**
      * 新增用户
-     * @param entity 新增用户实体
+     *
+     * @param entity      新增用户实体
      * @param currentUser 当前登录用户对象
      * @return 操作成功失败信息
      */
     @Transactional
-        public BizResult insertSelective(CrmSysUser entity, CrmSysUser currentUser, DataSourceDto dataSourceDto, Integer managerId) {
+    public BizResult insertSelective(CrmSysUser entity, CrmSysUser currentUser, DataSourceDto dataSourceDto, Integer managerId) {
         BizResult bizResult = new BizResult();
         try {
-            if(crmSysUserMapper.selectByUsername(entity.getUsername())!=null){
+            if (crmSysUserMapper.selectByUsername(entity.getUsername()) != null) {
                 throw new UserNameRepeatException("用户名重复,不能添加");
-           }
+            }
           /*  if(!sysPlatUserBiz.checkUserNameValid(entity.getUsername(),new DataSourceDto(masterDbName,masterSchema))){
                 throw new UserNameRepeatException("用户名在本品牌和其他品牌都不能重复,请重新输入用户名");
             }*/
@@ -91,26 +93,26 @@ public class UserBiz {
             Pattern pattern1 = Pattern.compile(regex);
             Boolean matcher1 = pattern1.matcher(entity.getMobile()).matches();
             //密码验证
-            String pass="^(?=.*[0-9])(?=.*[a-zA-Z])(.{15,30})$";
+            String pass = "^(?=.*[0-9])(?=.*[a-zA-Z])(.{15,30})$";
             Pattern pattern = Pattern.compile(pass);
             Boolean matcher = pattern.matcher(entity.getPassword()).matches();
-            if(!matcher1){
+            if (!matcher1) {
                 throw new UserNameRepeatException("手机号码输入格式错误");
             }
-            if(!matcher){
+            if (!matcher) {
                 throw new UserNameRepeatException("密码格式不正确");
             }
             String password = new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode(entity.getPassword());
             entity.setPassword(password);
             crmSysUserMapper.insert(entity);
-            sysPlatUserBiz.addPlatFormUser(entity.getUsername(),password,managerId,new Integer[]{dataSourceDto.getTenantId()},new DataSourceDto(masterDbName,masterSchema));
+            sysPlatUserBiz.addPlatFormUser(entity.getUsername(), password, managerId, new Integer[]{dataSourceDto.getTenantId()}, new DataSourceDto(masterDbName, masterSchema));
             bizResult.setCode(CommonConstant.CODE_SUCCESS);
             bizResult.setMsg("添加用户成功");
-        }catch (UserNameRepeatException e){
+        } catch (UserNameRepeatException e) {
             bizResult.setCode(CommonConstant.CODE_BIZ_ERROR);
             bizResult.setMsg(e.getMessage());
-        }catch (Exception e) {
-        	e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             log.info("添加用户失败", e);
             bizResult.setCode(CommonConstant.CODE_BIZ_ERROR);
             bizResult.setMsg("添加用户失败");
@@ -120,6 +122,7 @@ public class UserBiz {
 
     /**
      * 根据ID获取用户信息
+     *
      * @param id 用户ID
      * @return 用户信息
      */
@@ -150,6 +153,7 @@ public class UserBiz {
 
     /**
      * 根据ID更新用户信息
+     *
      * @param entity 用户实体
      */
     public BizResult updateSelectiveById(CrmSysUser entity) {
@@ -159,10 +163,10 @@ public class UserBiz {
             String regex = "^((13[0-9])|(14[5,6,7,8,9])|(15([0-3]|[5-9]))|(16[5,6])|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
             Pattern pattern1 = Pattern.compile(regex);
             Boolean matcher1 = pattern1.matcher(entity.getMobile()).matches();
-            if(!matcher1){
+            if (!matcher1) {
                 bizResult.setCode(CommonConstant.CODE_BIZ_ERROR);
                 bizResult.setMsg("手机号码输入格式错误");
-            }else {
+            } else {
           /*  if(entity.getMobile().length()==11){
                 throw new UserNameRepeatException("手机号码输入格式错误");
             }*/
@@ -180,6 +184,7 @@ public class UserBiz {
     /**
      * 根据ID删除用户
      * 删除用户关联的角色数据
+     *
      * @param id 用户ID
      */
     @Transactional
@@ -188,7 +193,7 @@ public class UserBiz {
         try {
             CrmSysUser crmSysUser = crmSysUserMapper.selectById(id);
             QueryWrapper<SysPlatformUser> wrapperuser = new QueryWrapper<>();
-            SysPlatformUser foruser=new SysPlatformUser();
+            SysPlatformUser foruser = new SysPlatformUser();
             foruser.setUsername(crmSysUser.getUsername());
             wrapperuser.setEntity(foruser);
             sysPlatformUserMapper.delete(wrapperuser);
@@ -220,10 +225,11 @@ public class UserBiz {
 
     /**
      * 根据用户名获取用户信息
+     *
      * @param username 用户名
      * @return 用户实体
      */
-    public CrmSysUser getUserByUsername(String username){
+    public CrmSysUser getUserByUsername(String username) {
         CrmSysUser user = new CrmSysUser();
         user.setUsername(username);
         return crmSysUserMapper.selectOne(new QueryWrapper<>(user));
@@ -231,32 +237,37 @@ public class UserBiz {
 
     /**
      * 获取登陆的用户平台信息
+     *
      * @param username 用户名
      * @return 多租户用户实体
      */
-    public CrmPlatformUser getPlatFormUsername(String username){
+    public CrmPlatformUser getPlatFormUsername(String username) {
         CrmPlatformUser user = new CrmPlatformUser();
         user.setUsername(username);
         return user.selectOne(new QueryWrapper<>(user));
     }
+
     /**
      * 获取用户状态
+     *
      * @return 用户状态集合
      */
-    public List<Map<String, String>> getUserStatus(){
+    public List<Map<String, String>> getUserStatus() {
         return sysDictMapper.getDictList(AdminCommonConstant.DICT_TABLE_CRM_SYS_USER, AdminCommonConstant.DICT_FIELD_USER_STATUS);
     }
 
     /**
      * 获取用户性别
+     *
      * @return 性别集合
      */
-    public List<Map<String, String>> getUserGender(){
+    public List<Map<String, String>> getUserGender() {
         return sysDictMapper.getDictList(AdminCommonConstant.DICT_TABLE_GLOBAL, AdminCommonConstant.DICT_FIELD_GENDER);
     }
 
     /**
      * 根据条件获取用户数量
+     *
      * @param user 查询条件对象
      * @return 用户数量
      */
@@ -266,6 +277,7 @@ public class UserBiz {
 
     /**
      * 根据条件获取用户列表
+     *
      * @param user 查询条件对象
      * @return 用户集合
      */
@@ -279,6 +291,7 @@ public class UserBiz {
 
     /**
      * 获取全部用户列表
+     *
      * @return 用户集合
      */
     public List<CrmSysUser> selectAllUser() {
@@ -291,6 +304,7 @@ public class UserBiz {
 
     /**
      * 获取当前登录用户能查看的用户
+     *
      * @param deptIds 部门id
      * @return 用户集合
      */
@@ -304,10 +318,11 @@ public class UserBiz {
 
     /**
      * 获取用户所选角色ID
+     *
      * @param id 用户ID
      * @return 用户所属角色集合
      */
-    public List<CrmSysUserRole> selectUserRoles(Integer id){
+    public List<CrmSysUserRole> selectUserRoles(Integer id) {
         QueryWrapper<CrmSysUserRole> wrapper = new QueryWrapper<>();
         CrmSysUserRole entity = new CrmSysUserRole();
         entity.setUserId(id);
@@ -317,6 +332,7 @@ public class UserBiz {
 
     /**
      * 解锁用户
+     *
      * @param userId 用户ID
      * @return 操作信息
      */
@@ -335,7 +351,7 @@ public class UserBiz {
             // 将最近10分钟登录错误日志打上标记，下次登录不统计带标记的错误次数
             CrmSysUser user = crmSysUserMapper.selectById(userId);
             String userName = user.getUsername();
-            String specifyMinutesDate = DateUtil.format(DateUtil.getDateBeforerMin(10),DateUtil.YYYY_MM_DD_HH_MM);
+            String specifyMinutesDate = DateUtil.format(DateUtil.getDateBeforerMin(10), DateUtil.YYYY_MM_DD_HH_MM);
             crmSysLoginLogMapper.updateUnlockFlagOfSpecifyMinutes(userName, specifyMinutesDate);
 
             json.put("code", CommonConstant.CODE_SUCCESS);
@@ -350,26 +366,28 @@ public class UserBiz {
 
     /**
      * 重置密码
+     *
      * @param id
      * @param newPassword
      */
-    public void resetPassword(int id,String newPassword) {
+    public void resetPassword(int id, String newPassword) {
         CrmSysUser crmSysUser = this.crmSysUserMapper.selectById(id);
-        SysPlatformUser sysPlatformUser = this.sysPlatUserBiz.getByUsername(crmSysUser.getUsername(),new DataSourceDto(masterDbName,masterSchema));
-        String oldPassword=sysPlatformUser.getPassword();
+        SysPlatformUser sysPlatformUser = this.sysPlatUserBiz.getByUsername(crmSysUser.getUsername(), new DataSourceDto(masterDbName, masterSchema));
+        String oldPassword = sysPlatformUser.getPassword();
         Assert.isTrue(
-                !this.sysPlatformUserService.matchPassword(newPassword,oldPassword),
+                !this.sysPlatformUserService.matchPassword(newPassword, oldPassword),
                 "重置密码失败,和原密码相同"
         );
         this.sysPlatUserBiz.updateByUsername(
                 crmSysUser.getUsername(),
                 new SysPlatformUser().setPassword(this.sysPlatformUserService.encryptPassword(newPassword)),
-                new DataSourceDto(masterDbName,masterSchema)
+                new DataSourceDto(masterDbName, masterSchema)
         );
     }
 
     /**
      * 用户更新密码
+     *
      * @param crmSysUser 用户对象
      * @return 操作信息
      */
@@ -399,6 +417,7 @@ public class UserBiz {
 
     /**
      * 获取系统管理/用户管理菜单ID
+     *
      * @return 用户管理菜单ID
      */
     public Integer getUserManagerMenuId() {
@@ -408,14 +427,9 @@ public class UserBiz {
         return result.getId();
     }
 
-    public Integer updatestatususer(String status,String username){
-        mapper.updatestatus(status,username);
-        return crmSysUserMapper.updatestatususer(status,username);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode("123321"));
-      //  System.out.println(new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).encode("123321"));
+    public Integer updatestatususer(String status, String username) {
+        mapper.updatestatus(status, username);
+        return crmSysUserMapper.updatestatususer(status, username);
     }
 
 }

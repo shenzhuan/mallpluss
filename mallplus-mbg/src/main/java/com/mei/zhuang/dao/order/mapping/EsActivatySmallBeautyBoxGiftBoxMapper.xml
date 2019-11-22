@@ -4,25 +4,25 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGiftBox">
-        <id column="id" property="id" />
-        <result column="box_name" property="boxName" />
-        <result column="box_money" property="boxMoney" />
-        <result column="box_code" property="boxCode" />
-        <result column="vitural_stock" property="vituralStock" />
-        <result column="stock" property="stock" />
-        <result column="box_img" property="boxImg" />
-        <result column="activaty_id" property="activatyId" />
-        <result column="product_code" property="productCode" />
-        <result column="gift_date" property="giftDate" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="box_name" property="boxName"/>
+        <result column="box_money" property="boxMoney"/>
+        <result column="box_code" property="boxCode"/>
+        <result column="vitural_stock" property="vituralStock"/>
+        <result column="stock" property="stock"/>
+        <result column="box_img" property="boxImg"/>
+        <result column="activaty_id" property="activatyId"/>
+        <result column="product_code" property="productCode"/>
+        <result column="gift_date" property="giftDate"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
     <select id="selectGiftBox" resultMap="BaseResultMap">
         select * from es_activaty_small_beauty_box_gift_box where
 
         <foreach collection="list" index="index" item="item" open="(" separator="and" close=")">
-             product_code like concat(concat('%',#{item},'%'))
+            product_code like concat(concat('%',#{item},'%'))
         </foreach>
-          and activaty_id=#{id}
+        and activaty_id=#{id}
     </select>
     <select id="select" resultType="com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGiftBox">
         select * from es_activaty_small_beauty_box_gift_box where activaty_id =#{activatyId} order by create_time asc

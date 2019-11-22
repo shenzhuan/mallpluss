@@ -13,12 +13,14 @@ public enum ShopType {
 
     private Integer value;
 
-    ShopType(Integer value){
-        this.value=value;
+    ShopType(Integer value) {
+        this.value = value;
     }
 
-    public Integer getValue(){
+    public Integer getValue() {
         return this.value;
-    };
+    }
+
+    ;
 
 }

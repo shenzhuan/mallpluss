@@ -2,52 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mei.zhuang.dao.sys.CrmSysRoleMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysRole">
-		<id column="id" property="id" />
-		<result column="name" property="name" />
-		<result column="status" property="status" />
-		<result column="description" property="description" />
-		<result column="pId" property="pId" />
-		<result column="create_user_id" property="createUserId" />
-		<result column="create_date" property="createDate" />
-		<result column="create_time" property="createTime" />
-		<result column="update_user_id" property="updateUserId" />
-		<result column="update_date" property="updateDate" />
-		<result column="update_time" property="updateTime" />
-		<result column="version" property="version" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysRole">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="status" property="status"/>
+        <result column="description" property="description"/>
+        <result column="pId" property="pId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+    </resultMap>
 
-	<sql id="whereCondition">
-       <where>
-           <if test="name != null and name != ''">
-               t.name like concat(CONCAT('%', #{name}, '%'))
-           </if>
-           <if test="status != null and status != ''">
-               and t.status = #{status}
-           </if>
-       </where>
+    <sql id="whereCondition">
+        <where>
+            <if test="name != null and name != ''">
+                t.name like concat(CONCAT('%', #{name}, '%'))
+            </if>
+            <if test="status != null and status != ''">
+                and t.status = #{status}
+            </if>
+        </where>
     </sql>
 
     <select id="selectRoleCount" resultType="int" parameterType="CrmSysRole">
-       select
-           count(0)
-       from
-           crm_sys_role t
-       <include refid="whereCondition"></include>
+        select
+        count(0)
+        from
+        crm_sys_role t
+        <include refid="whereCondition"></include>
     </select>
 
     <select id="selectRoleList" resultMap="BaseResultMap">
-       SELECT
-           t.id,
-           t.name,
-           t.status,
-           t.description,
-           t.create_date
-       FROM
-           CRM_SYS_ROLE t
-       <include refid="whereCondition"></include>
-       ORDER BY t.id DESC
+        SELECT
+        t.id,
+        t.name,
+        t.status,
+        t.description,
+        t.create_date
+        FROM
+        CRM_SYS_ROLE t
+        <include refid="whereCondition"></include>
+        ORDER BY t.id DESC
 
     </select>
 
@@ -83,40 +83,40 @@
 
     <select id="getRoleTreeListByRoleIds" resultType="com.arvato.admin.vo.ZTreeNode">
         SELECT
-            t1.id,
-            '0' pId,
-            t1.name "name",
-            'true' isOpen,
-            (
-	            CASE
-	                WHEN (t2.ID = 0 OR t2.ID IS NULL) THEN
-	                    'false'
-	                ELSE
-	                    'true'
-	            END
-            ) "checked"
+        t1.id,
+        '0' pId,
+        t1.name "name",
+        'true' isOpen,
+        (
+        CASE
+        WHEN (t2.ID = 0 OR t2.ID IS NULL) THEN
+        'false'
+        ELSE
+        'true'
+        END
+        ) "checked"
         FROM
-            CRM_SYS_ROLE t1
+        CRM_SYS_ROLE t1
         LEFT JOIN (
-            SELECT
-                ID
-            FROM
-                CRM_SYS_ROLE
-            WHERE
-                ID IN
-                <foreach collection="list" index="index" item="i" open="(" separator="," close=")">
-                    #{i}
-                </foreach>
+        SELECT
+        ID
+        FROM
+        CRM_SYS_ROLE
+        WHERE
+        ID IN
+        <foreach collection="list" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
         ) t2 ON t1.id = t2.id
         ORDER BY
-            t1.id ASC
+        t1.id ASC
     </select>
 
     <select id="selectByRoleIdAndName" resultType="int">
         select
-            count(0)
+        count(0)
         from
-            crm_sys_role
+        crm_sys_role
         <where>
             <if test="roleId != null">
                 id != #{roleId}

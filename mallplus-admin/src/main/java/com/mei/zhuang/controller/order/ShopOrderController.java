@@ -89,9 +89,9 @@ public class ShopOrderController {
                 return new CommonResult().paramFailed("订单备注 is empty");
             }
             EsShopOrder newE = shopOrderService.getById(id);
-            if(newE.getRemarkBuyer() != null){
+            if (newE.getRemarkBuyer() != null) {
                 newE.setRemarkBuyer(newE.getRemarkBuyer() + "|" + remark);
-            }else{
+            } else {
                 newE.setRemarkBuyer(remark);
             }
             if (shopOrderService.updateById(newE)) {
@@ -117,8 +117,8 @@ public class ShopOrderController {
             if (status == null) {
                 return new CommonResult().paramFailed("订单状态不能为空");
             }
-            if(shopOrderService.getById(id)==null){
-                return new CommonResult().failed("不存在id为{"+id+"}的订单");
+            if (shopOrderService.getById(id) == null) {
+                return new CommonResult().failed("不存在id为{" + id + "}的订单");
             }
 
 
@@ -217,16 +217,16 @@ public class ShopOrderController {
     @SysLog(MODULE = "地址修改", REMARK = "地址修改")
     @ApiOperation("地址修改")
     @PostMapping(value = "/updateaddress")
-    public Object updateaddress(EsShopOrder entity){
-        try{
-            if(shopOrderService.updateaddress(entity)>0){
+    public Object updateaddress(EsShopOrder entity) {
+        try {
+            if (shopOrderService.updateaddress(entity) > 0) {
                 return new CommonResult().success();
             }
-        }catch (Exception e){
-            log.error("地址修改",e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("地址修改", e.getMessage(), e);
         }
         return new CommonResult().failed();
-            }
+    }
 
     @SysLog(MODULE = "订单管理", REMARK = "查询订单明细,只有订单")
     @ApiOperation("查询订单明细,只有订单")
@@ -280,11 +280,11 @@ public class ShopOrderController {
 
             //业务处理
             EsShopOrder tempOrder = shopOrderService.getById(orderBatchSendDetail.getOrderId());
-            if(tempOrder == null){
-                return new CommonResult().failed("不存在id为{"+orderBatchSendDetail.getOrderId()+"}的订单");
+            if (tempOrder == null) {
+                return new CommonResult().failed("不存在id为{" + orderBatchSendDetail.getOrderId() + "}的订单");
             }
 
-            if(tempOrder.getStatus() != OrderStatus.TO_DELIVER.getValue()){
+            if (tempOrder.getStatus() != OrderStatus.TO_DELIVER.getValue()) {
                 return new CommonResult().paramFailed("订单状态不是待发货状态不能发货");
             }
 
@@ -306,7 +306,7 @@ public class ShopOrderController {
             if (orderBatchSendDetail.getDeliverType() == null) {
                 return new CommonResult().paramFailed("发货类型不能为空");
             }
-            if(orderBatchSendDetail.getDeliverType() != 1 && orderBatchSendDetail.getDeliverType() != 2){
+            if (orderBatchSendDetail.getDeliverType() != 1 && orderBatchSendDetail.getDeliverType() != 2) {
                 return new CommonResult().paramFailed("发货类型值输入非法：只能是{1和2}");
             }
             if (orderBatchSendDetail.getExpressSn().length() > OrderConstant.EXPRESS_SN_LENGTH) {
@@ -314,7 +314,7 @@ public class ShopOrderController {
             }
 
             //w 校验， 字母 数字 下划线
-            if(!RegexUtils.veryStr(orderBatchSendDetail.getExpressSn(),"^\\w+$")){
+            if (!RegexUtils.veryStr(orderBatchSendDetail.getExpressSn(), "^\\w+$")) {
                 return new CommonResult().paramFailed("快递单号不能输入非法字符!");
             }
 /*
@@ -371,8 +371,8 @@ public class ShopOrderController {
     public Object cancleDelivery(@ApiParam("订单id") @RequestParam Long id,
                                  @ApiParam(value = "订单备注", defaultValue = "我就是想取消") @RequestParam String remark) {
         EsShopOrder order = shopOrderService.getById(id);
-        if(order == null){
-            return new CommonResult().paramFailed("没有找到id为{"+id+"}的订单");
+        if (order == null) {
+            return new CommonResult().paramFailed("没有找到id为{" + id + "}的订单");
         }
 
         if (order.getStatus() != OrderStatus.DELIVERED.getValue()) {
@@ -403,7 +403,7 @@ public class ShopOrderController {
             return new CommonResult().paramFailed("发货类型不能为空");
         }
 
-        if(orderBatchSendDetail.getDeliverType() != 1 && orderBatchSendDetail.getDeliverType() != 2){
+        if (orderBatchSendDetail.getDeliverType() != 1 && orderBatchSendDetail.getDeliverType() != 2) {
             return new CommonResult().paramFailed("发货类型值输入非法：只能是{1和2}");
         }
 
@@ -413,7 +413,7 @@ public class ShopOrderController {
         }
 
         //w 校验， 字母 数字 下划线
-        if(!RegexUtils.veryStr(orderBatchSendDetail.getExpressSn(),"^\\w+$")){
+        if (!RegexUtils.veryStr(orderBatchSendDetail.getExpressSn(), "^\\w+$")) {
             return new CommonResult().paramFailed("快递单号不能输入非法字符!");
         }
        /*
@@ -464,7 +464,7 @@ public class ShopOrderController {
             /*if (ValidatorUtils.empty(exportParam.getColumns())) {
                 return new CommonResult().failed("需要导出的字段不能为空！");
             }*/
-            exportParam.setFileName(DateUtils.format(new Date(),DateUtil.YYYY_MM_DD) + "订单导出列表");
+            exportParam.setFileName(DateUtils.format(new Date(), DateUtil.YYYY_MM_DD) + "订单导出列表");
             exportParam.setSheetName("title");
             exportParam.setPath("D:/A");
             exportParam.setHeaders("编号,状态,订单编号,买家昵称,买家电话,支付金额,配送方式,订单来源");
@@ -601,59 +601,62 @@ public class ShopOrderController {
     @SysLog(MODULE = "订单管理", REMARK = "获取老用户订单数据")
     @ApiOperation("获取老用户订单数据")
     @PostMapping("/getOldCustOrderList")
-    public List<EsShopOrder> getOldCustOrderList(@RequestBody  CustTendencyParam param) {
+    public List<EsShopOrder> getOldCustOrderList(@RequestBody CustTendencyParam param) {
         return shopOrderService.getOldCustOrderList(param);
     }
+
     @SysLog(MODULE = "订单管理", REMARK = "获取老用户订单数据")
     @ApiOperation("获取所有用户订单数据")
     @PostMapping("/getAllOrderInfo")
-    public List<EsShopOrder> getAllOrderInfo(@RequestBody CustTradeSuccessParam param){
+    public List<EsShopOrder> getAllOrderInfo(@RequestBody CustTradeSuccessParam param) {
         return shopOrderService.getAllOrderInfo(param);
 
     }
+
     @SysLog(MODULE = "订单管理", REMARK = "获取老用户订单数据")
     @ApiOperation("获取老用户订单数据")
     @PostMapping("/getOldOrderInfo")
-    public List<EsShopOrder> getOldOrderInfo(@RequestBody CustTradeSuccessParam param){
+    public List<EsShopOrder> getOldOrderInfo(@RequestBody CustTradeSuccessParam param) {
         return shopOrderService.getOldOrderInfo(param);
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "获取新用户订单数据")
     @ApiOperation("获取新用户订单数据")
     @PostMapping("/getNewOrderInfo")
-    public List<EsShopOrder> getNewOrderInfo(@RequestBody CustTradeSuccessParam param){
-        return  shopOrderService.getNewOrderInfo(param);
+    public List<EsShopOrder> getNewOrderInfo(@RequestBody CustTradeSuccessParam param) {
+        return shopOrderService.getNewOrderInfo(param);
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "通过条件获取订单新老客户消费信息")
     @ApiOperation("通过条件获取订单新老客户消费信息")
     @PostMapping("/getCustOrderInfoByCon")
-    public OrderCustTotalVo getCustOrderInfoByCon(@RequestBody CustTradeSuccessParam param){
+    public OrderCustTotalVo getCustOrderInfoByCon(@RequestBody CustTradeSuccessParam param) {
         return shopOrderService.getCustOrderInfoByCon(param);
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "查询商品总销售量")
     @ApiOperation("查询商品总销售量")
     @PostMapping("/selGoodsTotalSaleCount")
-    public int selGoodsTotalSaleCount(@RequestBody GoodsAnalyzeParam param){
+    public int selGoodsTotalSaleCount(@RequestBody GoodsAnalyzeParam param) {
         return shopOrderService.selGoodsTotalSaleCount(param);
     }
+
     @PostMapping("/orderList")
-    public List<EsShopOrderGoods> orderGoodsList(@RequestBody GoodsAnalyzeParam param){
+    public List<EsShopOrderGoods> orderGoodsList(@RequestBody GoodsAnalyzeParam param) {
         return shopOrderService.orderGoodsList(param);
     }
+
     @PostMapping("/orderGoodsList")
-    public List<EsShopOrderGoods> orderGoodsList(@RequestParam long goodsId){
+    public List<EsShopOrderGoods> orderGoodsList(@RequestParam long goodsId) {
         return shopOrderService.orderGoodsList(goodsId);
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "查询商品总销售量")
     @ApiOperation("根据商品分析条件获得订单商品")
     @PostMapping("/selOrderGoodsByGoodsAnaly")
-    public List<EsShopOrderGoods> selOrderGoodsByGoodsAnaly(@RequestBody GoodsTrendMapParam param){
+    public List<EsShopOrderGoods> selOrderGoodsByGoodsAnaly(@RequestBody GoodsTrendMapParam param) {
         return shopOrderService.selOrderGoodsByGoodsAnaly(param);
     }
-
 
 
 }

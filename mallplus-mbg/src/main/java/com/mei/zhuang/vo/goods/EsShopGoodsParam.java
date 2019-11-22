@@ -39,7 +39,6 @@ public class EsShopGoodsParam extends EsShopGoods {
     private String specItemId;//规格值iD
 
 
-
     private Date putawayTimes;
 
 

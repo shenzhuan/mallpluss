@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopShareMemberAssistance">
-        <id column="id" property="id" />
-        <result column="share_member_id" property="shareMemberId" />
-        <result column="assis_member_id" property="assisMemberId" />
+        <id column="id" property="id"/>
+        <result column="share_member_id" property="shareMemberId"/>
+        <result column="assis_member_id" property="assisMemberId"/>
     </resultMap>
 
 </mapper>

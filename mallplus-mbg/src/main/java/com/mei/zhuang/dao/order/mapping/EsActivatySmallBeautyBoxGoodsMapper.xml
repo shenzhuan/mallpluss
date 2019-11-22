@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsActivatySmallBeautyBoxGoods">
-        <id column="id" property="id" />
-        <result column="activaty_id" property="activatyId" />
-        <result column="product_name" property="productName" />
-        <result column="subtitle" property="subtitle" />
-        <result column="product_code" property="productCode" />
-        <result column="product_img" property="productImg" />
-        <result column="gift_name" property="giftName" />
-        <result column="gift_code" property="giftCode" />
-        <result column="gift_img" property="giftImg" />
+        <id column="id" property="id"/>
+        <result column="activaty_id" property="activatyId"/>
+        <result column="product_name" property="productName"/>
+        <result column="subtitle" property="subtitle"/>
+        <result column="product_code" property="productCode"/>
+        <result column="product_img" property="productImg"/>
+        <result column="gift_name" property="giftName"/>
+        <result column="gift_code" property="giftCode"/>
+        <result column="gift_img" property="giftImg"/>
     </resultMap>
     <select id="selList" resultMap="BaseResultMap">
         select * from es_activaty_small_beauty_box_goods where activaty_id =#{activatyId} and product=#{product}

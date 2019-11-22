@@ -18,7 +18,6 @@ import java.util.Map;
 public interface EsShopGoodsGroupService extends IService<EsShopGoodsGroup> {
 
 
-
     @ApiOperation("保存商品分组")
     public Object saveGoodsGroup(EsShopGoodsGroup entity);
 
@@ -35,7 +34,6 @@ public interface EsShopGoodsGroupService extends IService<EsShopGoodsGroup> {
     public Object getGoodsGroupById(Long id);
 
 
-
     @ApiOperation("批量修改启动状态")
     public Object updatestateid(String id, Integer status);
 
@@ -44,7 +42,6 @@ public interface EsShopGoodsGroupService extends IService<EsShopGoodsGroup> {
 
     @ApiOperation("判断分组是否存在")
     public Integer selCateCount(String cateName);
-
 
 
 }

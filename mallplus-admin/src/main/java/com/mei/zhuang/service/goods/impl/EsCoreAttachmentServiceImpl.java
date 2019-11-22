@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-public class EsCoreAttachmentServiceImpl  extends ServiceImpl<EsCoreAttachmentMapper, EsCoreAttachment> implements EsCoreAttachmentService {
+public class EsCoreAttachmentServiceImpl extends ServiceImpl<EsCoreAttachmentMapper, EsCoreAttachment> implements EsCoreAttachmentService {
 
     @Resource
     private EsCoreAttachmentMapper esCoreAttachmentMapper;
-
 
 
 }

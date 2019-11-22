@@ -1,7 +1,6 @@
 package com.mei.zhuang.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.*;
-
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,7 +24,7 @@ public class CrmSysUser extends Model<CrmSysUser> {
      * 主键 用户id
      */
     @ApiModelProperty("主键 用户id")
-    @TableId(value="id", type= IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     /**
      * 用户名

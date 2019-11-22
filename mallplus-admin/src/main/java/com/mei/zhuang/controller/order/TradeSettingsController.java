@@ -45,7 +45,7 @@ public class TradeSettingsController {
     public Object list(PaySettingParam paySettingParam) {
         try {
             //非空处理
-            return new CommonResult().success(shopPaymentService.page(new Page<>(paySettingParam.getCurrent(),paySettingParam.getSize()),new QueryWrapper<EsShopPayment>()));
+            return new CommonResult().success(shopPaymentService.page(new Page<>(paySettingParam.getCurrent(), paySettingParam.getSize()), new QueryWrapper<EsShopPayment>()));
         } catch (Exception e) {
             log.error("查询支付设置列表：%s", e.getMessage(), e);
         }

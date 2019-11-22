@@ -55,6 +55,7 @@ public class EsShopFullGiftGoodsMap extends Model<EsShopFullGiftGoodsMap> {
      */
     @TableField("activity_name")
     private String activityName;
+
     @Override
     protected Serializable pkVal() {
         return null;

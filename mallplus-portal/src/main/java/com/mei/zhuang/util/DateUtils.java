@@ -171,6 +171,7 @@ public class DateUtils {
         return format.format(date);
 
     }
+
     /**
      * 添加分钟
      *
@@ -190,7 +191,7 @@ public class DateUtils {
     }
 
     public static void main(String[] args) throws ParseException {
-        System.out.println(DateUtils.addMins(new Date(),10));
+        System.out.println(DateUtils.addMins(new Date(), 10));
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // 获取当前时间
         Date date = new Date();
@@ -207,9 +208,9 @@ public class DateUtils {
 
         long hours = (diff - days * (1000 * 60 * 60 * 24))
                 / (1000 * 60 * 60);    //小时
-        long mins = (diff - days * (1000 * 60 * 60 * 24)-hours * (1000 * 60 * 60))/(1000 * 60 );    //小时
+        long mins = (diff - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60);    //小时
         long sc = (diff - days * (1000 * 60 * 60 * 24) - hours
-                * (1000 * 60 * 60)-mins*(1000*60)) / (1000); // 秒
+                * (1000 * 60 * 60) - mins * (1000 * 60)) / (1000); // 秒
 
         System.out.println(days);
         System.out.println(hours);

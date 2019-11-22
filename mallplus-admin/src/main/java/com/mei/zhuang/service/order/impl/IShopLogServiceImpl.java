@@ -34,7 +34,7 @@ public class IShopLogServiceImpl extends ServiceImpl<EsCoreLogMapper, EsCoreLog>
     @Override
     public Page<EsCoreLog> selecPageList(EsCoreLogParam param) {
         Page<EsCoreLog> page = new Page<EsCoreLog>(param.getCurrent(), param.getSize());
-       // page.setAsc(param.getIsAsc() == 0 ? false : true);
+        // page.setAsc(param.getIsAsc() == 0 ? false : true);
         page.setRecords(esCoreLogMapper.selecPageList(param));
         page.setTotal(esCoreLogMapper.selectLogCount(param));
         return page;

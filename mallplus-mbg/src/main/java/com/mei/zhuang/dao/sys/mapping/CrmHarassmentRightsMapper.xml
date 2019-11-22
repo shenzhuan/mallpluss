@@ -4,20 +4,20 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmHarassmentRights">
-        <result column="id" property="id" />
-        <result column="prevent_harassment_config_id" property="preventHarassmentConfigId" />
-        <result column="residue" property="residue" />
-        <result column="dept_id" property="deptId" />
-        <result column="create_user_id" property="createUserId" />
-        <result column="create_date" property="createDate" />
-        <result column="create_time" property="createTime" />
-        <result column="update_user_id" property="updateUserId" />
-        <result column="update_date" property="updateDate" />
-        <result column="update_time" property="updateTime" />
-        <result column="sms_used_num" property="smsUsedNum" />
-        <result column="wechat_used_num" property="wechatUsedNum" />
-        <result column="mail_used_num" property="mailUsedNum" />
-        <result column="mms_used_num" property="mmsUsedNum" />
+        <result column="id" property="id"/>
+        <result column="prevent_harassment_config_id" property="preventHarassmentConfigId"/>
+        <result column="residue" property="residue"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="sms_used_num" property="smsUsedNum"/>
+        <result column="wechat_used_num" property="wechatUsedNum"/>
+        <result column="mail_used_num" property="mailUsedNum"/>
+        <result column="mms_used_num" property="mmsUsedNum"/>
     </resultMap>
 
     <select id="getallstore" resultType="map">
@@ -29,7 +29,6 @@ and  address is not null
 and  region  is not null
 ;
     </select>
-
 
 
 </mapper>

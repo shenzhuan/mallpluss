@@ -5,7 +5,6 @@ import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.service.member.ICustGroupService;
 import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.vo.data.customer.*;
-import com.mei.zhuang.vo.data.customer.CustPropsParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class CustGroupAnalyzeController {
     public Object getVisitedData(CustGroupIndexParam param) {
         try {
 //            param.setShopId(1l);
-            return  custGroupService.getVisitedData(param);
+            return custGroupService.getVisitedData(param);
         } catch (Exception e) {
             log.error("查询访问数据：%s", e.getMessage(), e);
         }
@@ -85,12 +84,12 @@ public class CustGroupAnalyzeController {
     public Object getTradedownload(CustTradeSuccessParam param, HttpServletRequest request, HttpServletResponse response) {
         try {
             Map<String, CustTradeSuccessInfoVo> tradeScuInfo = custGroupService.getTradeScuInfo(param);
-            System.out.println(tradeScuInfo.toString()+"客户数据");
+            System.out.println(tradeScuInfo.toString() + "客户数据");
             HSSFWorkbook workbook = new HSSFWorkbook();
             HSSFSheet sheet = workbook.createSheet("成交客户分析数据列表");
             // 新增数据行，并且设置单元格数据
             int rowNum = 1;
-            String[] headers = {  "客户类型", "成交客户数", "客户数占比","支付订单数","客单价(元)","支付金额(元)","支付金额占比" };
+            String[] headers = {"客户类型", "成交客户数", "客户数占比", "支付订单数", "客单价(元)", "支付金额(元)", "支付金额占比"};
             // headers表示excel表中第一行的表头
             HSSFRow row = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
@@ -99,8 +98,8 @@ public class CustGroupAnalyzeController {
                 cell.setCellValue(text);
             }
             // 在表中存放查询到的数据放入对应的列
-            List<CustTradeSuccessInfoVo>listinfo=new ArrayList<>();
-            for(Map.Entry<String, CustTradeSuccessInfoVo> vo:tradeScuInfo.entrySet()){
+            List<CustTradeSuccessInfoVo> listinfo = new ArrayList<>();
+            for (Map.Entry<String, CustTradeSuccessInfoVo> vo : tradeScuInfo.entrySet()) {
                 listinfo.add(vo.getValue());
             }
             for (int i = 0; i < listinfo.size(); i++) {

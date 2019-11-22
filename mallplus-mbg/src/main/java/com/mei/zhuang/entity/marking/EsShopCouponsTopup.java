@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * <p>
- *    满额发券
+ * 满额发券
  * </p>
  *
  * @author arvato team
@@ -98,6 +98,7 @@ public class EsShopCouponsTopup extends Model<EsShopCouponsTopup> {
 
     @TableField(exist = false)
     private int total;
+
     public EsShopCouponsTopup() {
     }
 

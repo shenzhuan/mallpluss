@@ -23,11 +23,6 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class RedisDistributedLock extends AbstractDistributedLock {
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
-    private ThreadLocal<String> lockFlag = new ThreadLocal<>();
-
     private static final String UNLOCK_LUA;
 
     /*
@@ -41,6 +36,10 @@ public class RedisDistributedLock extends AbstractDistributedLock {
                 "    return 0 " +
                 "end ";
     }
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+    private ThreadLocal<String> lockFlag = new ThreadLocal<>();
 
     public RedisDistributedLock(RedisTemplate<String, Object> redisTemplate) {
         super();
@@ -106,7 +105,7 @@ public class RedisDistributedLock extends AbstractDistributedLock {
                 // 集群模式和单机模式虽然执行脚本的方法一样，但是没有共同的接口，所以只能分开执行
                 // 集群模式
                 if (nativeConnection instanceof JedisCluster) {
-                 //   return (Long) ((JedisCluster) nativeConnection).eval(UNLOCK_LUA, keys, args);
+                    //   return (Long) ((JedisCluster) nativeConnection).eval(UNLOCK_LUA, keys, args);
                 }
 
                 // 单机模式

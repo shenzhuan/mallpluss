@@ -6,7 +6,7 @@ package com.mei.zhuang.redis.lock;
  * @author mall
  * @date 2018/5/29 14:14
  */
-public abstract class AbstractDistributedLock implements DistributedLock{
+public abstract class AbstractDistributedLock implements DistributedLock {
 
     @Override
     public boolean lock(String key) {

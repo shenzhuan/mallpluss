@@ -109,6 +109,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
 
     @Resource
     private EsActivatySmallBeautyBoxGiftBoxService esActivatySmallBeautyBoxGiftBoxService;
+    @Resource
+    private WechatApiService wechatApiService;
+    @Resource
+    private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
 
     public Map<String, Object> homeStatic() {
 
@@ -316,7 +320,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         });
         return orderBatchSendDetailMapper.insert(orderBatchSendDetail);
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -612,7 +615,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<Long> custIds = getCustIds(order.getOrderGoodsList());//定制服务id
         List<Long> basicIds = new ArrayList<>();//定制服务基础basic 实体 ids
         List<EsShopCustomizedApplet> customizedAppletList = new ArrayList<>();
-        if(custIds != null && custIds.size() != 0){
+        if (custIds != null && custIds.size() != 0) {
             customizedAppletList = appletMakedService.list(new QueryWrapper<>(new EsShopCustomizedApplet())
                     .in("id", custIds));
         }
@@ -669,9 +672,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         return order;
     }
 
-
-
-
     private List<Long> getCustIds(List<EsShopOrderGoods> orderGoods) {
         List<Long> custIds = new ArrayList<>();
         for (EsShopOrderGoods item : orderGoods) {
@@ -691,7 +691,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         return cartIds;
     }
-
 
     @Override
     public OrderDetail orderDetail(Long id) {
@@ -790,7 +789,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<Long> custIds = getCustIds(orderGoods);//定制服务id
         List<Long> basicIds = new ArrayList<>();//定制服务基础basic 实体
         List<EsShopCustomizedApplet> customizedAppletList = new ArrayList<>();
-        if(custIds != null && custIds.size() != 0){
+        if (custIds != null && custIds.size() != 0) {
             customizedAppletList = appletMakedService.list(new QueryWrapper<>(new EsShopCustomizedApplet())
                     .in("id", custIds));
         }
@@ -852,47 +851,48 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public Page<EsShopOrder> selectPageExt(OrderParam entity) {
         Page<EsShopOrder> page = new Page<EsShopOrder>(entity.getCurrent(), entity.getSize());
-      //  page.setAsc(entity.getIsAsc() == 0 ? false : true);
+        //  page.setAsc(entity.getIsAsc() == 0 ? false : true);
         List<EsShopOrder> orderList = null;
         Integer total = 0;
         entity.setEndTime(entity.getEndTime() + " 23:59:59.0");
 
-        if("4".equals(entity.getKeyType()) || "5".equals(entity.getKeyType())){
+        if ("4".equals(entity.getKeyType()) || "5".equals(entity.getKeyType())) {
             // 先查找满足 orderids 多条件 查找og  获得og 中 order_id
             //再根据order 表里的条件， 实体，
             List<Long> orderIdsByOg = orderGoodsMapper.selOgByCondition(entity);//获得 ordergood 中的 orderId
             entity.setOrderIds(orderIdsByOg);
-            if(orderIdsByOg != null && orderIdsByOg.size() != 0){
+            if (orderIdsByOg != null && orderIdsByOg.size() != 0) {
                 orderList = this.orderMapper.selOrderByPage(entity);
                 total = orderMapper.getCountByPage(entity);
-                for(EsShopOrder orderItem : orderList){
+                for (EsShopOrder orderItem : orderList) {
                     orderItem.setOrderGoodsList(orderGoodsMapper.selectList
-                            (new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id",orderItem.getId())));
+                            (new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderItem.getId())));
                 }
-            }else{
+            } else {
                 orderList = new ArrayList<>();
                 total = 0;
             }
-        }else{
+        } else {
             // 单表查询
             orderList = orderMapper.getOrderListByCon(entity);
             total = orderMapper.getCountByCon(entity);
-            for(EsShopOrder order : orderList){
-                order.setOrderGoodsList(orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id",order.getId())));
+            for (EsShopOrder order : orderList) {
+                order.setOrderGoodsList(orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", order.getId())));
             }
         }
         page.setRecords(orderList);
         page.setTotal(total);
         return page;
     }
+
     //好友赠礼查询
     @Override
     public List<EsShopOrder> selectfriend(OrderParam entity) {
         List<EsShopOrder> orderList = null;
         orderList = orderMapper.getOrderListByCon(entity);
         //total = orderMapper.getCountByCon(entity);
-        for(EsShopOrder order : orderList){
-            order.setOrderGoodsList(orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id",order.getId())));
+        for (EsShopOrder order : orderList) {
+            order.setOrderGoodsList(orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", order.getId())));
         }
         return orderList;
     }
@@ -1020,7 +1020,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                     markingFegin.updateCodeStatus(vo.getCode(), 1);
                 }
                 if (ValidatorUtils.notEmpty(vo.getCouponId())) {
-                    markingFegin.updateMemberCoupon(vo.getCouponId(),vo.getMemberId(),null, 1);
+                    markingFegin.updateMemberCoupon(vo.getCouponId(), vo.getMemberId(), null, 1);
                 }
                 String formid = this.getFormIdByMemberId(vo.getMemberId());
 
@@ -1131,7 +1131,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                 List<EsShopOrderGoods> orderGoods = orderGoodsMapper.selectList(
                         new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", order.getId()).eq("is_gifts", 0));
                 EsMember user = membersFegin.getMemberById(order.getMemberId());
-                if (this.hasCountByMemberById(user.getId())>0){
+                if (this.hasCountByMemberById(user.getId()) > 0) {
                     markingFegin.sendNewCoupon(user.getId(), 2);
                 }
                 CartMarkingVo vo = new CartMarkingVo();
@@ -1276,10 +1276,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
 
         OrderCustTotalVo oldConsumeInfo = orderMapper.getOldConsumeInfo(tempParam);//老客户金额 老客户总人数
         OrderCustTotalVo totalInfo = orderMapper.getTotalInfo(tempParam);//获得总金额 总人数
-        if(oldConsumeInfo == null ){
+        if (oldConsumeInfo == null) {
             oldConsumeInfo = new OrderCustTotalVo();
         }
-        if(totalInfo == null){
+        if (totalInfo == null) {
             totalInfo = new OrderCustTotalVo();
         }
         oldConsumeInfo.setCount(totalInfo.getCount());
@@ -1299,11 +1299,11 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         cart.setActivatyType(1);
         List<EsShopCart> carts = cartMapper.selectList(new QueryWrapper<>(cart));
         if (carts != null) {
-            for (EsShopCart car:carts) {
-                EsShopGoods obj = (EsShopGoods)goodsFegin.getGoodsById(car.getGoodsId());
-                if(obj != null){
+            for (EsShopCart car : carts) {
+                EsShopGoods obj = (EsShopGoods) goodsFegin.getGoodsById(car.getGoodsId());
+                if (obj != null) {
                     return obj.getSmallBeautyBoxId();
-                }else{
+                } else {
                     return Long.parseLong("0");
                 }
             }
@@ -1320,11 +1320,11 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         param.setEndTime(param.getEndTime() + " 23:59:59.999");
         List<Long> orderIdList = orderMapper.orderIdList(param);
         //获得选择条件的订单， 然后累加商品数量。
-        if(orderIdList != null && orderIdList.size() != 0){
+        if (orderIdList != null && orderIdList.size() != 0) {
             return orderGoodsMapper.selGoodsTotalSaleCount(orderIdList);
-        }else{
+        } else {
             return 0;
-       }
+        }
     }
 
     @Override
@@ -1333,10 +1333,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         param.setStartTime(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS));*/
         List<EsShopOrderGoods> OrderGoods = orderGoodsMapper.OrderGoods(param);
         List<EsShopOrderGoods> purchaseGoods = orderGoodsMapper.purchaseGoods(param);
-        for(EsShopOrderGoods or:purchaseGoods){
-            for(EsShopOrderGoods goods:OrderGoods){
-                if(or.getGoodscount()>1&&goods.getGoodsId().longValue()==or.getGoodsId().longValue()){
-                    goods.setPurchaseNumber(goods.getPurchaseNumber()+1);
+        for (EsShopOrderGoods or : purchaseGoods) {
+            for (EsShopOrderGoods goods : OrderGoods) {
+                if (or.getGoodscount() > 1 && goods.getGoodsId().longValue() == or.getGoodsId().longValue()) {
+                    goods.setPurchaseNumber(goods.getPurchaseNumber() + 1);
                 }
             }
         }
@@ -1347,14 +1347,14 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public List<EsShopOrderGoods> orderGoodsList(long goodsId) {
         QueryWrapper<EsShopOrderGoods> condition = new QueryWrapper();
-        condition.eq("goods_id",goodsId);
+        condition.eq("goods_id", goodsId);
         return orderGoodsMapper.selectList(condition);
     }
 
     @Override
     public List<EsShopOrderGoods> selOrderGoodsByGoodsAnaly(GoodsTrendMapParam param) {
         //条件
-        QueryWrapper<EsShopOrder> condition = new QueryWrapper(new EsShopOrder(),"id");
+        QueryWrapper<EsShopOrder> condition = new QueryWrapper(new EsShopOrder(), "id");
         condition.notIn("status", OrderStatus.INIT.getValue(), OrderStatus.CLOSED.getValue());
         if (ValidatorUtils.notEmpty(param.getStartTime()))
             condition.ge("create_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)));
@@ -1368,10 +1368,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<Object> orderIds = this.listObjs(condition);
         List<Long> orderIdL = new ArrayList<>();
 
-        this.listObjs(condition).forEach((item)->{
+        this.listObjs(condition).forEach((item) -> {
             orderIdL.add((Long) item);
         });
-        if(orderIdL != null && orderIdL.size() != 0){
+        if (orderIdL != null && orderIdL.size() != 0) {
             return this.orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods())
                     .in("order_id", orderIdL)
             );
@@ -1386,10 +1386,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         EsShopCart cart = new EsShopCart();
         cart.setMemberId(entity.getMemberId());
         cart.setActivatyType(1);
-        Integer  num =cartMapper.delete(new QueryWrapper<>(cart));
-        if(num >=0){
+        Integer num = cartMapper.delete(new QueryWrapper<>(cart));
+        if (num >= 0) {
             return cartMapper.insert(entity);
-        }else{
+        } else {
             return 0;
         }
 
@@ -1399,8 +1399,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     public List<Integer> paymentNumber(EsShopOrder entity) {
         return orderMapper.paymentNumber(entity);
     }
-
-
 
     @Override
     public List<EsShopOrder> getOldCustOrderList(CustTendencyParam param) {
@@ -1419,7 +1417,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<EsShopCart> cartItemList = new ArrayList<>();
         for (EsShopCart cart : cartPromotionItemList) {
             EsShopGoods goods = goodsFegin.getGoodsById(cart.getGoodsId());
-            if (ValidatorUtils.notEmpty(goods.getEdareas()) && ValidatorUtils.notEmpty(orderParam.getAddressCity())  && ValidatorUtils.notEmpty(orderParam.getAddressProvince()) && (goods.getEdareas().contains(orderParam.getAddressCity().substring(0,2)) || goods.getEdareas().contains(orderParam.getAddressProvince().substring(0,2)))) {
+            if (ValidatorUtils.notEmpty(goods.getEdareas()) && ValidatorUtils.notEmpty(orderParam.getAddressCity()) && ValidatorUtils.notEmpty(orderParam.getAddressProvince()) && (goods.getEdareas().contains(orderParam.getAddressCity().substring(0, 2)) || goods.getEdareas().contains(orderParam.getAddressProvince().substring(0, 2)))) {
 
             } else {
                 cartItemList.add(cart);
@@ -1484,6 +1482,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         return new CommonResult().success(rules);
     }
+
     //订单详情
     @Override
     public Object preOrder(BookOrderParam orderParam) {
@@ -1491,11 +1490,11 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<EsShopCart> cartPromotionItemList = new ArrayList<>();
         List<EsShopCart> cartItemList = new ArrayList<>();
         // 1 商品详情 2 勾选购物车 3全部购物车的商品
-        StopWatch stopWatch = new StopWatch("预览订单" );
+        StopWatch stopWatch = new StopWatch("预览订单");
         stopWatch.start("查询商品数据");
         if ("1".equals(type)) {
             getCartByGoodsDetail(orderParam, cartPromotionItemList);
-            cartItemList=cartPromotionItemList;
+            cartItemList = cartPromotionItemList;
 
         } else if ("2".equals(type)) {
             String cartIdList1 = orderParam.getCartIds();
@@ -1533,12 +1532,12 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                         cart.setPrice(skuStock.getPrice());
                         checkSkuGoods(skuStock, cart.getTotal());
                     }
-                    if (skuStock.getVirtualStock() <= 0 ) {
+                    if (skuStock.getVirtualStock() <= 0) {
                         cartMapper.deleteById(cart.getId());
                         continue;
                     }
                 } else {
-                    if (goods.getVituralStock() <= 0 ) {
+                    if (goods.getVituralStock() <= 0) {
                         cartMapper.deleteById(cart.getId());
                         continue;
                     }
@@ -1573,20 +1572,20 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<EsShopCart> cartPromotionItemList = new ArrayList<>();
         List<EsShopCart> cartItemList = new ArrayList<>();
 
-        if("4".equals(type)){
-            getCartByGoodsDetail(orderParam,cartPromotionItemList);
-            cartItemList=cartPromotionItemList;
-            System.out.println("商品id"+cartItemList.toString());
+        if ("4".equals(type)) {
+            getCartByGoodsDetail(orderParam, cartPromotionItemList);
+            cartItemList = cartPromotionItemList;
+            System.out.println("商品id" + cartItemList.toString());
         }
         StringBuffer goodsIds = new StringBuffer();
         EsShopCart cart = new EsShopCart();
         goodsIds.append(orderParam.getGoodsId());
         EsShopGoods goods = goodsFegin.getGoodsById(orderParam.getGoodsId());
-        System.out.println("商品"+goods);
+        System.out.println("商品" + goods);
 
 
         //商品购买次数
-        Integer goodsTotal =  countByCart(cartPromotionItemList, orderParam.getGoodsId());
+        Integer goodsTotal = countByCart(cartPromotionItemList, orderParam.getGoodsId());
 
         if (goods.getNumMax() > 0 && goodsTotal > goods.getNumMax()) {
             return new CommonResult().failed("单次最多购买:" + goods.getNumMax());
@@ -1600,13 +1599,13 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         if (goods.getMostPurchases() > 0) {
             if (buyCount >= goods.getMostPurchases()) {
-                return new CommonResult().failed(3,"最多购买:" + goods.getMostPurchases() + "件,当前已经购买件数:" + buyCount);
+                return new CommonResult().failed(3, "最多购买:" + goods.getMostPurchases() + "件,当前已经购买件数:" + buyCount);
             }
             if (goodsTotal > (goods.getMostPurchases() - buyCount)) {
                 return new CommonResult().failed("最多购买:" + goods.getMostPurchases() + "件,已经购买：" + buyCount + ",当前选择件数:" + goodsTotal);
             }
         }
-        ConfirmOrderResult result = getConfirmOrderResult(orderParam.getMemberId(), cartItemList,orderParam);
+        ConfirmOrderResult result = getConfirmOrderResult(orderParam.getMemberId(), cartItemList, orderParam);
         return new CommonResult().success(result);
     }
 
@@ -1623,7 +1622,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         String type = orderParam.getType();
         //收货信息
-      //  EsShopOrder order = createOrderObj(orderParam);
+        //  EsShopOrder order = createOrderObj(orderParam);
         EsShopOrder order = new EsShopOrder();
         order.setIsPartDelivery(0);
         //转化为订单信息并插入数据库
@@ -1736,9 +1735,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             orderItem.setMemberDiscountPrice(cartPrice);
             orderItem.setCustId(cart.getCustId());
             orderItemList.add(orderItem);
-          //  cartIds.append(cart.getId() + ",");
+            //  cartIds.append(cart.getId() + ",");
         }
-       // cartIds.deleteCharAt(cartIds.length() - 1);
+        // cartIds.deleteCharAt(cartIds.length() - 1);
         //order.setCartIds(cartIds.toString());
 
         // 优惠计算 取 优惠更大的
@@ -1820,7 +1819,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             orderGoodsMapper.insert(orderItem);
         }
         if (ValidatorUtils.notEmpty(orderParam.getCouponId())) {
-            markingFegin.updateMemberCoupon(orderParam.getCouponId(),order.getId(),order.getOrderNo(),0);
+            markingFegin.updateMemberCoupon(orderParam.getCouponId(), order.getId(), order.getOrderNo(), 0);
         }
         OmsOrderVo orderVo = new OmsOrderVo();
         orderVo.setMember(member);
@@ -1842,7 +1841,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                 push(member, order, orderParam.getFormid(), 1, orderItemList);
 
                 if (!hasOrder(orderParam.getMemberId())) {
-                        markingFegin.sendNewCoupon(orderParam.getMemberId(), 2);
+                    markingFegin.sendNewCoupon(orderParam.getMemberId(), 2);
                 }
 
             } catch (Exception e) {
@@ -1852,12 +1851,11 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         return new CommonResult().success("下单成功", result);
     }
 
-
     private void getCartByGoodsDetail(BookOrderParam orderParam, List<EsShopCart> cartPromotionItemList) {
         EsShopCart cart = new EsShopCart();
         EsShopGoods goods = goodsFegin.getGoodsById(orderParam.getGoodsId());
         if (ValidatorUtils.empty(orderParam.getOptionId())) {
-            System.out.println("商品信息"+goods);
+            System.out.println("商品信息" + goods);
             checkGoods(goods, true, orderParam.getTotal());
             cart.setGoodsId(orderParam.getGoodsId());
             cart.setMemberId(orderParam.getMemberId());
@@ -1925,7 +1923,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         return count;
     }
 
-
     private ConfirmOrderResult getConfirmOrderResult(Long memberId, List<EsShopCart> cartPromotionItemList, BookOrderParam orderParam) {
         ConfirmOrderResult result = new ConfirmOrderResult();
 
@@ -1934,7 +1931,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             BigDecimal moneyBasic = new BigDecimal("0");
 
             Date nowD = new Date();
-            StopWatch stopWatch = new StopWatch("预览订单" );
+            StopWatch stopWatch = new StopWatch("预览订单");
             stopWatch.start("查询运费");
             BigDecimal dispatchPrice = getDispatchPrice(cartPromotionItemList, orderParam);
             stopWatch.stop();
@@ -2042,7 +2039,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             List<EsShopFullGift> fullGiftList = markingFegin.matchFullGift(cartPromotionItemList);
             result.setFullGiftList(fullGiftList);
             //选赠礼
-            List<EsShopFullGift> ChoosefullGiftList =markingFegin.ChooseFullGift(cartPromotionItemList);
+            List<EsShopFullGift> ChoosefullGiftList = markingFegin.ChooseFullGift(cartPromotionItemList);
             result.setChoosGiftList(ChoosefullGiftList);
             List<EsShopFullGift> esShopFullGift2 = markingFegin.matchFullGift2();
             result.setFullGiftListtwo(esShopFullGift2);
@@ -2169,7 +2166,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         EsShopOrder order = createOrderObj(orderParam);
         StringBuffer goodsIds = new StringBuffer();
         List<EsShopCart> cartPromotionItemList = new ArrayList<>();
-        StopWatch stopWatch = new StopWatch("下单" );
+        StopWatch stopWatch = new StopWatch("下单");
         stopWatch.start("查询购物车数据");
         if ("3".equals(type)) { // 1 商品详情(立即购买) 2 勾选购物车 3全部购物车的商品
             cartPromotionItemList = cartMapper.selectList(new QueryWrapper<EsShopCart>().eq("member_id", orderParam.getMemberId()));
@@ -2221,7 +2218,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             EsShopOrderGoods orderItem = createOrderItemObj(cart, goods);
             orderItem.setTypeoption(orderParam.getTypeOption());
             orderItem.setTypeword(orderParam.getTypeword());
-           Integer goodsTotal =  countByCart(cartPromotionItemList, cart.getGoodsId());
+            Integer goodsTotal = countByCart(cartPromotionItemList, cart.getGoodsId());
             if (goods.getNumMax() > 0 && goodsTotal > goods.getNumMax()) {
                 return new CommonResult().failed("单次最多购买:" + goods.getNumMax() + "件,当前件数:" + goodsTotal);
             }
@@ -2368,9 +2365,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             stopWatch.start("优惠券");
             vo.setPayAmount(payAmount1);
             vo.setMemberCouponId(orderParam.getCouponId());
-            markingAmount= markingAmount.add(payAmount1);
+            markingAmount = markingAmount.add(payAmount1);
             payAmount1 = markingFegin.selectById(vo);
-            markingAmount= markingAmount.subtract(payAmount1);
+            markingAmount = markingAmount.subtract(payAmount1);
             order.setCouponId(orderParam.getCouponId());
 
             if (orderParam.getCouponType() == 4) {
@@ -2410,14 +2407,14 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         stopWatch.stop();
         if (ValidatorUtils.notEmpty(orderParam.getCouponId())) {
             stopWatch.start("更新优惠券");
-            markingFegin.updateMemberCoupon(orderParam.getCouponId(),order.getId(),order.getOrderNo(),0);
+            markingFegin.updateMemberCoupon(orderParam.getCouponId(), order.getId(), order.getOrderNo(), 0);
             stopWatch.stop();
         }
         OmsOrderVo orderVo = new OmsOrderVo();
         orderVo.setMember(member);
         orderVo.setOrder(order);
         orderVo.setOrderGoodsList(orderItemList);
-      //  sender.createOrderMq(orderVo);
+        //  sender.createOrderMq(orderVo);
         stopWatch.start("锁库存");
         for (EsShopOrderGoods orderItem : orderItemList) {
             lockStock(orderItem, 0);
@@ -2590,7 +2587,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         orderItem.setTitle(goods.getTitle());
     }
 
-
     private void checkGoods(EsShopGoods goods, boolean falg, int count) {
         if (goods == null || goods.getId() == null) {
             throw new BusinessException("商品已删除");
@@ -2628,56 +2624,56 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
 
     @Override
     public void lockStock(EsShopOrderGoods item, Integer stockCnf) {
-        StopWatch stopWatch = new StopWatch("lockStock" );
+        StopWatch stopWatch = new StopWatch("lockStock");
         stopWatch.start("goodsFegin.getGoodsById");
-            EsShopGoods goods = goodsFegin.getGoodsById(item.getGoodsId());
-            stopWatch.stop();
-            if (goods != null && goods.getId() != null) {
+        EsShopGoods goods = goodsFegin.getGoodsById(item.getGoodsId());
+        stopWatch.stop();
+        if (goods != null && goods.getId() != null) {
 
-                if (stockCnf.equals(goods.getStockCnf())) {
-                    redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
-                    redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
-                    EsShopGoods newGoods = new EsShopGoods();
-                    newGoods.setId(goods.getId());
-                    if (!ValidatorUtils.empty(item.getOptionId()) && item.getOptionId() > 0) {
-                        stopWatch.start("decrSkuStock");
-                        int num = goodsFegin.decrSkuStock(item.getOptionId(), item.getCount(), goods.getId(),goods.getType());
-                        stopWatch.stop();
-                        if (num == 0) {
-                            throw new BusinessException("goods is stock out. goodsId=" + item.getGoodsId() + ", skuId=" + item.getOptionId());
-                        } else {
-                            stopWatch.start("updateGoodsById");
-                            Integer stocks = 0;
-                            List<EsShopGoodsOption> list = goods.getOptions();
-                            for (EsShopGoodsOption op : list) {
-                                stocks += op.getVirtualStock();
-                            }
-                            if (stocks - item.getCount() == 0) {
-                                newGoods.setStatus(3);
-                                newGoods.setSelloutTime(new Date());
-                            }
-                            newGoods.setVituralStock(stocks - item.getCount());
-                            goodsFegin.updateGoodsById(newGoods);
-                            stopWatch.stop();
-                        }
+            if (stockCnf.equals(goods.getStockCnf())) {
+                redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
+                redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
+                EsShopGoods newGoods = new EsShopGoods();
+                newGoods.setId(goods.getId());
+                if (!ValidatorUtils.empty(item.getOptionId()) && item.getOptionId() > 0) {
+                    stopWatch.start("decrSkuStock");
+                    int num = goodsFegin.decrSkuStock(item.getOptionId(), item.getCount(), goods.getId(), goods.getType());
+                    stopWatch.stop();
+                    if (num == 0) {
+                        throw new BusinessException("goods is stock out. goodsId=" + item.getGoodsId() + ", skuId=" + item.getOptionId());
                     } else {
-                        stopWatch.start("decrGoodsStock");
-                        int num = goodsFegin.decrGoodsStock(item.getGoodsId(), item.getCount());
-                        stopWatch.stop();
-                        if (num == 0) {
-                            throw new BusinessException("goods is stock out. goodsId=" + item.getGoodsId() + ", goodsId=" + item.getGoodsId());
-                        } else {
-                            stopWatch.start("updateGoodsById");
-                            if (goods.getVituralStock() - item.getCount() == 0) {
-                                newGoods.setStatus(3);
-                                newGoods.setSelloutTime(new Date());
-                                goodsFegin.updateGoodsById(newGoods);
-                            }
-                            stopWatch.stop();
+                        stopWatch.start("updateGoodsById");
+                        Integer stocks = 0;
+                        List<EsShopGoodsOption> list = goods.getOptions();
+                        for (EsShopGoodsOption op : list) {
+                            stocks += op.getVirtualStock();
                         }
+                        if (stocks - item.getCount() == 0) {
+                            newGoods.setStatus(3);
+                            newGoods.setSelloutTime(new Date());
+                        }
+                        newGoods.setVituralStock(stocks - item.getCount());
+                        goodsFegin.updateGoodsById(newGoods);
+                        stopWatch.stop();
+                    }
+                } else {
+                    stopWatch.start("decrGoodsStock");
+                    int num = goodsFegin.decrGoodsStock(item.getGoodsId(), item.getCount());
+                    stopWatch.stop();
+                    if (num == 0) {
+                        throw new BusinessException("goods is stock out. goodsId=" + item.getGoodsId() + ", goodsId=" + item.getGoodsId());
+                    } else {
+                        stopWatch.start("updateGoodsById");
+                        if (goods.getVituralStock() - item.getCount() == 0) {
+                            newGoods.setStatus(3);
+                            newGoods.setSelloutTime(new Date());
+                            goodsFegin.updateGoodsById(newGoods);
+                        }
+                        stopWatch.stop();
                     }
                 }
             }
+        }
         log.info(stopWatch.prettyPrint());
     }
 
@@ -2686,22 +2682,22 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         List<EsShopOrderGoods> itemList = orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderId));
         if (itemList != null && itemList.size() > 0) {
             for (EsShopOrderGoods item : itemList) {
-                    EsShopGoods goods = goodsFegin.getGoodsById(item.getGoodsId());
-                    if (goods != null && goods.getId() != null && goods.getStockCnf()!=2) {
-                        redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
-                        redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
-                        if (goods.getStatus() == 3) {
-                            EsShopGoods newGoods = new EsShopGoods();
-                            newGoods.setId(goods.getId());
-                            newGoods.setStatus(1);
-                            newGoods.setSelloutTime(null);
-                            goodsFegin.updateGoodsById(newGoods);
-                        }
-                        if (!ValidatorUtils.empty(item.getOptionId()) && item.getOptionId() > 0) {
-                            goodsFegin.addSkuStock(item.getOptionId(), item.getCount(), goods.getId());
-                        }
-                        goodsFegin.addGoodsStock(item.getGoodsId(), item.getCount());
+                EsShopGoods goods = goodsFegin.getGoodsById(item.getGoodsId());
+                if (goods != null && goods.getId() != null && goods.getStockCnf() != 2) {
+                    redisRepository.del(String.format(RedisConstant.GOODSDETAIL, goods.getId() + ""));
+                    redisRepository.del(String.format(RedisConstant.GOODS, goods.getId() + ""));
+                    if (goods.getStatus() == 3) {
+                        EsShopGoods newGoods = new EsShopGoods();
+                        newGoods.setId(goods.getId());
+                        newGoods.setStatus(1);
+                        newGoods.setSelloutTime(null);
+                        goodsFegin.updateGoodsById(newGoods);
                     }
+                    if (!ValidatorUtils.empty(item.getOptionId()) && item.getOptionId() > 0) {
+                        goodsFegin.addSkuStock(item.getOptionId(), item.getCount(), goods.getId());
+                    }
+                    goodsFegin.addGoodsStock(item.getGoodsId(), item.getCount());
+                }
 
             }
         }
@@ -2717,7 +2713,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                     markingFegin.updateCodeStatus(vo.getCode(), 1);
                 }
                 if (ValidatorUtils.notEmpty(vo.getCouponId())) {
-                    markingFegin.updateMemberCoupon(vo.getCouponId(),vo.getMemberId(),null, 1);
+                    markingFegin.updateMemberCoupon(vo.getCouponId(), vo.getMemberId(), null, 1);
                 }
                 String formid = this.getFormIdByMemberId(vo.getMemberId());
 
@@ -2740,7 +2736,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public int hasCountByMemberById(Long memberId) {
         Integer count = orderMapper.hasCountByMemberById(memberId);
-        if (ValidatorUtils.empty(count)){
+        if (ValidatorUtils.empty(count)) {
             return 0;
         }
         return count;
@@ -2749,7 +2745,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public int hasPayied(Long memberId) {
         Integer count = orderMapper.hasPayied(memberId);
-        if (ValidatorUtils.empty(count)){
+        if (ValidatorUtils.empty(count)) {
             return 0;
         }
         return count;
@@ -2768,7 +2764,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         //订单状态：
         order.setStatus(OrderStatus.INIT.getValue());
         //订单类型：
-      //  order.setOrderType(0);
+        //  order.setOrderType(0);
         //收货人信息：姓名、电话、邮编、地址
         order.setRemarkBuyer(orderParam.getRemarkBuyer());
         order.setAddressArea(orderParam.getAddressArea());
@@ -2953,15 +2949,15 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public Page<EsShopOrder> selectPageExtByApplet(AppletOrderParam appletOrderParam) {
         Page<EsShopOrder> page = new Page<EsShopOrder>(appletOrderParam.getCurrent(), appletOrderParam.getSize());
-      //  page.setAsc(appletOrderParam.getIsAsc() == 0 ? false : true);
-        List<EsShopOrder> orderList=null;
-        if(appletOrderParam.getOrderType()!=null&&appletOrderParam.getOrderType()==2){
+        //  page.setAsc(appletOrderParam.getIsAsc() == 0 ? false : true);
+        List<EsShopOrder> orderList = null;
+        if (appletOrderParam.getOrderType() != null && appletOrderParam.getOrderType() == 2) {
             List<EsShopOrder> orderfriend = orderMapper.selectFriendListByApplet(appletOrderParam);
-            orderList=orderfriend;
+            orderList = orderfriend;
             System.out.println(orderList);
-        }else {
+        } else {
             List<EsShopOrder> orderListapp = orderMapper.selectOrderListByApplet(appletOrderParam);
-            orderList=orderListapp;
+            orderList = orderListapp;
         }
 
         for (EsShopOrder order : orderList) {
@@ -3007,13 +3003,13 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                         cartMapper.deleteById(cart.getId());
                         continue;
                     }
-                    if (option.getVirtualStock() <= 0 ) {
+                    if (option.getVirtualStock() <= 0) {
                         cartMapper.deleteById(cart.getId());
                         continue;
                     }
                     item.setGoodsOption(option);
-                }else{
-                    if (goods.getVituralStock() <= 0 ) {
+                } else {
+                    if (goods.getVituralStock() <= 0) {
                         cartMapper.deleteById(cart.getId());
                         continue;
                     }
@@ -3057,7 +3053,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         return cartMapper.cartGoodsCount(memberId);
     }
 
-
     @Override
     public List<OrderStstic> listOrderGroupByMemberId() {
         return orderMapper.listOrderGroupByMemberId();
@@ -3086,9 +3081,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
 //                        .eq("is_gifts", 0)
 ////                //不查询赠品信息
         );
-        if(orderGoodsList != null && orderGoodsList.size() != 0){
-            for(EsShopOrderGoods item : orderGoodsList){
-                this.lockStock(item,1);//后台点击付款 减库存。
+        if (orderGoodsList != null && orderGoodsList.size() != 0) {
+            for (EsShopOrderGoods item : orderGoodsList) {
+                this.lockStock(item, 1);//后台点击付款 减库存。
             }
         }
         return orderMapper.updateById(vo) > 0;
@@ -3168,11 +3163,6 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         return orderMapper.selectUCustoCount(param);
     }
 
-    @Resource
-    private WechatApiService wechatApiService;
-    @Resource
-    private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
-
     /**
      * 推送消息
      *
@@ -3223,7 +3213,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                 param.put("keyword" + count, new TemplateData(getV(map.get("number" + i).toString(), order), map.get("color" + i).toString()));
             }
             accessToken = wechatApiService.getAccessToken(min.getAppid(), min.getAppSecret());
-           /* param.put("keyword1", new TemplateData(oderIterm.getTitle(), "#EE0000"));*/
+            /* param.put("keyword1", new TemplateData(oderIterm.getTitle(), "#EE0000"));*/
             com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(JSON.toJSONString(param));
 //        //调用发送微信消息给用户的接口    ********这里写自己在微信公众平台拿到的模板ID
             String ret = WX_TemplateMsgUtil.sendWechatMsgToUser(member.getOpenid(), messageTemplate.getOriginalTemplateId(), messageTemplate.getAddress(),
@@ -3278,25 +3268,25 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         if ("[订单状态]".equals(str)) {
             //   订单状态：0->待付款；1->待发货；2->待收货；3->已完成；->4已退款；->5维权中；->6维权已完成；->7已取消；->8已关闭；->9无效订单；
-            if(order.getStatus()==0){
+            if (order.getStatus() == 0) {
                 return "待付款";
-            }else   if(order.getStatus()==1){
+            } else if (order.getStatus() == 1) {
                 return "待发货";
-            }else  if(order.getStatus()==2){
+            } else if (order.getStatus() == 2) {
                 return "待收货";
-            }else  if(order.getStatus()==3){
+            } else if (order.getStatus() == 3) {
                 return "已完成";
-            }else  if(order.getStatus()==4){
+            } else if (order.getStatus() == 4) {
                 return "已退款";
-            }else  if(order.getStatus()==5){
+            } else if (order.getStatus() == 5) {
                 return "维权中";
-            }else  if(order.getStatus()==6){
+            } else if (order.getStatus() == 6) {
                 return "维权已完成";
-            }else  if(order.getStatus()==7){
+            } else if (order.getStatus() == 7) {
                 return "已取消";
-            }else  if(order.getStatus()==8){
+            } else if (order.getStatus() == 8) {
                 return "已关闭";
-            }else  if(order.getStatus()==9){
+            } else if (order.getStatus() == 9) {
                 return "无效订单";
             }
         }
@@ -3332,7 +3322,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         if ("[粉丝昵称]".equals(str)) {
             return order.getMemberNickname() + "";
-        } if ("[快递单号]".equals(str)) {
+        }
+        if ("[快递单号]".equals(str)) {
             return obs.getExpressSn() + "";
         }
         if ("[发货时间]".equals(str)) {
@@ -3342,11 +3333,10 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     }
 
 
-
     @Override
-    public Integer sumByGoods(Long memberId, Long goodsId,Date startTime, Date endTime) {
-        Integer count = orderMapper.sumByGoods(memberId, goodsId,startTime,endTime);
-        if (ValidatorUtils.empty(count)){
+    public Integer sumByGoods(Long memberId, Long goodsId, Date startTime, Date endTime) {
+        Integer count = orderMapper.sumByGoods(memberId, goodsId, startTime, endTime);
+        if (ValidatorUtils.empty(count)) {
             return 0;
         }
         return count;
@@ -3387,8 +3377,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         String accessToken = null;
         try {
             EsMiniprogram min = membersFegin.getByShopId(shopId);
-            System.out.println("min    +"+min);
-            EsCoreMessageTemplate messageTemplate = esCoreMessageTemplateMapper.selectById( ids);
+            System.out.println("min    +" + min);
+            EsCoreMessageTemplate messageTemplate = esCoreMessageTemplateMapper.selectById(ids);
             JSONArray a = (JSONArray) JSONArray.parse(messageTemplate.getTemplate());
             Map<String, TemplateData> param = new HashMap<String, TemplateData>();
             int count = 0;
@@ -3396,14 +3386,14 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                 count++;
                 Map map = JsonUtils.readJsonToMap(a.get(i).toString());
                 // {"color0":"#000","number0":"[订单号]","title0":"订单编号"}
-                if(i == 0){
+                if (i == 0) {
                     param.put("keyword" + count, new TemplateData(name, map.get("color" + i).toString()));
-                }else{
+                } else {
                     param.put("keyword" + count, new TemplateData(map.get("number" + i).toString(), map.get("color" + i).toString()));
                 }
 
             }
-            System.out.println("appid + "+min.getAppid()+", appSecret + "+min.getAppSecret());
+            System.out.println("appid + " + min.getAppid() + ", appSecret + " + min.getAppSecret());
             accessToken = wechatApiService.getAccessToken(min.getAppid(), min.getAppSecret());
             /* param.put("keyword1", new TemplateData(oderIterm.getTitle(), "#EE0000"));*/
             com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(JSON.toJSONString(param));
@@ -3423,8 +3413,8 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     public void updvituralStock(Long smallBeautyBoxId, Integer total) {
         EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.getById(smallBeautyBoxId);
-        giftBox.setVituralStock(giftBox.getVituralStock()-total);
-         esActivatySmallBeautyBoxGiftBoxService.updateById(giftBox);
+        giftBox.setVituralStock(giftBox.getVituralStock() - total);
+        esActivatySmallBeautyBoxGiftBoxService.updateById(giftBox);
     }
 
 }

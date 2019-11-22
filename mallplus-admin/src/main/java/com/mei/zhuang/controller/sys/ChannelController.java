@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * @Description: 渠道
  * @version: V1.0
  */
-@Api(description = "CRUD-渠道",tags = {"系统渠道信息"})
+@Api(description = "CRUD-渠道", tags = {"系统渠道信息"})
 @RestController
 @RequestMapping("/channel")
 @Slf4j

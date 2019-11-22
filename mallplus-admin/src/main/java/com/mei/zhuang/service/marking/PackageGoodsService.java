@@ -7,11 +7,12 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface PackageGoodsService extends IService<EsShopPackageGoods> {
-    boolean save(EsShopPackageGoods entity) ;
+    boolean save(EsShopPackageGoods entity);
 
-    boolean update(EsShopPackageGoods entity) ;
+    boolean update(EsShopPackageGoods entity);
 
     Integer deletePackage(String id);
+
     //批量修改状态
     Integer updatestatus(Integer status, String pid);
 

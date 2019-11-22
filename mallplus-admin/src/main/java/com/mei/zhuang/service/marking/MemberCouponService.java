@@ -20,43 +20,48 @@ import java.util.Map;
  */
 public interface MemberCouponService extends IService<EsMemberCoupon> {
 
-     public List<EsShopCouponGoodsMap>  selectSendCouponGift(Long couponId) ;
-     public AllMemberCoupon selectUserMemberCouponList(Long memberId) throws ParseException ;
-     boolean lockCoupon(EsMemberCoupon coupon) ;
+    public List<EsShopCouponGoodsMap> selectSendCouponGift(Long couponId);
 
-     void useCoupon(long orderId) ;
+    public AllMemberCoupon selectUserMemberCouponList(Long memberId) throws ParseException;
 
-     void releaseCoupon(long orderId) ;
+    boolean lockCoupon(EsMemberCoupon coupon);
 
-     public boolean isCouponUsable(EsMemberCoupon coupon, CouponFilterParam condition) ;
+    void useCoupon(long orderId);
 
-     public void shareCouponDiscount(EsMemberCoupon coupon, List<EsShopOrderGoods> orderItemList) ;
+    void releaseCoupon(long orderId);
 
-  //   ExcelExportUtil BySchemeId(String sheetTitle) throws IOException;
+    public boolean isCouponUsable(EsMemberCoupon coupon, CouponFilterParam condition);
 
-     //发放记录查询
-     List<Map<String,Object>> selectMemberCoupon(EsMemberCoupon coupon) throws ParseException;
+    public void shareCouponDiscount(EsMemberCoupon coupon, List<EsShopOrderGoods> orderItemList);
 
-     List<Map<String,Object>> selectMemberCoupon2();
-     //发放记录添加
-     Object saveadd(Long memberId, Integer node);
+    //   ExcelExportUtil BySchemeId(String sheetTitle) throws IOException;
 
-     //发放数量显示
-     Map<String,Object> record();
+    //发放记录查询
+    List<Map<String, Object>> selectMemberCoupon(EsMemberCoupon coupon) throws ParseException;
+
+    List<Map<String, Object>> selectMemberCoupon2();
+
+    //发放记录添加
+    Object saveadd(Long memberId, Integer node);
+
+    //发放数量显示
+    Map<String, Object> record();
 
 
-     //修改用户券库
-     boolean updatecoupon(EsMemberCoupon updaecoupon);
+    //修改用户券库
+    boolean updatecoupon(EsMemberCoupon updaecoupon);
 
-     List<EsMemberCoupon> selectUserMemberCoupon(CartMarkingVo vo) throws ParseException;
+    List<EsMemberCoupon> selectUserMemberCoupon(CartMarkingVo vo);
 
-     BigDecimal selectUserCouponById(CartMarkingVo vo);
+    BigDecimal selectUserCouponById(CartMarkingVo vo);
 
     void sendFillFillCoupon(CartMarkingVo vo);
 
-     void sendShopCoupon(CartMarkingVo vo);
-     public void sendManualCoupon(CartMarkingVo vo) throws ParseException ;
-     //查询奖品单日发放数量
-     List<EsMemberCoupon> selectCountMax(EsMemberCoupon entity);
+    void sendShopCoupon(CartMarkingVo vo);
+
+    public void sendManualCoupon(CartMarkingVo vo) throws ParseException;
+
+    //查询奖品单日发放数量
+    List<EsMemberCoupon> selectCountMax(EsMemberCoupon entity);
 
 }

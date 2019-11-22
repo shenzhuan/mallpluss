@@ -4,14 +4,14 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopFormid">
-        <id column="id" property="id" />
-        <result column="member_id" property="memberId" />
-        <result column="source" property="source" />
-        <result column="status" property="status" />
-        <result column="form_id" property="formId" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="member_id" property="memberId"/>
+        <result column="source" property="source"/>
+        <result column="status" property="status"/>
+        <result column="form_id" property="formId"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
-    <select id="getFormIdByMemberId" resultMap="BaseResultMap" >
+    <select id="getFormIdByMemberId" resultMap="BaseResultMap">
         select * from es_shop_formid where member_id=#{userId} and status=1 and create_time>=TO_DATE(#{createTime}, 'YYYY-MM-DD')  order by create_time asc
     </select>
 </mapper>

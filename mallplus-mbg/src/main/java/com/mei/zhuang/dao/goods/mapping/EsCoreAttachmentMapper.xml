@@ -17,14 +17,14 @@
         select * from es_core_attachment
         where 1=1
         <if test="categoryId != null">
-            and  category_id=#{categoryId}
+            and category_id=#{categoryId}
         </if>
         <if test="name != null">
-            and  name like concat(concat('%',#{name},'%'))
+            and name like concat(concat('%',#{name},'%'))
         </if>
 
         <if test="type != null">
-            and  type = #{type}
+            and type = #{type}
         </if>
         order by id desc
     </select>
@@ -32,14 +32,14 @@
         select count(1) from es_core_attachment
         where 1=1
         <if test="categoryId != null">
-            and  category_id=#{categoryId}
+            and category_id=#{categoryId}
         </if>
         <if test="name != null">
-            and  name like concat(concat('%',#{name},'%'))
+            and name like concat(concat('%',#{name},'%'))
         </if>
 
         <if test="type != null">
-            and  type = #{type}
+            and type = #{type}
         </if>
     </select>
 

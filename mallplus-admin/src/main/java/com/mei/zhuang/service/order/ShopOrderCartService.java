@@ -8,5 +8,5 @@ import com.mei.zhuang.entity.order.EsShopCart;
  * @Date: 2019-07-12 16:47
  * @Description:
  */
-public interface ShopOrderCartService  extends IService<EsShopCart> {
+public interface ShopOrderCartService extends IService<EsShopCart> {
 }

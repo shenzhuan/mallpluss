@@ -21,5 +21,4 @@ public class OrderGoodsCustMakingInfo {
     private String packing;//包装盒
 
 
-
 }

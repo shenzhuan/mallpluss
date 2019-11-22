@@ -40,14 +40,16 @@ public interface EsMemberCouponMapper extends BaseMapper<EsMemberCoupon> {
     Integer updatecoupon(@Param("cou") EsMemberCoupon cou);
 
     //发放记录查询
-    List<Map<String,Object>> selectMemberCoupon(@Param("coupon") EsMemberCoupon coupon);
+    List<Map<String, Object>> selectMemberCoupon(@Param("coupon") EsMemberCoupon coupon);
 
-    List<Map<String,Object>> selectMemberCoupon2();
+    List<Map<String, Object>> selectMemberCoupon2();
 
     //有效数量
     EsMemberCoupon couponeff();
+
     //使用数量
     EsMemberCoupon couponsta();
+
     //用户数量与发券数量
     EsMemberCoupon couponmember();
 

@@ -13,15 +13,16 @@ public class ListUtils {
 
     /**
      * 字符传转集合，Integer类型
+     *
      * @param arrayStr
      * @return
      */
-    public static List<Integer> parseStrToListForInt(String arrayStr){
+    public static List<Integer> parseStrToListForInt(String arrayStr) {
         List<Integer> list = null;
-        if(!StringUtils.isEmpty(arrayStr.trim())){
+        if (!StringUtils.isEmpty(arrayStr.trim())) {
             String[] deptIdArrary = arrayStr.split(",");
-            if(deptIdArrary.length>0){
-                for(int i = 0;i<deptIdArrary.length;i++){
+            if (deptIdArrary.length > 0) {
+                for (int i = 0; i < deptIdArrary.length; i++) {
                     list.add(Integer.parseInt(deptIdArrary[i]));
                 }
             }
@@ -31,9 +32,10 @@ public class ListUtils {
 
     /**
      * 结合转字符串，Integer类型
+     *
      * @return
      */
-    public static String parseIntListToStr(List<Integer> list,String separator){
-        return  StringUtils.join(list,separator);
+    public static String parseIntListToStr(List<Integer> list, String separator) {
+        return StringUtils.join(list, separator);
     }
 }

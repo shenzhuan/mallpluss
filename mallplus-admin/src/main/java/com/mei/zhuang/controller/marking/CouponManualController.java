@@ -40,7 +40,7 @@ public class CouponManualController {
     @SysLog(MODULE = "手工发券管理", REMARK = "根据条件查询所有手工券列表")
     @ApiOperation("根据条件查询所有手工券列表")
     @PostMapping(value = "/list")
-    public Object getCouponByPage( EsShopCouponManual entity,
+    public Object getCouponByPage(EsShopCouponManual entity,
                                   @RequestParam(value = "current", defaultValue = "1") Integer current,
                                   @RequestParam(value = "size", defaultValue = "10") Integer size
     ) {
@@ -52,15 +52,16 @@ public class CouponManualController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "手工发券管理", REMARK = "保存手工发券")
     @ApiOperation("保存手工发券")
     @PostMapping(value = "/save")
-    public Object saveCoupon( EsShopCouponManual entity) {
+    public Object saveCoupon(EsShopCouponManual entity) {
         try {
             TestCSVUtil csvUtil = new TestCSVUtil();
             List<EsShopCouponNewRule> list = JSONObject.parseArray(entity.getRuleList(), EsShopCouponNewRule.class);
             entity.setNewRuleList(list);
-            if(entity.getStampsNumber()==0){
+            if (entity.getStampsNumber() == 0) {
                 return new CommonResult().failed("请输入大于0的整数");
             }
             List<String> source = csvUtil.readcsvFile(entity.getPath());
@@ -76,10 +77,11 @@ public class CouponManualController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "手工发券管理", REMARK = "修改手工发券")
     @ApiOperation("修改手工发券")
     @PostMapping(value = "/update")
-    public Object updateCoupon( EsShopCouponManual entity) {
+    public Object updateCoupon(EsShopCouponManual entity) {
         try {
             List<EsShopCouponNewRule> list = JSONObject.parseArray(entity.getRuleList(), EsShopCouponNewRule.class);
             entity.setNewRuleList(list);
@@ -92,6 +94,7 @@ public class CouponManualController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "手工发券管理", REMARK = "删除手工发券")
     @ApiOperation("删除手工发券")
     @PostMapping(value = "/deleteManual")
@@ -107,6 +110,7 @@ public class CouponManualController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "手工发券管理", REMARK = "手工发券状态修改")
     @ApiOperation("手工发券状态修改")
     @PostMapping(value = "/statusManual")
@@ -114,40 +118,41 @@ public class CouponManualController {
         try {
             EsShopCouponManual manual = manualService.getById(id);
             //活动开启 1，立即开启，2指定时间，3关闭
-            if(manual.getActivityOpen()==2) {
+            if (manual.getActivityOpen() == 2) {
                 if (statusissue == 2) {
                     couponTime.setCoupon(1);
                     couponTime.schedulcouponTime();
-                }else{
+                } else {
                     couponTime.setCoupon(0);
                     couponTime.schedulcouponTime();
                 }
                 //发券对象 1,全部用户2，指定用户
-            }else if(manual.getActivityOpen()==1&&manual.getSendObject()==1){
+            } else if (manual.getActivityOpen() == 1 && manual.getSendObject() == 1) {
                 if (statusissue == 2) {
                     System.out.println("停止活动");
                     service.SetCou(1);
                     service.makeRealData(manual);
-                }else{
+                } else {
                     service.SetCou(0);
                     service.makeRealData(manual);
                 }
-            }else if(manual.getActivityOpen()==1&&manual.getSendObject()==2){
+            } else if (manual.getActivityOpen() == 1 && manual.getSendObject() == 2) {
                 if (statusissue == 2) {
                     System.out.println("停止活动");
                     service.SetCou(1);
                     service.specifiedCoupon(manual);
-                }else{
+                } else {
                     service.SetCou(0);
                     service.specifiedCoupon(manual);
                 }
             }
-            return new CommonResult().success(manualService.updatestatus(id,statusissue));
+            return new CommonResult().success(manualService.updatestatus(id, statusissue));
         } catch (Exception e) {
             log.error("手工发券状态修改：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "手工发券管理", REMARK = "手工发券明细")
     @ApiOperation("手工发券明细")
     @PostMapping(value = "/selectCoupon")

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author arvato team
@@ -62,7 +62,7 @@ public class SysPlatformUserServiceImpl extends ServiceImpl<SysPlatformUserMappe
 
     @Override
     public boolean matchPassword(String password, String encryptedPassword) {
-        return new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).matches(password,encryptedPassword);
+        return new BCryptPasswordEncoder(UserConstant.PW_ENCORDER_SALT).matches(password, encryptedPassword);
     }
 
     @Override
@@ -71,15 +71,14 @@ public class SysPlatformUserServiceImpl extends ServiceImpl<SysPlatformUserMappe
         Arrays.stream(tenantIds).forEach(tenantId -> {
             SysTenant sysTenant = sysTenantMapper.selectById(tenantId);
             SysDbResource sysDbResource = sysDbResourceMapper.selectById(sysTenant.getDbResourceId());
-            crmSysUserService.createTenantUserInfo(platformUser.getUsername(),new DataSourceDto(sysDbResource.getDbName(),sysTenant.getDbSchema()));
+            crmSysUserService.createTenantUserInfo(platformUser.getUsername(), new DataSourceDto(sysDbResource.getDbName(), sysTenant.getDbSchema()));
         });
     }
 
     @Override
-    public Integer updatestatus(String status,String username){
-        return this.mapper.updatestatus(status,username);
+    public Integer updatestatus(String status, String username) {
+        return this.mapper.updatestatus(status, username);
     }
-
 
 
 }

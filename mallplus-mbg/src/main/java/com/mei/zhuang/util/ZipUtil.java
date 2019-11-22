@@ -1,11 +1,9 @@
 package com.mei.zhuang.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -13,11 +11,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class ZipUtil {
-	private static final Log log = LogFactory.getLog(ZipUtil.class);
+    private static final Log log = LogFactory.getLog(ZipUtil.class);
 
 
     /**
@@ -49,7 +44,7 @@ public class ZipUtil {
             // Complete the ZIP file
             out.close();
         } catch (IOException e) {
-           log.error("ZipUtil zipFiles exception:"+e);
+            log.error("ZipUtil zipFiles exception:" + e);
         }
     }
 
@@ -63,7 +58,7 @@ public class ZipUtil {
         try {
             // Open the ZIP file
             ZipFile zf = new ZipFile(zipfile);
-            for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+            for (Enumeration entries = zf.entries(); entries.hasMoreElements(); ) {
                 // Get the entry name
                 ZipEntry entry = ((ZipEntry) entries.nextElement());
                 String zipEntryName = entry.getName();
@@ -80,7 +75,7 @@ public class ZipUtil {
                 out.close();
             }
         } catch (IOException e) {
-            log.error("ZipUtil unZipFiles exception:"+e);
+            log.error("ZipUtil unZipFiles exception:" + e);
         }
     }
 
@@ -90,7 +85,7 @@ public class ZipUtil {
      * @param args
      */
     public static void main(String[] args) {
-        List<File> srcfile=new ArrayList<File>();
+        List<File> srcfile = new ArrayList<File>();
         srcfile.add(new File("e:\\1.xlsx"));
         srcfile.add(new File("e:\\2.xlsx"));
         srcfile.add(new File("e:\\3.xlsx"));

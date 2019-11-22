@@ -113,7 +113,7 @@ public class DeptController extends BaseController {
                     this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) == 0
-                    ) {
+            ) {
                 dept.getCrmDeptCreditList().setDeptId(dept.getId());
                 Assert.isTrue(
                         this.deptCreditListService.save(dept.getCrmDeptCreditList()),
@@ -127,7 +127,7 @@ public class DeptController extends BaseController {
                     this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) > 0
-                    ) {
+            ) {
                 Assert.isTrue(
                         this.deptCreditListService.remove(new QueryWrapper<>(new CrmDeptCreditList() {{
                             this.setDeptId(dept.getId());
@@ -177,7 +177,7 @@ public class DeptController extends BaseController {
                     this.deptCreditListService.count(new QueryWrapper<>(new CrmDeptCreditList() {{
                         this.setDeptId(dept.getId());
                     }})) > 0
-                    ) {
+            ) {
 
                 Assert.isTrue(
                         this.deptCreditListService.remove(new QueryWrapper<>(new CrmDeptCreditList() {{
@@ -191,7 +191,7 @@ public class DeptController extends BaseController {
         if (dept.getOrgType() == 3) {
             if (
                     this.storeService.getById(dept.getId()) != null
-                    ) {
+            ) {
                 Assert.isTrue(
                         this.storeService.removeById(dept.getId()),
                         "操作失败"

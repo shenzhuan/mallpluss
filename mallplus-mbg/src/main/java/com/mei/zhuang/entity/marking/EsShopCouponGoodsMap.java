@@ -37,9 +37,9 @@ public class EsShopCouponGoodsMap extends Model<EsShopCouponGoodsMap> {
     // 1.实物商品 2.限制使用的商品，3赠品商品
     @TableField("goodslimit")
     private Integer goodslimit;
-  /*  //规格
-    @TableField("spec_id")
-    private Integer specId;*/
+    /*  //规格
+      @TableField("spec_id")
+      private Integer specId;*/
     //商品名称
     @TableField("goods_name")
     private String goodsName;

@@ -28,36 +28,36 @@ public class CrmApiUser extends Model<CrmApiUser> {
 
     private static final long serialVersionUID = 1L;
 
-	private Integer id;
+    private Integer id;
     /**
      * 账号
      */
     @ApiModelProperty("账号")
-	private String account;
+    private String account;
     /**
      * 密码
      */
-	@ApiModelProperty("密码")
-	private String password;
+    @ApiModelProperty("密码")
+    private String password;
     /**
      * 公司名称
      */
-	@ApiModelProperty("公司名称")
-	@TableField("firm_name")
-	private String firmName;
+    @ApiModelProperty("公司名称")
+    @TableField("firm_name")
+    private String firmName;
 
-	/**
-	 * 用户状态
-	 */
-	@ApiModelProperty("用户状态")
-	private String status;
+    /**
+     * 用户状态
+     */
+    @ApiModelProperty("用户状态")
+    private String status;
 
-	/**
-	 * 第三方唯一标识号
-	 */
-	@ApiModelProperty("第三方唯一标识号")
-	@TableField("api_key")
-	private String apiKey;
+    /**
+     * 第三方唯一标识号
+     */
+    @ApiModelProperty("第三方唯一标识号")
+    @TableField("api_key")
+    private String apiKey;
 
 //	/**
 //	 * 根据第三方唯一标识号生成的私钥
@@ -69,42 +69,42 @@ public class CrmApiUser extends Model<CrmApiUser> {
     /**
      * 创建人
      */
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	private Integer createUserId;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    private Integer createUserId;
     /**
      * 创建时间
      */
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
     /**
      * 创建日期
      */
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
     /**
      * 更新人
      */
-	@TableField(value = "update_user_id", fill = FieldFill.UPDATE)
-	private Integer updateUserId;
+    @TableField(value = "update_user_id", fill = FieldFill.UPDATE)
+    private Integer updateUserId;
     /**
      * 更新时间
      */
-	@TableField(value = "update_time", fill = FieldFill.UPDATE)
-	private String updateTime;
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    private String updateTime;
     /**
      * 更新日期
      */
-	@TableField(value = "update_date", fill = FieldFill.UPDATE)
-	private String updateDate;
+    @TableField(value = "update_date", fill = FieldFill.UPDATE)
+    private String updateDate;
     /**
      * 乐观锁用
      */
-	@Version
-	private Integer version;
+    @Version
+    private Integer version;
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

@@ -63,15 +63,15 @@ public class CouponController {
     @ApiOperation("保存优惠券")
     @PostMapping(value = "/save")
 
-    public Object saveCoupon( EsShopCoupon entity,EsShopCouponRule rule) {
+    public Object saveCoupon(EsShopCoupon entity, EsShopCouponRule rule) {
         try {
-            if(entity.getType()==3) {
+            if (entity.getType() == 3) {
                 System.out.println(entity.getGoodsList());
                 if (entity.getGoodsList().equals("")) {
                     return new CommonResult().failed("指定商品不可为空");
                 }
             }
-            if(entity.getType()==4){
+            if (entity.getType() == 4) {
                 if (entity.getGoodsList().equals("")) {
                     return new CommonResult().failed("指定赠品不可为空");
                 }
@@ -79,11 +79,11 @@ public class CouponController {
             List<GoodsSepcVo> list2 = JSONObject.parseArray(entity.getGoodsList(), GoodsSepcVo.class);
             entity.setGoodsSepcVoLists(list2);
 
-            if(rule.getGoodsLimitedId()==2||rule.getGoodsLimitedId()==3){
-                if(rule.getExtra()==1&&rule.getClassificationId()==null){
+            if (rule.getGoodsLimitedId() == 2 || rule.getGoodsLimitedId() == 3) {
+                if (rule.getExtra() == 1 && rule.getClassificationId() == null) {
                     return new CommonResult().failed("商品分类不能为空");
                 }
-                if(rule.getExtra()==2&&rule.getRulegoodslist().equals("")){
+                if (rule.getExtra() == 2 && rule.getRulegoodslist().equals("")) {
                     return new CommonResult().failed("指定商品不能为空");
                 }
             }
@@ -106,13 +106,13 @@ public class CouponController {
     @PostMapping(value = "/update")
     public Object updateCoupon(EsShopCoupon entity, EsShopCouponRule rule) {
         try {
-            if(entity.getType()==3) {
+            if (entity.getType() == 3) {
                 System.out.println(entity.getGoodsList());
                 if (entity.getGoodsList().equals("")) {
                     return new CommonResult().failed("指定商品不可为空");
                 }
             }
-            if(entity.getType()==4){
+            if (entity.getType() == 4) {
                 if (entity.getGoodsList().equals("")) {
                     return new CommonResult().failed("指定赠品不可为空");
                 }
@@ -120,11 +120,11 @@ public class CouponController {
             List<GoodsSepcVo> list2 = JSONObject.parseArray(entity.getGoodsList(), GoodsSepcVo.class);
             entity.setGoodsSepcVoLists(list2);
 
-            if(rule.getGoodsLimitedId()==2||rule.getGoodsLimitedId()==3){
-                if(rule.getExtra()==1&&rule.getClassificationId()==null){
+            if (rule.getGoodsLimitedId() == 2 || rule.getGoodsLimitedId() == 3) {
+                if (rule.getExtra() == 1 && rule.getClassificationId() == null) {
                     return new CommonResult().failed("商品分类不能为空");
                 }
-                if(rule.getExtra()==2&&rule.getRulegoodslist().equals("")){
+                if (rule.getExtra() == 2 && rule.getRulegoodslist().equals("")) {
                     return new CommonResult().failed("指定商品不能为空");
                 }
             }
@@ -150,9 +150,9 @@ public class CouponController {
                 return new CommonResult().paramFailed("优惠券id");
             }
             EsShopCoupon esCoupon = couponService.getById(id);
-            if(esCoupon.getStatusOpen().equals("1")){
+            if (esCoupon.getStatusOpen().equals("1")) {
                 return new CommonResult().failed("启用不可删除");
-            }else{
+            } else {
                 if (couponService.detetecouponid(id) > 0) {
                     return new CommonResult().success();
                 }
@@ -168,15 +168,15 @@ public class CouponController {
     @SysLog(MODULE = "优惠券管理", REMARK = "查询是否发放优惠券")
     @ApiOperation("查询是否发放优惠券")
     @PostMapping(value = "/selectcoupon")
-    public Object seleccoupon(@ApiParam("优惠券id") @RequestParam Long id,@RequestParam String name) {
+    public Object seleccoupon(@ApiParam("优惠券id") @RequestParam Long id, @RequestParam String name) {
         try {
 
-            List<EsShopCouponNewRule> couponlist = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("coupon_name", name).eq("couponid",id));
+            List<EsShopCouponNewRule> couponlist = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("coupon_name", name).eq("couponid", id));
             //已发送的删除状态
-            if(couponlist!=null&&couponlist.size()>0) {
-                    return new CommonResult().success(3);
-            }else{
-                    return new CommonResult().success(4);
+            if (couponlist != null && couponlist.size() > 0) {
+                return new CommonResult().success(3);
+            } else {
+                return new CommonResult().success(4);
             }
         } catch (Exception e) {
             log.error("查询是否发放优惠券：%s", e.getMessage(), e);
@@ -194,9 +194,9 @@ public class CouponController {
                 return new CommonResult().paramFailed("优惠券id");
             }
             EsShopCoupon esCoupon = couponService.getById(id);
-            if(esCoupon.getStatusOpen()=="1"){
+            if (esCoupon.getStatusOpen() == "1") {
                 return new CommonResult().failed("活动开启不可编辑");
-            }else {
+            } else {
                 List<Map<String, Object>> couponlimit = couponService.couponlimit(id);
                 Map<String, Object> map = new HashMap<>();
                 map.put("rows", couponlimit);
@@ -292,7 +292,7 @@ public class CouponController {
             } else if (esShopCoupon.getStatus() == 3) {
                 return new CommonResult().failed("属于失效状态,不可直接更改状态，请到编辑修活动时间");
             } else {*/
-         return new CommonResult().success(couponService.updatestatus(id,statusOpen));
+            return new CommonResult().success(couponService.updatestatus(id, statusOpen));
 
 
         } catch (Exception e) {

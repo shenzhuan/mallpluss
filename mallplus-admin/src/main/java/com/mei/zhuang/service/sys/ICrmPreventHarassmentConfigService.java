@@ -15,10 +15,10 @@ import java.util.Map;
  * @since 2018-08-28
  */
 public interface ICrmPreventHarassmentConfigService extends IService<CrmPreventHarassmentConfig> {
-	/**
-	 * 会员防骚扰设置重置
-	 */
-	void reset();
+    /**
+     * 会员防骚扰设置重置
+     */
+    void reset();
 
-	List<Map<String, Object>> getallstore();
+    List<Map<String, Object>> getallstore();
 }

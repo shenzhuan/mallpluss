@@ -30,45 +30,45 @@ public class EsActivatySmallBeautyBoxGoods extends Model<EsActivatySmallBeautyBo
     private Integer serialNember;
 
     /**
-     *活动ID
+     * 活动ID
      */
     @TableField("activaty_id")
     private Long activatyId;
     /**
-     *步数
+     * 步数
      */
     private Integer product;
     /**
-     *产品名称
+     * 产品名称
      */
     @TableField("product_name")
     private String productName;
     /**
-     *副标题
+     * 副标题
      */
     private String subtitle;
     /**
-     *产品编码
+     * 产品编码
      */
     @TableField("product_code")
     private String productCode;
     /**
-     *产品图片
+     * 产品图片
      */
     @TableField("product_img")
     private String productImg;
     /**
-     *赠品名称
+     * 赠品名称
      */
     @TableField("gift_name")
     private String giftName;
     /**
-     *赠品编码
+     * 赠品编码
      */
     @TableField("gift_code")
     private String giftCode;
     /**
-     *赠品图片
+     * 赠品图片
      */
     @TableField("gift_img")
     private String giftImg;

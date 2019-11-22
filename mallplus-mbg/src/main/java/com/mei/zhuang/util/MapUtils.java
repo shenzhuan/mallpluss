@@ -242,7 +242,6 @@ public class MapUtils {
     }
 
 
-
     /**
      * 将javabean实体类转为map类型，然后返回一个map类型的值
      *

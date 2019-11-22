@@ -1,9 +1,6 @@
 package com.mei.zhuang.service.member;
 
 
-
-
-
 import com.mei.zhuang.vo.data.customer.*;
 
 import java.util.List;
@@ -18,15 +15,16 @@ public interface ICustGroupService {
 
     /**
      * 获得客户分析头部分析数据
+     *
      * @param param
      * @return
      */
-    Object getVisitedData(CustGroupIndexParam param)throws Exception;
-
+    Object getVisitedData(CustGroupIndexParam param) throws Exception;
 
 
     /**
      * 获取客户属性数据
+     *
      * @param param
      * @return
      * @throws Exception
@@ -39,6 +37,7 @@ public interface ICustGroupService {
 
     /**
      * 获得客户趋势图数据
+     *
      * @param param
      * @return
      */
@@ -46,15 +45,11 @@ public interface ICustGroupService {
 
     /**
      * 获得客户交易留存分析数据
+     *
      * @param param
      * @return
      */
     Object getCustRemainScaleByDate(CustTradeRemainParam param);
-
-
-
-
-
 
 
 }

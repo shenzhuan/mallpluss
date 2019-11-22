@@ -23,14 +23,13 @@ public class Weekutils {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dt);
         int w = calendar.get(Calendar.DAY_OF_WEEK);
-        if (calendar.get(Calendar.DAY_OF_WEEK) == 1 ){
-            w = 0 ;
-        }else {
-            w = calendar.get(Calendar.DAY_OF_WEEK) - 1 ;
+        if (calendar.get(Calendar.DAY_OF_WEEK) == 1) {
+            w = 0;
+        } else {
+            w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         }
         return w;
     }
-
 
 
     public static void main(String[] args) throws ParseException {
@@ -46,9 +45,9 @@ public class Weekutils {
     /**
      * 判断当前时间是否在[startTime, endTime]区间，注意时间格式要一致
      *
-     * @param nowTime 当前时间
+     * @param nowTime   当前时间
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return
      * @author zhuan.shen
      */

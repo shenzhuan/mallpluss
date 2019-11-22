@@ -4,40 +4,40 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmMember">
-        <id column="id" property="id" />
-        <result column="club_id" property="clubId" />
-        <result column="member_code" property="memberCode" />
-        <result column="mobile" property="mobile" />
-        <result column="status" property="status" />
-        <result column="grade_code" property="gradeCode" />
-        <result column="last_grade_code" property="lastGradeCode" />
-        <result column="name" property="name" />
-        <result column="id_type" property="idType" />
-        <result column="id_no" property="idNo" />
-        <result column="mail" property="mail" />
-        <result column="sex" property="sex" />
-        <result column="birthday" property="birthday" />
-        <result column="is_edit_birthday" property="isEditBirthday" />
-        <result column="do_birthday_flag" property="doBirthdayFlag" />
-        <result column="do_birthday_date" property="doBirthdayDate" />
-        <result column="register_time" property="registerTime" />
-        <result column="is_member" property="isMember" />
-        <result column="is_deleted" property="isDeleted" />
-        <result column="channel" property="channel" />
-        <result column="store_id" property="storeId" />
-        <result column="store_num" property="storeNum" />
-        <result column="create_user_id" property="createUserId" />
-        <result column="create_date" property="createDate" />
-        <result column="create_time" property="createTime" />
-        <result column="update_user_id" property="updateUserId" />
-        <result column="update_date" property="updateDate" />
-        <result column="update_time" property="updateTime" />
-        <result column="employee_flag" property="employeeFlag" />
-        <result column="bu_id" property="buId" />
-        <result column="grade_priority" property="gradePriority" />
-        <result column="brandcode" property="brandcode" />
-        <result column="remark" property="remark" />
-        <result column="is_black_card" property="isBlackCard" />
+        <id column="id" property="id"/>
+        <result column="club_id" property="clubId"/>
+        <result column="member_code" property="memberCode"/>
+        <result column="mobile" property="mobile"/>
+        <result column="status" property="status"/>
+        <result column="grade_code" property="gradeCode"/>
+        <result column="last_grade_code" property="lastGradeCode"/>
+        <result column="name" property="name"/>
+        <result column="id_type" property="idType"/>
+        <result column="id_no" property="idNo"/>
+        <result column="mail" property="mail"/>
+        <result column="sex" property="sex"/>
+        <result column="birthday" property="birthday"/>
+        <result column="is_edit_birthday" property="isEditBirthday"/>
+        <result column="do_birthday_flag" property="doBirthdayFlag"/>
+        <result column="do_birthday_date" property="doBirthdayDate"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="is_member" property="isMember"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="channel" property="channel"/>
+        <result column="store_id" property="storeId"/>
+        <result column="store_num" property="storeNum"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="employee_flag" property="employeeFlag"/>
+        <result column="bu_id" property="buId"/>
+        <result column="grade_priority" property="gradePriority"/>
+        <result column="brandcode" property="brandcode"/>
+        <result column="remark" property="remark"/>
+        <result column="is_black_card" property="isBlackCard"/>
     </resultMap>
 
 </mapper>

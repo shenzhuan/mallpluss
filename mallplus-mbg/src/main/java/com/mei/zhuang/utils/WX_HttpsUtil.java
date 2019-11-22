@@ -18,18 +18,20 @@ import java.net.URL;
 public class WX_HttpsUtil {
 
     private static Logger log = LoggerFactory.getLogger(WX_HttpsUtil.class);
+
     /**
      * 发送https请求
-     * @param requestUrl 请求地址
+     *
+     * @param requestUrl    请求地址
      * @param requestMethod 请求方式（GET、POST）
-     * @param outputStr 提交的数据
-     * @return JSONObject(通过JSONObject.get(key)的方式获取json对象的属性值)
+     * @param outputStr     提交的数据
+     * @return JSONObject(通过JSONObject.get ( key)的方式获取json对象的属性值)
      */
     public static JSONObject httpsRequest(String requestUrl, String requestMethod, String outputStr) {
         JSONObject jsonObject = null;
         try {
             // 创建SSLContext对象，并使用我们指定的信任管理器初始化
-            TrustManager[] tm = { new MyX509TrustManager() };
+            TrustManager[] tm = {new MyX509TrustManager()};
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
             sslContext.init(null, tm, new java.security.SecureRandom());
             // 从上述SSLContext对象中得到SSLSocketFactory对象
@@ -72,27 +74,24 @@ public class WX_HttpsUtil {
         }
         return jsonObject;
     }
+
     //1.获取ACCESS_TOKEN
-    public static   String wxGetQrcode(String appid, String secret){
-        String getQrcode = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+ appid + "&secret=" + secret + "";
+    public static String wxGetQrcode(String appid, String secret) {
+        String getQrcode = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + secret + "";
         return getQrcode;
     }
+
     public static void main(String[] args) {
-        String code=wxGetQrcode("wx15ade215f1447bda","12c7a7ae75571beaf4eb379d30962681");
-        JSONObject token =  WX_HttpsUtil.httpsRequest(code, "GET",null);
+        String code = wxGetQrcode("wx15ade215f1447bda", "12c7a7ae75571beaf4eb379d30962681");
+        JSONObject token = WX_HttpsUtil.httpsRequest(code, "GET", null);
         System.out.println(token);
         JSONObject json = new JSONObject();
         json.put("access_token", token.getString("access_token"));
 
 
-        JSONObject result1 = WX_HttpsUtil.httpsRequest("https://api.weixin.qq.com/cgi-bin/wxopen/template/list", "POST",json.toString());
+        JSONObject result1 = WX_HttpsUtil.httpsRequest("https://api.weixin.qq.com/cgi-bin/wxopen/template/list", "POST", json.toString());
         JSONObject resultJson = new JSONObject(result1);
         System.out.println(resultJson);
-
-
-
-
-
 
 
     }

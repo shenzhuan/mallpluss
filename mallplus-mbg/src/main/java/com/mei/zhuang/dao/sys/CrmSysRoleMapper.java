@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
-  *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -17,27 +17,26 @@ import java.util.List;
  */
 public interface CrmSysRoleMapper extends BaseMapper<CrmSysRole> {
 
-     int selectRoleCount(CrmSysRole role);
+    int selectRoleCount(CrmSysRole role);
 
-     List<CrmSysRole> selectRoleList(CrmSysRole role);
+    List<CrmSysRole> selectRoleList(CrmSysRole role);
 
-     List<ZTreeNode> selectRoleTree();
+    List<ZTreeNode> selectRoleTree();
 
-     List<Integer> getRoleIdsByUserId(Integer userId);
+    List<Integer> getRoleIdsByUserId(Integer userId);
 
-     //静态权限
-     Integer getRoleIdsBy(Integer userId);
+    //静态权限
+    Integer getRoleIdsBy(Integer userId);
 
-     List<ZTreeNode> getRoleTreeListByRoleIds(List<Integer> roleIds);
+    List<ZTreeNode> getRoleTreeListByRoleIds(List<Integer> roleIds);
 
-     Integer selectByRoleIdAndName(@Param("roleId") Integer roleId, @Param("name") String name);
+    Integer selectByRoleIdAndName(@Param("roleId") Integer roleId, @Param("name") String name);
 
-     List<Integer> getRoleIdsByUserName(String userName);
+    List<Integer> getRoleIdsByUserName(String userName);
 
-     Integer Roleupdate(Integer id, String name);
+    Integer Roleupdate(Integer id, String name);
 
-     Integer Roleupdate2(String name);
-
+    Integer Roleupdate2(String name);
 
 
 }

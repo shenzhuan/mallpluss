@@ -4,11 +4,11 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysLoginLog">
-        <id column="id" property="id" />
-        <result column="login_name" property="loginName" />
-        <result column="login_result" property="loginResult" />
-        <result column="login_desc" property="loginDesc" />
-        <result column="login_time" property="loginTime" />
+        <id column="id" property="id"/>
+        <result column="login_name" property="loginName"/>
+        <result column="login_result" property="loginResult"/>
+        <result column="login_desc" property="loginDesc"/>
+        <result column="login_time" property="loginTime"/>
     </resultMap>
 
     <select id="getSpecifyMinutesPasswordErrorCount" resultType="int">

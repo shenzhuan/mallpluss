@@ -22,6 +22,7 @@ public class EsCoreMessageTemplateServiceImpl extends ServiceImpl<EsCoreMessageT
 
     @Resource
     private EsCoreMessageTemplateMapper esCoreMessageTemplateMapper;
+
     @Override
     public Map<String, Object> select(EsCoreMessageTemplate entity) {
         Map<String, Object> result = new HashMap<>();

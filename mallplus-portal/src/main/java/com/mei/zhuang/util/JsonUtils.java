@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -20,7 +19,6 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * json对象映射工具类之jackson封装
@@ -294,7 +292,7 @@ public class JsonUtils {
      *
      * @param @param  jsondata
      * @param @return 设定文件
-     * @return Map<String                               ,                               Map                               <                               String                               ,                               Object>>    返回类型
+     * @return Map<String, Map < String, Object>>    返回类型
      * @throws
      * @Title: readJsonMap
      * @Description: TODO(这里用一句话描述这个方法的作用)
@@ -344,6 +342,7 @@ public class JsonUtils {
 
         return jsonConfig;
     }
+
     /**
      * 将对象转换成json字符串。
      */
@@ -365,7 +364,7 @@ public class JsonUtils {
      */
     public static <T> T jsonToPojo(String jsonData, Class<T> beanType) {
         try {
-            if (ValidatorUtils.notEmpty(jsonData)){
+            if (ValidatorUtils.notEmpty(jsonData)) {
                 T t = objectMapper.readValue(jsonData, beanType);
                 return t;
             }

@@ -17,8 +17,10 @@ public interface EsShopSingleGiftGoodsMapMapper extends BaseMapper<EsShopSingleG
 
     //单品商品查询
     List<EsShopSingleGiftGoodsMap> selectsinggoods1(Long singleGiftId);
+
     //组合商品查询
     List<EsShopSingleGiftGoodsMap> selectsinggoods2(Long singleGiftId);
+
     //赠品商品查询
     List<EsShopSingleGiftGoodsMap> selectsinggoods3(Long singleGiftId);
 }

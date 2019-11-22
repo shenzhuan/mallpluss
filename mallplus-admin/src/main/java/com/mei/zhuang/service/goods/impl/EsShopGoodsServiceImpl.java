@@ -81,12 +81,35 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private static void descartes(List<List<EsShopGoodsSpecItem>> dimvalue, List<List<EsShopGoodsSpecItem>> result, int layer, List<EsShopGoodsSpecItem> curList) {
+        if (layer < dimvalue.size() - 1) {
+            if (dimvalue.get(layer).size() == 0) {
+                descartes(dimvalue, result, layer + 1, curList);
+            } else {
+                for (int i = 0; i < dimvalue.get(layer).size(); i++) {
+                    List<EsShopGoodsSpecItem> list = new ArrayList<EsShopGoodsSpecItem>(curList);
+                    list.add(dimvalue.get(layer).get(i));
+                    descartes(dimvalue, result, layer + 1, list);
+                }
+            }
+        } else if (layer == dimvalue.size() - 1) {
+            if (dimvalue.get(layer).size() == 0) {
+                result.add(curList);
+            } else {
+                for (int i = 0; i < dimvalue.get(layer).size(); i++) {
+                    List<EsShopGoodsSpecItem> list = new ArrayList<EsShopGoodsSpecItem>(curList);
+                    list.add(dimvalue.get(layer).get(i));
+                    result.add(list);
+                }
+            }
+        }
+    }
 
     @ApiOperation("根据条件查询所有商品列表：出售中、已售罄等模块调用该方法就可以，给定对应的状态")
     @Override
     public Object getGoodsByPage(EsShopGoods entity) {
         try {
-            Page p =new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
+            Page p = new Page<EsShopGoods>(entity.getCurrent(), entity.getSize());
             IPage<EsShopGoods> page = esShopGoodsMapper.selectPage(p, new QueryWrapper<>(entity));
 
             for (EsShopGoods lis : page.getRecords()) {
@@ -182,83 +205,83 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
             if (entity.getEnableSpec() != null) {
                 if (entity.getEnableSpec() == 1) {
-                //3 添加商品商品规格
-                if (entity.getGoodsSpecList() != null && entity.getGoodsSpecList().size() > 0) {
-                    Map<Integer,Object> map = new HashMap<Integer,Object>();
-                    List<List<EsShopGoodsSpecItem>> list = new ArrayList<List<EsShopGoodsSpecItem>>();
-                    Integer nums =1;
-                    for (EsShopGoodsSpec rule : entity.getGoodsSpecList()) {
-                        rule.setGoodsId(entity.getId());
-                        rule.setShopId(entity.getShopId());
-                        esShopGoodsSpecMapper.insert(rule);
-                        //4 添加商品规格值
-                        if (entity.getItemList() == null || entity.getItemList().size() <=0) {
-                        } else {
-                            List<EsShopGoodsSpecItem> listSub = new ArrayList<EsShopGoodsSpecItem>();
-                            for (EsShopGoodsSpecItem item : entity.getItemList()) {
-                                if (rule.getTitle().equals(item.getTitleItem())) {
-                                    item.setGoodsId(entity.getId());
-                                    item.setSpecId(rule.getId());
-                                    item.setShopId(entity.getShopId());
-                                    esShopGoodsSpecItemMapper.insert(item);
-                                    listSub.add(item);
-                                    if(item.getStatus() != null && item.getStatus() == 1){
-                                        String defaultSpec="";
-                                        EsShopGoods goods =esShopGoodsMapper.selectById(entity.getId());
-                                        if(goods.getDefaultSpec() != null && !goods.getDefaultSpec().equals("")){
-                                            defaultSpec = goods.getDefaultSpec()+item.getTitle();
-                                        }else{
-                                            defaultSpec =item.getTitle();
+                    //3 添加商品商品规格
+                    if (entity.getGoodsSpecList() != null && entity.getGoodsSpecList().size() > 0) {
+                        Map<Integer, Object> map = new HashMap<Integer, Object>();
+                        List<List<EsShopGoodsSpecItem>> list = new ArrayList<List<EsShopGoodsSpecItem>>();
+                        Integer nums = 1;
+                        for (EsShopGoodsSpec rule : entity.getGoodsSpecList()) {
+                            rule.setGoodsId(entity.getId());
+                            rule.setShopId(entity.getShopId());
+                            esShopGoodsSpecMapper.insert(rule);
+                            //4 添加商品规格值
+                            if (entity.getItemList() == null || entity.getItemList().size() <= 0) {
+                            } else {
+                                List<EsShopGoodsSpecItem> listSub = new ArrayList<EsShopGoodsSpecItem>();
+                                for (EsShopGoodsSpecItem item : entity.getItemList()) {
+                                    if (rule.getTitle().equals(item.getTitleItem())) {
+                                        item.setGoodsId(entity.getId());
+                                        item.setSpecId(rule.getId());
+                                        item.setShopId(entity.getShopId());
+                                        esShopGoodsSpecItemMapper.insert(item);
+                                        listSub.add(item);
+                                        if (item.getStatus() != null && item.getStatus() == 1) {
+                                            String defaultSpec = "";
+                                            EsShopGoods goods = esShopGoodsMapper.selectById(entity.getId());
+                                            if (goods.getDefaultSpec() != null && !goods.getDefaultSpec().equals("")) {
+                                                defaultSpec = goods.getDefaultSpec() + item.getTitle();
+                                            } else {
+                                                defaultSpec = item.getTitle();
+                                            }
+                                            goods = new EsShopGoods();
+                                            goods.setId(entity.getId());
+                                            goods.setDefaultSpec(defaultSpec);
+                                            esShopGoodsMapper.updateById(goods);
                                         }
-                                        goods= new EsShopGoods();
-                                        goods.setId(entity.getId());
-                                        goods.setDefaultSpec(defaultSpec);
-                                        esShopGoodsMapper.updateById(goods);
                                     }
                                 }
+                                map.put(nums, listSub);
                             }
-                            map.put(nums,listSub);
+                            nums += 1;
                         }
-                        nums+=1;
-                    }
-                    for (Object values : map.values()){
-                        list.add((List<EsShopGoodsSpecItem>) values);
-                    }
-                    List<List<EsShopGoodsSpecItem>> result = new ArrayList<List<EsShopGoodsSpecItem>>();
-                    descartes(list,result,0,new ArrayList<EsShopGoodsSpecItem>());
-                    for (List<EsShopGoodsSpecItem> lis:result ) {
-                        String specs="";
-                        String title="";
-                        Integer count =1;
-                        String specItemIds="";
-                        EsShopGoodsOption option = new EsShopGoodsOption();
-                        option.setMarketprice(new BigDecimal("0"));
-                        for (int i=0; i<lis.size() ; i++){
-                            EsShopGoodsSpecItem it = (EsShopGoodsSpecItem) lis.get(i);
-                                if(count == lis.size()) {
+                        for (Object values : map.values()) {
+                            list.add((List<EsShopGoodsSpecItem>) values);
+                        }
+                        List<List<EsShopGoodsSpecItem>> result = new ArrayList<List<EsShopGoodsSpecItem>>();
+                        descartes(list, result, 0, new ArrayList<EsShopGoodsSpecItem>());
+                        for (List<EsShopGoodsSpecItem> lis : result) {
+                            String specs = "";
+                            String title = "";
+                            Integer count = 1;
+                            String specItemIds = "";
+                            EsShopGoodsOption option = new EsShopGoodsOption();
+                            option.setMarketprice(new BigDecimal("0"));
+                            for (int i = 0; i < lis.size(); i++) {
+                                EsShopGoodsSpecItem it = (EsShopGoodsSpecItem) lis.get(i);
+                                if (count == lis.size()) {
                                     count += 1;
-                                    specs += it.getTitleItem() + ":" + it.getTitle() ;
-                                    title+=it.getTitle();
-                                    specItemIds+=it.getId();
-                                }else{
+                                    specs += it.getTitleItem() + ":" + it.getTitle();
+                                    title += it.getTitle();
+                                    specItemIds += it.getId();
+                                } else {
                                     count += 1;
                                     specs += it.getTitleItem() + ":" + it.getTitle() + ",";
-                                    title+=it.getTitle()+",";
-                                    specItemIds+=it.getId()+",";
+                                    title += it.getTitle() + ",";
+                                    specItemIds += it.getId() + ",";
                                 }
                                 option.setMarketprice(option.getMarketprice().add(it.getMoney()));
                                 option.setPrice(option.getMarketprice().add(it.getMoney()));
-                        }
+                            }
 
-                        option.setTitle(title);
-                        option.setSpecs(specs);
-                        option.setVirtualStock(0);
-                        option.setGoodsId(entity.getId());
-                        option.setSpecIds(specItemIds);
-                        option.setGoodsName(entity.getTitle());
-                        Integer sun = esShopGoodsOptionMapper.insert(option);
+                            option.setTitle(title);
+                            option.setSpecs(specs);
+                            option.setVirtualStock(0);
+                            option.setGoodsId(entity.getId());
+                            option.setSpecIds(specItemIds);
+                            option.setGoodsName(entity.getTitle());
+                            Integer sun = esShopGoodsOptionMapper.insert(option);
+                        }
                     }
-                }
                 }
             }
 
@@ -331,31 +354,6 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
         redisRepository.del(String.format(RedisConstant.GOODSDETAIL, entity.getId()));
     }
 
-    private static void descartes(List<List<EsShopGoodsSpecItem>> dimvalue, List<List<EsShopGoodsSpecItem>> result, int layer, List<EsShopGoodsSpecItem> curList) {
-        if (layer < dimvalue.size() - 1) {
-            if (dimvalue.get(layer).size() == 0) {
-                descartes(dimvalue, result, layer + 1, curList);
-            } else {
-                for (int i = 0; i < dimvalue.get(layer).size(); i++) {
-                    List<EsShopGoodsSpecItem> list = new ArrayList<EsShopGoodsSpecItem>(curList);
-                    list.add(dimvalue.get(layer).get(i));
-                    descartes(dimvalue, result, layer + 1, list);
-                }
-            }
-        } else if (layer == dimvalue.size() - 1) {
-            if (dimvalue.get(layer).size() == 0) {
-                result.add(curList);
-            } else {
-                for (int i = 0; i < dimvalue.get(layer).size(); i++) {
-                    List<EsShopGoodsSpecItem> list = new ArrayList<EsShopGoodsSpecItem>(curList);
-                    list.add(dimvalue.get(layer).get(i));
-                    result.add(list);
-                }
-            }
-        }
-    }
-
-
     @ApiOperation("更新商品")
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -406,21 +404,21 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 entity.setCategoryName("");
             }
 
-            if(  entity.getIsPutaway() == 0){
+            if (entity.getIsPutaway() == 0) {
                 entity.setStatus(-2);
             }
-            Integer virtualStock=0;
+            Integer virtualStock = 0;
             EsShopGoodsOption options = new EsShopGoodsOption();
             options.setGoodsId(entity.getId());
-            List<EsShopGoodsOption> listOption=esShopGoodsOptionMapper.selectList(new QueryWrapper<>(options));
-            if(listOption != null){
-                for (EsShopGoodsOption option:listOption) {
-                    if(option.getVirtualStock() ==null || option.getVirtualStock().equals("")){
+            List<EsShopGoodsOption> listOption = esShopGoodsOptionMapper.selectList(new QueryWrapper<>(options));
+            if (listOption != null) {
+                for (EsShopGoodsOption option : listOption) {
+                    if (option.getVirtualStock() == null || option.getVirtualStock().equals("")) {
                         option.setVirtualStock(0);
                     }
-                    virtualStock+=option.getVirtualStock();
+                    virtualStock += option.getVirtualStock();
                 }
-                if(virtualStock>0){
+                if (virtualStock > 0) {
                     entity.setStatus(1);
                 }
                 entity.setVituralStock(virtualStock);
@@ -437,7 +435,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 goodsRecomMapper.delete(new QueryWrapper<EsShopGoodsRecom>().eq("goodsid", entity.getId()));
                 esShopGoodsDiypageMapMapper.delete(new QueryWrapper<EsShopGoodsDiyPageMap>().eq("goods_id", entity.getId()));
 
-                List<EsShopGoodsOption> list1 =esShopGoodsOptionMapper.selectOption(entity.getId());
+                List<EsShopGoodsOption> list1 = esShopGoodsOptionMapper.selectOption(entity.getId());
                 if (entity.getEnableSpec() != null) {
                     if (entity.getEnableSpec() == 1) {
                         //3 添加商品商品规格
@@ -455,7 +453,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                                 if (rule.getId() != null && !rule.getId().equals("")) {
 
                                     esShopGoodsSpecMapper.updateById(rule);
-                                    esShopGoodsSpecItemMapper.updates(rule.getId(),rule.getTitle());
+                                    esShopGoodsSpecItemMapper.updates(rule.getId(), rule.getTitle());
                                 } else {
                                     numCount = esShopGoodsSpecMapper.insert(rule);
                                 }
@@ -509,7 +507,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                                         title += it.getTitle() + ",";
                                         specItemIds += it.getId() + ",";
                                     }
-                                    if(it.getMoney() != null){
+                                    if (it.getMoney() != null) {
                                         option.setMarketprice(option.getMarketprice().add(it.getMoney()));
                                         option.setPrice(option.getMarketprice().add(it.getMoney()));
                                     }
@@ -556,60 +554,60 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                     EsShopGoodsSpecItem item = new EsShopGoodsSpecItem();
                     item.setGoodsId(entity.getId());
                     List<EsShopGoodsSpecItem> list = esShopGoodsSpecItemMapper.selectList(new QueryWrapper<>(item));
-                    for (EsShopGoodsSpecItem specItem:list) {
+                    for (EsShopGoodsSpecItem specItem : list) {
                         //获取option张规格值id的位置，根据规格值id的位置找到规格值的位置并修改
-                        if(specItem.getId() != null){
+                        if (specItem.getId() != null) {
                             List<EsShopGoodsOption> optis = esShopGoodsOptionMapper.selectLikeSpecIds(specItem.getId());
-                            if(optis != null){
-                                for (EsShopGoodsOption opt:optis) {
-                                    Integer tagg=0;
-                                    String attTitle="";//title
-                                    String names="";//specs
+                            if (optis != null) {
+                                for (EsShopGoodsOption opt : optis) {
+                                    Integer tagg = 0;
+                                    String attTitle = "";//title
+                                    String names = "";//specs
                                     //ids
-                                    String[] attrSpecIds=opt.getSpecIds().split(",");
-                                    for (int i=0;i<attrSpecIds.length;i++){
-                                        if(Long.parseLong(attrSpecIds[i]) == specItem.getId() ){
-                                            tagg=i;
+                                    String[] attrSpecIds = opt.getSpecIds().split(",");
+                                    for (int i = 0; i < attrSpecIds.length; i++) {
+                                        if (Long.parseLong(attrSpecIds[i]) == specItem.getId()) {
+                                            tagg = i;
                                         }
                                     }
                                     //title
-                                    String[] attrTitle=opt.getTitle().split(",");
-                                    for (int i=0;i<attrTitle.length;i++){
-                                        if(i == tagg){
+                                    String[] attrTitle = opt.getTitle().split(",");
+                                    for (int i = 0; i < attrTitle.length; i++) {
+                                        if (i == tagg) {
                                             attrTitle[i] = specItem.getTitle();
                                         }
                                     }
-                                    int pTitle=1;
-                                    for (int i=0;i<attrTitle.length;i++){
-                                        if(pTitle==attrTitle.length){
-                                            attTitle+=attrTitle[i];
-                                        }else{
-                                            attTitle+=attrTitle[i]+",";
+                                    int pTitle = 1;
+                                    for (int i = 0; i < attrTitle.length; i++) {
+                                        if (pTitle == attrTitle.length) {
+                                            attTitle += attrTitle[i];
+                                        } else {
+                                            attTitle += attrTitle[i] + ",";
                                         }
-                                        pTitle+=1;
+                                        pTitle += 1;
                                     }
                                     //specs
                                     //替换数组
-                                    String name="";
-                                    String[] attrspecs=opt.getSpecs().split(",");
-                                    for (int i=0;i<attrspecs.length;i++){
-                                        if(i == tagg){
-                                            String[]  attrattr = attrspecs[i].toString().split(":");
+                                    String name = "";
+                                    String[] attrspecs = opt.getSpecs().split(",");
+                                    for (int i = 0; i < attrspecs.length; i++) {
+                                        if (i == tagg) {
+                                            String[] attrattr = attrspecs[i].toString().split(":");
                                             attrattr[1] = specItem.getTitle();
-                                            name =attrattr[0]+":"+attrattr[1];
+                                            name = attrattr[0] + ":" + attrattr[1];
                                             List<String> lists = Arrays.asList(attrspecs);
                                             Collections.replaceAll(lists, attrspecs[i], name);
                                         }
                                     }
                                     //去除，
-                                    int k=1;
-                                    for (int i=0;i<attrspecs.length;i++){
-                                        if(k==attrspecs.length){
-                                            names+=attrspecs[i];
-                                        }else{
-                                            names+=attrspecs[i]+",";
+                                    int k = 1;
+                                    for (int i = 0; i < attrspecs.length; i++) {
+                                        if (k == attrspecs.length) {
+                                            names += attrspecs[i];
+                                        } else {
+                                            names += attrspecs[i] + ",";
                                         }
-                                        k+=1;
+                                        k += 1;
                                     }
                                     opt.setTitle(attTitle);
                                     opt.setSpecs(names);
@@ -618,8 +616,6 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                             }
                         }
                     }
-
-
 
 
                 }
@@ -634,7 +630,6 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             return new CommonResult().failed();
         }
     }
-
 
 
     @ApiOperation("删除商品")
@@ -666,7 +661,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             condition.ge("create_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)));
         if (ValidatorUtils.notEmpty(param.getEndTime()))
             condition.le("create_time", Timestamp.valueOf(param.getEndTime()));
-        if(ValidatorUtils.notEmpty(param.getShopId())){
+        if (ValidatorUtils.notEmpty(param.getShopId())) {
             condition.eq("shop_id", param.getShopId());
         }
         System.out.println(esShopGoodsMapper.selectList(condition).toString());
@@ -730,7 +725,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 coupon.setSpecs(listSpec);
                 for (EsShopGoodsSpec lis : listSpec) {
                     //查询规格属性
-                    lis.setItemList(esShopGoodsSpecItemMapper.selectSpecItems(id,lis.getId()));
+                    lis.setItemList(esShopGoodsSpecItemMapper.selectSpecItems(id, lis.getId()));
                 }
                 //查询规格sku
                 List<EsShopGoodsOption> lis = esShopGoodsOptionMapper.selectOption(id);
@@ -764,10 +759,10 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             if (status == 1) {//出售中
                 //判断商品库存是否为0
                 EsShopGoods goo = esShopGoodsMapper.selShopGoodsDetail(var);
-                if(goo != null){
-                    if(goo.getType() ==4 || goo.getType() ==5){
+                if (goo != null) {
+                    if (goo.getType() == 4 || goo.getType() == 5) {
                         obj = esShopGoodsMapper.updPutawayTime(var, System.currentTimeMillis());
-                    }else{
+                    } else {
                         if (goo.getVituralStock() == 0 || goo.getVituralStock() == null) {
                             obj = esShopGoodsMapper.updEsShopGoodsStatus(var, 3, null);
                         } else {
@@ -947,14 +942,14 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
         return esShopGoodsMapper.selectgiftsgoods(title);
 
     }
+
     @Override
-    public Map<String, Object> searchGoods(String keywords){
-        Map<String,Object> map=new HashedMap();
+    public Map<String, Object> searchGoods(String keywords) {
+        Map<String, Object> map = new HashedMap();
         List<Map<String, Object>> selectmapcoupon = esShopGoodsMapper.searchGoods(keywords);
-        map.put("rows",selectmapcoupon);
+        map.put("rows", selectmapcoupon);
         return map;
     }
-
 
 
     @Override
@@ -964,8 +959,8 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
         try {
             PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
             List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList(esShopGoods);
-            for (EsShopGoods goods : list){
-                if(ValidatorUtils.notEmpty(goods.getDefaultSpec())) {
+            for (EsShopGoods goods : list) {
+                if (ValidatorUtils.notEmpty(goods.getDefaultSpec())) {
                     EsShopGoodsOption query = new EsShopGoodsOption();
                     query.setGoodsId(goods.getId());
                     query.setSpecs(goods.getDefaultSpec());
@@ -1001,7 +996,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             PageHelper.startPage(goodsQuery.getCurrent(), goodsQuery.getSize());
-            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPutaway( goodsQuery);
+            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPutaway(goodsQuery);
             Integer count = esShopGoodsMapper.selGoodsPutawayCount(goodsQuery);
             map.put("rows", list);
             map.put("total", count);
@@ -1059,7 +1054,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 }
             }
             PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
-            List<EsShopGoods> list = esShopGoodsMapper.lists( esShopGoods);
+            List<EsShopGoods> list = esShopGoodsMapper.lists(esShopGoods);
             int count = esShopGoodsMapper.counts(esShopGoods);
             result.put("rows", list);
             result.put("total", count);
@@ -1084,7 +1079,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 }
             }
             PageHelper.startPage(esShopGoods.getCurrent(), esShopGoods.getSize());
-            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList( esShopGoods);
+            List<EsShopGoods> list = esShopGoodsMapper.selGoodsPageList(esShopGoods);
             for (EsShopGoods es : list) {
                 if (es.getStatus() == null) {
                 } else {
@@ -1149,7 +1144,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
     private GoodsDetail getGoodsDetail(Long id) {
         GoodsDetail vo;
         vo = new GoodsDetail();
-        EsShopGoods goods =  (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, id + ""));
+        EsShopGoods goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, id + ""));
         if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getId())) {
             goods = esShopGoodsMapper.selectById(id);
             if (goods != null) {
@@ -1171,7 +1166,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             if (ValidatorUtils.notEmpty(goods.getRecomGoodsId())) {
                 List<Long> ids = Arrays.asList(goods.getRecomGoodsId().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
                 if (ids != null && ids.size() > 0) {
-                    recomGoodsList1 = esShopGoodsMapper.selectList(new QueryWrapper<EsShopGoods>().in("id", ids).in("status", statusList).notIn("type", 3).notIn("id",id));
+                    recomGoodsList1 = esShopGoodsMapper.selectList(new QueryWrapper<EsShopGoods>().in("id", ids).in("status", statusList).notIn("type", 3).notIn("id", id));
                     for (Long idLk : ids) {
                         for (EsShopGoods esShopGoods : recomGoodsList1) {
                             if (esShopGoods.getId().equals(idLk)) {
@@ -1194,7 +1189,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                                 .map(EsShopGoodsCategoryRecom::getGoodsId).distinct()
                                 .collect(Collectors.toList());
                         Page<EsShopGoods> page = new Page<EsShopGoods>(0, recomCategoryNum);
-                        recomGoodsList = esShopGoodsMapper.selectPage(page, new QueryWrapper<EsShopGoods>().notIn("type", 3).in("id", stIdList2).in("status", statusList).notIn("id",id).orderByDesc("display_order")).getRecords();
+                        recomGoodsList = esShopGoodsMapper.selectPage(page, new QueryWrapper<EsShopGoods>().notIn("type", 3).in("id", stIdList2).in("status", statusList).notIn("id", id).orderByDesc("display_order")).getRecords();
 
                     }
                 }
@@ -1288,10 +1283,10 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
         //1、删除spec
         Integer num = esShopGoodsSpecMapper.deleteById(spec.getId());
-        if(num ==1){
+        if (num == 1) {
             //2、删除specitem
-            List<EsShopGoodsSpecItem> listSpecItem = esShopGoodsSpecItemMapper.selectSpecItems(spec.getGoodsId(),spec.getId());
-            for (EsShopGoodsSpecItem specItem:listSpecItem) {
+            List<EsShopGoodsSpecItem> listSpecItem = esShopGoodsSpecItemMapper.selectSpecItems(spec.getGoodsId(), spec.getId());
+            for (EsShopGoodsSpecItem specItem : listSpecItem) {
                 esShopGoodsSpecItemMapper.deleteById(specItem.getId());
             }
             //3、重新生成列表
@@ -1299,42 +1294,42 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
             es.setGoodsId(spec.getGoodsId());
             List<EsShopGoodsSpec> listSpec = esShopGoodsSpecMapper.selectList(new QueryWrapper<>(es));
             if (listSpec != null && listSpec.size() > 0) {
-                Map<Integer,Object> map = new HashMap<Integer,Object>();
+                Map<Integer, Object> map = new HashMap<Integer, Object>();
                 List<List<EsShopGoodsSpecItem>> list = new ArrayList<List<EsShopGoodsSpecItem>>();
-                Integer nums =1;
+                Integer nums = 1;
                 for (EsShopGoodsSpec rule : listSpec) {
                     EsShopGoodsSpecItem esShopGoodsSpecItem = new EsShopGoodsSpecItem();
                     esShopGoodsSpecItem.setGoodsId(rule.getGoodsId());
                     esShopGoodsSpecItem.setSpecId(rule.getId());
                     List<EsShopGoodsSpecItem> listSub = esShopGoodsSpecItemMapper.selectList(new QueryWrapper<>(esShopGoodsSpecItem));
-                    map.put(nums,listSub);
-                    nums+=1;
+                    map.put(nums, listSub);
+                    nums += 1;
                 }
-                for (Object values : map.values()){
+                for (Object values : map.values()) {
                     list.add((List<EsShopGoodsSpecItem>) values);
                 }
                 List<List<EsShopGoodsSpecItem>> result = new ArrayList<List<EsShopGoodsSpecItem>>();
-                descartes(list,result,0,new ArrayList<EsShopGoodsSpecItem>());
-                esShopGoodsOptionMapper.delete(new QueryWrapper<EsShopGoodsOption>().eq("goods_id",spec.getGoodsId()));
-                for (List<EsShopGoodsSpecItem> lis:result ) {
-                    String specs="";
-                    String title="";
-                    Integer count =1;
-                    String specItemIds="";
+                descartes(list, result, 0, new ArrayList<EsShopGoodsSpecItem>());
+                esShopGoodsOptionMapper.delete(new QueryWrapper<EsShopGoodsOption>().eq("goods_id", spec.getGoodsId()));
+                for (List<EsShopGoodsSpecItem> lis : result) {
+                    String specs = "";
+                    String title = "";
+                    Integer count = 1;
+                    String specItemIds = "";
                     EsShopGoodsOption option = new EsShopGoodsOption();
                     option.setMarketprice(new BigDecimal("0"));
-                    for (int i=0; i<lis.size() ; i++){
+                    for (int i = 0; i < lis.size(); i++) {
                         EsShopGoodsSpecItem it = (EsShopGoodsSpecItem) lis.get(i);
-                        if(count == lis.size()) {
+                        if (count == lis.size()) {
                             count += 1;
-                            specs += it.getTitleItem() + ":" + it.getTitle() ;
-                            title+=it.getTitle();
-                            specItemIds+=it.getId();
-                        }else{
+                            specs += it.getTitleItem() + ":" + it.getTitle();
+                            title += it.getTitle();
+                            specItemIds += it.getId();
+                        } else {
                             count += 1;
                             specs += it.getTitleItem() + ":" + it.getTitle() + ",";
-                            title+=it.getTitle()+",";
-                            specItemIds+=it.getId()+",";
+                            title += it.getTitle() + ",";
+                            specItemIds += it.getId() + ",";
                         }
                         option.setMarketprice(option.getMarketprice().add(it.getMoney()));
                         option.setPrice(option.getMarketprice().add(it.getMoney()));
@@ -1356,23 +1351,23 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
         //删除商品下的规格
         //1、删除option
         List<EsShopGoodsOption> listOPtion = esShopGoodsOptionMapper.selectOption(item.getGoodsId());
-        for (EsShopGoodsOption option:listOPtion) {
-            String[] attr =option.getSpecIds().split(",");
-            for(int i=0;i<attr.length;i++){
-                if(Long.parseLong(attr[i]) == item.getId()){
+        for (EsShopGoodsOption option : listOPtion) {
+            String[] attr = option.getSpecIds().split(",");
+            for (int i = 0; i < attr.length; i++) {
+                if (Long.parseLong(attr[i]) == item.getId()) {
                     esShopGoodsOptionMapper.deleteById(option.getId());
                 }
             }
         }
         //2、删除specitem
-        EsShopGoodsSpecItem listSpecItem = esShopGoodsSpecItemMapper.selectSpecItem(item.getGoodsId(),item.getId());
-        if(listSpecItem.getId() != null ){
-           Integer num =  esShopGoodsSpecItemMapper.deleteById(listSpecItem.getId());
-           if(num>0){
-               return true;
-           }else{
-               return false;
-           }
+        EsShopGoodsSpecItem listSpecItem = esShopGoodsSpecItemMapper.selectSpecItem(item.getGoodsId(), item.getId());
+        if (listSpecItem.getId() != null) {
+            Integer num = esShopGoodsSpecItemMapper.deleteById(listSpecItem.getId());
+            if (num > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
         return false;
     }

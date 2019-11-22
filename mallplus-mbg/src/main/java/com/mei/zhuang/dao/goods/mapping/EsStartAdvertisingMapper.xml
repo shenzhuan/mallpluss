@@ -28,7 +28,7 @@
         select count(1) from es_start_advertising
         where 1=1
         <if test="advertName!=null and advertName!=''">
-          and advert_name like concat(concat('%',#{advertName},'%'))
+            and advert_name like concat(concat('%',#{advertName},'%'))
         </if>
     </select>
     <select id="countStatus" resultType="java.lang.Integer">
@@ -36,7 +36,7 @@
         where
         is_start in ('1','2')
         <if test="id!=null">
-          and    id!=#{id}
+            and id!=#{id}
         </if>
     </select>
 

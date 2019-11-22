@@ -24,27 +24,27 @@ public class EsActivatySmallBeautyBox extends Model<EsActivatySmallBeautyBox> {
      */
     private Long id;
     /**
-     *活动名称
+     * 活动名称
      */
     @TableField("activaty_name")
     private String activatyName;
     /**
-     *创建时间
+     * 创建时间
      */
     @TableField("create_time")
     private Date createTime;
     /**
-     *开始时间
+     * 开始时间
      */
     @TableField("start_time")
     private String startTime;
     /**
-     *结束时间
+     * 结束时间
      */
     @TableField("end_time")
     private String endTime;
     /**
-     *步数
+     * 步数
      */
     @TableField("step_number")
     private Integer stepNumber;

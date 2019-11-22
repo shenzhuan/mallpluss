@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @Auther: Tiger
  * @Date: 2019-06-28 13:32
- * @Description:客户属性年龄占比  （不用）
+ * @Description:客户属性年龄占比 （不用）
  */
 @Data
 public class CustPropAgeInfoVo {
@@ -28,7 +28,7 @@ public class CustPropAgeInfoVo {
     private int ageRangeCount6;//其他岁总人数
     private double ageRangeToScale6;//其他岁占比例
 
-    public CustPropAgeInfoVo(){
+    public CustPropAgeInfoVo() {
 
     }
 

@@ -2,58 +2,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mei.zhuang.dao.sys.CrmCampaignMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmCampaign">
-		<id column="campaign_id" property="campaignId" />
-		<result column="campaign_name" property="campaignName" />
-		<result column="campaign_type" property="campaignType" />
-		<result column="status" property="status" />
-		<result column="test_status" property="testStatus" />
-		<result column="activity_process_selection" property="activityProcessSelection" />
-		<result column="template_campaign_id" property="templateCampaignId" />
-		<result column="start_date" property="startDate" />
-		<result column="end_date" property="endDate" />
-		<result column="remark" property="remark" />
-		<result column="is_blacklist" property="isBlacklist" />
-		<result column="bu_id" property="buId" />
-		<result column="owner_id" property="ownerId" />
-		<result column="create_user_id" property="createUserId" />
-		<result column="create_date" property="createDate" />
-		<result column="create_time" property="createTime" />
-		<result column="update_user_id" property="updateUserId" />
-		<result column="update_date" property="updateDate" />
-		<result column="update_time" property="updateTime" />
-		<result column="version" property="version" />
-		<result column="is_open_silent" property="isOpenSilent" />
-		<result column="silent_begin_time" property="silentBeginTime" />
-		<result column="silent_end_time" property="silentEndTime" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmCampaign">
+        <id column="campaign_id" property="campaignId"/>
+        <result column="campaign_name" property="campaignName"/>
+        <result column="campaign_type" property="campaignType"/>
+        <result column="status" property="status"/>
+        <result column="test_status" property="testStatus"/>
+        <result column="activity_process_selection" property="activityProcessSelection"/>
+        <result column="template_campaign_id" property="templateCampaignId"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="remark" property="remark"/>
+        <result column="is_blacklist" property="isBlacklist"/>
+        <result column="bu_id" property="buId"/>
+        <result column="owner_id" property="ownerId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+        <result column="is_open_silent" property="isOpenSilent"/>
+        <result column="silent_begin_time" property="silentBeginTime"/>
+        <result column="silent_end_time" property="silentEndTime"/>
+    </resultMap>
 
-	<select id="getCalendarData" resultType="map">
+    <select id="getCalendarData" resultType="map">
         SELECT
-		    t1.campaign_id as "id",
-		    t1.campaign_name as title,
-		    t1.start_date as "start",
-		    t1.end_date as "end",
-			t1.is_open_silent as "isOpenSilent",
-			t1.silent_begin_time as "silentBeginTime",
-			t1.silent_end_time as "silentEndTime",
-		    t2.start_time as "stime",
-		    t3.color,
-			<![CDATA[ concat('campaign-add.html?campaignId=', t1.campaign_id, '&campaignStatus=', t1.status) url]]>
-		FROM
-		    crm_campaign t1
-		LEFT JOIN crm_node_schedule t2 ON t1.campaign_id = t2.mkt_id
-		LEFT JOIN crm_sys_status_color t3 ON t1.status = t3.status
-		<if test="statusList != null and statusList.size > 0">
-			<where>
-				t1.status in
-				<foreach collection="statusList" separator="," open="(" close=")" item="status">
-					#{status}
-				</foreach>
-			</where>
-		</if>
-	</select>
+        t1.campaign_id as "id",
+        t1.campaign_name as title,
+        t1.start_date as "start",
+        t1.end_date as "end",
+        t1.is_open_silent as "isOpenSilent",
+        t1.silent_begin_time as "silentBeginTime",
+        t1.silent_end_time as "silentEndTime",
+        t2.start_time as "stime",
+        t3.color,
+        <![CDATA[ concat('campaign-add.html?campaignId=', t1.campaign_id, '&campaignStatus=', t1.status) url]]>
+        FROM
+        crm_campaign t1
+        LEFT JOIN crm_node_schedule t2 ON t1.campaign_id = t2.mkt_id
+        LEFT JOIN crm_sys_status_color t3 ON t1.status = t3.status
+        <if test="statusList != null and statusList.size > 0">
+            <where>
+                t1.status in
+                <foreach collection="statusList" separator="," open="(" close=")" item="status">
+                    #{status}
+                </foreach>
+            </where>
+        </if>
+    </select>
 
 
 </mapper>

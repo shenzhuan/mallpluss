@@ -29,9 +29,9 @@ public class EsShopOrder extends Model<EsShopOrder> {
 
     private static final long serialVersionUID = 1L;
     @TableField(exist = false)
-    private  int goodsCount;
+    private int goodsCount;
     @TableField(exist = false)
-    private  String statusEn;
+    private String statusEn;
 
     /**
      * 付费频道
@@ -236,7 +236,7 @@ public class EsShopOrder extends Model<EsShopOrder> {
      * 买主备注
      */
     @TableField("remark_buyer")
-    private String remarkBuyer ;
+    private String remarkBuyer;
     /**
      * 发送时间
      */
@@ -445,25 +445,24 @@ public class EsShopOrder extends Model<EsShopOrder> {
     @TableField(exist = false)
     private List<EsShopOrderGoods> gift1 = new ArrayList<>();
     @TableField(exist = false)
-    private  List<EsShopOrderGoods> gift2 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift2 = new ArrayList<>();
     @TableField(exist = false)
-    private  List<EsShopOrderGoods> gift3 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift3 = new ArrayList<>();
     @TableField(exist = false)
-    private  List<EsShopOrderGoods> gift4 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift4 = new ArrayList<>();
     @TableField(exist = false)
-    private  List<EsShopOrderGoods> gift5 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift5 = new ArrayList<>();
     @TableField(exist = false)
-    private  List<EsShopOrderGoods> gift6 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift6 = new ArrayList<>();
 
     @TableField("cart_ids")
-    private  String cartIds;//购物车ids
+    private String cartIds;//购物车ids
     @TableField(exist = false)
     private BigDecimal custPrice;//刻字价格
     @TableField(exist = false)
-    private String  beginTime;//开始时间
+    private String beginTime;//开始时间
     @TableField(exist = false)
     private String endTime;//结束时间
-
 
 
     @Override

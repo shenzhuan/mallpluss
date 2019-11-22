@@ -28,9 +28,12 @@ public class GoodsSepcVo implements Serializable {
      * 商品的spu或者sku的价格
      */
     private BigDecimal price;
-    private Integer total ;
-    public GoodsSepcVo(){}
-    public GoodsSepcVo(Long goodsId,Long specId){
+    private Integer total;
+
+    public GoodsSepcVo() {
+    }
+
+    public GoodsSepcVo(Long goodsId, Long specId) {
         this.goodsId = goodsId;
         this.specId = specId;
     }

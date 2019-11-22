@@ -5,8 +5,9 @@ import com.mei.zhuang.entity.sys.CrmDeptCreditList;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
+ *
  * @author arvato team
  * @since 2018-08-06
  */

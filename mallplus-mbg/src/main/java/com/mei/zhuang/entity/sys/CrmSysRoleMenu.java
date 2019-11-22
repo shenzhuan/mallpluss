@@ -18,22 +18,22 @@ public class CrmSysRoleMenu extends Model<CrmSysRoleMenu> {
 
     private static final long serialVersionUID = 1L;
 
-	private Integer id;
-	@TableField("role_id")
-	private Integer roleId;
-	@TableField("menu_id")
-	private Integer menuId;
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	private Integer createUserId;
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
+    private Integer id;
+    @TableField("role_id")
+    private Integer roleId;
+    @TableField("menu_id")
+    private Integer menuId;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    private Integer createUserId;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
 
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

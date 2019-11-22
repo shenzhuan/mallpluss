@@ -11,7 +11,7 @@ public class HttpUrlConnection {
    /* 以post或get方式调用对方接口方法，
     @param pathUrl*/
 
-    public static JSONObject doPostOrGet(String pathUrl, String data){
+    public static JSONObject doPostOrGet(String pathUrl, String data) {
         OutputStreamWriter out = null;
         BufferedReader br = null;
         String result = "";
@@ -53,24 +53,24 @@ public class HttpUrlConnection {
             br = new BufferedReader(new InputStreamReader(is));
             String str = "";
             StringBuffer response = new StringBuffer();
-            while ((str = br.readLine()) != null){
+            while ((str = br.readLine()) != null) {
                 result += str;
             }
             response.append(result);
-            System.out.println(result+"结果码");
+            System.out.println(result + "结果码");
             //关闭流
             is.close();
             //断开连接，disconnect是在底层tcp socket链接空闲时才切断，如果正在被其他线程使用就不切断。
             conn.disconnect();
-            jsonObject=JSONObject.parseObject(response.toString());
+            jsonObject = JSONObject.parseObject(response.toString());
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-                if (out != null){
+                if (out != null) {
                     out.close();
                 }
-                if (br != null){
+                if (br != null) {
                     br.close();
                 }
             } catch (IOException e) {
@@ -97,9 +97,6 @@ public class HttpUrlConnection {
         obj.put("sourceTag","arvato");
         obj.put("signature",md5);
         doPostOrGet(url,obj.toString());*/
-
-
-
 
 
     }

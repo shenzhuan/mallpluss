@@ -48,7 +48,6 @@ public class EsCoreSmsTemplate extends Model<EsCoreSmsTemplate> {
     private Long sendCondition;
     /**
      * 发送对象 1买家 2用户（冗余）
-
      */
     @TableField("send_object")
     private Long sendObject;
@@ -102,7 +101,7 @@ public class EsCoreSmsTemplate extends Model<EsCoreSmsTemplate> {
     private String smsTemplateId;
 
     /**
-     *模板类别（模板类型）
+     * 模板类别（模板类型）
      */
     @TableField("template_type")
     private Long templateType;

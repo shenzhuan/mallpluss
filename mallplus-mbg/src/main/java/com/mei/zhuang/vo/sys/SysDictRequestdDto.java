@@ -10,20 +10,26 @@ import lombok.Data;
 @Data
 public class SysDictRequestdDto {
 
-    /**大类*/
+    /**
+     * 大类
+     */
     private String tableName;
-    /**小类*/
+    /**
+     * 小类
+     */
     private String field;
-    /**值*/
+    /**
+     * 值
+     */
     private String value;
 
-    public SysDictRequestdDto(String tableName,String field){
-        this.tableName  = tableName;
+    public SysDictRequestdDto(String tableName, String field) {
+        this.tableName = tableName;
         this.field = field;
     }
 
-    public SysDictRequestdDto(String tableName,String field,String value){
-        this.tableName  = tableName;
+    public SysDictRequestdDto(String tableName, String field, String value) {
+        this.tableName = tableName;
         this.field = field;
         this.value = value;
     }

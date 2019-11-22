@@ -67,8 +67,8 @@ public class FullGiftController {
             List<EsShopFullGiftRule> list2 = JSONObject.parseArray(entity.getSelectrule(), EsShopFullGiftRule.class);
             List<EsShopFullGiftGoodsMap> list3 = JSONObject.parseArray(entity.getSelectfullgift(), EsShopFullGiftGoodsMap.class);
             List<EsShopFullGift> list4 = JSONObject.parseArray(entity.getSelectfullList(), EsShopFullGift.class);
-            List list1=new ArrayList();
-            if(list4!=null) {
+            List list1 = new ArrayList();
+            if (list4 != null) {
                 for (EsShopFullGift gif : list4) {
                     for (EsShopFullGiftRule rule : gif.getRuleList()) {
                         list1.add(rule.getFullLevel());
@@ -76,8 +76,8 @@ public class FullGiftController {
                 }
             }
             System.out.println(list1);
-            Set set=new HashSet(list1);
-            if(list1.size()!=set.size()){
+            Set set = new HashSet(list1);
+            if (list1.size() != set.size()) {
                 return new CommonResult().failed("排序出现重复值");
             }
             entity.setGoodsSepcVoList(list);
@@ -104,16 +104,16 @@ public class FullGiftController {
             List<EsShopFullGiftRule> list2 = JSONObject.parseArray(entity.getSelectrule(), EsShopFullGiftRule.class);
             List<EsShopFullGiftGoodsMap> list3 = JSONObject.parseArray(entity.getSelectfullgift(), EsShopFullGiftGoodsMap.class);
             List<EsShopFullGift> list4 = JSONObject.parseArray(entity.getSelectfullList(), EsShopFullGift.class);
-            List list1=new ArrayList();
-            if(list4!=null) {
+            List list1 = new ArrayList();
+            if (list4 != null) {
                 for (EsShopFullGift gif : list4) {
                     for (EsShopFullGiftRule rule : gif.getRuleList()) {
                         list1.add(rule.getFullLevel());
                     }
                 }
             }
-            Set set=new HashSet(list1);
-            if(list1.size()!=set.size()){
+            Set set = new HashSet(list1);
+            if (list1.size() != set.size()) {
                 return new CommonResult().failed("排序出现重复值");
             }
             entity.setGoodsSepcVoList(list);

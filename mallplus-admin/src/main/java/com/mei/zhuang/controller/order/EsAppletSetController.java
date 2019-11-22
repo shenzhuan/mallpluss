@@ -1,10 +1,10 @@
 package com.mei.zhuang.controller.order;
 
-import com.mei.zhuang.service.order.EsAppletSetService;
-import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.order.EsAppletSet;
+import com.mei.zhuang.service.order.EsAppletSetService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class EsAppletSetController {
             if (ValidatorUtils.empty(entity.getAppSecret())) {
                 return new CommonResult().failed("小程序密钥不得为空");
             }
-             esAppletSetService.save(entity);
+            esAppletSetService.save(entity);
             return new CommonResult().success("success", 1);
         } catch (Exception e) {
             e.printStackTrace();

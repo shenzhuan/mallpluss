@@ -51,6 +51,7 @@ public class MenuBiz {
 
     /**
      * 新增菜单
+     *
      * @param menu 菜单实体对象
      * @return 新增结果
      */
@@ -61,6 +62,7 @@ public class MenuBiz {
 
     /**
      * 根据ID获取菜单信息
+     *
      * @param id 菜单ID
      * @return 菜单信息
      */
@@ -74,6 +76,7 @@ public class MenuBiz {
 
     /**
      * 更新菜单信息
+     *
      * @param menu 菜单实体对象
      * @return 更新菜单操作结果
      */
@@ -85,10 +88,11 @@ public class MenuBiz {
     /**
      * 新增、修改时，处理菜单信息
      * 1.处理排序字段
-     *   orderNum计算逻辑，如果新增菜单的orderNum不为同级别pid下的最大orderNum+1，则新增菜的orderNum设置为最大orderNum+1
+     * orderNum计算逻辑，如果新增菜单的orderNum不为同级别pid下的最大orderNum+1，则新增菜的orderNum设置为最大orderNum+1
+     *
      * @param menu 菜单信息
      */
-    private void dealMenuInfo(CrmSysMenu menu){
+    private void dealMenuInfo(CrmSysMenu menu) {
         // orderNum处理
         Integer orderNum = menu.getOrderNum();
         Integer pid = menu.getPId() == null ? 0 : menu.getPId();
@@ -107,12 +111,13 @@ public class MenuBiz {
             menu.setLevel(parentLevel + 1);
         }
 
-        Assert.isTrue(menu.getLevel()<=4,"菜单最多只能有4个层级");
+        Assert.isTrue(menu.getLevel() <= 4, "菜单最多只能有4个层级");
     }
 
     /**
      * 根据ID删除菜单
      * 删除下级菜单，删除菜单角色关联关系
+     *
      * @param id 菜单id
      * @return 删除菜单操作结果
      */
@@ -148,6 +153,7 @@ public class MenuBiz {
 
     /**
      * 获取角色已分配的菜单ID
+     *
      * @param roleId 角色ID
      * @return 角色拥有菜单ID集合
      */
@@ -157,31 +163,35 @@ public class MenuBiz {
 
     /**
      * 获取选中菜单树
+     *
      * @param menuIds 菜单ID集合
      * @return 菜单树集合
      */
-    public List<ZTreeNode> menuTreeListByMenuIds(List<Integer> menuIds){
+    public List<ZTreeNode> menuTreeListByMenuIds(List<Integer> menuIds) {
         return crmSysMenuMapper.menuTreeListByMenuIds(menuIds);
     }
 
     /**
      * 获取菜单树
+     *
      * @return 菜单树集合
      */
-    public List<ZTreeNode> menuTreeList(){
+    public List<ZTreeNode> menuTreeList() {
         return crmSysMenuMapper.menuTreeList();
     }
 
     /**
      * 获取菜单类型
+     *
      * @return 菜单类型集合
      */
-    public List<Map<String, String>> getMenuType(){
+    public List<Map<String, String>> getMenuType() {
         return sysDictMapper.getDictList(AdminCommonConstant.DICT_TABLE_CRM_SYS_MENU, AdminCommonConstant.DICT_FIELD_MENU_TYPE);
     }
 
     /**
      * 获取左侧菜单
+     *
      * @return 获取结果
      */
     /*public JSONObject leftMenu(CrmSysUser currentUser){
@@ -218,19 +228,19 @@ public class MenuBiz {
         }
         return json;
     }*/
-   //静态模块显示
-    public JSONObject leftMenu(CrmSysUser currentUser){
+    //静态模块显示
+    public JSONObject leftMenu(CrmSysUser currentUser) {
         JSONObject json = new JSONObject();
         try {
             //String encodeName = Encryption.getEncryption(currentUser.getUsername());
-        List<Integer> roleIdList=  roleMapper.getRoleIdsByUserId(currentUser.getId());
+            List<Integer> roleIdList = roleMapper.getRoleIdsByUserId(currentUser.getId());
             System.out.println(currentUser.getId());
         /*//获取菜单列表
         List<CrmSysMenu> menuList = crmSysMenuMapper.leftMenu(roleIdList);
         System.out.println(menuList+"222");
         Integer integer = roleMenuMapper.selectCountByRoleIds(roleIdList);
         System.out.println(integer);*/
-        List<CrmSysRoleMenu> menuList2 = roleMenuMapper.crmSysRoleMenu(roleIdList);
+            List<CrmSysRoleMenu> menuList2 = roleMenuMapper.crmSysRoleMenu(roleIdList);
 
             json.put("code", CommonConstant.CODE_SUCCESS);
             json.put("msg", "加载菜单成功");
@@ -245,8 +255,9 @@ public class MenuBiz {
 
     /**
      * 封装左侧菜单
+     *
      * @param parent 上级菜单集合
-     * @param sub 下级菜单集合
+     * @param sub    下级菜单集合
      */
     private void WrapperMenuOther(List<CrmSysMenu> parent, List<CrmSysMenu> sub) {
 
@@ -269,23 +280,25 @@ public class MenuBiz {
 
     /**
      * 获取菜单下没有权限的按钮
+     *
      * @param userId 用户ID
      * @param menuId 菜单ID
      * @return 返回没有权限按钮集合
      */
-    public List<CrmSysMenu> getPermissionButtons(Integer userId, Integer menuId){
+    public List<CrmSysMenu> getPermissionButtons(Integer userId, Integer menuId) {
         List<Integer> roleIdList = roleMapper.getRoleIdsByUserId(userId);
         return crmSysMenuMapper.getPermissionButtons(roleIdList, menuId);
     }
 
     /**
      * 获取权限分配菜单
+     *
      * @return 该角色拥有权限的菜单集合
      */
-    public JSONObject getAuthDistributionMenu(Integer roleId){
+    public JSONObject getAuthDistributionMenu(Integer roleId) {
         List<RoleAuthMenu> resultList = new ArrayList<>();
         // 获取根节点----》一级菜单
-        List<AuthMenuVo> rootMenus = crmSysMenuMapper.getMenuInfo(roleId,0);
+        List<AuthMenuVo> rootMenus = crmSysMenuMapper.getMenuInfo(roleId, 0);
         if (rootMenus != null && !rootMenus.isEmpty()) {
             for (AuthMenuVo rootMenu : rootMenus) {
                 //-----》二级菜单
@@ -298,19 +311,19 @@ public class MenuBiz {
                             //有下级菜单，下级菜单（三级菜单）
                             Integer subMenuId = subMenu.getMenuId();
                             List<AuthMenuVo> funcMenus = crmSysMenuMapper.getMenuInfo(roleId, subMenuId);
-                            if(funcMenus != null && !funcMenus.isEmpty()){
+                            if (funcMenus != null && !funcMenus.isEmpty()) {
                                 //判断下级菜单是否还有下级菜单
-                                for(AuthMenuVo last : funcMenus){
+                                for (AuthMenuVo last : funcMenus) {
                                     Integer lastMenuType = last.getMenuType();
-                                    if(1 == lastMenuType){
+                                    if (1 == lastMenuType) {
                                         Integer tempSubMenuId = last.getMenuId();
                                         List<AuthMenuVo> tempFuncMenus = crmSysMenuMapper.getMenuInfo(roleId, tempSubMenuId);
-                                        wrapperDataAuthMenu(resultList, rootMenu, subMenu, funcMenus,tempFuncMenus, roleId);
-                                    }else if(2 == lastMenuType){
+                                        wrapperDataAuthMenu(resultList, rootMenu, subMenu, funcMenus, tempFuncMenus, roleId);
+                                    } else if (2 == lastMenuType) {
                                         //无下级菜单
                                         List<AuthMenuVo> tempFuncMenus = new ArrayList<>();
                                         tempFuncMenus.add(last);
-                                        wrapperDataAuthMenu(resultList, rootMenu, subMenu, tempFuncMenus,null, roleId);
+                                        wrapperDataAuthMenu(resultList, rootMenu, subMenu, tempFuncMenus, null, roleId);
                                     }
                                 }
                             }
@@ -318,7 +331,7 @@ public class MenuBiz {
                             //无下级菜单
                             List<AuthMenuVo> funcMenus = new ArrayList<>();
                             funcMenus.add(subMenu);
-                            wrapperDataAuthMenu(resultList, rootMenu, null, funcMenus,null, roleId);
+                            wrapperDataAuthMenu(resultList, rootMenu, null, funcMenus, null, roleId);
                         }
                     }
                 }
@@ -331,6 +344,7 @@ public class MenuBiz {
 
     /**
      * 获取上级菜单级别
+     *
      * @param pid 上级菜单id
      * @return 上级菜单级别
      */
@@ -341,7 +355,7 @@ public class MenuBiz {
         return json;
     }
 
-    private void wrapperDataAuthMenu(List<RoleAuthMenu> resultList, AuthMenuVo rootMenu, AuthMenuVo subMenu, List<AuthMenuVo> funcMenus,List<AuthMenuVo> subFuncMenus,
+    private void wrapperDataAuthMenu(List<RoleAuthMenu> resultList, AuthMenuVo rootMenu, AuthMenuVo subMenu, List<AuthMenuVo> funcMenus, List<AuthMenuVo> subFuncMenus,
                                      Integer roleId) {
         if (funcMenus == null) {
             RoleAuthMenu roleAuthMenu = new RoleAuthMenu();
@@ -371,14 +385,14 @@ public class MenuBiz {
                 roleAuthMenu.setButtonList(buttonList);
                 List<DataAuthNode> dataAuthList = this.getDataAuth(roleId, funcMenu.getMenuId());
                 roleAuthMenu.setDataAuthList(dataAuthList);
-                if(null != subFuncMenus && subFuncMenus.size() > 0){
+                if (null != subFuncMenus && subFuncMenus.size() > 0) {
                     RoleAuthMenu roleAuthMenuNew = null;
-                    for (AuthMenuVo temp : subFuncMenus){
-                        if(funcMenu.getMenuId().intValue() == temp.getMenuPid().intValue()){
+                    for (AuthMenuVo temp : subFuncMenus) {
+                        if (funcMenu.getMenuId().intValue() == temp.getMenuPid().intValue()) {
                             roleAuthMenuNew = new RoleAuthMenu();
                             try {
-                                BeanUtils.copyProperties(roleAuthMenuNew,roleAuthMenu);
-                            }catch (Exception e){
+                                BeanUtils.copyProperties(roleAuthMenuNew, roleAuthMenu);
+                            } catch (Exception e) {
                             }
                             roleAuthMenuNew.setDataAuthList(this.getDataAuth(roleId, temp.getMenuId()));
                             roleAuthMenuNew.setSubSubModuleId(temp.getMenuId());
@@ -388,7 +402,7 @@ public class MenuBiz {
                         }
 
                     }
-                }else{
+                } else {
                     resultList.add(roleAuthMenu);
                 }
             }
@@ -402,27 +416,26 @@ public class MenuBiz {
     private List<DataAuthNode> getDataAuth(Integer roleId, Integer menuId) {
         List<DataAuthNode> dataAuthList = crmSysMenuMapper.getAllDataAuth(roleId, menuId);
         boolean flag = false;
-        for(DataAuthNode dataAuthNode : dataAuthList) {
-            if(dataAuthNode.isCheck()){
+        for (DataAuthNode dataAuthNode : dataAuthList) {
+            if (dataAuthNode.isCheck()) {
                 flag = true;
             }
         }
-        if(!flag){
+        if (!flag) {
             dataAuthList.get(0).setCheck(true);
         }
         return dataAuthList;
     }
 
 
-
-    public Boolean checkRepeatName(String menuName,Integer id,Integer pid){
-        CrmSysMenu menu=new CrmSysMenu();
+    public Boolean checkRepeatName(String menuName, Integer id, Integer pid) {
+        CrmSysMenu menu = new CrmSysMenu();
         menu.setName(menuName);
         menu.setPId(pid);
-        if(id==null) {
-           return  crmSysMenuMapper.selectCount(new QueryWrapper<>(menu))>0?true:false;
+        if (id == null) {
+            return crmSysMenuMapper.selectCount(new QueryWrapper<>(menu)) > 0 ? true : false;
         }
-        return crmSysMenuMapper.selectCount(new QueryWrapper<>(menu).notIn("id",id))>0?true:false;
+        return crmSysMenuMapper.selectCount(new QueryWrapper<>(menu).notIn("id", id)) > 0 ? true : false;
     }
 
 }

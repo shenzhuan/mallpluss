@@ -51,6 +51,11 @@ public class ApiUserController extends BaseController {
     @Resource
     private ApiInterfaceBiz apiInterfaceBiz;
 
+    public static void main(String[] args) {
+        String password = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode("111111");
+        System.out.println(password);
+    }
+
     @SysLog(MODULE = "接口调用用户管理", REMARK = "获取用户状态、用户类型列表")
     @ApiOperation(value = "获取用户状态、用户类型列表", notes = "data.status:用户状态列表")
     @GetMapping("/init")
@@ -224,10 +229,5 @@ public class ApiUserController extends BaseController {
             return true;
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-        String password = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode("111111");
-        System.out.println(password);
     }
 }

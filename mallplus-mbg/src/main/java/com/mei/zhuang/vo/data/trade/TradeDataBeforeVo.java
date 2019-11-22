@@ -25,7 +25,7 @@ public class TradeDataBeforeVo implements Serializable {
     private double refundPriceBeforeOnePerc;//退款订单金额前一日比例
 
 
-    public TradeDataBeforeVo(){
+    public TradeDataBeforeVo() {
 
     }
 
@@ -37,7 +37,6 @@ public class TradeDataBeforeVo implements Serializable {
         this.unitPriceByOneBeforeOnePerc = unitPriceByOneBeforeOnePerc;
         this.refundPriceBeforeOnePerc = refundPriceBeforeOnePerc;
     }
-
 
 
 }

@@ -45,24 +45,20 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class WechatApiService {
 
+    public final static String access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
     private static final String WECHAT_API = "https://api.weixin.qq.com/cgi-bin";
     private static final String WECHAT_API_TOKEN = WECHAT_API + "/token";
     private static final String WECHAT_API_TICKET = WECHAT_API + "/ticket/getticket?type=jsapi&access_token=";
-    public final static String access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
-
+    private final HttpClient httpclient;
     @Resource
     private EsAppletTemplatesMapper templatesMapper;
-
     @Resource
     private MembersFegin membersFegin;
 
-    @Resource
-    private RedisRepository redisRepository;
-
     /*@Resource
     private DistributedLock lock;*/
-
-    private final HttpClient httpclient;
+    @Resource
+    private RedisRepository redisRepository;
 
     public WechatApiService() {
         RequestConfig config = RequestConfig.custom()
@@ -72,50 +68,6 @@ public class WechatApiService {
                 .build();
         httpclient = HttpClients.custom().setDefaultRequestConfig(config).build();
     }
-
-
-    /**
-     * 获取  access_token
-     * https://mp.weixin.qq.com/wiki?action=doc&id=mp1421140183
-     *
-     * @return access_token
-     * @throws Exception
-     */
-    public String getAccessToken(String appid, String appSecret) throws Exception {
-
-        String key = "access_token:" + appid;
-        if (redisRepository.willExpire(key) > 30) {
-            return redisRepository.get(key).toString();
-
-        }
-
-        //https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
-        String lockKey = "lock_" + key;
-
-       /* boolean acquired = lock.lock(lockKey);
-        if (!acquired) {
-            throw new Exception("acquired lock: " + lockKey + " timeout");
-        }*/
-        try {
-            if (redisRepository.willExpire(key) > 30) {
-                return redisRepository.get(key).toString();
-            }
-
-            HttpGet get = new HttpGet(WECHAT_API_TOKEN + "?grant_type=client_credential&appid=" + appid + "&secret=" + appSecret);
-            HttpResponse response = httpclient.execute(get);
-            String text = EntityUtils.toString(response.getEntity());
-            Map<String, Object> resultMap = JsonUtils.readJsonToMap(text);
-            String accessToken = (String) resultMap.get("access_token");
-            int expiresIn = (int) resultMap.get("expires_in");
-
-            //redisRepository.set(key, accessToken);
-            redisRepository.setExpire(key, accessToken, expiresIn);
-            return accessToken;
-        } finally {
-            //   lock.releaseLock(lockKey);
-        }
-    }
-
 
     /**
      * 发起https请求并获取结果
@@ -177,106 +129,6 @@ public class WechatApiService {
         }
         return jsonObject;
     }
-
-
-    /**
-     * 获取 jsapi_ticket
-     * https://mp.weixin.qq.com/wiki?action=doc&id=mp1421141115
-     *
-     * @param appid
-     * @param appSecret
-     * @return ticket
-     * @throws Exception
-     */
-    public String getJsTicket(String appid, String appSecret) throws Exception {
-
-        String key = "jsapi_ticket:" + appid;
-
-        if (redisRepository.willExpire(key) > 30) {
-            return redisRepository.get(key).toString();
-        }
-
-        String lockKey = "lock_" + key;
-
-       /* boolean acquired = lock.lock(lockKey);
-        if (!acquired) {
-            throw new Exception("acquired lock: " + lockKey + " timeout");
-        }*/
-
-        try {
-            if (redisRepository.willExpire(key) > 30) {
-                return redisRepository.get(key).toString();
-            }
-
-            HttpGet get = new HttpGet(WECHAT_API_TICKET + getAccessToken(appid, appSecret));
-            HttpResponse response = httpclient.execute(get);
-            String text = EntityUtils.toString(response.getEntity());
-            Map<String, Object> resultMap = JsonUtils.readJsonToMap(text);
-            String ticket = (String) resultMap.get("ticket");
-            int expiresIn = (int) resultMap.get("expires_in");
-
-            redisRepository.setExpire(key, ticket, expiresIn);
-
-            return ticket;
-        } finally {
-            //   lock.releaseLock(lockKey);
-
-        }
-    }
-
-    public JSONObject synTemplates(Long shopId) throws Exception {
-          EsMiniprogram miniprogram = membersFegin.getByShopId(shopId);
-          String code = getAccessToken(miniprogram.getAppid(), miniprogram.getAppSecret());
-       // String code = getAccessToken("wxf5b847b162d8fbf8", "ac1fbc7256c08f69d2a42e02b27c478c");
-        String url = "https://api.weixin.qq.com/cgi-bin/wxopen/template/list?access_token=" + code;
-        JSONObject json = new JSONObject();
-        json.put("access_token", code);
-        json.put("offset", 0);
-        json.put("count", 20);
-        JSONObject resultJson = WX_HttpsUtil.httpsRequest(url, "POST", json.toString());
-        if ("ok".equals(resultJson.getString("errmsg"))) {
-            List<EsAppletTemplates> listWeiXin = resultJson.getJSONArray("list").toJavaList(EsAppletTemplates.class);
-            List<EsAppletTemplates> templatesList = templatesMapper.selectList(new QueryWrapper<>());
-            List<EsAppletTemplates> addList = new ArrayList<>();
-            List<EsAppletTemplates> delList = new ArrayList<>();
-            if (templatesList != null && templatesList.size() > 0) {
-                if (listWeiXin != null && listWeiXin.size() > 0) {
-                    addList = listWeiXin.stream()
-                            .filter(item -> !templatesList.stream()
-                                    .map(e -> e.getTemplateId())
-                                    .collect(toList())
-                                    .contains(item.getTemplateId()))
-                            .collect(toList());
-                    delList = templatesList.stream()
-                            .filter(item -> !listWeiXin.stream()
-                                    .map(e -> e.getTemplateId())
-                                    .collect(toList())
-                                    .contains(item.getTemplateId()))
-                            .collect(toList());
-                } else {
-                    delList = templatesList;
-                }
-            } else {
-                addList = listWeiXin;
-            }
-            for (EsAppletTemplates add : addList) {
-
-                add.setStatus(1);
-                add.setCreateTime(new Date());
-                templatesMapper.insert(add);
-            }
-            for (EsAppletTemplates del : delList) {
-                del.setStatus(2);
-                templatesMapper.updateById(del);
-            }
-
-
-        } else {
-            System.out.println(resultJson.getString("errmsg"));
-        }
-        return resultJson;
-    }
-
 
     public static void main(String[] args) {
 
@@ -340,6 +192,146 @@ public class WechatApiService {
         reduce2.parallelStream().forEach(System.out::println);
 
 
+    }
+
+    /**
+     * 获取  access_token
+     * https://mp.weixin.qq.com/wiki?action=doc&id=mp1421140183
+     *
+     * @return access_token
+     * @throws Exception
+     */
+    public String getAccessToken(String appid, String appSecret) throws Exception {
+
+        String key = "access_token:" + appid;
+        if (redisRepository.willExpire(key) > 30) {
+            return redisRepository.get(key).toString();
+
+        }
+
+        //https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+        String lockKey = "lock_" + key;
+
+       /* boolean acquired = lock.lock(lockKey);
+        if (!acquired) {
+            throw new Exception("acquired lock: " + lockKey + " timeout");
+        }*/
+        try {
+            if (redisRepository.willExpire(key) > 30) {
+                return redisRepository.get(key).toString();
+            }
+
+            HttpGet get = new HttpGet(WECHAT_API_TOKEN + "?grant_type=client_credential&appid=" + appid + "&secret=" + appSecret);
+            HttpResponse response = httpclient.execute(get);
+            String text = EntityUtils.toString(response.getEntity());
+            Map<String, Object> resultMap = JsonUtils.readJsonToMap(text);
+            String accessToken = (String) resultMap.get("access_token");
+            int expiresIn = (int) resultMap.get("expires_in");
+
+            //redisRepository.set(key, accessToken);
+            redisRepository.setExpire(key, accessToken, expiresIn);
+            return accessToken;
+        } finally {
+            //   lock.releaseLock(lockKey);
+        }
+    }
+
+    /**
+     * 获取 jsapi_ticket
+     * https://mp.weixin.qq.com/wiki?action=doc&id=mp1421141115
+     *
+     * @param appid
+     * @param appSecret
+     * @return ticket
+     * @throws Exception
+     */
+    public String getJsTicket(String appid, String appSecret) throws Exception {
+
+        String key = "jsapi_ticket:" + appid;
+
+        if (redisRepository.willExpire(key) > 30) {
+            return redisRepository.get(key).toString();
+        }
+
+        String lockKey = "lock_" + key;
+
+       /* boolean acquired = lock.lock(lockKey);
+        if (!acquired) {
+            throw new Exception("acquired lock: " + lockKey + " timeout");
+        }*/
+
+        try {
+            if (redisRepository.willExpire(key) > 30) {
+                return redisRepository.get(key).toString();
+            }
+
+            HttpGet get = new HttpGet(WECHAT_API_TICKET + getAccessToken(appid, appSecret));
+            HttpResponse response = httpclient.execute(get);
+            String text = EntityUtils.toString(response.getEntity());
+            Map<String, Object> resultMap = JsonUtils.readJsonToMap(text);
+            String ticket = (String) resultMap.get("ticket");
+            int expiresIn = (int) resultMap.get("expires_in");
+
+            redisRepository.setExpire(key, ticket, expiresIn);
+
+            return ticket;
+        } finally {
+            //   lock.releaseLock(lockKey);
+
+        }
+    }
+
+    public JSONObject synTemplates(Long shopId) throws Exception {
+        EsMiniprogram miniprogram = membersFegin.getByShopId(shopId);
+        String code = getAccessToken(miniprogram.getAppid(), miniprogram.getAppSecret());
+        // String code = getAccessToken("wxf5b847b162d8fbf8", "ac1fbc7256c08f69d2a42e02b27c478c");
+        String url = "https://api.weixin.qq.com/cgi-bin/wxopen/template/list?access_token=" + code;
+        JSONObject json = new JSONObject();
+        json.put("access_token", code);
+        json.put("offset", 0);
+        json.put("count", 20);
+        JSONObject resultJson = WX_HttpsUtil.httpsRequest(url, "POST", json.toString());
+        if ("ok".equals(resultJson.getString("errmsg"))) {
+            List<EsAppletTemplates> listWeiXin = resultJson.getJSONArray("list").toJavaList(EsAppletTemplates.class);
+            List<EsAppletTemplates> templatesList = templatesMapper.selectList(new QueryWrapper<>());
+            List<EsAppletTemplates> addList = new ArrayList<>();
+            List<EsAppletTemplates> delList = new ArrayList<>();
+            if (templatesList != null && templatesList.size() > 0) {
+                if (listWeiXin != null && listWeiXin.size() > 0) {
+                    addList = listWeiXin.stream()
+                            .filter(item -> !templatesList.stream()
+                                    .map(e -> e.getTemplateId())
+                                    .collect(toList())
+                                    .contains(item.getTemplateId()))
+                            .collect(toList());
+                    delList = templatesList.stream()
+                            .filter(item -> !listWeiXin.stream()
+                                    .map(e -> e.getTemplateId())
+                                    .collect(toList())
+                                    .contains(item.getTemplateId()))
+                            .collect(toList());
+                } else {
+                    delList = templatesList;
+                }
+            } else {
+                addList = listWeiXin;
+            }
+            for (EsAppletTemplates add : addList) {
+
+                add.setStatus(1);
+                add.setCreateTime(new Date());
+                templatesMapper.insert(add);
+            }
+            for (EsAppletTemplates del : delList) {
+                del.setStatus(2);
+                templatesMapper.updateById(del);
+            }
+
+
+        } else {
+            System.out.println(resultJson.getString("errmsg"));
+        }
+        return resultJson;
     }
 
 }

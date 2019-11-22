@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -18,6 +18,7 @@ public interface SysLoginLogMapper extends BaseMapper<SysLoginLog> {
 
     /**
      * 获取指定时间内密码错误次数
+     *
      * @param loginName
      * @param specifyTime
      * @return

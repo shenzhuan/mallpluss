@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -21,6 +21,7 @@ public interface ICrmSysDeptService extends IService<CrmSysDept> {
 
     /**
      * 获取部门ids
+     *
      * @param menuId
      * @param crmSysUser
      */
@@ -29,12 +30,14 @@ public interface ICrmSysDeptService extends IService<CrmSysDept> {
 
     /**
      * 初始化用户部门数据
+     *
      * @param menuId
      */
     List<ZTreeNode> initDeptDatasByCurrentUser(Integer pid, Integer menuId, CrmSysUser crmSysUser);
 
     /**
      * 组织架构数据字典
+     *
      * @return
      */
     List<DeptDictData> dict();

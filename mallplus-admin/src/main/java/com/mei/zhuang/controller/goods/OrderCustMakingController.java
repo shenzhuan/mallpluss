@@ -1,9 +1,10 @@
 package com.mei.zhuang.controller.goods;
 
-import com.mei.zhuang.service.goods.*;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopCustomizedBasic;
 import com.mei.zhuang.entity.goods.EsShopCustomizedPacket;
+import com.mei.zhuang.service.goods.EsShopCustomizedBasicService;
+import com.mei.zhuang.service.goods.EsShopCustomizedPacketServer;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,15 +29,15 @@ import java.util.List;
 public class OrderCustMakingController {
 
 
-   /*
-    @Resource
-    private EsShopCustomizedLegendService esShopCustomizedLegendService;//定制服务样图service
-    @Resource
-    private EsShopCustomizedCardService esShopCustomizedCardService;//刻字服务：定制卡片service
-    @Resource
-    private EsShopCardMessageServer esShopCardMessageServer;//卡片寄语设置service
+    /*
+     @Resource
+     private EsShopCustomizedLegendService esShopCustomizedLegendService;//定制服务样图service
+     @Resource
+     private EsShopCustomizedCardService esShopCustomizedCardService;//刻字服务：定制卡片service
+     @Resource
+     private EsShopCardMessageServer esShopCardMessageServer;//卡片寄语设置service
 
-    */
+     */
     @Resource
     private EsShopCustomizedPacketServer esShopCustomizedPacketServer;//封套/包装列表service
     @Resource

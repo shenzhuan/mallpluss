@@ -1,7 +1,6 @@
 package com.mei.zhuang.dao.order;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.order.EsActivatySmallBeautyBox;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  */
 public interface EsActivatySmallBeautyBoxMapper extends BaseMapper<EsActivatySmallBeautyBox> {
 
-    List<EsActivatySmallBeautyBox> selList( EsActivatySmallBeautyBox entity);
+    List<EsActivatySmallBeautyBox> selList(EsActivatySmallBeautyBox entity);
 
     int count(EsActivatySmallBeautyBox entity);
 

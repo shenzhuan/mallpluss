@@ -146,7 +146,7 @@ public class EsShopPayment extends Model<EsShopPayment> {
     private String notifyUrl;
     /**
      * 支付方式
-      */
+     */
 
     @TableField("pay_type")
     private Integer payType;
@@ -156,17 +156,17 @@ public class EsShopPayment extends Model<EsShopPayment> {
      *//*
     @TableField(exist = false)
     private File certFile;
-    *//**
+    */
+
+    /**
      * cert文件秘钥
      *//*
     @TableField(exist = false)
     private File keyCertFile;*/
-
     @Override
     protected Serializable pkVal() {
         return this.id;
     }
-
 
 
 }

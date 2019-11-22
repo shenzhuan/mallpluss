@@ -52,7 +52,7 @@ public class EsMemberActivatyRecord extends Model<EsMemberActivatyRecord> {
      * 用户昵称
      */
     @TableField("nick_name")
-    private String  nickName;
+    private String nickName;
     /**
      * 用户标识符
      */
@@ -92,12 +92,13 @@ public class EsMemberActivatyRecord extends Model<EsMemberActivatyRecord> {
      * 每页显示条数
      */
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
     /**
      * 当前页码
      */
     @TableField(exist = false)
-    private Integer current=1;
+    private Integer current = 1;
+
     @Override
     protected Serializable pkVal() {
         return null;

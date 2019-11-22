@@ -53,7 +53,7 @@ public class EsShopShareMap extends Model<EsShopShareMap> {
     @TableField("goods_id")
     private long goodsId;
     private Integer id;
-   // 1.优惠 2 赠品
+    // 1.优惠 2 赠品
     private Integer type;
     @TableField(exist = false)
     private Long memberId;
@@ -63,7 +63,6 @@ public class EsShopShareMap extends Model<EsShopShareMap> {
     private Integer number;
     @TableField(exist = false)
     private Long shareMemberId;
-
 
 
     @Override

@@ -18,7 +18,7 @@ public class OrderParam {
     private String keyType; //1订单号  2收货人信息 3快递单号 4商品名称  5商品编码 6.核销员 7.核销店铺 8.自提门店 9.商户名称
     private String keyword;
     private Integer status;//订单状态
-    private Long userId ;
+    private Long userId;
     private Integer current = 1;
     private Integer size = 10;
     private Integer isAsc = 0;

@@ -27,76 +27,76 @@ public class CrmSysDept extends Model<CrmSysDept> {
      * 主键ID
      */
     @ApiModelProperty("主键ID")
-	private Integer id;
+    private Integer id;
     /**
      * 部门名称
      */
     @ApiModelProperty("部门名称")
-	private String name;
-	/**
-	 * 上级部门ID
-	 */
+    private String name;
+    /**
+     * 上级部门ID
+     */
     @ApiModelProperty("上级部门ID")
-	@TableField("p_id")
-	@JsonProperty("pId")
-	private Integer pId;
+    @TableField("p_id")
+    @JsonProperty("pId")
+    private Integer pId;
 
-	/**
-	 * 部门类型
-	 */
+    /**
+     * 部门类型
+     */
     @ApiModelProperty("部门类型")
-	@TableField("org_type")
-	private Integer orgType;
+    @TableField("org_type")
+    private Integer orgType;
 
-	/**
-	 * 渠道ID
-	 */
+    /**
+     * 渠道ID
+     */
     @ApiModelProperty("渠道ID")
-	@TableField("channel_id")
-	private Integer channelId;
+    @TableField("channel_id")
+    private Integer channelId;
 
-	/**
-	 * 部门顺序
-	 */
+    /**
+     * 部门顺序
+     */
     @ApiModelProperty("部门顺序")
-	private Integer num;
+    private Integer num;
 
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	private Integer createUserId;
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
-	@TableField(value = "update_user_id", fill = FieldFill.UPDATE)
-	private Integer updateUserId;
-	@TableField(value = "update_date", fill = FieldFill.UPDATE)
-	private String updateDate;
-	@TableField(value = "update_time", fill = FieldFill.UPDATE)
-	private String updateTime;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    private Integer createUserId;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
+    @TableField(value = "update_user_id", fill = FieldFill.UPDATE)
+    private Integer updateUserId;
+    @TableField(value = "update_date", fill = FieldFill.UPDATE)
+    private String updateDate;
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    private String updateTime;
     /**
      * 乐观锁用
      */
-	@Version
-	private Integer version;
+    @Version
+    private Integer version;
 
-	/**
-	 * 渠道ID
-	 */
+    /**
+     * 渠道ID
+     */
     @ApiModelProperty("渠道ID")
-	@TableField("dept_no")
-	private String deptNo;
+    @TableField("dept_no")
+    private String deptNo;
 
     @ApiModelProperty("商店")
-	@TableField(exist = false)
-	private CrmStore store;
+    @TableField(exist = false)
+    private CrmStore store;
 
     @TableField(exist = false)
     private CrmDeptCreditList crmDeptCreditList;
 
 
     @Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

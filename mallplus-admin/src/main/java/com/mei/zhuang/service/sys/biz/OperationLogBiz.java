@@ -26,8 +26,6 @@ public class OperationLogBiz {
     private CrmSysLogTypeMapper logTypeMapper;
 
 
-
-
     /**
      * 导出日志列表
      *
@@ -43,6 +41,7 @@ public class OperationLogBiz {
 
     /**
      * 获得操作类型集合
+     *
      * @return
      */
     public Object getLogTypeList() {
@@ -52,7 +51,7 @@ public class OperationLogBiz {
     public boolean insertModuleName(String[] strs, String belongModule) {
 
 //        List<CrmSysLogType> list = new ArrayList<>();
-        for(String item : strs){
+        for (String item : strs) {
             CrmSysLogType logType = new CrmSysLogType();
             logType.setOperationType(item.trim());
             logType.setDesc(item.trim());

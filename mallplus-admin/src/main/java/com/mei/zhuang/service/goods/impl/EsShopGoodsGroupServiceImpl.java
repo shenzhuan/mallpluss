@@ -48,10 +48,6 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
     private EsShopGoodsGroupMapper goodsGroupMapper;
 
 
-
-
-
-
     @ApiOperation("选择商品分类查询")
     @Override
     public List<Map<String, Object>> goodscatelist(EsShopGoods goods) {
@@ -62,7 +58,6 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
     public Integer selCateCount(String cateName) {
         return goodsGroupMapper.selCateCount(cateName);
     }
-
 
 
     @ApiOperation("保存商品分组")

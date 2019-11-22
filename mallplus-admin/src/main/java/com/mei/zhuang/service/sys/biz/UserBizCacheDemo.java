@@ -13,15 +13,14 @@ import java.util.List;
 @CacheConfig(cacheNames = "sysUser")
 public class UserBizCacheDemo {
 
+    private static final String KEY_ALL = "'sysUser-*'";
     @Autowired
     private CrmSysUserMapper userMapper;
     @Autowired
-    private HttpServletRequest  request;
-
-    private static final String KEY_ALL = "'sysUser-*'";
+    private HttpServletRequest request;
 
     @Cacheable(key = KEY_ALL)
-    public List<CrmSysUser> getAll()  {
+    public List<CrmSysUser> getAll() {
         try {
             return userMapper.selectAllUser();
         } catch (Exception ex) {
@@ -30,39 +29,39 @@ public class UserBizCacheDemo {
     }
 
     @Cacheable(key = "#p0")
-    public CrmSysUser getById(Integer userId)  {
+    public CrmSysUser getById(Integer userId) {
         try {
             return userMapper.selectById(userId);
         } catch (Exception ex) {
-            throw  ex;
+            throw ex;
         }
     }
 
 
     @CachePut(key = "#user.id")
     @Caching(evict = {@CacheEvict(key = KEY_ALL)})
-    public boolean create(CrmSysUser user)  {
+    public boolean create(CrmSysUser user) {
         try {
             return user.insert();
         } catch (Exception ex) {
-            throw  ex;
+            throw ex;
         }
     }
 
     @Caching(evict = {@CacheEvict(key = KEY_ALL)})
-    @CacheEvict(key="#user.id")
-    public boolean update(CrmSysUser user)  {
+    @CacheEvict(key = "#user.id")
+    public boolean update(CrmSysUser user) {
         return user.updateById();
     }
 
 
     @Caching(evict = {@CacheEvict(key = KEY_ALL)})
-    @CacheEvict(key="#user.id")
-    public Integer delete(Integer userId)  {
+    @CacheEvict(key = "#user.id")
+    public Integer delete(Integer userId) {
         try {
             return userMapper.deleteById(userId);
         } catch (Exception ex) {
-            throw  ex;
+            throw ex;
         }
     }
 

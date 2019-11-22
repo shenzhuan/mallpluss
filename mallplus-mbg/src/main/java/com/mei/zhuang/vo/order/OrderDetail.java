@@ -19,9 +19,9 @@ public class OrderDetail {
     private List<EsShopOrderGoods> orderGoodsList;
     private EsShopFriendGiftCard giftCard;
     private List<EsShopOrderGoods> gift1 = new ArrayList<>();
-    private  List<EsShopOrderGoods> gift2 = new ArrayList<>();
-    private  List<EsShopOrderGoods> gift3 = new ArrayList<>();
-    private  List<EsShopOrderGoods> gift4 = new ArrayList<>();
-    private  List<EsShopOrderGoods> gift5 = new ArrayList<>();
-    private  List<EsShopOrderGoods> gift6 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift2 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift3 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift4 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift5 = new ArrayList<>();
+    private List<EsShopOrderGoods> gift6 = new ArrayList<>();
 }

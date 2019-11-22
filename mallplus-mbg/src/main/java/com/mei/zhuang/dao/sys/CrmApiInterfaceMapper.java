@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * <p>
-  *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -20,6 +20,7 @@ import java.util.List;
 public interface CrmApiInterfaceMapper extends BaseMapper<CrmApiInterface> {
     /**
      * 根据uri查找用户接口id
+     *
      * @param uri
      * @return
      */
@@ -32,6 +33,7 @@ public interface CrmApiInterfaceMapper extends BaseMapper<CrmApiInterface> {
 
     /**
      * 获取所有接口类型
+     *
      * @return
      */
     List<ZTreeNode> getAllTypes();

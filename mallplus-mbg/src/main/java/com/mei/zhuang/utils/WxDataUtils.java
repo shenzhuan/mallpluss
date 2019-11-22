@@ -8,12 +8,4 @@ package com.mei.zhuang.utils;
 public class WxDataUtils {
 
 
-
-
-
-
-
-
-
-
 }

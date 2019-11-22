@@ -48,9 +48,8 @@ public class ICustGroupServiceImpl implements ICustGroupService {
     private ShopOrderService orderService;
 
 
-
     @Override
-    public Object getVisitedData(CustGroupIndexParam param) throws Exception{
+    public Object getVisitedData(CustGroupIndexParam param) throws Exception {
 
         CustVisitedDataVo dataVo = new CustVisitedDataVo();
 
@@ -74,7 +73,7 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         calBegin.setTime(format.parse(param.getStartTime()));
         Calendar calEnd = Calendar.getInstance();
         calEnd.setTime(format.parse(param.getEndTime()));
-        String startTime =format.format(calBegin.getTime());
+        String startTime = format.format(calBegin.getTime());
         String endTime = format.format(calEnd.getTime());
         long subDay = DateUtil.getDaySub(startTime, endTime, DateUtil.YYYY_MM_DD);
         subDay = Math.abs(subDay);//相差的天数
@@ -90,7 +89,6 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         String token = tokenObj.getString("access_token");
 
 
-
 //业务赋值
 
         JSONObject wxVisitedData = null;//赋值访问数 和 新增客户数
@@ -100,13 +98,13 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         }
         param.setStartTime(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD));
         param.setEndTime(DateUtil.format(param.getEndTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD));
-        if(subDay<=31 && DateCalendarUtils.isFristDayOfMonth(param.getStartTime()) && DateCalendarUtils.isLastDayOfMonth(param.getEndTime())){//自然月
-            wxVisitedData = this.getWxVisitedData(wxMonthVisitedUrl,token, wxNeedStartTime, wxNeedEndTime);
-        }else if(subDay == 6 && DateCalendarUtils.isMonday(startTime) && DateCalendarUtils.isSunday(endTime)){//自然周
-            wxVisitedData = this.getWxVisitedData(wxWeekVisitedUrl,token, wxNeedStartTime, wxNeedEndTime);
-        }else if(startTime !=null && startTime.equals(endTime)){//自然日
-            wxVisitedData = this.getWxVisitedData(wxDayVisitedUrl,token, wxNeedStartTime, wxNeedEndTime);
-        }else{
+        if (subDay <= 31 && DateCalendarUtils.isFristDayOfMonth(param.getStartTime()) && DateCalendarUtils.isLastDayOfMonth(param.getEndTime())) {//自然月
+            wxVisitedData = this.getWxVisitedData(wxMonthVisitedUrl, token, wxNeedStartTime, wxNeedEndTime);
+        } else if (subDay == 6 && DateCalendarUtils.isMonday(startTime) && DateCalendarUtils.isSunday(endTime)) {//自然周
+            wxVisitedData = this.getWxVisitedData(wxWeekVisitedUrl, token, wxNeedStartTime, wxNeedEndTime);
+        } else if (startTime != null && startTime.equals(endTime)) {//自然日
+            wxVisitedData = this.getWxVisitedData(wxDayVisitedUrl, token, wxNeedStartTime, wxNeedEndTime);
+        } else {
             return new CommonResult().failed("时间格式不对，只接收自然日" +
                     "（指：任意一天），" +
                     "自然周（每个星期的周一至周日的日期)，自然月数据（每月的月初至每月的月末）" +
@@ -121,7 +119,7 @@ public class ICustGroupServiceImpl implements ICustGroupService {
             newAddCustCount = Integer.parseInt(wxVisitedData.getString("visit_uv_new"));
         }
 
-        if(DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())){
+        if (DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())) {
             dataVo.setIsDisplayBeforeData(true);
 
             double uvCountScale = 0.0;//访客数占比
@@ -140,9 +138,9 @@ public class ICustGroupServiceImpl implements ICustGroupService {
                             DateUtil.parse(param.getEndTime(), DateUtil.YYYY_MM_DD),
                             -1),
                     DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
-            JSONObject wxVisitedBeforeData = this.getWxVisitedData(wxDayVisitedUrl,token, wxNeedStartBeforeTime, wxNeedEndBeforeTime);
+            JSONObject wxVisitedBeforeData = this.getWxVisitedData(wxDayVisitedUrl, token, wxNeedStartBeforeTime, wxNeedEndBeforeTime);
 
-            if(wxVisitedBeforeData != null){
+            if (wxVisitedBeforeData != null) {
                 int uvCountBefore = Integer.parseInt(wxVisitedData.getString("visit_uv"));
                 int newAddCustCountBefore = Integer.parseInt(wxVisitedData.getString("visit_uv_new"));
 
@@ -150,7 +148,7 @@ public class ICustGroupServiceImpl implements ICustGroupService {
                 uvCountScale = uvCountBefore != 0 ?
                         BigDecimal.valueOf(
                                 (uvCount - uvCountBefore) / uvCountBefore)
-                        .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
+                                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
 
                 //新增客户数前一日比例(今日新增客户数- 前一日新增客户数) / 前一日总新增客户数
                 newAddCustCountScale = newAddCustCountBefore != 0 ?
@@ -220,16 +218,16 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         JSONObject wxCustData = null;// 获取 性别 ， 年龄， 地域 数据
 
         //结束时间是 昨天 ，相差是几 就说明是最近 ××
-        if(subDay == 29 && DateCalendarUtils.isYestaday(endTime)){//最近三十天
+        if (subDay == 29 && DateCalendarUtils.isYestaday(endTime)) {//最近三十天
             //微信分布图数据
             wxCustData = this.getweanalysisappiduserportrait(token, wxNeedStartTime, wxNeedEndTime);
-        }else if(subDay == 6 && DateCalendarUtils.isYestaday(endTime)){//最近7天
+        } else if (subDay == 6 && DateCalendarUtils.isYestaday(endTime)) {//最近7天
             //微信分布图数据
             wxCustData = this.getweanalysisappiduserportrait(token, wxNeedStartTime, wxNeedEndTime);
-        }else if(subDay == 0 && DateCalendarUtils.isYestaday(endTime)){//最近1天
+        } else if (subDay == 0 && DateCalendarUtils.isYestaday(endTime)) {//最近1天
             //微信分布图数据
             wxCustData = this.getweanalysisappiduserportrait(token, wxNeedStartTime, wxNeedEndTime);
-        }else{
+        } else {
             return new CommonResult().paramFailed("时间格式不正确！ 只接受最近一天，最近7天，最近30天的格式");
         }
 
@@ -559,20 +557,20 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         newCust.setTradeSuccessCount(orderCustTotalVo.getNewClientCount());
         newCust.setCustCountToScale(orderCustTotalVo.getCount() != 0 ?
                 BigDecimal.valueOf((double) orderCustTotalVo.getNewClientCount() / (orderCustTotalVo.getCount()) * 100)
-                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
+                        .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
         newCust.setPayAmountToScale(orderCustTotalVo.getTotal() != 0 ?
                 BigDecimal.valueOf(orderCustTotalVo.getNewConsumeAmount() / (orderCustTotalVo.getTotal()) * 100)
-                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
+                        .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
         newCust.setCustType(2);
         newCust.setCustTypeEn("新客户");
 
         oldCust.setTradeSuccessCount(orderCustTotalVo.getOldClientCount());
         oldCust.setCustCountToScale(orderCustTotalVo.getCount() != 0 ?
                 BigDecimal.valueOf((double) orderCustTotalVo.getOldClientCount() / (orderCustTotalVo.getCount()) * 100)
-                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
+                        .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
         oldCust.setPayAmountToScale(orderCustTotalVo.getTotal() != 0 ?
-                BigDecimal.valueOf(orderCustTotalVo.getOldConsumeAmount() / orderCustTotalVo.getTotal() * 100 )
-                .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
+                BigDecimal.valueOf(orderCustTotalVo.getOldConsumeAmount() / orderCustTotalVo.getTotal() * 100)
+                        .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() : 0.0);
         oldCust.setCustType(3);
         oldCust.setCustTypeEn("老客户");
 
@@ -638,13 +636,14 @@ public class ICustGroupServiceImpl implements ICustGroupService {
 
     /**
      * 获得微信访问数据
-     * @param dateUrl 所对应的日期URL
+     *
+     * @param dateUrl         所对应的日期URL
      * @param accessToken
      * @param wxNeedStartTime
      * @param wxNeedEndTime
      * @return
      */
-    private JSONObject getWxVisitedData(String dateUrl,String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
+    private JSONObject getWxVisitedData(String dateUrl, String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
         JSONObject result = null;
         try {
             JSONObject jsonParamData = new JSONObject();
@@ -680,7 +679,7 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         jsonParamData.put("end_date", wxNeedEndTime);
         result = WX_HttpsUtil.httpsRequest(String.format(baseURL, accessToken), "POST", jsonParamData.toString());
         System.out.println(String.format(baseURL, accessToken));
-        if(result.getString("errmsg") != null || result.getString("errcode") != null){
+        if (result.getString("errmsg") != null || result.getString("errcode") != null) {
             System.out.println(result.getString("errmsg"));
             return null;
         }
@@ -760,7 +759,7 @@ public class ICustGroupServiceImpl implements ICustGroupService {
             JSONObject temp = provinces.getJSONObject(i);
             proCountToSale = totalCustCount != 0 ? (double) Integer.valueOf(temp.getString("value")) / (totalCustCount) * 100 : 0.00;
             proCountToSale = BigDecimal.valueOf(proCountToSale).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            data.add(new CustAreaAnalyzeInfoVo(temp.getString("name").replaceAll("省",""), Integer.valueOf(temp.getString("value")),
+            data.add(new CustAreaAnalyzeInfoVo(temp.getString("name").replaceAll("省", ""), Integer.valueOf(temp.getString("value")),
                     Integer.valueOf(temp.getString("id")), proCountToSale));
         }
 
@@ -773,11 +772,11 @@ public class ICustGroupServiceImpl implements ICustGroupService {
         });
         //将考前的设置top //
         int len = data.size();
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++) {
             data.get(i).setTop(i + 1);
         }
 
-        if(data.size() > 10){
+        if (data.size() > 10) {
             return data.subList(0, 10);
         }
 

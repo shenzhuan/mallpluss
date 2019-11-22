@@ -10,11 +10,28 @@ import java.util.List;
  * 平台账户状态
  */
 public enum SysPlatformUserStatus {
-    NORMAL("0","正常"),
-    LOCKED("1","锁定");
+    NORMAL("0", "正常"),
+    LOCKED("1", "锁定");
 
     private String status;
     private String statusText;
+
+    SysPlatformUserStatus(String status, String statusText) {
+        this.setStatus(status);
+        this.setStatusText(statusText);
+    }
+
+    public static List<DictData> toDictList() {
+        List<DictData> list = new ArrayList<>();
+        Arrays.stream(SysPlatformUserStatus.values()).forEach(status -> {
+            list.add(
+                    new DictData()
+                            .setValue(status.getStatus())
+                            .setText(status.getStatusText())
+            );
+        });
+        return list;
+    }
 
     public String getStatusText() {
         return statusText;
@@ -30,22 +47,5 @@ public enum SysPlatformUserStatus {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    SysPlatformUserStatus(String status, String statusText){
-        this.setStatus(status);
-        this.setStatusText(statusText);
-    }
-
-    public static List<DictData> toDictList(){
-        List<DictData> list  = new ArrayList<>();
-        Arrays.stream(SysPlatformUserStatus.values()).forEach(status -> {
-            list.add(
-                    new DictData()
-                            .setValue(status.getStatus())
-                            .setText(status.getStatusText())
-            );
-        });
-        return list;
     }
 }

@@ -1,20 +1,12 @@
 package com.mei.zhuang.exception;
 
 public class BaseException extends RuntimeException {
-	private int code = 200;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
+    private int code = 200;
 
     public BaseException() {
     }
 
-    public BaseException(String message,int code) {
+    public BaseException(String message, int code) {
         super(message);
         this.code = code;
     }
@@ -33,5 +25,13 @@ public class BaseException extends RuntimeException {
 
     public BaseException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

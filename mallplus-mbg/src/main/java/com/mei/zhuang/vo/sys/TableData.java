@@ -22,11 +22,12 @@ public class TableData<T> {
     public TableData() {
     }
 
-    public TableData total(int total){
+    public TableData total(int total) {
         this.setTotal(total);
         return this;
     }
-    public TableData rows(List<T> rows){
+
+    public TableData rows(List<T> rows) {
         this.setRows(rows);
         return this;
     }

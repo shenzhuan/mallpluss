@@ -184,6 +184,7 @@ public class RedisRepository {
         });
         return keysList;
     }
+
     public Long willExpire(final String key) {
         Long execute = redisTemplate.execute((RedisCallback<Long>) connection -> {
             return connection.ttl(key.getBytes(DEFAULT_CHARSET));

@@ -70,6 +70,7 @@ public class AppletGoodsController {
         }
         return new CommonResult().success(goodsService.goodsDetail(id));
     }
+
     @SysLog(MODULE = "小程序商品管理", REMARK = "根据条件查询所有商品列表(模糊查询)")
     @ApiOperation("根据条件查询所有商品列表(模糊查询)")
     @PostMapping(value = "/goodsListByCate")
@@ -90,21 +91,22 @@ public class AppletGoodsController {
         }
 
     }
+
     @SysLog(MODULE = "小程序商品管理", REMARK = "首页搜索")
     @ApiOperation("首页搜索")
     @PostMapping(value = "/searchGoods")
-    public Object searchGoods(@RequestParam("keywords") String  keywords,
+    public Object searchGoods(@RequestParam("keywords") String keywords,
                               @RequestParam(value = "current", defaultValue = "1") Integer current,
                               @RequestParam(value = "size", defaultValue = "10") Integer size) {
         try {
-           if (ValidatorUtils.empty(keywords)){
-               return new CommonResult().failed("清输入查询条件");
-           }
+            if (ValidatorUtils.empty(keywords)) {
+                return new CommonResult().failed("清输入查询条件");
+            }
             PageHelper.startPage(current, size);
             Map<String, Object> map = goodsService.searchGoods(keywords);
             map.put("current", current);
             map.put("size", size);
-         //   map.put("total", (int) PageHelper.);
+            //   map.put("total", (int) PageHelper.);
             return new CommonResult().success(map);
 
         } catch (Exception e) {
@@ -113,6 +115,7 @@ public class AppletGoodsController {
         }
 
     }
+
     @Deprecated
     @ApiOperation("商品详情商品同组的的商品")
     @PostMapping(value = "/goodsListByGoodsId")

@@ -101,7 +101,7 @@ public class EsShopShare extends Model<EsShopShare> {
     @TableField("share_title")
     private String shareTitle;
     /**
-     *发起者好友助力满次
+     * 发起者好友助力满次
      */
     @TableField("help_number")
     private Integer helpNumber;
@@ -157,7 +157,7 @@ public class EsShopShare extends Model<EsShopShare> {
     private Integer winningType;
     //顶部广告图
     @TableField("top_picture")
-    private String  topPicture;
+    private String topPicture;
     //轮播图
     @TableField("shuffling_picture")
     private String shufflingPicture;
@@ -173,10 +173,10 @@ public class EsShopShare extends Model<EsShopShare> {
     //文字颜色
     @TableField("text_color")
     private String textColor;
-   // 助力者好友满次数
+    // 助力者好友满次数
     @TableField("power_number")
     private Integer powerNumber;
-   // 助力获赠件数
+    // 助力获赠件数
     @TableField("power_given")
     private Integer powerGiven;
     //最多获取次奖品
@@ -186,7 +186,7 @@ public class EsShopShare extends Model<EsShopShare> {
     @TableField("total_power")
     private Integer totalPower;
     //发起者
-    @TableField(exist=false)
+    @TableField(exist = false)
     private List<EsShopShareMap> sharemapList;
     //助力者
     @TableField(exist = false)

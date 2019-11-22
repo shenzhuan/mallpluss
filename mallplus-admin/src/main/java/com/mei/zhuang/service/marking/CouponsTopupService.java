@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -16,7 +16,9 @@ import java.util.Map;
  */
 public interface CouponsTopupService extends IService<EsShopCouponsTopup> {
     boolean save(EsShopCouponsTopup entity);
+
     boolean update(EsShopCouponsTopup entity) throws Exception;
+
     //商品通用删除
     Integer deletegoodsid(Long arg0, String arg1);
 
@@ -27,7 +29,7 @@ public interface CouponsTopupService extends IService<EsShopCouponsTopup> {
     EsShopCouponsTopup selectTopupid(long id);
 
     //满额查询
-    List<Map<String,Object>> selectTopup(EsShopCouponsTopup Topup);
+    List<Map<String, Object>> selectTopup(EsShopCouponsTopup Topup);
 
     //修改满额状态
     Integer updatestatusid(Integer activitiesOpen, Long id);

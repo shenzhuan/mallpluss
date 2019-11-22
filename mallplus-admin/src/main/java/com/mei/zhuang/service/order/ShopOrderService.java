@@ -40,7 +40,9 @@ public interface ShopOrderService extends IService<EsShopOrder> {
     EsShopOrder detail(Long id);
 
     OrderDetail orderDetail(Long id);
+
     Page<EsShopOrder> selectPageExt(OrderParam entity);
+
     Page<EsShopOrder> selectPageExtByApplet(AppletOrderParam appletOrderParam);
 
     List<EsShopOrder> selectfriend(OrderParam entity);
@@ -85,19 +87,17 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     int deleteCartIds(List<Long> resultList);
 
-    Map<String,Object> cartList(Long memberId);
+    Map<String, Object> cartList(Long memberId);
 
     List<EsShopCart> cartPromotionList(Long memberId);
 
     Integer cartGoodsCount(Long memberId);
 
 
-
     int isCheckCart(Integer isSelected, List<Long> resultList);
 
 
     Object linkToBuy(CartParam cartParam);
-
 
 
     Object confimDelivery(Long id);
@@ -110,6 +110,7 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     /**
      * 查看有没有下过单(支付成功过的)
+     *
      * @param memberId
      * @return
      */
@@ -117,6 +118,7 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     /**
      * 查询用户有没有支付过
+     *
      * @return
      */
     int hasPayied(Long memberId);
@@ -134,7 +136,7 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     List<EsShopOrderGoods> selOrderGoodsByPart(Long orderId);
 
-    UserDiffOrderStatusCount  getDiffStatusCount(Long userId);
+    UserDiffOrderStatusCount getDiffStatusCount(Long userId);
 
     List<TableColumnInfo> selOrderColumnInfo();
 
@@ -156,9 +158,9 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     BigDecimal addressToFee(BookOrderParam orderParam);
 
-    List<EsShopOrder> getOldCustOrderList(CustTendencyParam param) ;
+    List<EsShopOrder> getOldCustOrderList(CustTendencyParam param);
 
-    List<EsShopOrder> getNewCustOrderList(CustTendencyParam param) ;
+    List<EsShopOrder> getNewCustOrderList(CustTendencyParam param);
 
     List<EsShopOrder> getAllOrderInfo(CustTradeSuccessParam param);
 

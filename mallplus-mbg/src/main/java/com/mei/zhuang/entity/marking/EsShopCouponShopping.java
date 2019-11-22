@@ -15,6 +15,7 @@ import java.util.List;
  * <p>
  * 购物发券
  * </p>
+ *
  * @author arvato team
  * @since 2019-05-15
  */
@@ -33,7 +34,7 @@ public class EsShopCouponShopping extends Model<EsShopCouponShopping> {
     @TableField("activities_open")
     private Integer activitiesOpen;
     /**
-     *  参与范围 1.全部,2.指定,3.分类,4.分组
+     * 参与范围 1.全部,2.指定,3.分类,4.分组
      */
     @TableField("scope_id")
     private Integer scopeId;
@@ -108,6 +109,7 @@ public class EsShopCouponShopping extends Model<EsShopCouponShopping> {
     private String classification;
     @TableField("create_time")
     private Date createTime;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

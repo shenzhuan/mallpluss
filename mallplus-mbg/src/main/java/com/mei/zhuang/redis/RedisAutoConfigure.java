@@ -41,6 +41,7 @@ public class RedisAutoConfigure {
 
     /**
      * RedisTemplate配置
+     *
      * @param factory
      */
     @Bean

@@ -22,13 +22,13 @@ import java.util.Map;
 @Data
 public class ExcelExportUtil {
     //表头
-    private String title="优惠券发放记录";
+    private String title = "优惠券发放记录";
     //各个列的表头
     private String[] heardList;
     //各个列的元素key值
     private String[] heardKey;
     //需要填充的数据信息
-    private List<Map<String,Object>> data;
+    private List<Map<String, Object>> data;
     //字体大小
     private int fontSize = 14;
     //行高
@@ -36,7 +36,7 @@ public class ExcelExportUtil {
     //列宽
     private int columWidth = 200;
     //工作表
-    private String sheetName="发放记录";
+    private String sheetName = "发放记录";
 
     public String getTitle() {
         return title;
@@ -61,7 +61,6 @@ public class ExcelExportUtil {
     public void setHeardKey(String[] heardKey) {
         this.heardKey = heardKey;
     }
-
 
 
     public int getFontSize() {
@@ -117,7 +116,7 @@ public class ExcelExportUtil {
 
 
     //生成excel表格
-    public HSSFWorkbook  getHSSFWorkbook(HttpServletRequest request, HttpServletResponse response) {
+    public HSSFWorkbook getHSSFWorkbook(HttpServletRequest request, HttpServletResponse response) {
         //创建HSSFWorkbook对象
         HSSFWorkbook wb = new HSSFWorkbook();
         //创建HSSFSheet对象
@@ -125,7 +124,7 @@ public class ExcelExportUtil {
         //创建HSSFRow对象
         HSSFRow row = sheet.createRow(0);
         //创建HSSFCell对象
-        HSSFCell cell=row.createCell(0);
+        HSSFCell cell = row.createCell(0);
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 创建一个居中格式
@@ -133,23 +132,23 @@ public class ExcelExportUtil {
         cell.setCellValue("验证码上传");
 
         //导出数据
-        try{
-            Date date=new Date();
+        try {
+            Date date = new Date();
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            String fileName="验证码"+sf.format(date)+".csv";
-            response.setHeader("Content-disposition", "attachment;Filename=" +new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+            String fileName = "验证码" + sf.format(date) + ".csv";
+            response.setHeader("Content-disposition", "attachment;Filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
             response.flushBuffer();
             wb.write(response.getOutputStream());
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally{
+        } finally {
             try {
 
-            } finally{
+            } finally {
                 try {
                     wb.close();
                 } catch (IOException ex) {
-                   ex.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
         }
@@ -158,10 +157,10 @@ public class ExcelExportUtil {
 
     /**
      * 开始导出数据信息
-     *
-     *  List<Map>集合处理
+     * <p>
+     * List<Map>集合处理
      */
-    public byte[]  exportExport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public byte[] exportExport(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //检查参数配置信息
         checkConfig();
         //创建工作簿
@@ -227,8 +226,8 @@ public class ExcelExportUtil {
         //开始写入实体数据信息
         byte result[] = null;
 
-        FileOutputStream out=null;
-        OutputStream outputStream=null;
+        FileOutputStream out = null;
+        OutputStream outputStream = null;
         int a = 2;
         for (int i = 0; i < data.size(); i++) {
             HSSFRow roww = wbSheet.createRow((int) a);
@@ -240,7 +239,7 @@ public class ExcelExportUtil {
                 cell.setCellStyle(style);
                 Object valueObject = map.get(heardKey[j]);
                 String value = null;
-                if (valueObject == null||valueObject.equals("")) {
+                if (valueObject == null || valueObject.equals("")) {
                     valueObject = "";
                 }
                 if (valueObject instanceof String) {
@@ -249,44 +248,44 @@ public class ExcelExportUtil {
                 } else if (valueObject instanceof Integer) {
                     //取出的数据是Integer
                     value = String.valueOf(((Integer) (valueObject)).floatValue());
-                    if(heardKey[j].equals("type")){
-                        if(value.equals("1.0")){
-                            value="现金券";
-                        }else if(value.equals("2.0")){
-                            value="折扣券";
-                        }else if(value.equals("3.0")){
-                            value="实物券";
-                        }else {
-                            value="赠品券";
+                    if (heardKey[j].equals("type")) {
+                        if (value.equals("1.0")) {
+                            value = "现金券";
+                        } else if (value.equals("2.0")) {
+                            value = "折扣券";
+                        } else if (value.equals("3.0")) {
+                            value = "实物券";
+                        } else {
+                            value = "赠品券";
                         }
                     }
-                    if(heardKey[j].equals("froms")){
-                        if(value.equals("1.0")){
-                            value="后台发放";
-                        }else if(value.equals("2.0")){
-                            value="新人发券";
-                        }else if(value.equals("3.0")){
-                            value="，满额发券";
-                        }else if(value.equals("4.0")){
-                            value="购物发券";
-                        }else if(value.equals("5.0")){
-                            value="手工发券";
+                    if (heardKey[j].equals("froms")) {
+                        if (value.equals("1.0")) {
+                            value = "后台发放";
+                        } else if (value.equals("2.0")) {
+                            value = "新人发券";
+                        } else if (value.equals("3.0")) {
+                            value = "，满额发券";
+                        } else if (value.equals("4.0")) {
+                            value = "购物发券";
+                        } else if (value.equals("5.0")) {
+                            value = "手工发券";
                         }
                     }
-                    if(heardKey[j].equals("status")){
-                        if(value.equals("1.0")){
-                            value="未使用";
-                        }else if(value.equals("3.0")){
-                            value="使用";
-                        }else if(value.equals("2.0")){
-                            value="锁定";
+                    if (heardKey[j].equals("status")) {
+                        if (value.equals("1.0")) {
+                            value = "未使用";
+                        } else if (value.equals("3.0")) {
+                            value = "使用";
+                        } else if (value.equals("2.0")) {
+                            value = "锁定";
                         }
                     }
                 } else if (valueObject instanceof BigDecimal) {
                     //取出的数据是BigDecimal
                     value = String.valueOf(((BigDecimal) (valueObject)).floatValue());
-                }else if(valueObject.equals("")){
-                    value=null;
+                } else if (valueObject.equals("")) {
+                    value = null;
                 }
                 cell.setCellValue(Strings.isNullOrEmpty(value) ? "" : value);
                 System.out.println(cell.getStringCellValue());
@@ -294,26 +293,26 @@ public class ExcelExportUtil {
             a++;
         }
         //导出数据浏览下载
-        try{
-            Date date=new Date();
+        try {
+            Date date = new Date();
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-            String fileName=""+sheetName+sf.format(date)+".xls";
-            response.setHeader("Content-disposition", "attachment;Filename=" +new String(fileName.getBytes("gb2312"), "ISO8859-1"));
-           // outputStream = response.getOutputStream();
-          //  out = new FileOutputStream(""+sheetName+System.currentTimeMillis()+".xls");
+            String fileName = "" + sheetName + sf.format(date) + ".xls";
+            response.setHeader("Content-disposition", "attachment;Filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+            // outputStream = response.getOutputStream();
+            //  out = new FileOutputStream(""+sheetName+System.currentTimeMillis()+".xls");
             response.flushBuffer();
             wb.write(response.getOutputStream());
             result = wb.getBytes();
         } catch (Exception ex) {
-           ex.printStackTrace();
-        } finally{
+            ex.printStackTrace();
+        } finally {
             try {
-                if(null != out){
+                if (null != out) {
                     out.close();
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-            } finally{
+            } finally {
                 try {
                     wb.close();
                 } catch (IOException ex) {

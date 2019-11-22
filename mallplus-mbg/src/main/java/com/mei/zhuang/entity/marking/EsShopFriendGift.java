@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * <p>
- *         好友赠礼
+ * 好友赠礼
  * </p>
  *
  * @author arvato team

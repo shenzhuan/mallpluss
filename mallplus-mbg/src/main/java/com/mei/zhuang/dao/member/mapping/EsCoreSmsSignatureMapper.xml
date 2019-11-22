@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.member.EsCoreSmsSignature">
-        <id column="id" property="id" />
-        <result column="is_default" property="isDefault" />
-        <result column="signature" property="signature" />
+        <id column="id" property="id"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="signature" property="signature"/>
     </resultMap>
 
 </mapper>

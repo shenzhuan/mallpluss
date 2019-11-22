@@ -13,7 +13,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_start_advertising_img")
-public class EsStartAdvertisingImg  extends Model<EsStartAdvertisingImg> {
+public class EsStartAdvertisingImg extends Model<EsStartAdvertisingImg> {
 
     /**
      * 编号

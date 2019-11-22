@@ -6,7 +6,7 @@ import com.mei.zhuang.vo.sys.DataSourceDto;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -15,6 +15,7 @@ import com.mei.zhuang.vo.sys.DataSourceDto;
 public interface ICrmSysUserService extends IService<CrmSysUser> {
 
     void createTenantUserInfo(String username, DataSourceDto dataSourceDto);
+
     //状态修改
     Integer updatestatus(String status, String username);
 }

@@ -26,10 +26,4 @@ public class GoodsRankTopDetailVo {
     private int gooodsPU;//商品浏览量
 
 
-
-
-
-
-
-
 }

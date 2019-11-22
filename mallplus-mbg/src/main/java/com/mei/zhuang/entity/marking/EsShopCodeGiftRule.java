@@ -51,8 +51,9 @@ public class EsShopCodeGiftRule extends Model<EsShopCodeGiftRule> {
     @TableField("code_openid")
     private String codeOpenid;
     //数量
-    @TableField(exist =  false)
+    @TableField(exist = false)
     private Integer count;
+
     @Override
     protected Serializable pkVal() {
         return null;

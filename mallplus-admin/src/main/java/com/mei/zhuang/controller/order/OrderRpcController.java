@@ -1,9 +1,9 @@
 package com.mei.zhuang.controller.order;
 
-import com.mei.zhuang.vo.order.OrderStstic;
-import com.mei.zhuang.service.order.ShopOrderService;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsShopOrder;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.vo.order.OrderStstic;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -85,17 +85,17 @@ public class OrderRpcController {
     @PostMapping("/sumByGoods")
     Integer sumByGoods(@RequestParam("memberId") Long memberId, @RequestParam("goodsId") Long goodsId,
                        @RequestParam("startTime") Date startTime, @RequestParam("endTime") Date endTime) {
-        return orderService.sumByGoods(memberId, goodsId,startTime,endTime);
+        return orderService.sumByGoods(memberId, goodsId, startTime, endTime);
     }
 
     @SysLog(MODULE = "订单对外接口管理", REMARK = "根据会员id查询订单数量")
     @ApiOperation("根据会员id查询订单数量")
     @GetMapping("/test")
     Integer test() {
-        Integer c=  orderService.sumByGoods(1l,1l,new Date(),new Date());
+        Integer c = orderService.sumByGoods(1l, 1l, new Date(), new Date());
         System.out.println(c);
 
-        Integer c1=  orderService.sumByGoods(1l,1l,null,null);
+        Integer c1 = orderService.sumByGoods(1l, 1l, null, null);
         System.out.println(c1);
         return 1;
     }

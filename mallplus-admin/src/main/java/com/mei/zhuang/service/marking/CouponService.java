@@ -31,22 +31,24 @@ public interface CouponService extends IService<EsShopCoupon> {
 
     //优惠券选择
     List<EsShopCoupon> selectcoupon(EsShopCoupon esShopCoupon);
+
     //优惠券管理面显示
-    Map<String,Object> selectmapcoupon(EsShopCoupon esShopCoupon) throws Exception;
+    Map<String, Object> selectmapcoupon(EsShopCoupon esShopCoupon) throws Exception;
 
     //优惠券明细
-    List<Map<String,Object>> couponlimit(Long id);
+    List<Map<String, Object>> couponlimit(Long id);
 
     //商品明细
     List<EsShopCouponGoodsMap> selectgoods(Long couponId);
+
     //1.实物商品
     List<EsShopCouponGoodsMap> selectgoods2(Long couponId);
+
     //赠品券商品查询
     List<EsShopCouponGoodsMap> selcetcoupongoods(Long couponId);
 
     //优惠券批量查询
     List<EsShopCoupon> couponbatch(String id);
-
 
 
 }

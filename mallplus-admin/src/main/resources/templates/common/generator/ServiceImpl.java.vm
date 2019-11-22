@@ -1,6 +1,6 @@
 package
 
-    ${package}.${
+${package}.${
 
         module }.service.impl;
     ${package}.${module}.entity.${Module}${className};

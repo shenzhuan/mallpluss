@@ -1,11 +1,11 @@
 package com.mei.zhuang.service.marking;
 
 
-import com.mei.zhuang.vo.order.CartMarkingVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
 import com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 
 import java.util.List;
 import java.util.Map;
@@ -16,16 +16,17 @@ import java.util.Map;
  * @Description:
  */
 public interface FullGiftService extends IService<EsShopFullGift> {
-    boolean save(EsShopFullGift entity) ;
+    boolean save(EsShopFullGift entity);
 
     int updateShowStatus(Long ids, Integer status);
 
     List<EsShopFullGift> selectrule();
 
-    boolean update(EsShopFullGift entity) ;
+    boolean update(EsShopFullGift entity);
 
     //满赠商品明细
     List<EsShopFullGiftGoodsMap> selectgift(Long fullGiftId);
+
     //满赠赠品明细和优惠设置
     List<Map<String, Object>> selectgift2(Long fullGiftId);
 
@@ -34,6 +35,7 @@ public interface FullGiftService extends IService<EsShopFullGift> {
 
     //满赠查询
     List<EsShopFullGift> slelectPurchase();
+
     //选赠礼
     List<EsShopFullGift> slelectPurchase2();
 
@@ -49,5 +51,6 @@ public interface FullGiftService extends IService<EsShopFullGift> {
     List<EsShopFullGift> ChooseFullGift(List<EsShopCart> cartList) throws Exception;
 
     List<EsShopFullGiftGoodsMap> isFullGiftGoodsUseAble(CartMarkingVo vo);
+
     List<EsShopFullGiftGoodsMap> isChooseGiftGoodsUseAble(CartMarkingVo vo);
 }

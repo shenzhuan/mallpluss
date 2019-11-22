@@ -24,5 +24,4 @@ public interface IShopLogService extends IService<EsCoreLog> {
     List<EsCoreLogType> getLogTypeList();
 
 
-
 }

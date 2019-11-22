@@ -14,10 +14,12 @@ import java.util.List;
  * @since 2019-04-28
  */
 public interface EsShopCouponGoodsMapMapper extends BaseMapper<EsShopCouponGoodsMap> {
-        //2.限制使用的商品
+    //2.限制使用的商品
     List<EsShopCouponGoodsMap> selectgoods(Long couponId);
+
     //1.实物明细商品
     List<EsShopCouponGoodsMap> selectgoods2(Long couponId);
+
     //赠品券商品明细查询
     List<EsShopCouponGoodsMap> selcetcoupongoods(Long couponId);
 

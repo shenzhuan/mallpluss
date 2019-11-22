@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
-    流量分析
+ * 流量分析
  */
 @Api(value = "流量设置管理", description = "", tags = {"流量设置管理"})
 @Slf4j
@@ -49,7 +49,7 @@ public class TrafficAnalysisController {
         HSSFSheet sheet = workbook.createSheet("商品排行明细数据列表");
         // 新增数据行，并且设置单元格数据
         int rowNum = 1;
-        String[] headers = {  "日期", "浏览量", "访客数","分享访问次数","分享访问人数","商品浏览量","商品访客数" };
+        String[] headers = {"日期", "浏览量", "访客数", "分享访问次数", "分享访问人数", "商品浏览量", "商品访客数"};
         // headers表示excel表中第一行的表头
         HSSFRow row = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
@@ -87,6 +87,7 @@ public class TrafficAnalysisController {
     public Object HeadParam(TradeAnalyzeParam param) throws Exception {
         return analysiService.HeadParam(param);
     }
+
     @SysLog(MODULE = "流量分析", REMARK = "流量分析")
     @ApiOperation("页面跳出率")
     @PostMapping("/TrSelect")

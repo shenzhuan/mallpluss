@@ -21,7 +21,9 @@ public interface EsShopCodeGiftRuleMapper extends BaseMapper<EsShopCodeGiftRule>
 
     //查询验证码
     List<EsShopCodeGiftRule> codelist(long codeGiftId);
+
     //唯一验证
-    EsShopCodeGiftRule  codegif(long codeGiftId);
+    EsShopCodeGiftRule codegif(long codeGiftId);
+
     EsShopCodeGiftRule codegif2(String code);
 }

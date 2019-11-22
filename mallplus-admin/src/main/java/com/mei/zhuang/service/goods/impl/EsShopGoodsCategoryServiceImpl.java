@@ -53,7 +53,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
     public Object getGoodsCategoryByPage(EsShopGoodsCategory entity) {
         try {
             // page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>()
-            com.baomidou.mybatisplus.extension.plugins.pagination.Page<EsShopGoodsCategory> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(entity.getCurrent(),entity.getSize());
+            com.baomidou.mybatisplus.extension.plugins.pagination.Page<EsShopGoodsCategory> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(entity.getCurrent(), entity.getSize());
             return new CommonResult().success(shopGoodsCategoryMapper.selectPage(page, new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有商品分类列表：%s", e.getMessage(), e);
@@ -79,25 +79,25 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
     @Override
     public Integer delGoodsCategory(Long id) {
         //判断分类下是否存在商品
-        List<EsShopGoodsCateMap> list=shopGoodsCateMapMapper.selEsShopGoodsCateMap(id);
-        if(list!=null && list.size()>0){
+        List<EsShopGoodsCateMap> list = shopGoodsCateMapMapper.selEsShopGoodsCateMap(id);
+        if (list != null && list.size() > 0) {
             //删除分类下的商品
-            Integer num=null;
-            for (EsShopGoodsCateMap li:list) {
-                num= shopGoodsCateMapMapper.delete(new QueryWrapper<>(li));
+            Integer num = null;
+            for (EsShopGoodsCateMap li : list) {
+                num = shopGoodsCateMapMapper.delete(new QueryWrapper<>(li));
 
-                EsShopGoods esShopGoods=esShopGoodsMapper.selectById(li.getGoodsId());
-                if(esShopGoods !=null){
+                EsShopGoods esShopGoods = esShopGoodsMapper.selectById(li.getGoodsId());
+                if (esShopGoods != null) {
                     String[] attrId = esShopGoods.getCategoryId().split(",");
-                    for(int i=0; i<attrId.length;i++){
+                    for (int i = 0; i < attrId.length; i++) {
                         esShopGoods.setCategoryId(attrId[i]);
                     }
-                    String[] attrName =  esShopGoods.getCategoryName().split(",");
+                    String[] attrName = esShopGoods.getCategoryName().split(",");
                 }
             }
             shopGoodsCategoryMapper.delGoodsCategory(id);
             return num;
-        }else{
+        } else {
             return shopGoodsCategoryMapper.delGoodsCategory(id);
         }
 
@@ -111,11 +111,11 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
 
             // 1.添加分类信息
             Date ds = new Date();
-            String str=sdf.format(ds);
-            Date date=sdf.parse(str);
+            String str = sdf.format(ds);
+            Date date = sdf.parse(str);
             entity.setCreateTime(date);
             entity.setLastTime(date);
-            if(entity.getThumb()!=null){
+            if (entity.getThumb() != null) {
                 entity.setThumb(entity.getThumb().replace("\"", ""));
             }
 
@@ -137,24 +137,24 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
             //添加广告图
             if (entity != null) {
                 EsShopGoodsCategoryAdvertimg advertimg = new EsShopGoodsCategoryAdvertimg();
-                if(entity.getAdvertImg()!=null){
+                if (entity.getAdvertImg() != null) {
                     String[] img = entity.getAdvertImg().split(",");
-                        for (int i = 0; i < img.length; i++) {
-                            advertimg.setCategoruAdimg(img[i].replace("\"", ""));
-                            String[] address = entity.getAdvertAddress().split(",");
-                            for (int j = 0; j < address.length; j++) {
-                                if (i == j) {
-                                    advertimg.setCategoruAdaddress(address[j].replace("\"", ""));
-                                    continue;
-                                }
-
-                            }
-                            advertimg.setCategoryId(entity.getId());
-                            if(advertimg.getCategoruAdimg()!=null && !advertimg.getCategoruAdimg().equals("")){
-                                esShopGoodsCategoryAdvertimgMapper.insert(advertimg);
+                    for (int i = 0; i < img.length; i++) {
+                        advertimg.setCategoruAdimg(img[i].replace("\"", ""));
+                        String[] address = entity.getAdvertAddress().split(",");
+                        for (int j = 0; j < address.length; j++) {
+                            if (i == j) {
+                                advertimg.setCategoruAdaddress(address[j].replace("\"", ""));
+                                continue;
                             }
 
                         }
+                        advertimg.setCategoryId(entity.getId());
+                        if (advertimg.getCategoruAdimg() != null && !advertimg.getCategoruAdimg().equals("")) {
+                            esShopGoodsCategoryAdvertimgMapper.insert(advertimg);
+                        }
+
+                    }
                 }
 
 
@@ -203,8 +203,8 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
             entity.setStatus(entity.getStatus());
             // 1.添加分类信息
             Date ds = new Date();
-            String str=sdf.format(ds);
-            Date date=sdf.parse(str);
+            String str = sdf.format(ds);
+            Date date = sdf.parse(str);
             entity.setLastTime(date);
             entity.setThumb(entity.getThumb().replace("\"", ""));
             this.baseMapper.updateById(entity);
@@ -219,7 +219,7 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
                 }
                 //添加推荐商品
                 EsShopGoodsCategoryRecom recom = new EsShopGoodsCategoryRecom();
-                if(entity.getGoodsIds()!=null&&!entity.getGoodsIds().equals("")){
+                if (entity.getGoodsIds() != null && !entity.getGoodsIds().equals("")) {
                     String[] attr = entity.getGoodsIds().split(",");
                     //根据名称查询分类ID
                     EsShopGoodsCategory category = shopGoodsCategoryMapper.selCategory(entity.getName());
@@ -316,15 +316,15 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
     @Override
     public Object selectAll() {
         List<EsShopGoodsCategory> list = shopGoodsCategoryMapper.selAll();
-        for (EsShopGoodsCategory cate:list) {
-            if(cate.getLevel()==0){
+        for (EsShopGoodsCategory cate : list) {
+            if (cate.getLevel() == 0) {
                 //查询二级分类
-                List<EsShopGoodsCategory> listTwo=shopGoodsCategoryMapper.selCategoryByLevel(1,cate.getId());
-                if(listTwo!=null&&listTwo.size()>0){
+                List<EsShopGoodsCategory> listTwo = shopGoodsCategoryMapper.selCategoryByLevel(1, cate.getId());
+                if (listTwo != null && listTwo.size() > 0) {
                     cate.setListTwo(listTwo);
                     //查询三级分类
-                    for (EsShopGoodsCategory listThree:listTwo) {
-                        listThree.setListThree(shopGoodsCategoryMapper.selCategoryByLevel(2,listThree.getId()));
+                    for (EsShopGoodsCategory listThree : listTwo) {
+                        listThree.setListThree(shopGoodsCategoryMapper.selCategoryByLevel(2, listThree.getId()));
                     }
                 }
             }
@@ -354,15 +354,15 @@ public class EsShopGoodsCategoryServiceImpl extends ServiceImpl<EsShopGoodsCateg
         Page<EsShopGoods> page = new Page<EsShopGoods>(current, size);
         //查询一级分类，分页查询
         List<EsShopGoodsCategory> list = shopGoodsCategoryMapper.selectList(new QueryWrapper<>());
-        for (EsShopGoodsCategory cate:list) {
-            if(cate.getLevel()==0){
+        for (EsShopGoodsCategory cate : list) {
+            if (cate.getLevel() == 0) {
                 //查询二级分类
-                List<EsShopGoodsCategory> listTwo=shopGoodsCategoryMapper.selCategoryByLevel(1,cate.getId());
-                if(listTwo!=null&&listTwo.size()>0){
+                List<EsShopGoodsCategory> listTwo = shopGoodsCategoryMapper.selCategoryByLevel(1, cate.getId());
+                if (listTwo != null && listTwo.size() > 0) {
                     cate.setListTwo(listTwo);
                     //查询三级分类
-                    for (EsShopGoodsCategory listThree:listTwo) {
-                        listThree.setListThree(shopGoodsCategoryMapper.selCategoryByLevel(2,listThree.getId()));
+                    for (EsShopGoodsCategory listThree : listTwo) {
+                        listThree.setListThree(shopGoodsCategoryMapper.selCategoryByLevel(2, listThree.getId()));
                     }
                 }
             }

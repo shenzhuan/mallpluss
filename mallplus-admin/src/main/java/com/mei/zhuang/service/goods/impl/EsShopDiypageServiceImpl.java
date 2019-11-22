@@ -1,18 +1,13 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.mei.zhuang.dao.goods.EsShopDiypageMapper;
-import com.mei.zhuang.service.goods.EsShopDiypageService;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopDiypageMapper;
 import com.mei.zhuang.entity.goods.EsShopDiypage;
-import com.mei.zhuang.entity.goods.EsShopGoods;
+import com.mei.zhuang.service.goods.EsShopDiypageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -27,19 +22,18 @@ public class EsShopDiypageServiceImpl extends ServiceImpl<EsShopDiypageMapper, E
     private EsShopDiypageMapper esShopDiypageMapper;
 
 
-
     @Override
     public Object updStatus(Long id, Integer status, Integer typeId) {
         EsShopDiypage diypage = new EsShopDiypage();
         diypage.setId(id);
         diypage.setStatus(status);
-        Object obj=esShopDiypageMapper.updateById(diypage);
+        Object obj = esShopDiypageMapper.updateById(diypage);
         return obj;
     }
 
     @Override
-    public Integer selDiyPageTypeId(Integer typeId,Long id) {
-        return esShopDiypageMapper.selDiyPageTypeId(typeId,id);
+    public Integer selDiyPageTypeId(Integer typeId, Long id) {
+        return esShopDiypageMapper.selDiyPageTypeId(typeId, id);
     }
 
     @Override
@@ -48,7 +42,7 @@ public class EsShopDiypageServiceImpl extends ServiceImpl<EsShopDiypageMapper, E
     }
 
     @Override
-    public Integer selectCounts(Long id,String name) {
-        return esShopDiypageMapper.selectCounts(id,name);
+    public Integer selectCounts(Long id, String name) {
+        return esShopDiypageMapper.selectCounts(id, name);
     }
 }

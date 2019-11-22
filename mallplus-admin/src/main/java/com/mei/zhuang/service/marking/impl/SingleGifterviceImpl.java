@@ -44,10 +44,10 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
     public List<EsShopSingleGiftGoodsMap> isSingleGiftUseAble(CartMarkingVo vo) {
 
         List<EsShopSingleGiftGoodsMap> rules = new ArrayList<>();
-        if (ValidatorUtils.notEmpty(vo.getRuleIds())){
+        if (ValidatorUtils.notEmpty(vo.getRuleIds())) {
             String[] split = vo.getRuleIds().split(";");
-            for (int i=0;i<split.length;i++){
-                EsShopSingleGiftGoodsMap g =  singleGiftGoodsMapMapper.selectById(Long.parseLong(split[i].split(":")[0]));
+            for (int i = 0; i < split.length; i++) {
+                EsShopSingleGiftGoodsMap g = singleGiftGoodsMapMapper.selectById(Long.parseLong(split[i].split(":")[0]));
                 g.setCount(Integer.valueOf(split[i].split(":")[1]));
                 rules.add(g);
             }
@@ -147,7 +147,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                         }
                     } else {
                         if (manjianGoodsMaps != null && manjianGoodsMaps.size() > 0) {
-                            int giftCount = 0 ;
+                            int giftCount = 0;
                             List<EsShopCart> singCartList1 = new ArrayList<>();
                             List<EsShopCart> singCartList2 = new ArrayList<>();
                             for (EsShopSingleGiftGoodsMap manjianGoodsMap : manjianGoodsMaps) {
@@ -172,7 +172,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                      */
                                     if (manjian.getType() == 1) {
                                         manjianGoodsMap.setCount(1);
-                                        giftCount =1;
+                                        giftCount = 1;
                                     }
                                     if (manjian.getType() == 2) {
                                         EsShopSingleGiftRule q = new EsShopSingleGiftRule();
@@ -193,7 +193,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                         } else {
                                             count1 = 0;
                                         }
-                                        if (ValidatorUtils.notEmpty(rule.getMaxAmount()) && rule.getMaxAmount()>0) {
+                                        if (ValidatorUtils.notEmpty(rule.getMaxAmount()) && rule.getMaxAmount() > 0) {
                                             if (count1 > rule.getMaxAmount()) {
                                                 count1 = rule.getMaxAmount();
                                             }
@@ -224,7 +224,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                         } else {
                                             count1 = 0;
                                         }
-                                        if (ValidatorUtils.notEmpty(rule.getMaxAmount()) && rule.getMaxAmount()>0) {
+                                        if (ValidatorUtils.notEmpty(rule.getMaxAmount()) && rule.getMaxAmount() > 0) {
                                             if (count1 > rule.getMaxAmount()) {
                                                 count1 = rule.getMaxAmount();
                                             }
@@ -235,7 +235,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
                                     giftGoodsMapsList.add(manjianGoodsMap);
                                 }
                             }
-                            if (falg && falg1 && giftCount>0) {
+                            if (falg && falg1 && giftCount > 0) {
                                 manjian.setGiftGoodsMapsList(giftGoodsMapsList);
                                 List<EsShopSingleGiftRule> list = singleGiftRuleMapper.selectList(
                                         new QueryWrapper<EsShopSingleGiftRule>().eq("single_gift_id", manjian.getId()));
@@ -362,7 +362,7 @@ public class SingleGifterviceImpl extends ServiceImpl<EsShopSingleGiftMapper, Es
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopSingleGift entity)  {
+    public boolean save(EsShopSingleGift entity) {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);

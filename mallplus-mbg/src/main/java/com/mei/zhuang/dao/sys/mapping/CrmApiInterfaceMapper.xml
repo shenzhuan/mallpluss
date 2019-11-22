@@ -2,67 +2,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mei.zhuang.dao.sys.CrmApiInterfaceMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmApiInterface">
-		<id column="id" property="id" />
-		<result column="type_id" property="typeId" />
-		<result column="name" property="name" />
-		<result column="status" property="status" />
-		<result column="request_url" property="requestUrl" />
-		<result column="remark" property="remark" />
-		<result column="create_time" property="createTime" />
-		<result column="update_time" property="updateTime" />
-		<result column="create_user_id" property="createUserId" />
-		<result column="update_user_id" property="updateUserId" />
-		<result column="create_date" property="createDate" />
-		<result column="update_date" property="updateDate" />
-		<result column="version" property="version" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmApiInterface">
+        <id column="id" property="id"/>
+        <result column="type_id" property="typeId"/>
+        <result column="name" property="name"/>
+        <result column="status" property="status"/>
+        <result column="request_url" property="requestUrl"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="version" property="version"/>
+    </resultMap>
 
-	<select id="list" resultType="com.arvato.admin.vo.ApiInterfaceVo">
-		SELECT
-		t.id,
-		t.name,
-		t.request_url as "requestUrl",
-		(CASE WHEN aup.id = 0 OR aup.id IS NULL THEN false ELSE true END) AS "permission",
-		(CASE WHEN cat.id = 0 OR cat.id IS NULL THEN '' ELSE cat.name END) AS "typeName"
-		FROM crm_api_interface t
-		left join crm_api_type cat on t.type_id = cat.id
-		LEFT JOIN crm_api_user_permission aup on t.id = aup.interface_id AND aup.api_user_id = #{apiUserId}
-		WHERE 1 = 1 and t.status = '1'
-		<trim>
-			<if test="name != null and name != ''">
-				AND t.name LIKE CONCAT('%', #{name}, '%')
-			</if>
-			<if test="typeId != null and typeId != 0">
-				AND t.type_id = #{typeId}
-			</if>
-		</trim>
-		ORDER BY id DESC
-		LIMIT #{limit} OFFSET #{offset}
-	</select>
+    <select id="list" resultType="com.arvato.admin.vo.ApiInterfaceVo">
+        SELECT
+        t.id,
+        t.name,
+        t.request_url as "requestUrl",
+        (CASE WHEN aup.id = 0 OR aup.id IS NULL THEN false ELSE true END) AS "permission",
+        (CASE WHEN cat.id = 0 OR cat.id IS NULL THEN '' ELSE cat.name END) AS "typeName"
+        FROM crm_api_interface t
+        left join crm_api_type cat on t.type_id = cat.id
+        LEFT JOIN crm_api_user_permission aup on t.id = aup.interface_id AND aup.api_user_id = #{apiUserId}
+        WHERE 1 = 1 and t.status = '1'
+        <trim>
+            <if test="name != null and name != ''">
+                AND t.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="typeId != null and typeId != 0">
+                AND t.type_id = #{typeId}
+            </if>
+        </trim>
+        ORDER BY id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
 
-	<select id="count" resultType="int" >
-		SELECT
-		count(0)
-		FROM crm_api_interface t
-		WHERE 1=1 and t.status = '1'
-		<trim>
-			<if test="name != null and name != ''">
-				AND t.name LIKE CONCAT('%', #{name}, '%')
-			</if>
-			<if test="typeId != null and typeId != ''">
-				AND t.type_id = #{typeId}
-			</if>
-		</trim>
-	</select>
+    <select id="count" resultType="int">
+        SELECT
+        count(0)
+        FROM crm_api_interface t
+        WHERE 1=1 and t.status = '1'
+        <trim>
+            <if test="name != null and name != ''">
+                AND t.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="typeId != null and typeId != ''">
+                AND t.type_id = #{typeId}
+            </if>
+        </trim>
+    </select>
 
-	<select id="selectInterfaceByUri" resultType="int">
+    <select id="selectInterfaceByUri" resultType="int">
 		select id from crm_api_interface cai
 		where cai.request_url = #{uri} limit 1
 	</select>
 
-	<select id="getAllTypes" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="getAllTypes" resultType="com.arvato.common.vo.ZTreeNode">
 		SELECT
             id,
             0 as "pId",

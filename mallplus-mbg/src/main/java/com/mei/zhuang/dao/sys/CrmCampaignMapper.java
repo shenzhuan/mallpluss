@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * <p>
-  * 活动表 Mapper 接口
+ * 活动表 Mapper 接口
  * </p>
  *
  * @author arvato team

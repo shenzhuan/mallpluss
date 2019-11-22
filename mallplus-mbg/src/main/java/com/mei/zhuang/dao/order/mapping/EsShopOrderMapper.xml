@@ -117,13 +117,12 @@
   -->
 
 
-
-    <select id="hasOrder" resultType="java.lang.Integer" >
+    <select id="hasOrder" resultType="java.lang.Integer">
         select count(1)
         from es_shop_order
         where  member_id =#{memberId}
     </select>
-    <select id="getOrderBuyerByMemberId" resultMap="BaseResultMap" >
+    <select id="getOrderBuyerByMemberId" resultMap="BaseResultMap">
         select *
         from es_shop_order
         where  buyer_mobile is not null and member_id =#{memberId} limit 1
@@ -133,7 +132,8 @@
         select *
         from es_shop_order
         where status=0
-        and <![CDATA[ close_time < now()]]>
+        and <![CDATA[ close_time < now()
+        ]]>
     </select>
 
     <select id="queryAutoConfirmOrders" resultMap="BaseResultMap">
@@ -175,7 +175,6 @@
     </select>
 
 
-
     <select id="selOrderByPage" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.OrderParam">
         SELECT * from es_shop_order o
         where 1=1
@@ -190,7 +189,7 @@
         <include refid="query_order_where_bypage"/>
     </select>
 
-    <update id="updateaddress"   parameterType="com.mei.zhuang.entity.order.EsShopOrder">
+    <update id="updateaddress" parameterType="com.mei.zhuang.entity.order.EsShopOrder">
         update es_shop_order set address_detail=#{addressDetail},address_province=#{addressProvince},address_city=#{addressCity},address_area=#{addressArea},
         buyer_name=#{buyerName},buyer_mobile=#{buyerMobile},gift_giving=2,status=1 where id=#{id}
     </update>
@@ -212,7 +211,7 @@
     <sql id="query_order_where_bypage">
         <if test="orderIds != null">
             and o.id in
-            <foreach item="item"  index="index"  open="(" separator=","  close=")" collection="orderIds">
+            <foreach item="item" index="index" open="(" separator="," close=")" collection="orderIds">
                 #{item}
             </foreach>
         </if>
@@ -393,11 +392,6 @@
     </select>
 
 
-
-
-
-
-
     <!--<select id="selectOrderCountByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultType="java.lang.Integer">
         SELECT count(1) from es_shop_order o LEFT join es_shop_order_goods og
@@ -418,7 +412,6 @@
     </select>
 
 
-
     <select id="hasCountByMemberById" parameterType="java.lang.Long" resultType="java.lang.Integer">
         SELECT count(*) from es_shop_order where member_id = #{memberId}
     </select>
@@ -435,51 +428,53 @@
     </sql>
 
 
-    <select id="listOrderGroupByMemberId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
+    <select id="listOrderGroupByMemberId" resultType="com.mei.zhuang.vo.order.OrderStstic">
        select count(id) totalCount ,sum(pay_price) totalPayAmount,member_id memberId from es_shop_order
        where status between  1 and 3 group by member_id
     </select>
 
-    <select id="listOrderGroupByManJianId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
+    <select id="listOrderGroupByManJianId" resultType="com.mei.zhuang.vo.order.OrderStstic">
           select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
     where status between  1 and 3 and manjian_or_discountid is not null and manjian_info is not null group by manjian_or_discountid
 
     </select>
 
-    <select id="listOrderGroupByDiscountId"  resultType="com.mei.zhuang.vo.order.OrderStstic">
+    <select id="listOrderGroupByDiscountId" resultType="com.mei.zhuang.vo.order.OrderStstic">
         select count(id) totalCount ,sum(pay_price) totalPayAmount,count(distinct member_id) memberCount ,manjian_or_discountid objId from es_shop_order
         where status between  1 and 3 and manjian_or_discountid is not null and discount_info is not null group by manjian_or_discountid
 
     </select>
 
-    <select id="getBuyCountByUserId"  resultType="java.lang.Integer">
+    <select id="getBuyCountByUserId" resultType="java.lang.Integer">
         select sum(count)
 from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
 from es_shop_order where es_shop_order.member_id=#{memberId} and status between  1 and 3)
     </select>
 
-    <select id="sumByGoods"  resultType="java.lang.Integer">
+    <select id="sumByGoods" resultType="java.lang.Integer">
         select sum(count)
         from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
-        from es_shop_order where es_shop_order.member_id=#{memberId} and status between  1 and 3
+        from es_shop_order where es_shop_order.member_id=#{memberId} and status between 1 and 3
         <if test="startTime != null">
-            and  pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-            and  to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') >= pay_time
+            and pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') >= pay_time
         </if>
         )
     </select>
 
-    <select id="getBuyCountByMemberId"  resultType="java.lang.Integer">
+    <select id="getBuyCountByMemberId" resultType="java.lang.Integer">
         select sum(count)
         from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
         from es_shop_order where es_shop_order.member_id=#{memberId} and status = #{status})
     </select>
 
-    <select id="getOldConsumeInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="getOldConsumeInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
         select sum(record.total) as oldConsumeAmount, sum(record.count) as oldClientCount
         from (select SUM(pay_price) as total ,count(member_id) as count, member_id
         from es_shop_order WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS') AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS') AND create_time &lt;=
+        to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
@@ -505,7 +500,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="getTotalInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="getTotalInfo" resultType="com.arvato.ec.common.vo.data.trade.OrderCustTotalVo"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
         select
         sum(record.total) as total, sum(record.count) as count
         from (
@@ -524,8 +520,9 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="selectUCustoCount" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
-        select  count( distinct member_id)  from es_shop_order
+    <select id="selectUCustoCount" resultType="java.lang.Integer"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+        select count( distinct member_id) from es_shop_order
         where 1 = 1
         <if test="startTime != null and startTime !=''.toString()">
             and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
@@ -540,7 +537,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="getNewOrderList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+    <select id="getNewOrderList" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -562,7 +560,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="getOldOrderList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+    <select id="getOldOrderList" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -590,7 +589,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
        order by create_time asc limit 1 OFFSET 0
     </select>
 
-    <select id="getAllOrderInfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+    <select id="getAllOrderInfo" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -612,7 +612,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
     </select>
 
 
-    <select id="getOldOrderIfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+    <select id="getOldOrderIfo" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -634,7 +635,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="getNewOrderInfo" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
+    <select id="getNewOrderInfo" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustTendencyParam">
         select * from es_shop_order
         where member_id in
         (
@@ -656,18 +658,19 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
 
     </select>
 
-    <select id="selOrderIdsByGoodsAnParam" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
+    <select id="selOrderIdsByGoodsAnParam" resultType="java.lang.Long"
+            parameterType="com.arvato.ec.common.vo.data.goods.GoodsAnalyzeParam">
         select id from es_shop_order
         where 1=1
         <include refid="timeCondtion"/>
 
 
     </select>
-    <select id="selectfriend"  resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.OrderParam">
+    <select id="selectfriend" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.order.OrderParam">
         select * from es_shop_order o where o.gift_giving=#{giftGiving}
     </select>
 
-    <select id="selectFriendListByApplet"  parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
+    <select id="selectFriendListByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
             resultMap="BaseResultMap">
         SELECT * from es_shop_order
         where 1=1 and status!=8
@@ -688,7 +691,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         </if>
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
-    <select id="memberIdList" resultType="java.lang.Long" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="memberIdList" resultType="java.lang.Long"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
         AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
@@ -719,8 +723,6 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
             AND shop_id = #{shopId}
         </if>
     </sql>
-
-
 
 
 </mapper>

@@ -18,17 +18,18 @@ public class ApiInterfaceBiz {
     @Resource
     private CrmApiInterfaceMapper apiInterfaceMapper;
 
-    public Map<String,Object> getInterfaceList(String name, Integer typeId, Integer apiUserId, Integer limit, Integer offset, List<Integer> deptIds) {
-        Map<String,Object> result = new HashMap<>();
-        List<ApiInterfaceVo> list = this.apiInterfaceMapper.list(name,typeId,apiUserId, limit, offset, deptIds);
+    public Map<String, Object> getInterfaceList(String name, Integer typeId, Integer apiUserId, Integer limit, Integer offset, List<Integer> deptIds) {
+        Map<String, Object> result = new HashMap<>();
+        List<ApiInterfaceVo> list = this.apiInterfaceMapper.list(name, typeId, apiUserId, limit, offset, deptIds);
         int count = this.apiInterfaceMapper.count(name, typeId, apiUserId, deptIds);
         result.put("rows", list);
         result.put("total", count);
-        return  result;
+        return result;
     }
 
     /**
      * 获取接口所有类型
+     *
      * @return
      */
     public List<ZTreeNode> getAllTypes() {

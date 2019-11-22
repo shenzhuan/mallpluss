@@ -42,21 +42,23 @@
         <result column="shop_id" property="shopId"/>
         <result column="open_card" property="openCard"/>
     </resultMap>
-    <select id="memberNumber" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
+    <select id="memberNumber" resultType="java.lang.Integer"
+            parameterType="com.arvato.ec.common.vo.data.trade.TradeAnalyzeParam">
         select count(*) from es_member where create_time &gt;= to_timestamp(#{param.startTime}, 'YYYY/MM/DD HH24:MI:SS')
         and create_time &lt;= to_timestamp(#{param.endTime}, 'YYYY/MM/DD HH24:MI:SS')
 
     </select>
 
-    <select id="selTotalMember" resultType="java.lang.Integer" parameterType="com.arvato.ec.common.vo.data.customer.CustGroupIndexParam">
+    <select id="selTotalMember" resultType="java.lang.Integer"
+            parameterType="com.arvato.ec.common.vo.data.customer.CustGroupIndexParam">
         select count(id) from es_member where shop_id = #{shopId}
-       <!-- <if test="startTime != null and startTime !=''.toString()">
-            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        </if>
-        <if test="endTime != null and endTime !=''.toString()">
-            and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
-        </if>
--->
+        <!-- <if test="startTime != null and startTime !=''.toString()">
+             and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+         </if>
+         <if test="endTime != null and endTime !=''.toString()">
+             and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+         </if>
+ -->
 
     </select>
 
@@ -69,7 +71,7 @@
             limit #{param1} offset #{param2}
         </if>
     </select>
-    <select id="selectmember" resultType="com.mei.zhuang.entity.member.EsMember" >
+    <select id="selectmember" resultType="com.mei.zhuang.entity.member.EsMember">
         select * from es_member where mobile=#{mobile}
     </select>
 

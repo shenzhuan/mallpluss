@@ -10,11 +10,28 @@ import java.util.List;
  * 租户状态
  */
 public enum SysTenantStatus {
-    ENABLE("0","启用"),
-    DISABLE("1","禁用");
+    ENABLE("0", "启用"),
+    DISABLE("1", "禁用");
 
     private String status;
     private String statusText;
+
+    SysTenantStatus(String status, String statusText) {
+        this.setStatus(status);
+        this.setStatusText(statusText);
+    }
+
+    public static List<DictData> toDictList() {
+        List<DictData> list = new ArrayList<>();
+        Arrays.stream(SysTenantStatus.values()).forEach(status -> {
+            list.add(
+                    new DictData()
+                            .setValue(status.getStatus())
+                            .setText(status.getStatusText())
+            );
+        });
+        return list;
+    }
 
     public String getStatusText() {
         return statusText;
@@ -30,22 +47,5 @@ public enum SysTenantStatus {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    SysTenantStatus(String status,String statusText){
-        this.setStatus(status);
-        this.setStatusText(statusText);
-    }
-
-    public static List<DictData> toDictList(){
-        List<DictData> list  = new ArrayList<>();
-        Arrays.stream(SysTenantStatus.values()).forEach(status -> {
-            list.add(
-                    new DictData()
-                            .setValue(status.getStatus())
-                            .setText(status.getStatusText())
-            );
-        });
-        return list;
     }
 }

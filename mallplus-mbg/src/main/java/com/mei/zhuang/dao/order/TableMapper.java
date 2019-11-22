@@ -11,15 +11,10 @@ import java.util.List;
  * @Date: 2019-06-21 15:07
  * @Description:
  */
-public interface TableMapper  {
+public interface TableMapper {
 
     //error
     List<TableColumnInfo> getColumnInfoByTableName(@Param("tableName") String tableName);
-
-
-
-
-
 
 
 }

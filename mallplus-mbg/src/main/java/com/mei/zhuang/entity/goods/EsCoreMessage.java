@@ -23,27 +23,27 @@ public class EsCoreMessage extends Model<EsAppletSet> {
     @TableField("app_name")
     private String appName;
     /**
-     *权限等级
+     * 权限等级
      */
     @TableField("role")
     private Long role;
     /**
-     *消息类型
+     * 消息类型
      */
     @TableField("message_type")
     private String messageType;
     /**
-     *模板标题
+     * 模板标题
      */
     @TableField("title")
     private String title;
     /**
-     *模板签名
+     * 模板签名
      */
     @TableField("message_sign")
     private String messageSign;
     /**
-     *描述
+     * 描述
      */
     @TableField("description")
     private String description;

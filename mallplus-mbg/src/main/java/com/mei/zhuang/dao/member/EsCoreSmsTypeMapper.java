@@ -6,7 +6,7 @@ import com.mei.zhuang.entity.member.EsCoreSmsType;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team

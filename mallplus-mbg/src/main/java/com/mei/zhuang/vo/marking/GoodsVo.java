@@ -25,5 +25,4 @@ public class GoodsVo implements Serializable {
     private String couponsName;
 
 
-
 }

@@ -1,4 +1,3 @@
-
 package com.mei.zhuang.enums;
 
 public interface BaseEnum<K> {

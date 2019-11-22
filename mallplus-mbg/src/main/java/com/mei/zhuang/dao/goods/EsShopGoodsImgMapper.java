@@ -1,7 +1,6 @@
 package com.mei.zhuang.dao.goods;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.goods.EsShopGoodsImg;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,8 +14,7 @@ public interface EsShopGoodsImgMapper extends BaseMapper<EsShopGoodsImg> {
      * @param entity
      * @return
      */
-  //  List<EsShopGoodsImg> selImg(Pagination page, EsShopGoodsImg entity);
-
+    //  List<EsShopGoodsImg> selImg(Pagination page, EsShopGoodsImg entity);
 
 
     /**

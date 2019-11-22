@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author arvato team
@@ -33,10 +33,10 @@ public class CrmSysUserServiceImpl extends ServiceImpl<CrmSysUserMapper, CrmSysU
 
     @Transactional
     @Override
-    public void createTenantUserInfo(String username, DataSourceDto dataSourceDto){
+    public void createTenantUserInfo(String username, DataSourceDto dataSourceDto) {
         CrmSysUser sysUser = new CrmSysUser()
-                                    .setUsername(username)
-                                    .setDeptId(AdminCommonConstant.SYS_DEPT_IT_ID);
+                .setUsername(username)
+                .setDeptId(AdminCommonConstant.SYS_DEPT_IT_ID);
         this.crmSysUserMapper.insert(sysUser);
         this.crmSysUserRoleMapper.insert(
                 new CrmSysUserRole()
@@ -46,7 +46,7 @@ public class CrmSysUserServiceImpl extends ServiceImpl<CrmSysUserMapper, CrmSysU
     }
 
 
-    public Integer updatestatus(String status,String username){
-        return crmSysUserMapper.updatestatususer(status,username);
+    public Integer updatestatus(String status, String username) {
+        return crmSysUserMapper.updatestatususer(status, username);
     }
 }

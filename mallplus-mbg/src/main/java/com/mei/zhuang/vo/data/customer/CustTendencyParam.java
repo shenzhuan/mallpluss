@@ -18,7 +18,7 @@ public class CustTendencyParam {
 
     private String source;//来源
 
-    private Long  shopId;//店铺id
+    private Long shopId;//店铺id
 
 
 }

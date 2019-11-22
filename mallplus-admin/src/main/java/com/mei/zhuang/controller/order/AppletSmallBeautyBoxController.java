@@ -46,26 +46,38 @@ public class AppletSmallBeautyBoxController {
     @Resource
     private GoodsFegin goodsFegin;
 
+    private static List<String> getDiffrent(List<String> list1, List<String> list2) {
+        long st = System.nanoTime();
+        List<String> diff = new ArrayList<String>();
+        for (String str : list1) {
+            if (!list2.contains(str)) {
+                diff.add(str);
+            }
+        }
+        System.out.println("total times " + (System.nanoTime() - st));
+        return diff;
+    }
+
     @SysLog(MODULE = "小美盒管理", REMARK = "查询正在进行的小美盒活动")
     @ApiOperation("查询正在进行的小美盒活动")
     @PostMapping(value = "/selSmallBeautyBox")
     public Object selSmallBeautyBox(EsActivatySmallBeautyBox entity) {
         try {
-            if(ValidatorUtils.empty(entity.getMemberId())){
+            if (ValidatorUtils.empty(entity.getMemberId())) {
                 return new CommonResult().failed("请指定用户编号");
             }
             //查询正在进行的活动
-            Map<String,Object> map = new HashMap<String,Object>();
+            Map<String, Object> map = new HashMap<String, Object>();
             long beginTime = System.currentTimeMillis();
             ////您有未结算的礼盒
             //判断购物车是否有未结算的定制礼盒
             EsMember member = new EsMember();
             member.setId(entity.getMemberId());
             Long countNum = shopOrderService.selectExist(member);
-            if(countNum>0){
+            if (countNum > 0) {
                 EsActivatySmallBeautyBoxGiftBox giftBox = esActivatySmallBeautyBoxGiftBoxService.getById(countNum);
                 List<EsActivatySmallBeautyBox> list = esActivatySmallBeautyBoxService.list(new QueryWrapper<>());
-                if(list != null && list.size() > 0){
+                if (list != null && list.size() > 0) {
                     for (EsActivatySmallBeautyBox box : list) {
                         if (Long.parseLong(box.getStartTime()) <= beginTime) {
                             if (Long.parseLong(box.getEndTime()) >= beginTime) {
@@ -74,19 +86,19 @@ public class AppletSmallBeautyBoxController {
                                 goods.setActivatyId(box.getId());
                                 goods.setProduct(1);
                                 List<EsActivatySmallBeautyBoxGoods> listGoods = esActivatySmallBeautyBoxGoodsService.list(new QueryWrapper<>(goods));
-                                map.put("activaty",box);
-                                map.put("goods",listGoods);
-                                map.put("giftBox",giftBox);
+                                map.put("activaty", box);
+                                map.put("goods", listGoods);
+                                map.put("giftBox", giftBox);
                                 return new CommonResult().success("success", map);
                             }
                         }
                     }
                 }
-                return new CommonResult().success("success",null);
+                return new CommonResult().success("success", null);
             }
 
             List<EsActivatySmallBeautyBox> list = esActivatySmallBeautyBoxService.list(new QueryWrapper<>());
-            if(list != null && list.size() > 0){
+            if (list != null && list.size() > 0) {
                 for (EsActivatySmallBeautyBox box : list) {
                     if (Long.parseLong(box.getStartTime()) <= beginTime) {
                         if (Long.parseLong(box.getEndTime()) >= beginTime) {
@@ -95,8 +107,8 @@ public class AppletSmallBeautyBoxController {
                             goods.setActivatyId(box.getId());
                             goods.setProduct(1);
                             List<EsActivatySmallBeautyBoxGoods> listGoods = esActivatySmallBeautyBoxGoodsService.list(new QueryWrapper<>(goods));
-                            map.put("activaty",box);
-                            map.put("goods",listGoods);
+                            map.put("activaty", box);
+                            map.put("goods", listGoods);
                             return new CommonResult().success("success", map);
                         }
                     }
@@ -112,50 +124,50 @@ public class AppletSmallBeautyBoxController {
     @SysLog(MODULE = "小美盒管理", REMARK = "根据步数查询对应的code")
     @ApiOperation("根据步数查询对应的code")
     @PostMapping(value = "/selSmallGoods")
-    public Object selSmallGoods(EsActivatySmallBeautyBoxGoods entity){
-        try{
-            if(ValidatorUtils.empty(entity.getActivatyId())){
+    public Object selSmallGoods(EsActivatySmallBeautyBoxGoods entity) {
+        try {
+            if (ValidatorUtils.empty(entity.getActivatyId())) {
                 return new CommonResult().failed("请指定活动编号");
             }
-            if(ValidatorUtils.empty(entity.getSerialNember())){
+            if (ValidatorUtils.empty(entity.getSerialNember())) {
                 return new CommonResult().failed("请指定步数");
             }
             //此编码指当前步数选择的编码加前几步的编码
-            if(ValidatorUtils.empty(entity.getProductCode())){
+            if (ValidatorUtils.empty(entity.getProductCode())) {
                 return new CommonResult().failed("请指定商品编码");
             }
             List<EsActivatySmallBeautyBoxGoods> list = new ArrayList<EsActivatySmallBeautyBoxGoods>();
 
             String[] attr = entity.getProductCode().split(",");
-            List<String> listString=Arrays.asList(attr);
+            List<String> listString = Arrays.asList(attr);
             List<String> listStr = new ArrayList<String>();
             List<EsActivatySmallBeautyBoxGiftBox> listCode = new ArrayList<EsActivatySmallBeautyBoxGiftBox>();
             List<EsActivatySmallBeautyBoxGoods> lists = new ArrayList<EsActivatySmallBeautyBoxGoods>();
 
             //1、查询所有相匹配的定制礼盒
-            List<EsActivatySmallBeautyBoxGiftBox> listGoods =  esActivatySmallBeautyBoxGiftBoxService.selectSmall(listString,entity.getActivatyId());
-            List<String> attrGift= new ArrayList<String>();
-            if(entity.getSerialNember() ==5){
+            List<EsActivatySmallBeautyBoxGiftBox> listGoods = esActivatySmallBeautyBoxGiftBoxService.selectSmall(listString, entity.getActivatyId());
+            List<String> attrGift = new ArrayList<String>();
+            if (entity.getSerialNember() == 5) {
                 //直接返回一个礼盒
-                for (EsActivatySmallBeautyBoxGiftBox gift:listGoods) {
+                for (EsActivatySmallBeautyBoxGiftBox gift : listGoods) {
                     attrGift = Arrays.asList(gift.getProductCode().split(","));
                 }
                 List<String> attrCode = Arrays.asList(entity.getProductCode().split(","));
-                attrCode =getDiffrent(attrGift,attrCode);
+                attrCode = getDiffrent(attrGift, attrCode);
                 List<EsActivatySmallBeautyBoxGoods> lis = new ArrayList<EsActivatySmallBeautyBoxGoods>();
-                for (String gb:attrCode) {
+                for (String gb : attrCode) {
                     EsActivatySmallBeautyBoxGoods goods = new EsActivatySmallBeautyBoxGoods();
                     goods.setActivatyId(entity.getActivatyId());
                     goods.setProductCode(gb);
                     lis.add(esActivatySmallBeautyBoxGoodsService.getOne(new QueryWrapper<>(goods)));
                 }
-                return new CommonResult().success("success",lis);
-            }else{
-                for (EsActivatySmallBeautyBoxGiftBox gift:listGoods) {
+                return new CommonResult().success("success", lis);
+            } else {
+                for (EsActivatySmallBeautyBoxGiftBox gift : listGoods) {
                     String[] attrPC = gift.getProductCode().split(",");
-                    for (int i=0;i<attrPC.length;i++){
-                        for (String str:listString) {
-                            if(str.equals(attrPC[i])){
+                    for (int i = 0; i < attrPC.length; i++) {
+                        for (String str : listString) {
+                            if (str.equals(attrPC[i])) {
                                 listCode.add(gift);
                             }
                         }
@@ -166,11 +178,11 @@ public class AppletSmallBeautyBoxController {
                 boxGoods.setActivatyId(entity.getActivatyId());
                 boxGoods.setProduct(entity.getSerialNember());
                 List<EsActivatySmallBeautyBoxGoods> goodsList = esActivatySmallBeautyBoxGoodsService.list(new QueryWrapper<>(boxGoods));
-                for (EsActivatySmallBeautyBoxGoods goods :goodsList) {//礼品
-                    for (EsActivatySmallBeautyBoxGiftBox code:listCode) {//礼盒
-                        String[] attrCode=code.getProductCode().split(",");
-                        for (int i=0;i<attrCode.length;i++){
-                            if(attrCode[i].equals(goods.getProductCode())){
+                for (EsActivatySmallBeautyBoxGoods goods : goodsList) {//礼品
+                    for (EsActivatySmallBeautyBoxGiftBox code : listCode) {//礼盒
+                        String[] attrCode = code.getProductCode().split(",");
+                        for (int i = 0; i < attrCode.length; i++) {
+                            if (attrCode[i].equals(goods.getProductCode())) {
                                 lists.add(goods);
                             }
                         }
@@ -179,69 +191,53 @@ public class AppletSmallBeautyBoxController {
                 HashSet h = new HashSet(lists);
                 lists.clear();
                 lists.addAll(h);
-                return new CommonResult().success("success",lists);
+                return new CommonResult().success("success", lists);
 
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed("操作异常");
         }
-}
-    private static List<String> getDiffrent(List<String> list1, List<String> list2) {
-        long st = System.nanoTime();
-        List<String> diff = new ArrayList<String>();
-        for(String str:list1)
-        {
-            if(!list2.contains(str))
-            {
-                diff.add(str);
-            }
-        }
-        System.out.println("total times "+(System.nanoTime()-st));
-        return diff;
     }
-
-
-
 
     @SysLog(MODULE = "小美盒管理", REMARK = "根据code查询对应礼盒")
     @ApiOperation("根据code查询对应礼盒")
     @PostMapping("/selGiftBox")
-    public Object selGiftBox(EsActivatySmallBeautyBoxGiftBox entity){
-        try{
-            if(ValidatorUtils.empty(entity.getProductCode())){
+    public Object selGiftBox(EsActivatySmallBeautyBoxGiftBox entity) {
+        try {
+            if (ValidatorUtils.empty(entity.getProductCode())) {
                 return new CommonResult().failed("产品编码为空");
             }
-            if(ValidatorUtils.empty(entity.getActivatyId())){
+            if (ValidatorUtils.empty(entity.getActivatyId())) {
                 return new CommonResult().failed("请指定活动编号");
             }
             String[] attr = entity.getProductCode().split(",");
-            List<String> list =Arrays.asList(attr);
-            List<EsActivatySmallBeautyBoxGiftBox> lists = esActivatySmallBeautyBoxGiftBoxService.selectSmall(list,entity.getActivatyId());
-            for (EsActivatySmallBeautyBoxGiftBox box:lists) {
-                return new CommonResult().success("success",box);
+            List<String> list = Arrays.asList(attr);
+            List<EsActivatySmallBeautyBoxGiftBox> lists = esActivatySmallBeautyBoxGiftBoxService.selectSmall(list, entity.getActivatyId());
+            for (EsActivatySmallBeautyBoxGiftBox box : lists) {
+                return new CommonResult().success("success", box);
             }
             return new CommonResult().failed("暂无");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
         }
     }
 
-   @SysLog(MODULE = "小美盒管理", REMARK = "添加小美盒到购物车")
+    @SysLog(MODULE = "小美盒管理", REMARK = "添加小美盒到购物车")
     @ApiOperation("添加小美盒到购物车")
     @PostMapping("/insSmallBeautyCart")
-    public Object insSmallBeautyCart(EsActivatySmallBeautyBoxGiftBox entity){
-        try{
-            if(ValidatorUtils.empty(entity.getId())){
+    public Object insSmallBeautyCart(EsActivatySmallBeautyBoxGiftBox entity) {
+        try {
+            if (ValidatorUtils.empty(entity.getId())) {
                 return new CommonResult().failed("请指定礼盒编号");
             }
-            if(ValidatorUtils.empty(entity.getMemberId())){
+            if (ValidatorUtils.empty(entity.getMemberId())) {
                 return new CommonResult().failed("请指定用户编号");
             }
             EsShopGoods goods = goodsFegin.goodsDetail(entity.getId());
-            if(goods != null){
+            if (goods != null) {
                 EsShopGoodsOption goodsOption = goodsFegin.goodsOption(goods.getId());
                 EsShopCart cart = new EsShopCart();
                 cart.setMemberId(entity.getMemberId());
@@ -257,10 +253,10 @@ public class AppletSmallBeautyBoxController {
                 cart.setCreateTime(new Date());
                 cart.setOptionName(goodsOption.getTitle());
                 cart.setOptionId(goodsOption.getId());
-                return new CommonResult().success("success",shopOrderService.inserts(cart));
+                return new CommonResult().success("success", shopOrderService.inserts(cart));
             }
-            return new CommonResult().success("success",null);
-        }catch (Exception e){
+            return new CommonResult().success("success", null);
+        } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
         }
@@ -269,23 +265,22 @@ public class AppletSmallBeautyBoxController {
     @SysLog(MODULE = "小美盒管理", REMARK = "(查询商品编号)")
     @ApiOperation("送礼(查询商品编号)")
     @PostMapping("/selGoodsId")
-    public Object selGoodsId(@RequestParam("id") Long id){
-        try{
+    public Object selGoodsId(@RequestParam("id") Long id) {
+        try {
 
-            if(ValidatorUtils.empty(id)){
+            if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定礼盒编号");
             }
             EsShopGoods goods = goodsFegin.goodsDetail(id);
-            if(goods != null){
-                return new CommonResult().success("success",goods.getId());
+            if (goods != null) {
+                return new CommonResult().success("success", goods.getId());
             }
-            return new CommonResult().success("success",null);
-        }catch (Exception e){
+            return new CommonResult().success("success", null);
+        } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed("操作失败");
         }
     }
-
 
 
 }

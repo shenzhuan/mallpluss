@@ -27,6 +27,7 @@ public interface CrmSysUserMapper extends BaseMapper<CrmSysUser> {
 
     /**
      * 根据用户名查找
+     *
      * @param username
      * @return
      */

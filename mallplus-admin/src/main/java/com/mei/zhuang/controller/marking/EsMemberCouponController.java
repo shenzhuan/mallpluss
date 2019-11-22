@@ -30,6 +30,13 @@ public class EsMemberCouponController {
     @Resource
     private MemberCouponService memberCouponService;
 
+    public static void main(String[] args) {
+        EsMemberCouponController couponController = new EsMemberCouponController();
+        EsMemberCoupon entity = new EsMemberCoupon();
+        couponController.list(entity, 1, 10);
+
+    }
+
     @SysLog(MODULE = "用户发放券管理", REMARK = "查询发放记录")
     @ApiOperation("查询发放记录")
     @PostMapping(value = "/lisetmembercoupon")
@@ -47,18 +54,18 @@ public class EsMemberCouponController {
     @SysLog(MODULE = "发放记录导出", REMARK = "发放记录导出")
     @ApiOperation("发放记录导出")
     @RequestMapping(value = "/excllist", method = RequestMethod.POST)
-    public Object excllist(HttpServletRequest request,HttpServletResponse response,EsMemberCoupon entity) {
+    public Object excllist(HttpServletRequest request, HttpServletResponse response, EsMemberCoupon entity) {
         try {
 
             List<Map<String, Object>> maps1 = memberCouponService.selectMemberCoupon(entity);
-            String[] title= new String[]{"优惠券类型", "优惠券名称", "用户信息", "获得方式", "获得时间", "状态", "使用时间", "使用订单号"};        //设置表格表头字段
-            String [] properties={"type","title","nickname","froms","create_time","status","used_time","order_id"};
+            String[] title = new String[]{"优惠券类型", "优惠券名称", "用户信息", "获得方式", "获得时间", "状态", "使用时间", "使用订单号"};        //设置表格表头字段
+            String[] properties = {"type", "title", "nickname", "froms", "create_time", "status", "used_time", "order_id"};
             ExcelExportUtil excelExport2 = new ExcelExportUtil();
             excelExport2.setData(maps1);
             excelExport2.setHeardKey(properties);
             excelExport2.setFontSize(14);
             excelExport2.setHeardList(title);
-            excelExport2.exportExport(request,response);
+            excelExport2.exportExport(request, response);
             return new CommonResult().success("导出成功");
         } catch (Exception e) {
             log.error("发放记录导出：%s", e.getMessage(), e);
@@ -89,14 +96,6 @@ public class EsMemberCouponController {
             log.error("发放记录显示：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
-    }
-
-
-    public static void main(String[] args) {
-        EsMemberCouponController couponController = new EsMemberCouponController();
-        EsMemberCoupon entity = new EsMemberCoupon();
-        couponController.list(entity, 1, 10);
-
     }
 
 }

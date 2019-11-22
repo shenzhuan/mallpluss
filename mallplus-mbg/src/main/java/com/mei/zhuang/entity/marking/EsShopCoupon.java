@@ -1,7 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -17,7 +16,7 @@ import java.util.List;
 
 /**
  * <p>
- *  优惠券
+ * 优惠券
  * <p>
  * </p>
  *
@@ -163,9 +162,9 @@ public class EsShopCoupon extends Model<EsShopCoupon> {
     private String goodsList;
 
 
-
     @TableField(exist = false)
-    private Integer total=0;
+    private Integer total = 0;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

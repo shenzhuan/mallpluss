@@ -4,18 +4,18 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmPreventHarassmentConfig">
-        <id column="id" property="id" />
-        <result column="type" property="type" />
-        <result column="number" property="number" />
-        <result column="status" property="status" />
-        <result column="dept_id" property="deptId" />
-        <result column="create_user_id" property="createUserId" />
-        <result column="create_date" property="createDate" />
-        <result column="create_time" property="createTime" />
-        <result column="update_user_id" property="updateUserId" />
-        <result column="update_date" property="updateDate" />
-        <result column="update_time" property="updateTime" />
-        <result column="data_config" property="dataConfig" />
+        <id column="id" property="id"/>
+        <result column="type" property="type"/>
+        <result column="number" property="number"/>
+        <result column="status" property="status"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="data_config" property="dataConfig"/>
     </resultMap>
 
 </mapper>

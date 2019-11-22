@@ -4,34 +4,33 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysTenant">
-        <id column="id" property="id" />
-        <result column="tenant_name" property="tenantName" />
-        <result column="db_resource_id" property="dbResourceId" />
-        <result column="db_schema" property="dbSchema" />
-        <result column="brand_name" property="brandName" />
-        <result column="brand_logo" property="brandLogo" />
-        <result column="company_name" property="companyName" />
-        <result column="company_tel" property="companyTel" />
-        <result column="company_email" property="companyEmail" />
-        <result column="company_address" property="companyAddress" />
-        <result column="status" property="status" />
+        <id column="id" property="id"/>
+        <result column="tenant_name" property="tenantName"/>
+        <result column="db_resource_id" property="dbResourceId"/>
+        <result column="db_schema" property="dbSchema"/>
+        <result column="brand_name" property="brandName"/>
+        <result column="brand_logo" property="brandLogo"/>
+        <result column="company_name" property="companyName"/>
+        <result column="company_tel" property="companyTel"/>
+        <result column="company_email" property="companyEmail"/>
+        <result column="company_address" property="companyAddress"/>
+        <result column="status" property="status"/>
     </resultMap>
 
 
     <resultMap id="pagingData" type="com.arvato.common.dto.SysTenantPagingData">
-        <result column="tenant_name" property="tenantName" />
-        <result column="db_resource_name" property="dbResourceName" />
-        <result column="db_schema" property="dbSchema" />
-        <result column="status" property="status" />
-        <result column="create_date" property="createDate" />
+        <result column="tenant_name" property="tenantName"/>
+        <result column="db_resource_name" property="dbResourceName"/>
+        <result column="db_schema" property="dbSchema"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
 
     <resultMap id="sysTenantInfo" type="com.arvato.common.dto.SysTenantInfo">
-        <result column="id" property="id" />
-        <result column="db_name" property="dbName" />
-        <result column="db_schema" property="dbSchema" />
+        <result column="id" property="id"/>
+        <result column="db_name" property="dbName"/>
+        <result column="db_schema" property="dbSchema"/>
     </resultMap>
-
 
 
     <select id="getValidTenantByIds" resultMap="BaseResultMap">
@@ -53,10 +52,10 @@
     </select>
     <select id="getPagingList" resultMap="pagingData">
         select id ,tenant_name,
-               (select source_name from sys_db_resource where id=sys_tenant.db_resource_id) as db_resource_name,
-               db_schema,
-               to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
-               status
+        (select source_name from sys_db_resource where id=sys_tenant.db_resource_id) as db_resource_name,
+        db_schema,
+        to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
+        status
         from sys_tenant
         <include refid="pagingWhere"></include>
         order by id desc

@@ -4,24 +4,26 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysPlatformUser">
-        <result column="id" property="id" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="last_login_time" property="lastLoginTime" />
-        <result column="login_error_count" property="loginErrorCount" />
-        <result column="manage_tenant_ids" property="manageTenantIds" javaType="int[]" jdbcType="ARRAY" typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
-        <result column="user_type" property="userType" />
-        <result column="status" property="status" />
-        <result column="create_date" property="createDate" />
-        <result column="create_time" property="createTime" />
-        <result column="update_date" property="updateDate" />
-        <result column="update_time" property="updateTime" />
+        <result column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="login_error_count" property="loginErrorCount"/>
+        <result column="manage_tenant_ids" property="manageTenantIds" javaType="int[]" jdbcType="ARRAY"
+                typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+        <result column="user_type" property="userType"/>
+        <result column="status" property="status"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
     </resultMap>
 
 
     <resultMap id="pagingData" type="com.arvato.common.dto.SysPlatformUserPagingData">
-        <result column="manage_tenant_names" property="manageTenantNames" javaType="string" jdbcType="ARRAY" typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
-        <result column="create_date" property="createDate" />
+        <result column="manage_tenant_names" property="manageTenantNames" javaType="string" jdbcType="ARRAY"
+                typeHandler="com.arvato.utils.util.ArrayTypeHandler"/>
+        <result column="create_date" property="createDate"/>
     </resultMap>
 
     <update id="recordLastLoginTimeAndResetLoginErrorCount">
@@ -46,9 +48,10 @@
     </select>
     <select id="getPagingList" resultMap="pagingData">
         select id ,username,
-               array(select tenant_name from sys_tenant where id = any(sys_platform_user.manage_tenant_ids)) as manage_tenant_names,
-               to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
-               status
+        array(select tenant_name from sys_tenant where id = any(sys_platform_user.manage_tenant_ids)) as
+        manage_tenant_names,
+        to_char(to_timestamp(create_date, 'YYYYMMDD'),'yyyy-mm-dd') as create_date,
+        status
         from sys_platform_user
         <include refid="pagingWhere"></include>
         order by id desc

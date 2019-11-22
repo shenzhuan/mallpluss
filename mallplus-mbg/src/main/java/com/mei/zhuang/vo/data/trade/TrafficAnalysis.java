@@ -15,11 +15,12 @@ public class TrafficAnalysis {
     private String DataTime;
 
 
-    public TrafficAnalysis(){}
+    public TrafficAnalysis() {
+    }
 
-    public TrafficAnalysis(double bounceTotal,double bounceAvg){
-        this.bounceTotal=bounceTotal;
-        this.bounceAvg=bounceAvg;
+    public TrafficAnalysis(double bounceTotal, double bounceAvg) {
+        this.bounceTotal = bounceTotal;
+        this.bounceAvg = bounceAvg;
     }
 
 }

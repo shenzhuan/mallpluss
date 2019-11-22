@@ -4,11 +4,11 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods">
-        <result column="id" property="id" />
-        <result column="good_id" property="goodId" />
-        <result column="specifications_id" property="specificationsId" />
-        <result column="public_goodsid" property="publicGoodsid" />
-        <result column="physical_id" property="physicalId" />
+        <result column="id" property="id"/>
+        <result column="good_id" property="goodId"/>
+        <result column="specifications_id" property="specificationsId"/>
+        <result column="public_goodsid" property="publicGoodsid"/>
+        <result column="physical_id" property="physicalId"/>
     </resultMap>
 
 

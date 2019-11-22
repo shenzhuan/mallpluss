@@ -1,9 +1,9 @@
 package com.mei.zhuang.entity.marking;
 
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,7 +29,9 @@ import java.util.List;
 public class EsShopDiscount extends Model<EsShopDiscount> {
 
     private static final long serialVersionUID = 1L;
-
+    //order联调的调用活动
+    @TableField(exist = false)
+    List<EsShopDiscountRule> discountRuleList;
     /**
      * 时间间隔
      */
@@ -145,7 +147,6 @@ public class EsShopDiscount extends Model<EsShopDiscount> {
     @TableField("update_time")
     private Date updateTime;
     private Integer source;
-
     //折扣活动的添加
     @TableField(exist = false)
     private List<EsShopDiscountRule> ruleList;
@@ -164,12 +165,10 @@ public class EsShopDiscount extends Model<EsShopDiscount> {
     //活动时间
     @TableField(exist = false)
     private String time;
-    @TableField(exist =  false)
+    @TableField(exist = false)
     //总页数
     private Integer total;
-    //order联调的调用活动
-    @TableField(exist =  false)
-    List<EsShopDiscountRule> discountRuleList;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

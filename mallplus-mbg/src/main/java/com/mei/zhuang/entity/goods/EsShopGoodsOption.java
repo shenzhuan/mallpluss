@@ -38,13 +38,13 @@ public class EsShopGoodsOption extends Model<EsShopGoodsOption> {
     private Long shopId;
     private String title;//规格名称
     @TableField("goods_code")
-    private String goodsCode ;//编码
+    private String goodsCode;//编码
     @TableField("suit_code")
     private String suitCode;//套装编码
     @TableField("color_test_code")
     private String colorTestCode;//试色编码
     @TableField("productsn")
-    private String productsn ;//条码
+    private String productsn;//条码
     @TableField("goods_name")
     private String goodsName;//商品名称
     private BigDecimal price;//价格
@@ -55,7 +55,7 @@ public class EsShopGoodsOption extends Model<EsShopGoodsOption> {
     @TableField("stock_warning")
     private Integer stockWarning;
     @TableField("is_default")
-    private Integer  isDefault;// 字段 1是默认 2非默认
+    private Integer isDefault;// 字段 1是默认 2非默认
 
     private String banner;//规格的轮播图
 
@@ -68,7 +68,7 @@ public class EsShopGoodsOption extends Model<EsShopGoodsOption> {
     private BigDecimal costprice;//原价
     private BigDecimal productprice;//预售价
     @TableField(exist = false)
-    private Integer current =1;
+    private Integer current = 1;
     @TableField(exist = false)
     private Integer size = 10;
     @TableField(exist = false)

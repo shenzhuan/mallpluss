@@ -44,12 +44,12 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
     private EsShopCouponsTopupGoodsMapper couponsTopupGoodsMapper;
 
     public void date(EsShopCouponNew ent) throws Exception {
-        if(!ent.getTime().equals("")) {
+        if (!ent.getTime().equals("")) {
             String[] times = ent.getTime().split(",");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             ent.setStartingTime(sdf.parse(times[0]));
             ent.setEndTime(sdf.parse(times[1]));
-        }else{
+        } else {
             ent.setStartingTime(null);
             ent.setEndTime(null);
         }
@@ -57,9 +57,9 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
 
     @Transactional(rollbackFor = Exception.class)
     public void addsave(EsShopCouponNew entity) throws Exception {
-        if(entity.getRulesList()!=null&&entity.getRulesList().size()>0){
-            for(EsShopCouponNewRule newrule:entity.getRulesList()){
-                EsShopCouponNewRule nr=new EsShopCouponNewRule();
+        if (entity.getRulesList() != null && entity.getRulesList().size() > 0) {
+            for (EsShopCouponNewRule newrule : entity.getRulesList()) {
+                EsShopCouponNewRule nr = new EsShopCouponNewRule();
                 nr.setCouponid(newrule.getCouponid());
                 nr.setInventory(newrule.getInventory());
                 nr.setPublicCouponid(entity.getCouponNewid());
@@ -68,9 +68,9 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
                 couponNewRuleMapper.insert(nr);
                 EsShopCouponNewRule NewRule = couponNewRuleMapper.selectById(nr.getId());
                 //赠品券
-                if(NewRule.getCouponTypes()==4){
+                if (NewRule.getCouponTypes() == 4) {
                     List<EsShopCouponGoodsMap> GoodsMaps = goodsMapMapper.selcetcoupongoods(NewRule.getCouponid());
-                    for(EsShopCouponGoodsMap goods:GoodsMaps) {
+                    for (EsShopCouponGoodsMap goods : GoodsMaps) {
                         EsShopCouponsTopupGoods trg = new EsShopCouponsTopupGoods();
                         trg.setGoodId(goods.getGoodsId());
                         trg.setPhysicalId(NewRule.getId());
@@ -78,9 +78,9 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
                     }
                 }
                 //商品券
-                if(NewRule.getCouponTypes()==3){
+                if (NewRule.getCouponTypes() == 3) {
                     List<EsShopCouponGoodsMap> GoodsMaps = goodsMapMapper.selectgoods2(NewRule.getCouponid());
-                    for(EsShopCouponGoodsMap goods:GoodsMaps) {
+                    for (EsShopCouponGoodsMap goods : GoodsMaps) {
                         EsShopCouponsTopupGoods trg = new EsShopCouponsTopupGoods();
                         trg.setGoodId(goods.getGoodsId());
                         trg.setSpecificationsId(goods.getSpecIds());
@@ -91,40 +91,42 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
             }
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCouponNew entity)  {
+    public boolean save(EsShopCouponNew entity) {
         try {
-            if(entity.getStatus()==1){
-                if(entity.getActivityId()==1) {
+            if (entity.getStatus() == 1) {
+                if (entity.getActivityId() == 1) {
                     date(entity);
                 }
-                String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
+                String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
                 entity.setCouponNewid(uuid);
                 couponNewMapper.insert(entity);
                 addsave(entity);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
 
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(EsShopCouponNew couponNew) throws Exception {
-      //  EsShopCouponNew couponnewid=selectOne(new QueryWrapper<EsShopCouponNew>().eq("id",couponNew.getId()));
+        //  EsShopCouponNew couponnewid=selectOne(new QueryWrapper<EsShopCouponNew>().eq("id",couponNew.getId()));
         EsShopCouponNew couponnewid = couponNewMapper.selectById(couponNew.getId());
-        List<EsShopCouponNewRule> shopCouponNew = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid",couponnewid.getCouponNewid()));
+        List<EsShopCouponNewRule> shopCouponNew = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", couponnewid.getCouponNewid()));
         //实物商品和赠品
-        if(shopCouponNew.size()>0&&shopCouponNew!=null) {
+        if (shopCouponNew.size() > 0 && shopCouponNew != null) {
             couponsTopupGoodsMapper.delete(new QueryWrapper<EsShopCouponsTopupGoods>().eq("physical_id", shopCouponNew.get(0).getCouponid()));
             couponNewRuleMapper.delete(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", couponnewid.getCouponNewid()));
         }
         date(couponNew);
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
         couponNew.setCouponNewid(uuid);
-        if(couponNew.getSingleCoupon()==null){
+        if (couponNew.getSingleCoupon() == null) {
             couponNew.setSingleCoupon(0);
         }
         couponNewMapper.updateById(couponNew);
@@ -134,9 +136,9 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
 
     @Override
     public EsShopCouponNew listcouponnew() {
-        Map<String,Object> map=new HashMap<String,Object>();
-        EsShopCouponNew listcoupon= couponNewMapper.listcouponnew();
-        if(listcoupon!=null) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        EsShopCouponNew listcoupon = couponNewMapper.listcouponnew();
+        if (listcoupon != null) {
             List<EsShopCouponNewRule> coupontype = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", listcoupon.getCouponNewid()));
             listcoupon.setRulesList(coupontype);
             return listcoupon;
@@ -146,9 +148,9 @@ public class CouponNewServiceImpl extends ServiceImpl<EsShopCouponNewMapper, EsS
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Integer deletetypeid(Long couponid,String typeid) {
+    public Integer deletetypeid(Long couponid, String typeid) {
 
-        return couponNewRuleMapper.deletetypeid(couponid,typeid);
+        return couponNewRuleMapper.deletetypeid(couponid, typeid);
     }
 
 }

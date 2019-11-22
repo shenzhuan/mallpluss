@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * <p>
- *    套餐商品
+ * 套餐商品
  * </p>
  *
  * @author arvato team
@@ -86,11 +86,11 @@ public class EsShopPackageGoods extends Model<EsShopPackageGoods> {
     private BigDecimal costPrice;
     //1.显示  2,隐藏
     private int according;
-    @TableField(exist=false)
+    @TableField(exist = false)
     private List<EsShopPackageGoodsSpec> PackageGoodsSpecList;
     @TableField(exist = false)
     private String packagespecList;
-    @TableField(exist =  false)
+    @TableField(exist = false)
     private String time;
     @TableField(exist = false)
     private Integer total;

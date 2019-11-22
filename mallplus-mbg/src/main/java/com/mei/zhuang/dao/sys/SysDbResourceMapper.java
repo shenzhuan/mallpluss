@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -17,6 +17,7 @@ import java.util.List;
 public interface SysDbResourceMapper extends BaseMapper<SysDbResource> {
     /**
      * 获取数据源字典列表
+     *
      * @return
      */
     List<DictData> getDictList();

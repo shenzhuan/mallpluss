@@ -4,12 +4,12 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsActivatySmallBeautyBox">
-        <id column="id" property="id" />
-        <result column="activaty_name" property="activatyName" />
-        <result column="create_time" property="createTime" />
-        <result column="start_time" property="startTime" />
-        <result column="end_time" property="endTime" />
-        <result column="step_number" property="stepNumber" />
+        <id column="id" property="id"/>
+        <result column="activaty_name" property="activatyName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="step_number" property="stepNumber"/>
     </resultMap>
     <select id="selList" resultMap="BaseResultMap">
         select * from es_activaty_small_beauty_box

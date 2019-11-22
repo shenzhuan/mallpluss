@@ -14,6 +14,7 @@ import com.mei.zhuang.entity.marking.EsShopDiscount;
 public interface EsShopDiscountMapper extends BaseMapper<EsShopDiscount> {
 
     void stopAllDiscount();
+
     Integer selectstatus();
 
 }

@@ -12,7 +12,7 @@ public class GoodsAnalyzeParam {
 
     private String source;//来源
 
-        private String startTime;//开始时间
+    private String startTime;//开始时间
 
     private String endTime;//结束时间
 

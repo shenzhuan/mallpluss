@@ -4,30 +4,32 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.member.EsCoreSmsTemplate">
-        <id column="id" property="id" />
-        <result column="shop_id" property="shopId" />
-        <result column="sms_name" property="smsName" />
-        <result column="send_condition" property="sendCondition" />
-        <result column="send_object" property="sendObject" />
-        <result column="type" property="type" />
-        <result column="sms_sign" property="smsSign" />
-        <result column="data" property="data" />
-        <result column="status" property="status" />
-        <result column="content" property="content" />
-        <result column="is_default" property="isDefault" />
-        <result column="create_time" property="createTime" />
-        <result column="is_delete" property="isDelete" />
-        <result column="server_id" property="serverId" />
-        <result column="sms_template_id" property="smsTemplateId" />
-        <result column="template_type" property="templateType" />
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="sms_name" property="smsName"/>
+        <result column="send_condition" property="sendCondition"/>
+        <result column="send_object" property="sendObject"/>
+        <result column="type" property="type"/>
+        <result column="sms_sign" property="smsSign"/>
+        <result column="data" property="data"/>
+        <result column="status" property="status"/>
+        <result column="content" property="content"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="server_id" property="serverId"/>
+        <result column="sms_template_id" property="smsTemplateId"/>
+        <result column="template_type" property="templateType"/>
 
     </resultMap>
 
-    <resultMap id="smsDetailMap" type="com.mei.zhuang.entity.member.EsCoreSmsTemplate" extends = "BaseResultMap" >
-        <association property="serverInfo" javaType="com.mei.zhuang.entity.member.EsCoreSms" resultMap="com.arvato.service.member.api.orm.dao.EsCoreSmsMapper.BaseResultMap" ></association>
+    <resultMap id="smsDetailMap" type="com.mei.zhuang.entity.member.EsCoreSmsTemplate" extends="BaseResultMap">
+        <association property="serverInfo" javaType="com.mei.zhuang.entity.member.EsCoreSms"
+                     resultMap="com.arvato.service.member.api.orm.dao.EsCoreSmsMapper.BaseResultMap"></association>
     </resultMap>
 
-    <select id="selectSmsTemplateList" resultMap="smsDetailMap" parameterType="com.arvato.service.member.api.vo.SmsParam">
+    <select id="selectSmsTemplateList" resultMap="smsDetailMap"
+            parameterType="com.arvato.service.member.api.vo.SmsParam">
         select * from es_core_sms_template smsTemp
         left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
         where 1 = 1
@@ -47,14 +49,15 @@
         limit #{size} offset (#{current} - 1) * #{size}
     </select>
 
-   <!-- <select id="selectById" resultMap="smsDetailMap" parameterType="java.lang.Long">
-        select * from es_core_sms_template smsTemp
-        left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
-        where smsTemp.id = #{id}
-    </select>
--->
+    <!-- <select id="selectById" resultMap="smsDetailMap" parameterType="java.lang.Long">
+         select * from es_core_sms_template smsTemp
+         left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
+         where smsTemp.id = #{id}
+     </select>
+ -->
 
-    <select id="selectSmsTemplateCount"  resultType="java.lang.Integer" parameterType="com.arvato.service.member.api.vo.SmsParam">
+    <select id="selectSmsTemplateCount" resultType="java.lang.Integer"
+            parameterType="com.arvato.service.member.api.vo.SmsParam">
         select count(*) from es_core_sms_template smsTemp
         left join es_core_sms smsServer on smsTemp.server_id = smsServer.id
         where 1 = 1
@@ -65,8 +68,8 @@
 
     </select>
 
-    <sql id="query_sms_condition" >
-       <if test="startTime != null and startTime !=''.toString()">
+    <sql id="query_sms_condition">
+        <if test="startTime != null and startTime !=''.toString()">
             and smsTemp.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
         </if>
         <if test="endTime != null and endTime !=''.toString()">

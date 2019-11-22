@@ -31,11 +31,10 @@ import java.util.regex.Pattern;
 public class EsMemberController {
 
 
-
     @Resource
     private EsMemberService memberService;
-    private String MbluatURl="https://mbluat.acxiom.com.cn/mbl/member/getCustomer";
-    private String InsertURL="https://mbluat.acxiom.com.cn/mbl/cce";
+    private String MbluatURl = "https://mbluat.acxiom.com.cn/mbl/member/getCustomer";
+    private String InsertURL = "https://mbluat.acxiom.com.cn/mbl/cce";
 
     @SysLog(MODULE = "会员管理", REMARK = "根据条件查询所有会员列表")
     @ApiOperation("根据条件查询所有会员列表")
@@ -116,7 +115,7 @@ public class EsMemberController {
     @SysLog(MODULE = "会员管理", REMARK = "更新会员")
     @ApiOperation("更新会员")
     @PostMapping(value = "/update")
-    public Object updateCoupon( EsMember entity) {
+    public Object updateCoupon(EsMember entity) {
         try {
             if (memberService.updateById(entity)) {
                 return new CommonResult().success();
@@ -168,13 +167,14 @@ public class EsMemberController {
     @ApiOperation("查询用户数量")
     @PostMapping(value = "/membercount")
     public Integer membercount() {
-       return memberService.membercount();
+        return memberService.membercount();
 
     }
+
     @ApiOperation("查询规定的用户数量")
     @PostMapping(value = "/memberselect")
-    public List<EsMember> memberselect(@RequestParam("size")Integer size,@RequestParam("current")Integer current) {
-        return memberService.memberselect(size,current);
+    public List<EsMember> memberselect(@RequestParam("size") Integer size, @RequestParam("current") Integer current) {
+        return memberService.memberselect(size, current);
 
     }
 
@@ -190,6 +190,7 @@ public class EsMemberController {
     public EsMember mobileselect(@RequestParam long memberId) {
         return memberService.getById(memberId);
     }
+
     @ApiOperation("修改")
     @PostMapping(value = "/updatemeber")
     public boolean updatemeber(@RequestBody EsMember entity) {

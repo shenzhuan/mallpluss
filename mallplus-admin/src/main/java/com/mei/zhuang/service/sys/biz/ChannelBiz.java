@@ -22,9 +22,10 @@ public class ChannelBiz {
 
     /**
      * 获取入会渠道下拉列表
+     *
      * @return List<Object>
      */
-    public List<CrmChannel> getChannelList(){
+    public List<CrmChannel> getChannelList() {
         return crmChannelMapper.selectList(new QueryWrapper<>(new CrmChannel()));
     }
 }

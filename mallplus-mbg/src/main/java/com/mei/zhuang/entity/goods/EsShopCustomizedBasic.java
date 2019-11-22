@@ -43,52 +43,52 @@ public class EsShopCustomizedBasic extends Model<EsShopCustomizedBasic> {
     @TableField("full_price")
     private BigDecimal fullPrice;
     /**
-     *减免开始时间
+     * 减免开始时间
      */
     @TableField("start_time")
     private String startTime;
     /**
-     *减免结束时间
+     * 减免结束时间
      */
     @TableField("end_time")
     private String endTime;
     /**
-     *刻字内容提示
+     * 刻字内容提示
      */
     @TableField("basic_content_tip")
     private String basicContentTip;
     /**
-     *刻字要求描述
+     * 刻字要求描述
      */
     @TableField("basic_rqe_desc")
     private String basicRqeDesc;
     /**
-     *样例图
+     * 样例图
      */
     @TableField("legend_img")
     private String legendImg;
     /**
-     *特殊符号标题
+     * 特殊符号标题
      */
     @TableField("spec_sym_title")
     private String specSymTitle;
     /**
-     *特殊符号描述
+     * 特殊符号描述
      */
     @TableField("spec_sym_desc")
     private String specSymDesc;
     /**
-     *特殊符号图片
+     * 特殊符号图片
      */
     @TableField("spec_sym_img")
     private String specSymImg;
     /**
-     *留言框提示
+     * 留言框提示
      */
     @TableField("box_message")
     private String boxMessage;
     /**
-     *刻字须知内容
+     * 刻字须知内容
      */
     @TableField("basic_notice")
     private String basicNotice;

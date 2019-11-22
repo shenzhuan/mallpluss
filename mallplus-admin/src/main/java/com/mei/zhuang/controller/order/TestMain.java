@@ -281,11 +281,11 @@ public class TestMain {
         String startTime = "2019-7-1";
         String endTime = "2019-7-31";
 
-        if(DateCalendarUtils.isFristDayByDate(startTime, DateUtil.YYYY_MM_DD) &&
+        if (DateCalendarUtils.isFristDayByDate(startTime, DateUtil.YYYY_MM_DD) &&
                 DateCalendarUtils.isLastDayByDate(endTime, DateUtil.YYYY_MM_DD)) {//自然月
             System.out.println(true);
 
-        }else{
+        } else {
             System.out.println(false);
         }
 
@@ -315,8 +315,6 @@ public class TestMain {
         String province = "湖南";
         province = province.replaceAll("省", "");
         System.out.println(province);
-
-
 
 
     }

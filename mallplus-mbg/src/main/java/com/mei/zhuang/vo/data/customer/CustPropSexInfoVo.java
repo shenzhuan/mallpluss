@@ -23,7 +23,8 @@ public class CustPropSexInfoVo {
 
     private String refDate;//关系日期
 
-    public CustPropSexInfoVo(){}
+    public CustPropSexInfoVo() {
+    }
 
     public CustPropSexInfoVo(int totalCustCount, int maleCount, double maleToScale, int femaleCount, double femaleToScale, int unknownCount, double unknownToScale, String refDate) {
         this.totalCustCount = totalCustCount;

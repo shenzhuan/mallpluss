@@ -21,12 +21,14 @@ public interface ISmsService extends IService<EsCoreSmsTemplate> {
 
     /**
      * 获得短信服务商信息
+     *
      * @return
      */
     List<EsCoreSms> getServerInfo();
 
     /**
      * 获得短信类型信息
+     *
      * @return
      */
     List<EsCoreSmsType> getSmsTypeInfo();

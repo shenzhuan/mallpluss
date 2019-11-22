@@ -7,22 +7,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- *@Author:liangjilong
- *@Date:2015-1-4
- *@Email:jilongliang@sina.com
- *@Version:1.0
- *@Description
+ * @Author:liangjilong
+ * @Date:2015-1-4
+ * @Email:jilongliang@sina.com
+ * @Version:1.0
+ * @Description
  */
 
 public class HttpRequestUtils {
     /**
      * 发送http请求
      * POST和GET请求都可以
-     * @param requestUrl 请求地址
+     *
+     * @param requestUrl     请求地址
      * @param method传入的执行的方式 是GET还是POST方式
      * @return String
      */
-    public static String HttpURLConnRequest(String requestUrl,String method) {
+    public static String HttpURLConnRequest(String requestUrl, String method) {
         StringBuffer buffer = new StringBuffer();
         try {
             URL url = new URL(requestUrl);

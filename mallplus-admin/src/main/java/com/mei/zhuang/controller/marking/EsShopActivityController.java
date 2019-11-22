@@ -76,18 +76,18 @@ public class EsShopActivityController {
                 return new CommonResult().failed("编号为空");
             }
             List<EsShopActivityPrize> list = JSONObject.parseArray(entity.getActivatyPrize(), EsShopActivityPrize.class);
-            Integer num=100;
+            Integer num = 100;
             if (list != null) {
-                for (EsShopActivityPrize prize:list) {
-                    num-=prize.getWinning();
+                for (EsShopActivityPrize prize : list) {
+                    num -= prize.getWinning();
                 }
                 entity.setList(list);
             }
             entity.setWinRate(num);
-            boolean bool =esShopActivityService.updates(entity);
-            if(bool ==true){
+            boolean bool = esShopActivityService.updates(entity);
+            if (bool == true) {
                 return new CommonResult().success("修改成功");
-            }else{
+            } else {
                 return new CommonResult().success("修改失败");
             }
 
@@ -123,18 +123,18 @@ public class EsShopActivityController {
                 return new CommonResult().failed("活动名称不得为空");
             }
             List<EsShopActivityPrize> list = JSONObject.parseArray(entity.getActivatyPrize(), EsShopActivityPrize.class);
-            Integer num=100;
+            Integer num = 100;
             if (list != null) {
-                for (EsShopActivityPrize prize:list) {
-                    num-=prize.getWinning();
+                for (EsShopActivityPrize prize : list) {
+                    num -= prize.getWinning();
                 }
                 entity.setList(list);
             }
             entity.setWinRate(num);
-            boolean bool =esShopActivityService.save(entity);
-            if(bool ==true){
+            boolean bool = esShopActivityService.save(entity);
+            if (bool == true) {
                 return new CommonResult().success("添加成功");
-            }else{
+            } else {
                 return new CommonResult().success("添加失败");
             }
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class EsShopActivityController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            String img = ImgBase64Util.StringUtil(id,"pages/goods/detail/index");
+            String img = ImgBase64Util.StringUtil(id, "pages/goods/detail/index");
 
             return new CommonResult().success("success", img);
         } catch (Exception e) {
@@ -167,7 +167,7 @@ public class EsShopActivityController {
     @PostMapping("/selPageListMember")
     public Object selPageListMeber(EsMemberActivatyRecord entity) {
         try {
-            if(ValidatorUtils.empty(entity.getActivatyId())){
+            if (ValidatorUtils.empty(entity.getActivatyId())) {
                 return new CommonResult().failed("请指定活动编号");
             }
             return new CommonResult().success("success", esMemberActivatyRecordService.selPageList(entity));
@@ -180,7 +180,7 @@ public class EsShopActivityController {
 
     @SysLog(MODULE = "抽奖有礼管理", REMARK = "用户抽奖记录列表数据导出")
     @ApiOperation("用户抽奖记录列表数据导出")
-    @RequestMapping(value = "/excelDownloads",method = RequestMethod.POST)
+    @RequestMapping(value = "/excelDownloads", method = RequestMethod.POST)
     public void excelDownloads(EsMemberActivatyRecord entity, HttpServletRequest request, HttpServletResponse response) {
 
         try {
@@ -190,7 +190,7 @@ public class EsShopActivityController {
             List<EsMemberActivatyRecord> list = esMemberActivatyRecordService.list(new QueryWrapper<>(entity));
             // 新增数据行，并且设置单元格数据
             int rowNum = 1;
-            String[] headers = {  "编号", "时间", "昵称", "openid","状态","奖项","奖品" };
+            String[] headers = {"编号", "时间", "昵称", "openid", "状态", "奖项", "奖品"};
             // headers表示excel表中第一行的表头
             HSSFRow row = sheet.createRow(0);
             // 在excel表中添加表头
@@ -203,12 +203,12 @@ public class EsShopActivityController {
             for (int i = 0; i < list.size(); i++) {
                 HSSFRow row1 = sheet.createRow(rowNum);
                 row1.createCell(0).setCellValue(null != list.get(i).getId() ? list.get(i).getId().toString() : "暂无");
-                row1.createCell(1).setCellValue( null != list.get(i).getCreateTime() ? list.get(i).getCreateTime().toString() : "暂无");
-                row1.createCell(2).setCellValue( null != list.get(i).getNickName() ? list.get(i).getNickName() : "暂无");
-                row1.createCell(3).setCellValue( null != list.get(i).getOpenId() ? list.get(i).getOpenId() : "暂无");
-                row1.createCell(4).setCellValue( null != list.get(i).getIsWin() ? list.get(i).getIsWin().toString() : "暂无");
-                row1.createCell(5).setCellValue( null != list.get(i).getPrizeLevel() ? list.get(i).getPrizeLevel().toString() : "暂无");
-                row1.createCell(6).setCellValue( null != list.get(i).getPrizeName() ? list.get(i).getPrizeName() : "暂无");
+                row1.createCell(1).setCellValue(null != list.get(i).getCreateTime() ? list.get(i).getCreateTime().toString() : "暂无");
+                row1.createCell(2).setCellValue(null != list.get(i).getNickName() ? list.get(i).getNickName() : "暂无");
+                row1.createCell(3).setCellValue(null != list.get(i).getOpenId() ? list.get(i).getOpenId() : "暂无");
+                row1.createCell(4).setCellValue(null != list.get(i).getIsWin() ? list.get(i).getIsWin().toString() : "暂无");
+                row1.createCell(5).setCellValue(null != list.get(i).getPrizeLevel() ? list.get(i).getPrizeLevel().toString() : "暂无");
+                row1.createCell(6).setCellValue(null != list.get(i).getPrizeName() ? list.get(i).getPrizeName() : "暂无");
                 rowNum++;
             }
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");

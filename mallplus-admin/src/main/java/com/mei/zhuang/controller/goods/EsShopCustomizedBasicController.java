@@ -1,15 +1,15 @@
 package com.mei.zhuang.controller.goods;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.mei.zhuang.service.goods.EsShopCustomizedBasicService;
-import com.mei.zhuang.service.goods.EsShopCustomizedLegendService;
-import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopCustomizedBasic;
 import com.mei.zhuang.entity.goods.EsShopCustomizedLegend;
+import com.mei.zhuang.service.goods.EsShopCustomizedBasicService;
+import com.mei.zhuang.service.goods.EsShopCustomizedLegendService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -135,7 +135,7 @@ public class EsShopCustomizedBasicController {
     @PostMapping("/detailBasics")
     private EsShopCustomizedBasic detailBasics(@RequestParam("id") Long id) {
         try {
-            EsShopCustomizedBasic basic=esShopCustomizedBasicService.detail(id);
+            EsShopCustomizedBasic basic = esShopCustomizedBasicService.detail(id);
             return basic;
         } catch (Exception e) {
             log.error("新增刻字服务基本信息异常:", e);
@@ -188,7 +188,6 @@ public class EsShopCustomizedBasicController {
         }
 
     }
-
 
 
 }

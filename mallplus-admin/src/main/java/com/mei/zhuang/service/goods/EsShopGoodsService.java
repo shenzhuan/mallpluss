@@ -49,7 +49,8 @@ public interface EsShopGoodsService extends IService<EsShopGoods> {
 
     public Object updRecycleShopStatus(String id, Integer status);
 
-    Object selDisplayShopGoodsCategoryOne() ;
+    Object selDisplayShopGoodsCategoryOne();
+
     public Object selShopGoodsCategoryOne();
 
     public Object selShopGoodsCategoryTwo(Long parentId, Integer level);
@@ -61,7 +62,7 @@ public interface EsShopGoodsService extends IService<EsShopGoods> {
      */
     List<EsShopGoods> selectgiftsgoods(String title);
 
-     Map<String, Object> selGoodsPageList(GoodsQuery esShopGoods);
+    Map<String, Object> selGoodsPageList(GoodsQuery esShopGoods);
 
     GoodsDetail goodsDetail(Long id);
 
@@ -76,23 +77,25 @@ public interface EsShopGoodsService extends IService<EsShopGoods> {
 
     List<EsShopGoods> selectgoodsListByCateIds(List<String> ids);
 
-     Map<String, Object> goodsListByCatePageList(GoodsQuery esShopGoods);
+    Map<String, Object> goodsListByCatePageList(GoodsQuery esShopGoods);
 
-     List<EsShopGoods> selGoodsPutAwayTime();
+    List<EsShopGoods> selGoodsPutAwayTime();
 
     List<EsShopDiypage> selectAll();
 
-    Map<String,Object> selGoodsPutaway(GoodsQuery goodsQuery);
+    Map<String, Object> selGoodsPutaway(GoodsQuery goodsQuery);
 
-    Map<String,Object> selCustService();
+    Map<String, Object> selCustService();
 
     EsShopGoods detail(Long id);
 
-    Map<String,Object> lists(GoodsQuery entity);
+    Map<String, Object> lists(GoodsQuery entity);
 
     Map<String, Object> searchGoods(String keywords);
+
     //删除规格
     boolean delSpec(EsShopGoodsSpec spec);
+
     //删除规格值
     boolean delSpecItem(EsShopGoodsSpecItem item);
 }

@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class EsShopFriendGiftServiceImpl extends ServiceImpl<EsShopFriendGiftMapper, EsShopFriendGift> implements EsShopFriendGiftService {
 
-   @Resource
-   private EsShopFriendGiftMapper friendGiftMapper;
-   @Resource
-   private EsShopFriendGiftCardMapper friendGiftCardMapper;
+    @Resource
+    private EsShopFriendGiftMapper friendGiftMapper;
+    @Resource
+    private EsShopFriendGiftCardMapper friendGiftCardMapper;
 
 
     @Override
@@ -28,10 +28,10 @@ public class EsShopFriendGiftServiceImpl extends ServiceImpl<EsShopFriendGiftMap
         return true;
     }
 
-    public void giftcard(EsShopFriendGift friendGift){
-        if(friendGift.getFriendgifcard()!=null&&friendGift.getFriendgifcard().size()>0){
-            for(EsShopFriendGiftCard card:friendGift.getFriendgifcard()){
-                EsShopFriendGiftCard giftcard=new EsShopFriendGiftCard();
+    public void giftcard(EsShopFriendGift friendGift) {
+        if (friendGift.getFriendgifcard() != null && friendGift.getFriendgifcard().size() > 0) {
+            for (EsShopFriendGiftCard card : friendGift.getFriendgifcard()) {
+                EsShopFriendGiftCard giftcard = new EsShopFriendGiftCard();
                 giftcard.setGiftId(friendGift.getId());
                 giftcard.setTitle(card.getTitle());
                 giftcard.setGiftPicture(card.getGiftPicture());
@@ -51,8 +51,8 @@ public class EsShopFriendGiftServiceImpl extends ServiceImpl<EsShopFriendGiftMap
     @Override
     public EsShopFriendGift friend() {
         EsShopFriendGift friend = friendGiftMapper.friend();
-        if(friend!=null) {
-            List<EsShopFriendGiftCard> gift_id = friendGiftCardMapper.selectList(new QueryWrapper<EsShopFriendGiftCard>().eq("gift_id", friend.getId()).eq("according",1));
+        if (friend != null) {
+            List<EsShopFriendGiftCard> gift_id = friendGiftCardMapper.selectList(new QueryWrapper<EsShopFriendGiftCard>().eq("gift_id", friend.getId()).eq("according", 1));
             friend.setFriendgifcard(gift_id);
         }
         return friend;

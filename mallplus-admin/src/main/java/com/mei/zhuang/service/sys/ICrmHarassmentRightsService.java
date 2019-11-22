@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.sys.CrmHarassmentRights;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team

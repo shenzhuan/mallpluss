@@ -6,7 +6,6 @@ import com.mei.zhuang.entity.order.EsShopOrderGoods;
 import com.mei.zhuang.service.goods.IGoodsAnalyService;
 import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.vo.data.goods.*;
-import com.mei.zhuang.vo.data.goods.GoodsTrendMapParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -60,13 +59,13 @@ public class GoodsAnalyzeController {
     @SysLog(MODULE = "商品分析管理", REMARK = "商品销量排行榜数据下载")
     @ApiOperation("商品销量排行榜数据下载")
     @RequestMapping(value = "/goodsBySaledownload", method = RequestMethod.POST)
-    public Object goodsBySaledownload(  GoodsRankTopParam param, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public Object goodsBySaledownload(GoodsRankTopParam param, HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<GoodsRankTopSaleVo> goodsRankTopSaleVos = goodsAnalyService.goodsRankTopBySaleCount(param);
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("商品销量排行榜数据列表");
         // 新增数据行，并且设置单元格数据
         int rowNum = 1;
-        String[] headers = {  "排名", "商品", "销量" };
+        String[] headers = {"排名", "商品", "销量"};
         // headers表示excel表中第一行的表头
         HSSFRow row = sheet.createRow(0);
         for (int i = 0; i < headers.length; i++) {
@@ -78,7 +77,7 @@ public class GoodsAnalyzeController {
         for (int i = 0; i < goodsRankTopSaleVos.size(); i++) {
             HSSFRow row1 = sheet.createRow(rowNum);
             row1.createCell(0).setCellValue(goodsRankTopSaleVos.get(i).getTop());
-            row1.createCell(1).setCellValue(goodsRankTopSaleVos.get(i).getThumb()+goodsRankTopSaleVos.get(i).getGoodsNameAndOption());
+            row1.createCell(1).setCellValue(goodsRankTopSaleVos.get(i).getThumb() + goodsRankTopSaleVos.get(i).getGoodsNameAndOption());
             row1.createCell(2).setCellValue(goodsRankTopSaleVos.get(i).getSaleCount());
             rowNum++;
         }
@@ -105,44 +104,43 @@ public class GoodsAnalyzeController {
     @ApiOperation("商品支付金额排行榜数据下载")
     @RequestMapping(value = "/goodsByPricedownload", method = RequestMethod.POST)
     public Object goodsByPricedownload(GoodsRankTopParam param, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try{
-        List<GoodsRankTopPayPriceVo> goodsRankTopPayPriceVos = goodsAnalyService.goodsRankTopByPrice(param);
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("商品支付金额排行榜数据列表");
-        // 新增数据行，并且设置单元格数据
-        int rowNum = 1;
-        String[] headers = {  "排名", "商品", "支付金额" };
-        // headers表示excel表中第一行的表头
-        HSSFRow row = sheet.createRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            HSSFCell cell = row.createCell(i);
-            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
-            cell.setCellValue(text);
+        try {
+            List<GoodsRankTopPayPriceVo> goodsRankTopPayPriceVos = goodsAnalyService.goodsRankTopByPrice(param);
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("商品支付金额排行榜数据列表");
+            // 新增数据行，并且设置单元格数据
+            int rowNum = 1;
+            String[] headers = {"排名", "商品", "支付金额"};
+            // headers表示excel表中第一行的表头
+            HSSFRow row = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                HSSFCell cell = row.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+                cell.setCellValue(text);
+            }
+            // 在表中存放查询到的数据放入对应的列
+            for (int i = 0; i < goodsRankTopPayPriceVos.size(); i++) {
+                HSSFRow row1 = sheet.createRow(rowNum);
+                row1.createCell(0).setCellValue(goodsRankTopPayPriceVos.get(i).getTop());
+                row1.createCell(1).setCellValue(goodsRankTopPayPriceVos.get(i).getThumb() + goodsRankTopPayPriceVos.get(i).getGoodsNameAndOption());
+                row1.createCell(2).setCellValue(goodsRankTopPayPriceVos.get(i).getTotalPayAmount().doubleValue());
+                rowNum++;
+            }
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            String date = sf.format(new Date());
+            String fileName = "数据-商品支付金额排行榜" + date + ".xls";// 设置要导出的文件的名字
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition",
+                    "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+            return new CommonResult().success("下载成功");
+        } catch (Exception e) {
+            log.error("查找详细数据：%s", e.getMessage(), e);
         }
-        // 在表中存放查询到的数据放入对应的列
-        for (int i = 0; i < goodsRankTopPayPriceVos.size(); i++) {
-            HSSFRow row1 = sheet.createRow(rowNum);
-            row1.createCell(0).setCellValue(goodsRankTopPayPriceVos.get(i).getTop());
-            row1.createCell(1).setCellValue(goodsRankTopPayPriceVos.get(i).getThumb()+goodsRankTopPayPriceVos.get(i).getGoodsNameAndOption());
-            row1.createCell(2).setCellValue(goodsRankTopPayPriceVos.get(i).getTotalPayAmount().doubleValue());
-            rowNum++;
-        }
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        String date = sf.format(new Date());
-        String fileName = "数据-商品支付金额排行榜" + date + ".xls";// 设置要导出的文件的名字
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition",
-                "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
-        response.flushBuffer();
-        workbook.write(response.getOutputStream());
-        return new CommonResult().success("下载成功");
-    } catch (Exception e) {
-        log.error("查找详细数据：%s", e.getMessage(), e);
-    }
         return new CommonResult().failed();
 
     }
-
 
 
     @SysLog(MODULE = "商品分析管理", REMARK = "商品排行明细")
@@ -156,49 +154,49 @@ public class GoodsAnalyzeController {
     @ApiOperation("商品排行明细数据下载")
     @RequestMapping(value = "/goodsDetaildownload", method = RequestMethod.POST)
     public Object goodsDetaildownload(GoodsAnalyzeParam param, HttpServletRequest request, HttpServletResponse response) throws Exception {
-       try{
+        try {
       /*  param.setEndTime(param.getEndTime() + " 23:59:59.999");
         param.setStartTime(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS));*/
-        List<EsShopOrderGoods> esShopOrderGoods = goodsAnalyService.goodsRankTopRanking(param);
-           System.out.println(esShopOrderGoods+"排行明细数据源");
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("商品排行明细数据列表");
-        // 新增数据行，并且设置单元格数据
-        int rowNum = 1;
-        String[] headers = { "商品", "支付件数", "支付金额","复购人数","商品访客数","商品浏览量" };
-        // headers表示excel表中第一行的表头
-        HSSFRow row = sheet.createRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            HSSFCell cell = row.createCell(i);
-            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
-            cell.setCellValue(text);
-        }
-        // 在表中存放查询到的数据放入对应的列
+            List<EsShopOrderGoods> esShopOrderGoods = goodsAnalyService.goodsRankTopRanking(param);
+            System.out.println(esShopOrderGoods + "排行明细数据源");
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("商品排行明细数据列表");
+            // 新增数据行，并且设置单元格数据
+            int rowNum = 1;
+            String[] headers = {"商品", "支付件数", "支付金额", "复购人数", "商品访客数", "商品浏览量"};
+            // headers表示excel表中第一行的表头
+            HSSFRow row = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                HSSFCell cell = row.createCell(i);
+                HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+                cell.setCellValue(text);
+            }
+            // 在表中存放查询到的数据放入对应的列
             for (int i = 0; i < esShopOrderGoods.size(); i++) {
                 HSSFRow row1 = sheet.createRow(rowNum);
-                row1.createCell(0).setCellValue(null !=esShopOrderGoods.get(i).getTitle()?esShopOrderGoods.get(i).getTitle():"");
-                row1.createCell(1).setCellValue(null !=esShopOrderGoods.get(i).getGoodscount()?esShopOrderGoods.get(i).getGoodscount():0);
+                row1.createCell(0).setCellValue(null != esShopOrderGoods.get(i).getTitle() ? esShopOrderGoods.get(i).getTitle() : "");
+                row1.createCell(1).setCellValue(null != esShopOrderGoods.get(i).getGoodscount() ? esShopOrderGoods.get(i).getGoodscount() : 0);
                 row1.createCell(2).setCellValue(esShopOrderGoods.get(i).getTotal().doubleValue());
                 row1.createCell(3).setCellValue(esShopOrderGoods.get(i).getPurchaseNumber());
                 row1.createCell(4).setCellValue(esShopOrderGoods.get(i).getGoodsUV());
                 row1.createCell(5).setCellValue(esShopOrderGoods.get(i).getGooodsPU());
                 rowNum++;
             }
-           SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-           String date = sf.format(new Date());
-           String fileName = "数据-商品排行明细" + date + ".xls";// 设置要导出的文件的名字
-             response.setContentType("application/octet-stream");
-           response.setHeader("Content-disposition",
-                   "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
-           response.flushBuffer();
-           workbook.write(response.getOutputStream());
-        return new CommonResult().success();
-    } catch (Exception e) {
-        log.error("查找详细数据：%s", e.getMessage(), e);
-    }
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            String date = sf.format(new Date());
+            String fileName = "数据-商品排行明细" + date + ".xls";// 设置要导出的文件的名字
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition",
+                    "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+            return new CommonResult().success();
+        } catch (Exception e) {
+            log.error("查找详细数据：%s", e.getMessage(), e);
+        }
         return new CommonResult().failed();
 
-}
+    }
 
 
 }

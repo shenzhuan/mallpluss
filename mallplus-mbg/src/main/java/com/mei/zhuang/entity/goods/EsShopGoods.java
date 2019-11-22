@@ -75,7 +75,7 @@ public class EsShopGoods extends Model<EsShopGoods> {
     @TableField("product_sn")
     private String productSn;//
     @TableField("promotion_time")
-    private String promotionTime ;
+    private String promotionTime;
 
     private String channelName;//渠道名称
     @TableField(exist = false)
@@ -258,7 +258,6 @@ public class EsShopGoods extends Model<EsShopGoods> {
     private Long smallBeautyBoxId;//小美盒定制礼盒编号
 
     private Integer fabulous;//点赞
-
 
 
     @TableField(exist = false)

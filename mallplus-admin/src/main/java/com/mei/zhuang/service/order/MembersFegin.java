@@ -25,7 +25,7 @@ public interface MembersFegin {
     void updateMemberOrderById(@RequestBody EsMember member);
 
     @PostMapping(value = "/api/member/memberNumber")
-     Integer memberNumber(@RequestBody TradeAnalyzeParam param);
+    Integer memberNumber(@RequestBody TradeAnalyzeParam param);
 
 
 }

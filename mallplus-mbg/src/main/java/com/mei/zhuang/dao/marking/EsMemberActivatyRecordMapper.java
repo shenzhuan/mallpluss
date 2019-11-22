@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface EsMemberActivatyRecordMapper extends BaseMapper<EsMemberActivatyRecord> {
 
-    List<EsMemberActivatyRecord> selPageList( EsMemberActivatyRecord entity);
+    List<EsMemberActivatyRecord> selPageList(EsMemberActivatyRecord entity);
 
     Integer count(EsMemberActivatyRecord entity);
 

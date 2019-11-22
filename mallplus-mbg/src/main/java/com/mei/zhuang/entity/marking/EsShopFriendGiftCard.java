@@ -19,7 +19,7 @@ public class EsShopFriendGiftCard {
     //卡片图
     @TableField("gift_picture")
     private String giftPicture;
-   // 卡片名称
+    // 卡片名称
     private String title;
     //1 显示  2.隐藏
     private Integer according;

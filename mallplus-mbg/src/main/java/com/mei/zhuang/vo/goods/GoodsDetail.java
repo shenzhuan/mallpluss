@@ -15,7 +15,7 @@ import java.util.List;
  * @Description:
  */
 @Data
-public class GoodsDetail implements Serializable{
+public class GoodsDetail implements Serializable {
 
     private EsShopGoods goods;
     //规格sku

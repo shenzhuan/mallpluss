@@ -49,14 +49,14 @@ public class RoleController extends BaseController {
             @ApiImplicitParam(value = "每页显示数", name = "size", paramType = "Integer", defaultValue = "10", required = true),
             @ApiImplicitParam(value = "开始行数", name = "current", paramType = "Integer", defaultValue = "1", required = true)
     })
-    public Map<String, Object> getRoleByPage( String name,@RequestParam(value = "current", defaultValue = "1") Integer current,
+    public Map<String, Object> getRoleByPage(String name, @RequestParam(value = "current", defaultValue = "1") Integer current,
                                              @RequestParam(value = "size", defaultValue = "10") Integer size) {
         Map<String, Object> result = new HashMap<String, Object>();
         CrmSysRole role = new CrmSysRole();
         role.setName(name);
         PageHelper.startPage(current, size);
         List<CrmSysRole> crmSysRoles = roleBiz.selectRoleList(role);
-     //   role.setTotal((int) PageHelper.freeTotal());
+        //   role.setTotal((int) PageHelper.freeTotal());
         result.put("current", current);
         result.put("size", size);
         result.put("total", role.getTotal());
@@ -117,9 +117,9 @@ public class RoleController extends BaseController {
             @ApiImplicitParam(value = "dataAuthStr", name = "dataAuthStr", required = true)
     })
     public BizResult roleAuthAssign(@RequestParam("roleId") Integer roleId,
-                                    @RequestParam("menuIds") String menuIds,@RequestParam String dataAuthStr) {
+                                    @RequestParam("menuIds") String menuIds, @RequestParam String dataAuthStr) {
         BizResult bizResult = new BizResult();
-        if(dataAuthStr.equals("")||menuIds.equals("")){
+        if (dataAuthStr.equals("") || menuIds.equals("")) {
             bizResult.setCode(CommonConstant.CODE_BIZ_ERROR);
             bizResult.setMsg("角色权限分配失败");
             return bizResult;

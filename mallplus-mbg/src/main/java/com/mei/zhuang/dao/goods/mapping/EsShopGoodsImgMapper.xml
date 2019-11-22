@@ -19,22 +19,22 @@
         where
         1=1
         <if test="imgGroupId != null">
-           and  img_group_id=#{imgGroupId}
+            and img_group_id=#{imgGroupId}
         </if>
         <if test="imgName != null">
-            and  img_name like concat(concat('%',#{imgName},'%'))
+            and img_name like concat(concat('%',#{imgName},'%'))
         </if>
         order by id desc
     </select>
 
     <select id="selCountImg" resultType="java.lang.Integer">
-        select  count(1) from es_shop_goods_img
+        select count(1) from es_shop_goods_img
         where 1=1
         <if test="imgGroupId != null">
-            and  img_group_id=#{imgGroupId}
+            and img_group_id=#{imgGroupId}
         </if>
         <if test="imgName != null">
-            and  img_name like concat(concat('%',#{imgName},'%'))
+            and img_name like concat(concat('%',#{imgName},'%'))
         </if>
     </select>
     <select id="selImgs" resultType="com.mei.zhuang.entity.goods.EsShopGoodsImg">

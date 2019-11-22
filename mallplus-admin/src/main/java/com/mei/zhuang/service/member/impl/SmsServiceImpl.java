@@ -37,7 +37,7 @@ public class SmsServiceImpl extends ServiceImpl<EsCoreSmsTemplateMapper, EsCoreS
     public Page<EsCoreSmsTemplate> selectPageExt(SmsParam entity) {
         Page<EsCoreSmsTemplate> page = new Page<>(entity.getCurrent(), entity.getSize());
         List<EsCoreSmsTemplate> list = smsTemplateMapper.selectSmsTemplateList(entity);
-       // page.setAsc(entity.getIsAsc() == 0 ? false : true);
+        // page.setAsc(entity.getIsAsc() == 0 ? false : true);
         page.setTotal(smsTemplateMapper.selectSmsTemplateCount(entity));
         page.setRecords(list);
         return page;
@@ -70,7 +70,7 @@ public class SmsServiceImpl extends ServiceImpl<EsCoreSmsTemplateMapper, EsCoreS
     @Override
     @Transactional
     public boolean updSmsServerInfopAllById(List<EsCoreSms> list) {
-        for (EsCoreSms temp : list){
+        for (EsCoreSms temp : list) {
             smsMapper.updateById(temp);
         }
         //待完善
@@ -85,12 +85,12 @@ public class SmsServiceImpl extends ServiceImpl<EsCoreSmsTemplateMapper, EsCoreS
 
     @Override
     public boolean isExistTemplateByStatus(EsCoreSmsTemplate entity) {
-        if(entity.getStatus() != 1){
+        if (entity.getStatus() != 1) {
             return false;
         }
         List<SmsVariable> smsVariableList = JSON.parseArray(entity.getData(), SmsVariable.class);
         EcSmsFunction temp = smsFunctionMapper.selectById(smsVariableList.get(0).getSmsTypeFunctionId());
-        if(temp != null){
+        if (temp != null) {
 //            根据模板类型id查找改模板类型的数量
             entity.setTemplateType(temp.getSmsTypeId());//设置该模板是什么类型
             Integer templateCount = smsTemplateMapper.selectCount(new QueryWrapper<>(new EsCoreSmsTemplate())
@@ -106,7 +106,7 @@ public class SmsServiceImpl extends ServiceImpl<EsCoreSmsTemplateMapper, EsCoreS
 
     @Override
     public boolean isExistRepeatName(String templateName) {
-        return  this.smsTemplateMapper.selectCount(
+        return this.smsTemplateMapper.selectCount(
                 new QueryWrapper<>(
                         new EsCoreSmsTemplate()).eq("sms_name", templateName)) > 0;
     }

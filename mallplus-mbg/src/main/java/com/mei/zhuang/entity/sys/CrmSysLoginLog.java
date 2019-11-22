@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 /**
  * 后期多租户可以删除，可以删除，可以删除，可以删除
+ *
  * @author arvato team
  * @since 2018-01-09
  */
@@ -25,30 +26,30 @@ public class CrmSysLoginLog extends Model<CrmSysLoginLog> {
     /**
      * 主键ID
      */
-	private Integer id;
+    private Integer id;
     /**
      * 登录用户名
      */
-	@TableField("login_name")
-	private String loginName;
+    @TableField("login_name")
+    private String loginName;
 
-	@TableField("login_result")
-	private Integer loginResult;
+    @TableField("login_result")
+    private Integer loginResult;
     /**
      * 登录结果描述
      */
-	@TableField("login_desc")
-	private String loginDesc;
+    @TableField("login_desc")
+    private String loginDesc;
     /**
      * 登录时间
      */
-	@TableField("login_time")
-	private String loginTime;
+    @TableField("login_time")
+    private String loginTime;
 
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

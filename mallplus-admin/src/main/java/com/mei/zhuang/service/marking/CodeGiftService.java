@@ -13,22 +13,25 @@ import com.mei.zhuang.vo.order.CartMarkingVo;
  * @Description:
  */
 public interface CodeGiftService extends IService<EsShopCodeGift> {
-    boolean save(EsShopCodeGift entity) ;
+    boolean save(EsShopCodeGift entity);
 
     int updateShowStatus(Long ids, Integer status);
 
     boolean update(EsShopCodeGift entity) throws Exception;
+
     //验证码删除
     Integer deleteCode(long id);
 
     //验证码明细查询
     EsShopCodeGift CodeList(long id);
+
     //唯一验证
     EsShopCodeGiftRule codegif(long codeGiftId);
+
     EsShopCodeGiftRule codegif2(String code);
 
 
-
     public CodeResult getCodeGoods(CartMarkingVo vo);
-    public  void updateCodeStatus(String code, Integer status);
+
+    public void updateCodeStatus(String code, Integer status);
 }

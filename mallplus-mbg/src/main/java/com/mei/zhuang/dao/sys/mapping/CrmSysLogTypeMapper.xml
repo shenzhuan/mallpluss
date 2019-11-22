@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysLogType">
-        <result column="id" property="id" />
-        <result column="operation_type" property="operationType" />
-        <result column="desc" property="desc" />
-        <result column="belong_module" property="belongModule" />
+        <result column="id" property="id"/>
+        <result column="operation_type" property="operationType"/>
+        <result column="desc" property="desc"/>
+        <result column="belong_module" property="belongModule"/>
     </resultMap>
 
 </mapper>

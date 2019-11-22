@@ -24,9 +24,9 @@ public class EsShopGoodsImg extends Model<EsShopGoodsImg> {
     private String imgName;
 
     @TableField(exist = false)
-    private Integer current=1;
+    private Integer current = 1;
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
 
     @Override
     protected Serializable pkVal() {

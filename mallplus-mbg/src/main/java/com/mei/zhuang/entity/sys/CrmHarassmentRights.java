@@ -1,7 +1,6 @@
 package com.mei.zhuang.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.*;
-
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +27,7 @@ public class CrmHarassmentRights extends Model<CrmHarassmentRights> {
     /**
      * 会员id
      */
-	@TableId(value="id", type= IdType.INPUT)
+    @TableId(value = "id", type = IdType.INPUT)
     private Integer id;
     /**
      * 防骚扰配置id
@@ -57,19 +56,27 @@ public class CrmHarassmentRights extends Model<CrmHarassmentRights> {
     @TableField(value = "update_time", fill = FieldFill.UPDATE)
     private String updateTime;
 
-    /** 短信渠道已发送次数 */
+    /**
+     * 短信渠道已发送次数
+     */
     @TableField("sms_used_num")
     private Integer smsUsedNum;
 
-    /** 微信渠道已发送次数 */
+    /**
+     * 微信渠道已发送次数
+     */
     @TableField("wechat_used_num")
     private Integer wechatUsedNum;
 
-    /** 邮件渠道已发送次数 */
+    /**
+     * 邮件渠道已发送次数
+     */
     @TableField("mail_used_num")
     private Integer mailUsedNum;
 
-    /** 彩信渠道已发送次数 */
+    /**
+     * 彩信渠道已发送次数
+     */
     @TableField("mms_used_num")
     private Integer mmsUsedNum;
 

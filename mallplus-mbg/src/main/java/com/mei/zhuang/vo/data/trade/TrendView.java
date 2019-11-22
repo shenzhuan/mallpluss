@@ -14,10 +14,7 @@ public class TrendView {
     private String relationDate;//时间日期
     private String datatime;
 
-    private  TrendViewVo viewVo;
-
-
-
+    private TrendViewVo viewVo;
 
 
 }

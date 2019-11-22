@@ -4,16 +4,16 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFriendGift">
-        <id column="id" property="id" />
-        <result column="gift_title" property="giftTitle" />
-        <result column="rules_link" property="rulesLink" />
-        <result column="tooltip" property="tooltip" />
-        <result column="share_photos" property="sharePhotos" />
-        <result column="share_title" property="shareTitle" />
-        <result column="accept_card" property="acceptCard" />
-        <result column="receive_card" property="receiveCard" />
-        <result column="receiving_gifts" property="receivingGifts" />
-        <result column="status" property="status" />
+        <id column="id" property="id"/>
+        <result column="gift_title" property="giftTitle"/>
+        <result column="rules_link" property="rulesLink"/>
+        <result column="tooltip" property="tooltip"/>
+        <result column="share_photos" property="sharePhotos"/>
+        <result column="share_title" property="shareTitle"/>
+        <result column="accept_card" property="acceptCard"/>
+        <result column="receive_card" property="receiveCard"/>
+        <result column="receiving_gifts" property="receivingGifts"/>
+        <result column="status" property="status"/>
     </resultMap>
 
     <select id="friend" resultType="com.mei.zhuang.entity.marking.EsShopFriendGift">

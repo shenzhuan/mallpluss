@@ -46,8 +46,8 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
         EsShopCodeGiftRule query = new EsShopCodeGiftRule();
         query.setCode(vo.getCode());
         EsShopCodeGiftRule rule = fullGiftRuleMapper.selectOne(new QueryWrapper<>(query));
-        if (rule!=null) {
-            if (rule.getStatus() == 2 && rule.getActivityType()==2) {
+        if (rule != null) {
+            if (rule.getStatus() == 2 && rule.getActivityType() == 2) {
                 codeResult.setStatus(4);
                 return codeResult;
             }
@@ -122,7 +122,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
                 codeResult.setStatus(9);
                 return codeResult;
             }
-        }else{
+        } else {
             codeResult.setStatus(1);
             return codeResult;
         }
@@ -183,8 +183,8 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
     }
 
     @Override
-    public void updateCodeStatus(String code,Integer status) {
-        fullGiftRuleMapper.updateCodeStatus(code,status);
+    public void updateCodeStatus(String code, Integer status) {
+        fullGiftRuleMapper.updateCodeStatus(code, status);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -201,8 +201,8 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
 
     @Override
     public Integer deleteCode(long id) {
-        fullGiftRuleMapper.delete(new QueryWrapper<EsShopCodeGiftRule>().eq("code_gift_id",id));
-        fullGiftGoodsMapMapper.delete(new QueryWrapper<EsShopCodeGiftGoodsMap>().eq("code_gift_id",id));
+        fullGiftRuleMapper.delete(new QueryWrapper<EsShopCodeGiftRule>().eq("code_gift_id", id));
+        fullGiftGoodsMapMapper.delete(new QueryWrapper<EsShopCodeGiftGoodsMap>().eq("code_gift_id", id));
         fullGiftMapper.deleteById(id);
         return 1;
     }
@@ -228,9 +228,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
     }
 
 
-
-
-    public void datetime(EsShopCodeGift en)  {
+    public void datetime(EsShopCodeGift en) {
         try {
             String[] times = en.getTime().split(",");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -244,7 +242,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
             } else if (tim.after(en.getExpiryEndTime())) {
                 en.setStatus(2);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -252,7 +250,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCodeGift entity)  {
+    public boolean save(EsShopCodeGift entity) {
         entity.setShopId((long) 1);
         entity.setCreateTime(new Date());
         datetime(entity);
@@ -262,7 +260,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
     }
 
 
-    private void addExtrInfo(EsShopCodeGift entity)  {
+    private void addExtrInfo(EsShopCodeGift entity) {
         //商品模式，风格 1 全部商品 2 指定商品 3 不指定商品
         if (entity.getGoodsMode() == 2 || entity.getGoodsMode() == 3) {
             if (entity.getGoodsSepcVoList() != null && entity.getGoodsSepcVoList().size() > 0) {
@@ -278,7 +276,7 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
             }
         }
         //赠品
-        if (entity.getGoodsCouponList()!=null&&entity.getGoodsCouponList().size()>0) {
+        if (entity.getGoodsCouponList() != null && entity.getGoodsCouponList().size() > 0) {
 
             for (EsShopCodeGiftGoodsMap gid : entity.getGoodsCouponList()) {
                 EsShopCodeGiftGoodsMap group = new EsShopCodeGiftGoodsMap();
@@ -293,8 +291,8 @@ public class CodeGifterviceImpl extends ServiceImpl<EsShopCodeGiftMapper, EsShop
         }
         if (entity.getCoderuleList() != null && entity.getCoderuleList().size() > 0) {
             for (EsShopCodeGiftRule rule : entity.getCoderuleList()) {
-                String str[] =rule.getCode().split(",");
-                for(String st:str){
+                String str[] = rule.getCode().split(",");
+                for (String st : str) {
                     rule.setActivityType(entity.getType());
                     rule.setCodeGiftId(entity.getId());
                     rule.setShopId(entity.getShopId());

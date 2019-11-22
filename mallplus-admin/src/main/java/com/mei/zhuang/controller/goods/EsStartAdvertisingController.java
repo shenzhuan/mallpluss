@@ -1,16 +1,16 @@
 package com.mei.zhuang.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.service.goods.EsShopGoodsQRCodeService;
-import com.mei.zhuang.service.goods.EsStartAdvertisingImgService;
-import com.mei.zhuang.service.goods.EsStartAdvertisingService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopGoodsQRCode;
 import com.mei.zhuang.entity.goods.EsStartAdvertising;
 import com.mei.zhuang.entity.goods.EsStartAdvertisingImg;
+import com.mei.zhuang.service.goods.EsShopGoodsQRCodeService;
+import com.mei.zhuang.service.goods.EsStartAdvertisingImgService;
+import com.mei.zhuang.service.goods.EsStartAdvertisingService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

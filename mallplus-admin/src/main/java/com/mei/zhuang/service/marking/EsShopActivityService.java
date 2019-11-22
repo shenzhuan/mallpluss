@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface EsShopActivityService extends IService<EsShopActivity> {
 
-    Map<String,Object> selPageList(EsShopActivity entity);
+    Map<String, Object> selPageList(EsShopActivity entity);
 
     boolean save(EsShopActivity entity);
 

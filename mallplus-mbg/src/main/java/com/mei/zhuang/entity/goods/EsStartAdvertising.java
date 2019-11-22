@@ -22,27 +22,27 @@ public class EsStartAdvertising extends Model<EsStartAdvertising> {
      */
     private Long id;
     /**
-     *广告名称
+     * 广告名称
      */
     @TableField("advert_name")
     private String advertName;
     /**
-     *广告背景
+     * 广告背景
      */
     @TableField("advert_backaground")
     private String advertBackaground;
     /**
-     *显示设置（1.仅显示一次 2.每次显示 3.间隔时间显示）
+     * 显示设置（1.仅显示一次 2.每次显示 3.间隔时间显示）
      */
     @TableField("display_setup")
     private Integer displaySetup;
     /**
-     *显示页面（1.仅首页显示 2.指定页面显示 3.全部页面）
+     * 显示页面（1.仅首页显示 2.指定页面显示 3.全部页面）
      */
     @TableField("display_page")
     private Integer displayPage;
     /**
-     *指定页面
+     * 指定页面
      */
     @TableField("specified_page")
     private String specifiedPage;
@@ -52,7 +52,7 @@ public class EsStartAdvertising extends Model<EsStartAdvertising> {
    /* @TableField("advert_img_id")
     private Long advertImgId;*/
     /**
-     *是否启用（0禁用 1立即启用 2定时启用）
+     * 是否启用（0禁用 1立即启用 2定时启用）
      */
     @TableField("is_start")
     private Integer isStart;
@@ -78,14 +78,13 @@ public class EsStartAdvertising extends Model<EsStartAdvertising> {
     private Date lastTime;
 
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
     @TableField(exist = false)
-    private Integer current=1;
-    @TableField(exist =  false)
+    private Integer current = 1;
+    @TableField(exist = false)
     private String advertImg;
-    @TableField(exist =  false)
+    @TableField(exist = false)
     private List<EsStartAdvertisingImg> listAdvertImg;
-
 
 
     @Override

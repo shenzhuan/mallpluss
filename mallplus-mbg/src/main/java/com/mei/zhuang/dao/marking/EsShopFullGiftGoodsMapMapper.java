@@ -16,6 +16,7 @@ import java.util.List;
 public interface EsShopFullGiftGoodsMapMapper extends BaseMapper<EsShopFullGiftGoodsMap> {
     //满赠商品明细
     List<EsShopFullGiftGoodsMap> selectgift(Long fullGiftId);
+
     //满赠赠品明细
     List<EsShopFullGiftGoodsMap> selectgift2(Long fullGiftId);
 

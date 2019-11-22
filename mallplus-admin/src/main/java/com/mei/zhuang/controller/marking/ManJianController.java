@@ -46,7 +46,7 @@ public class ManJianController {
     ) {
         try {
             PageHelper.startPage(current, size);
-          //  List<EsShopManjian> esShopManjians = manJianService.slelectMan();
+            //  List<EsShopManjian> esShopManjians = manJianService.slelectMan();
             return new CommonResult().success(PageInfo.of(manJianService.slelectMan()));
         } catch (Exception e) {
             log.error("根据条件查询所有满减列表：%s", e.getMessage(), e);

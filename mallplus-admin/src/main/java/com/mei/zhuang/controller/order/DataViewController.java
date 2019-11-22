@@ -32,6 +32,7 @@ public class DataViewController {
     public Object DataViewSelect(TradeAnalyzeParam param) throws Exception {
         return viewService.viewVoList(param);
     }
+
     @SysLog(MODULE = "数据概览", REMARK = "数据概览")
     @ApiOperation("数据概览实体看板")
     @PostMapping("/EntityViewSelect")
@@ -45,6 +46,7 @@ public class DataViewController {
     public Object OrderViewSelect(TradeAnalyzeParam param) throws Exception {
         return viewService.TrendList(param);
     }
+
     @SysLog(MODULE = "数据概览", REMARK = "数据概览")
     @ApiOperation("浏览量趋势图")
     @PostMapping("/visitorsList")
@@ -58,6 +60,7 @@ public class DataViewController {
     public Object unitList(TradeAnalyzeParam param) throws Exception {
         return viewService.unitList(param);
     }
+
     @SysLog(MODULE = "数据概览", REMARK = "数据概览")
     @ApiOperation("转化率趋势图")
     @PostMapping("/rateList")

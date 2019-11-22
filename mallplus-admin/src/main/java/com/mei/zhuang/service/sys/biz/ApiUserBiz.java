@@ -23,25 +23,25 @@ public class ApiUserBiz {
     private CrmApiUserPermissionMapper permissionMapper;
 
 
-    public Map<String,Object> getApiUserList(String account,String firmName,String status, Integer limit, Integer offset, List<Integer> deptIds) {
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getApiUserList(String account, String firmName, String status, Integer limit, Integer offset, List<Integer> deptIds) {
+        Map<String, Object> result = new HashMap<>();
         List<CrmApiUser> list = apiUserMapper.list(account, firmName, status, limit, offset, deptIds);
-        list.forEach((apiUser)->{
-            apiUser.setCreateTime(DateUtil.getYYYY_MM_DD_HH_MM_SSFormat(DateUtil.getYYYYMMDDHHMMSSFormat((apiUser.getCreateDate().toString()+apiUser.getCreateTime()))));
+        list.forEach((apiUser) -> {
+            apiUser.setCreateTime(DateUtil.getYYYY_MM_DD_HH_MM_SSFormat(DateUtil.getYYYYMMDDHHMMSSFormat((apiUser.getCreateDate().toString() + apiUser.getCreateTime()))));
         });
         int count = apiUserMapper.count(account, firmName, status, deptIds);
         result.put("rows", list);
         result.put("total", count);
-        return  result;
+        return result;
     }
 
     @Transactional
     public int delete(int id) {
         //查询api权限表里有没有相关数据
-        int count = this.permissionMapper.selectCount(new QueryWrapper<>(new CrmApiUserPermission(),"count(0)").eq("api_user_id",id));
+        int count = this.permissionMapper.selectCount(new QueryWrapper<>(new CrmApiUserPermission(), "count(0)").eq("api_user_id", id));
         //如果有数据先删除
-        if(count > 0) {
-            this.permissionMapper.delete(new QueryWrapper<>(new CrmApiUserPermission()).eq("api_user_id",id));
+        if (count > 0) {
+            this.permissionMapper.delete(new QueryWrapper<>(new CrmApiUserPermission()).eq("api_user_id", id));
         }
         return apiUserMapper.deleteById(id);
     }

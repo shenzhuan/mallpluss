@@ -24,5 +24,4 @@ public class TableColumnInfo {
     private String comment;
 
 
-
 }

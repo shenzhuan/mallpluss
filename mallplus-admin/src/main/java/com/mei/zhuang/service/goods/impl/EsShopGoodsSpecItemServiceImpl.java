@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.goods.impl;
 
-import com.mei.zhuang.dao.goods.EsShopGoodsSpecItemMapper;
-import com.mei.zhuang.service.goods.EsShopGoodsSpecItemService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.goods.EsShopGoodsSpecItemMapper;
 import com.mei.zhuang.entity.goods.EsShopGoodsSpecItem;
+import com.mei.zhuang.service.goods.EsShopGoodsSpecItemService;
 import org.springframework.stereotype.Service;
 
 /**

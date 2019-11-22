@@ -5,10 +5,10 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopPackageGoodsSpec">
 
-        <result column="package_id" property="packageId" />
-        <result column="goods_id" property="goodsId" />
-        <result column="specs_id" property="specsId" />
-        <result column="package_price" property="packagePrice" />
+        <result column="package_id" property="packageId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="specs_id" property="specsId"/>
+        <result column="package_price" property="packagePrice"/>
     </resultMap>
 
 </mapper>

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -19,10 +19,12 @@ import java.util.List;
 public interface ISysTenantService extends IService<SysTenant> {
 
     int getPagingTotal(SysTenantPagingParam param);
+
     List<SysTenantPagingData> getPagingList(SysTenantPagingParam param);
 
     /**
      * schema 名称规范检查
+     *
      * @return
      */
     boolean schemaNameCheck(String schema);

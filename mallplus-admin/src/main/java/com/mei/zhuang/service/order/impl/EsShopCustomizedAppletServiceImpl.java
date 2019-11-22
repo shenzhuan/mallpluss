@@ -37,17 +37,16 @@ public class EsShopCustomizedAppletServiceImpl extends ServiceImpl<EsShopCustomi
 //    private EsShopCustomizedPacket
 
 
-
     @Override
     public Object saveCust(EsShopCustAppletParam entity) {
-        try{
+        try {
             if (ValidatorUtils.empty(entity.getTotal())) {
                 entity.setTotal(1);
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             EsShopCart cart = new EsShopCart();
             EsShopCart exit = new EsShopCart();
-            Date time=null;
+            Date time = null;
             EsShopGoods goods = goodsFegin.getGoodsById(entity.getGoodsId());
             if (ValidatorUtils.empty(entity.getOptionId())) {
                 if (ValidatorUtils.empty(entity.getGoodsId())) {
@@ -89,20 +88,20 @@ public class EsShopCustomizedAppletServiceImpl extends ServiceImpl<EsShopCustomi
             }
 
             return cart;
-            }catch (Exception e){
-                e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
 
-                return  null;
-            }
+            return null;
+        }
     }
 
     @Override
     public Object detailCustService(EsShopCustomizedApplet entity) {
-        try{
-            EsShopCustomizedApplet obj= this.getOne(new QueryWrapper<>(entity));
-            if(obj != null ){
+        try {
+            EsShopCustomizedApplet obj = this.getOne(new QueryWrapper<>(entity));
+            if (obj != null) {
                 //查询刻字服务和样图
-                if(obj.getBasicId() != null){
+                if (obj.getBasicId() != null) {
                     EsShopCustomizedBasic basic = new EsShopCustomizedBasic();
                     basic.setId(obj.getBasicId());
                     obj.setEsShopCustomizedBasic(goodsFegin.detailBasics(basic));
@@ -110,17 +109,17 @@ public class EsShopCustomizedAppletServiceImpl extends ServiceImpl<EsShopCustomi
                     obj.setEsShopCustomizedLegend(goodsFegin.detailLegend(obj.getLegendId()));
                 }
                 //查询卡片
-                if(obj.getCardId() != null){
+                if (obj.getCardId() != null) {
                     obj.setEsShopCustomizedCard(goodsFegin.detail(obj.getCardId()));
                 }
                 //查询套装
-                if(obj.getPacketId() != null){
+                if (obj.getPacketId() != null) {
                     obj.setEsShopCustomizedPacket(goodsFegin.details(obj.getPacketId()));
                 }
-                obj.setMap( goodsFegin.selectCust(obj.getGoodsId()));
+                obj.setMap(goodsFegin.selectCust(obj.getGoodsId()));
             }
             return obj;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -147,6 +146,7 @@ public class EsShopCustomizedAppletServiceImpl extends ServiceImpl<EsShopCustomi
             throw new BusinessException("库存不足!");
         }
     }
+
     private EsShopGoodsOption getSkuByGoods(EsShopGoods goods, Long optionId) {
         List<EsShopGoodsOption> options = goods.getOptions();
         if (options != null && options.size() > 0) {

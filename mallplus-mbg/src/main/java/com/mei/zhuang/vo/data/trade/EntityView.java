@@ -18,8 +18,8 @@ public class EntityView {
     private double payRatio;//转化率比例
     private BigDecimal unitPrice;//客单价
     private BigDecimal unitRatio;//昨日客单价
-    private BigDecimal payAmount=BigDecimal.valueOf(0.0);//支付金额
-    private BigDecimal paidAmount=BigDecimal.valueOf(0.0);//昨日金额
+    private BigDecimal payAmount = BigDecimal.valueOf(0.0);//支付金额
+    private BigDecimal paidAmount = BigDecimal.valueOf(0.0);//昨日金额
 
     private int views;//浏览量
     private int viewsYd;//昨天浏览量
@@ -27,16 +27,11 @@ public class EntityView {
     private int visitorsYd;//昨天访客量
     private int saleNumber;//在售商品数
     private int outNumber;//售罄商品数
-    private int houseGoodNumber  ;// 仓库商品数
-    private int customersNumber ;//累计客户数
+    private int houseGoodNumber;// 仓库商品数
+    private int customersNumber;//累计客户数
 
     private String date;
     private String EnTime;   //当前时间
-
-
-
-
-
 
 
 }

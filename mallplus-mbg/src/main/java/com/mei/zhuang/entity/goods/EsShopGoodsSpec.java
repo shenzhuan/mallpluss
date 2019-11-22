@@ -40,13 +40,10 @@ public class EsShopGoodsSpec extends Model<EsShopGoodsSpec> {
     private Integer displayOrder;//规格的排序
 
 
-
     @TableField(exist = false)
     private List<EsShopGoodsSpecItem> itemList;
 
     private String content;//规格的id合并
-
-
 
 
     @Override

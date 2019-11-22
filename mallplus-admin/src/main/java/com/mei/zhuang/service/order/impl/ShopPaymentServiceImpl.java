@@ -1,21 +1,18 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.mei.zhuang.vo.order.PayParam;
-import com.mei.zhuang.vo.order.PaySettingParam;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.dao.order.EsShopOperationLogMapper;
 import com.mei.zhuang.dao.order.EsShopPayLogMapper;
 import com.mei.zhuang.dao.order.EsShopPaymentMapper;
-import com.mei.zhuang.service.order.ShopPaymentService;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.order.EsShopOperationLog;
 import com.mei.zhuang.entity.order.EsShopPayment;
+import com.mei.zhuang.service.order.ShopPaymentService;
+import com.mei.zhuang.vo.order.PayParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Auther: Tiger
@@ -51,7 +48,7 @@ public class ShopPaymentServiceImpl extends ServiceImpl<EsShopPaymentMapper, EsS
     @Override
     public boolean savePayment(EsShopPayment entity) {
         //判断添加的是否是 子商户 还是 父商户
-        if(entity.getType() == 0){//微信支付（父商户）
+        if (entity.getType() == 0) {//微信支付（父商户）
             entity.setSubAppid("");
             entity.setSubMchId(0l);
         }

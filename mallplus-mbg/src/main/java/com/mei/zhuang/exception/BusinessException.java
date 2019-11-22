@@ -1,4 +1,3 @@
-
 package com.mei.zhuang.exception;
 
 public class BusinessException extends RuntimeException {

@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponNew">
-        <result column="id" property="id" />
-        <result column="single_coupon" property="singleCoupon" />
-        <result column="vouchers_node" property="vouchersNode" />
-        <result column="activity_id" property="activityId" />
-        <result column="starting_time" property="startingTime" />
-        <result column="end_time" property="endTime" />
-        <result column="status" property="status" />
-        <result column="coupon_newid" property="couponNewid" />
-        <result column="create_time" property="createTime" />
+        <result column="id" property="id"/>
+        <result column="single_coupon" property="singleCoupon"/>
+        <result column="vouchers_node" property="vouchersNode"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="starting_time" property="startingTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="coupon_newid" property="couponNewid"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
 
     <select id="couponnew" resultType="com.mei.zhuang.entity.marking.EsShopCouponNew">

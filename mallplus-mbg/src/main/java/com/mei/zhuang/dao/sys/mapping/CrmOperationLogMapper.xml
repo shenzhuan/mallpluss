@@ -4,17 +4,17 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmOperationLog">
-        <id column="id" property="id" />
-        <result column="user_id" property="userId" />
-        <result column="user_name" property="userName" />
-        <result column="module" property="module" />
-        <result column="method" property="method" />
-        <result column="operation_desc" property="operationDesc" />
-        <result column="ip" property="ip" />
-        <result column="params" property="params" />
-        <result column="shop_id" property="shopId" />
-        <result column="time_min" property="timeMin" />
-        <result column="add_time" property="addTime" />
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="module" property="module"/>
+        <result column="method" property="method"/>
+        <result column="operation_desc" property="operationDesc"/>
+        <result column="ip" property="ip"/>
+        <result column="params" property="params"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="time_min" property="timeMin"/>
+        <result column="add_time" property="addTime"/>
     </resultMap>
 
     <select id="selecPageList" resultMap="BaseResultMap" parameterType="com.arvato.admin.vo.SysOpertionLogParam">
@@ -54,7 +54,6 @@
         <include refid="query_condition_where"/>
 
 
-
     </select>
 
     <sql id="query_condition_where">
@@ -64,9 +63,9 @@
         <if test="endTime != null and endTime !=''.toString()">
             and log.add_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
         </if>
-      <!--  <if test="operationTypeId != null">
-            and log.operation_type_id = #{operationTypeId}
-        </if>-->
+        <!--  <if test="operationTypeId != null">
+              and log.operation_type_id = #{operationTypeId}
+          </if>-->
         <if test="operationTypeName != null and operationTypeName!=''.toString()">
             and log.module like concat('%',#{operationTypeName},'%')
         </if>

@@ -89,7 +89,7 @@ public class EsShopOrderPackage extends Model<EsShopOrderPackage> {
     private String remark;
     /**
      * 订单商品信息
-      */
+     */
     @TableField(exist = false)
     private List<EsShopOrderGoods> orderGoodsList;
     /**

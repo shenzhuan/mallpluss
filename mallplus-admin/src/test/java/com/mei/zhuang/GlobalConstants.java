@@ -6,11 +6,11 @@ import org.jsoup.nodes.Document;
 import java.net.URL;
 
 /**
- *@Author:liangjilong
- *@Date:2015-1-4
- *@Email:jilongliang@sina.com
- *@Version:1.0
- *@Description
+ * @Author:liangjilong
+ * @Date:2015-1-4
+ * @Email:jilongliang@sina.com
+ * @Version:1.0
+ * @Description
  */
 public class GlobalConstants {
 
@@ -20,9 +20,9 @@ public class GlobalConstants {
      * @param format格式（XML、JSON）
      * @return
      */
-    public static String getUrl(Integer page,String format){
-        StringBuffer buffer=new StringBuffer("http://api.roll.news.sina.com.cn/zt_list?channel=news");
-        String url="";
+    public static String getUrl(Integer page, String format) {
+        StringBuffer buffer = new StringBuffer("http://api.roll.news.sina.com.cn/zt_list?channel=news");
+        String url = "";
         buffer.append("&cat_1=shxw");//显示新闻
         buffer.append("&cat_2==zqsk||=qwys||=shwx||=fz-shyf");
         buffer.append("&level==1||=2");//级别
@@ -30,10 +30,10 @@ public class GlobalConstants {
         buffer.append("&show_all=1");//显示所有
         buffer.append("&show_num=22");//显示多少条
         buffer.append("&tag=1");
-        buffer.append("&format="+format);
-        buffer.append("&page="+page);
+        buffer.append("&format=" + format);
+        buffer.append("&page=" + page);
         buffer.append("&callback=newsloader");
-        url=buffer.toString();
+        url = buffer.toString();
         return url;
     }
 
@@ -44,12 +44,12 @@ public class GlobalConstants {
      * @param url
      * @return
      */
-    public static String getNewsContent(String url) throws Exception{
-        Document doc=Jsoup.parse(new URL(url), 3000);
-        if(doc!=null){
-            String artibody=doc.getElementById("artibody").html();//通过网页的html的id去拿到新闻内容artibody
+    public static String getNewsContent(String url) throws Exception {
+        Document doc = Jsoup.parse(new URL(url), 3000);
+        if (doc != null) {
+            String artibody = doc.getElementById("artibody").html();//通过网页的html的id去拿到新闻内容artibody
             return artibody;
-        }else{
+        } else {
             return "网络异常";
         }
     }

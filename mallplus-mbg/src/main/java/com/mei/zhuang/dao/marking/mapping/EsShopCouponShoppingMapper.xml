@@ -4,23 +4,23 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponShopping">
-        <id column="id" property="id" />
-        <result column="activities_open" property="activitiesOpen" />
-        <result column="scope_id" property="scopeId" />
-        <result column="single_buy" property="singleBuy" />
-        <result column="cumulative_buy" property="cumulativeBuy" />
-        <result column="single_number" property="singleNumber" />
-        <result column="cumulative_number" property="cumulativeNumber" />
-        <result column="repertory" property="repertory" />
-        <result column="push_id" property="pushId" />
-        <result column="activities_validity" property="activitiesValidity" />
-        <result column="starting_time" property="startingTime" />
-        <result column="end_time" property="endTime" />
-        <result column="coupon_shopid" property="couponShopid" />
-        <result column="goodshop_id" property="goodshopId" />
-        <result column="grouping" property="grouping" />
-        <result column="classification" property="classification" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="activities_open" property="activitiesOpen"/>
+        <result column="scope_id" property="scopeId"/>
+        <result column="single_buy" property="singleBuy"/>
+        <result column="cumulative_buy" property="cumulativeBuy"/>
+        <result column="single_number" property="singleNumber"/>
+        <result column="cumulative_number" property="cumulativeNumber"/>
+        <result column="repertory" property="repertory"/>
+        <result column="push_id" property="pushId"/>
+        <result column="activities_validity" property="activitiesValidity"/>
+        <result column="starting_time" property="startingTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="coupon_shopid" property="couponShopid"/>
+        <result column="goodshop_id" property="goodshopId"/>
+        <result column="grouping" property="grouping"/>
+        <result column="classification" property="classification"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
     <update id="updatestatusid">
         update es_shop_coupon_shopping set activities_open=#{param1} where id=#{param2}

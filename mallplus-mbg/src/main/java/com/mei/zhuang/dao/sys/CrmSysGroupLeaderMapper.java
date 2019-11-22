@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.sys.CrmSysGroupLeader;
 
 /**
  * <p>
-  *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team

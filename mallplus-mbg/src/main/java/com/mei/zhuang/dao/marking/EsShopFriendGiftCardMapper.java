@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -14,7 +14,6 @@ import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
 public interface EsShopFriendGiftCardMapper extends BaseMapper<EsShopFriendGiftCard> {
 
     Integer updatecard(long giftId);
-
 
 
 }

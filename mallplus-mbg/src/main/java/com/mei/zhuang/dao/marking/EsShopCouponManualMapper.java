@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -18,6 +18,6 @@ import java.util.Map;
 public interface EsShopCouponManualMapper extends BaseMapper<EsShopCouponManual> {
 
     //手工发券查询
-    List<Map<String,Object>>selectmanual(@Param("manual") EsShopCouponManual manual);
+    List<Map<String, Object>> selectmanual(@Param("manual") EsShopCouponManual manual);
 
 }

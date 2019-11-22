@@ -25,52 +25,52 @@ public class EsActivatySmallBeautyBoxGiftBox extends Model<EsActivatySmallBeauty
      */
     private Long id;
     /**
-     *礼盒名称
+     * 礼盒名称
      */
     @TableField("box_name")
     private String boxName;
     /**
-     *礼盒价格
+     * 礼盒价格
      */
     @TableField("box_money")
     private BigDecimal boxMoney;
     /**
-     *礼盒编码
+     * 礼盒编码
      */
     @TableField("box_code")
     private String boxCode;
     /**
-     *礼盒虚拟库存
+     * 礼盒虚拟库存
      */
     @TableField("vitural_stock")
     private Integer vituralStock;
     /**
-     *礼盒库存
+     * 礼盒库存
      */
     @TableField("stock")
     private Integer stock;
     /**
-     *礼盒图片
+     * 礼盒图片
      */
     @TableField("box_img")
     private String boxImg;
     /**
-     *所属活动
+     * 所属活动
      */
     @TableField("activaty_id")
     private Long activatyId;
     /**
-     *所属活动
+     * 所属活动
      */
     @TableField(exist = false)
     private String activatyName;
     /**
-     *填写产品编码（用，隔开）
+     * 填写产品编码（用，隔开）
      */
     @TableField("product_code")
     private String productCode;
     /**
-     *赠品管理
+     * 赠品管理
      */
     @TableField("gift_date")
     private String giftDate;

@@ -59,9 +59,9 @@ public class EsCoreAttachment extends Model<EsCoreAttachment> {
     private Long categoryId;
 
     @TableField(exist = false)
-    private Integer current= 1;
+    private Integer current = 1;
     @TableField(exist = false)
-    private Integer size= 10;
+    private Integer size = 10;
 
     @Override
     protected Serializable pkVal() {

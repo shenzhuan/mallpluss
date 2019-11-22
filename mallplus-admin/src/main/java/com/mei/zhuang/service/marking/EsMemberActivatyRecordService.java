@@ -9,9 +9,10 @@ public interface EsMemberActivatyRecordService extends IService<EsMemberActivaty
 
     /**
      * 查询用户抽奖记录列表
+     *
      * @param entity
      * @return
      */
-    Map<String,Object> selPageList(EsMemberActivatyRecord entity);
+    Map<String, Object> selPageList(EsMemberActivatyRecord entity);
 
 }

@@ -65,13 +65,13 @@
         where ORDER_ID = #{orderId}
     </select>
 
-    <select id="myCoupon"	resultMap="EsMemberCouponMap">
+    <select id="myCoupon" resultMap="EsMemberCouponMap">
         select *
         from es_member_coupon
-        where  ACCOUNT_ID = #{accountId}
-        <if test="type == 1">and STATUS = 1  and EXPIRE_TIME &gt;= now() </if>
-        <if test="type == 2">and STATUS in (2,3) </if>
-        <if test="type == 3">and STATUS = 1 and now() &gt; EXPIRE_TIME  </if>
+        where ACCOUNT_ID = #{accountId}
+        <if test="type == 1">and STATUS = 1 and EXPIRE_TIME &gt;= now()</if>
+        <if test="type == 2">and STATUS in (2,3)</if>
+        <if test="type == 3">and STATUS = 1 and now() &gt; EXPIRE_TIME</if>
         order by STATUS, EXPIRE_TIME asc
     </select>
 
@@ -94,8 +94,9 @@
         update es_member_coupon set start_time=#{cou.startTime},end_time=#{cou.endTime},effective=#{cou.effective} where title=#{cou.title}
     </update>
 
-    <select id="selectMemberCoupon"  resultType="java.util.Map">
-        select mc.id,mc.type,mc.title,mc.member_id,mc.froms,mc.create_time,mc.status,mc.used_time,mc.order_no,mb.id,mb.nickname,mb.avatar
+    <select id="selectMemberCoupon" resultType="java.util.Map">
+        select
+        mc.id,mc.type,mc.title,mc.member_id,mc.froms,mc.create_time,mc.status,mc.used_time,mc.order_no,mb.id,mb.nickname,mb.avatar
         from es_member_coupon mc,es_member mb where mc.member_id=mb.id
         <if test="coupon.froms!=null">
             and froms=#{coupon.froms}
@@ -107,7 +108,7 @@
             and status=#{coupon.status}
         </if>
         <if test="coupon.createTime!=null and coupon.createTime!=''">
-            and  mc.create_time&gt;=#{coupon.createDate} and mc.create_time&lt;=#{coupon.uesdDate}
+            and mc.create_time&gt;=#{coupon.createDate} and mc.create_time&lt;=#{coupon.uesdDate}
         </if>
         <if test="coupon.usedTime!=null and coupon.usedTime!=''">
             and mc.used_time&gt;=#{coupon.createDate} and mc.used_time&lt;=#{coupon.uesdDate}
@@ -115,10 +116,10 @@
         <if test="coupon.title!=null and coupon.title!=''">
             and mc.title like concat(concat('%',#{coupon.title},'%'))
         </if>
-         order by mc.id desc
+        order by mc.id desc
     </select>
 
-    <select id="selectMemberCoupon2"  resultType="java.util.Map">
+    <select id="selectMemberCoupon2" resultType="java.util.Map">
         select mc.id,mc.type,mc.title,mc.member_id,mc.froms,mc.create_time,mc.status,mc.used_time,mc.order_id,mb.id,mb.nickname,mb.avatar
         from es_member_coupon mc,es_member mb where mc.member_id=mb.id
         order by mc.id desc

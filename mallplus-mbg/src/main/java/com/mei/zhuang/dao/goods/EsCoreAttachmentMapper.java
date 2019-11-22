@@ -5,7 +5,7 @@ import com.mei.zhuang.entity.goods.EsCoreAttachment;
 
 public interface EsCoreAttachmentMapper extends BaseMapper<EsCoreAttachment> {
 
-  //  List<EsCoreAttachment> selPageList(Pagination page, EsCoreAttachment entity);
+    //  List<EsCoreAttachment> selPageList(Pagination page, EsCoreAttachment entity);
 
     Integer count(EsCoreAttachment entity);
 }

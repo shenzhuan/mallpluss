@@ -59,6 +59,7 @@ public class EsShopSingleGiftRule extends Model<EsShopSingleGiftRule> {
      */
     @TableField("activity_name")
     private String activityName;
+
     @Override
     protected Serializable pkVal() {
         return null;

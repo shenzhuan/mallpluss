@@ -4,7 +4,6 @@
  * Package Name:utils
  * Date:2017年8月15日下午3:18:05
  * Copyright (c) 2017, China Link Communications LTD All Rights Reserved.
- *
  */
 
 
@@ -37,27 +36,27 @@ public class PropertyUtil {
     public static Properties loadProp(String file) {
         Properties prop = new Properties();
         InputStream in = null;
-        Reader reader=null;
+        Reader reader = null;
         try {
-            in=PropertyUtil.class.getClassLoader().getResourceAsStream(file);
-            reader=new InputStreamReader(in,"utf-8");
+            in = PropertyUtil.class.getClassLoader().getResourceAsStream(file);
+            reader = new InputStreamReader(in, "utf-8");
             prop.load(reader);
             return prop;
         } catch (IOException e) {
-            log.error("",e);
-        }finally {
-            if(reader!=null){
+            log.error("", e);
+        } finally {
+            if (reader != null) {
                 try {
                     reader.close();
-                }catch (Exception e){
-                    log.error("",e);
+                } catch (Exception e) {
+                    log.error("", e);
                 }
             }
-            if(in!=null){
+            if (in != null) {
                 try {
                     in.close();
-                }catch (Exception e){
-                    log.error("",e);
+                } catch (Exception e) {
+                    log.error("", e);
                 }
             }
         }

@@ -8,19 +8,18 @@ package com.mei.zhuang.enums;
  */
 public enum InterfaceTypeEnum {
 
-	//天猫会员信息同步接口
-	TMALL_MEMBER_SYNC("TMALL_MEMBER_SYNC")
-	;
+    //天猫会员信息同步接口
+    TMALL_MEMBER_SYNC("TMALL_MEMBER_SYNC");
 
 
-	private  InterfaceTypeEnum(String ret) {
-		this.ret=ret;
-	}
+    private String ret;
 
-	private String ret;
+    private InterfaceTypeEnum(String ret) {
+        this.ret = ret;
+    }
 
-	public String  getValue(){
-		return ret;
-	}
+    public String getValue() {
+        return ret;
+    }
 
 }

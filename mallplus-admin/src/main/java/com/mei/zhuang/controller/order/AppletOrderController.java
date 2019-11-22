@@ -119,6 +119,7 @@ public class AppletOrderController {
     public BigDecimal addressToFee(BookOrderParam orderParam) {
         return orderService.addressToFee(orderParam);
     }
+
     /**
      * 商品详情预览订单
      *
@@ -136,7 +137,7 @@ public class AppletOrderController {
             e.printStackTrace();
         }
         return null;
-}
+    }
 
     /**
      * 提交订单
@@ -160,7 +161,7 @@ public class AppletOrderController {
     @ApiOperation("好友详情预览")
     @PostMapping(value = "/friendOrder")
     @ResponseBody
-    public Object friendOrder( BookOrderParam orderParam) {
+    public Object friendOrder(BookOrderParam orderParam) {
         try {
             return orderService.friendOrder(orderParam);
         } catch (BusinessException e) {
@@ -170,6 +171,7 @@ public class AppletOrderController {
         }
         return null;
     }
+
     @ApiOperation("好友下订单")
     @PostMapping(value = "/friendbookOrder")
     public Object friendbookOrder(BookOrderParam orderParam) {
@@ -259,7 +261,7 @@ public class AppletOrderController {
     public Object cartGoodsCount(Long memberId) {
 
         Integer goodsCount = orderService.cartGoodsCount(memberId);
-        if (goodsCount != null &&  goodsCount>0) {
+        if (goodsCount != null && goodsCount > 0) {
             return new CommonResult().success(goodsCount);
         } else {
             return new CommonResult().success(0);
@@ -296,7 +298,7 @@ public class AppletOrderController {
         }
         int count = orderService.deleteCartIds(resultList);
         if (count > 0) {
-            for (Long id:resultList) {
+            for (Long id : resultList) {
                 EsShopCustomizedApplet applet = new EsShopCustomizedApplet();
                 applet.setCartId(id);
                 esShopCustomizedAppletService.remove(new QueryWrapper<>(applet));//删除定制服务
@@ -346,6 +348,7 @@ public class AppletOrderController {
     public Object orderList(AppletOrderParam appletOrderParam) {
         return new CommonResult().success(orderService.selectPageExtByApplet(appletOrderParam));
     }
+
     @ApiOperation("获取某个会员的送礼订单列表")
     @RequestMapping(value = "/orderFriendByMemberId", method = RequestMethod.POST)
     public Object orderFriendByMemberId(AppletOrderParam appletOrderParam) {
@@ -354,7 +357,7 @@ public class AppletOrderController {
 
     @ApiOperation("修改订单状态")
     @RequestMapping(value = "/updateStatus", method = RequestMethod.POST)
-     public Object updateStatus(Long orderId, Integer status) {
+    public Object updateStatus(Long orderId, Integer status) {
         return new CommonResult().success(orderService.updateStatus(orderId, status));
     }
 
@@ -428,7 +431,7 @@ public class AppletOrderController {
         if (ValidatorUtils.empty(formId)) {
             return new CommonResult().failed("前置参数错误，formId不能为空");
         }
-        if ("the formId is a mock one".equals(formId)){
+        if ("the formId is a mock one".equals(formId)) {
             return new CommonResult().success("需要打开调试模式或者上线");
         }
         if (ValidatorUtils.empty(memberId)) {
@@ -480,7 +483,7 @@ public class AppletOrderController {
                 return new CommonResult().failed("请指定定制服务编号");
             }
             esShopCustomizedAppletService.updateById(entity);
-            return new CommonResult().success("success",esShopCustomizedAppletService.detailCustService(entity));
+            return new CommonResult().success("success", esShopCustomizedAppletService.detailCustService(entity));
         } catch (Exception e) {
             log.error("修改商品定制服务异常：", e);
             e.printStackTrace();
@@ -509,9 +512,9 @@ public class AppletOrderController {
     @ApiOperation("同步失敗訂單到MQ")
     @PostMapping("/synOrder")
     public Object synOrder() {
-        List<Object> ids =  redisRepository.getList("order_error_ids",1,100);
-        for (Object id : ids){
-            log.info("同步失敗訂單:"+id);
+        List<Object> ids = redisRepository.getList("order_error_ids", 1, 100);
+        for (Object id : ids) {
+            log.info("同步失敗訂單:" + id);
             OmsOrderVo orderVo = new OmsOrderVo();
             EsShopOrder order = orderService.getById((Serializable) id);
             orderVo.setOrder(order);
@@ -526,9 +529,9 @@ public class AppletOrderController {
     @ApiOperation("好友赠礼")
     @PostMapping("/friendsGift")
     public Object friendsGift() {
-        List<Object> ids =  redisRepository.getList("order_error_ids",1,100);
-        for (Object id : ids){
-            log.info("同步失敗訂單:"+id);
+        List<Object> ids = redisRepository.getList("order_error_ids", 1, 100);
+        for (Object id : ids) {
+            log.info("同步失敗訂單:" + id);
             OmsOrderVo orderVo = new OmsOrderVo();
             EsShopOrder order = orderService.getById((Serializable) id);
             orderVo.setOrder(order);
@@ -542,14 +545,14 @@ public class AppletOrderController {
 
     @ApiOperation("发送模版消息")
     @PostMapping("/sendTemplate")
-    public Object sendTemplate(@RequestParam("opedid")String opedid,
-                               @RequestParam("formId")String formId,
-                               @RequestParam("shopId")Long shopId,
-                               @RequestParam("ids")Long ids,
-                               @RequestParam("name")String name,
-                               @RequestParam("id")Long id) {
+    public Object sendTemplate(@RequestParam("opedid") String opedid,
+                               @RequestParam("formId") String formId,
+                               @RequestParam("shopId") Long shopId,
+                               @RequestParam("ids") Long ids,
+                               @RequestParam("name") String name,
+                               @RequestParam("id") Long id) {
         System.out.println("进来了");
-        System.out.println("memberId =="+id+"==  openid  =="+opedid+" == shopId=="+shopId+" == ids =="+ids+"  == formId =="+formId);
+        System.out.println("memberId ==" + id + "==  openid  ==" + opedid + " == shopId==" + shopId + " == ids ==" + ids + "  == formId ==" + formId);
         System.out.println();
         Long userId = id;
         log.info("发送模版消息：userId=" + id + "formId=" + formId);
@@ -559,8 +562,8 @@ public class AppletOrderController {
         String accessToken = null;
         try {
             EsMiniprogram min = memberFegin.getByShopId(shopId);
-            System.out.println("min    +"+min);
-            EsCoreMessageTemplate messageTemplate = esCoreMessageTemplateMapper.selectById( ids);
+            System.out.println("min    +" + min);
+            EsCoreMessageTemplate messageTemplate = esCoreMessageTemplateMapper.selectById(ids);
             JSONArray a = (JSONArray) JSONArray.parse(messageTemplate.getTemplate());
             Map<String, TemplateData> param = new HashMap<String, TemplateData>();
             int count = 0;
@@ -568,19 +571,19 @@ public class AppletOrderController {
                 count++;
                 Map map = JsonUtils.readJsonToMap(a.get(i).toString());
                 // {"color0":"#000","number0":"[订单号]","title0":"订单编号"}
-                if(i == 0){
+                if (i == 0) {
                     param.put("keyword" + count, new TemplateData(name, map.get("color" + i).toString()));
-                }else{
+                } else {
                     param.put("keyword" + count, new TemplateData(map.get("number" + i).toString(), map.get("color" + i).toString()));
                 }
 
             }
-            System.out.println("appid + "+min.getAppid()+", appSecret + "+min.getAppSecret());
+            System.out.println("appid + " + min.getAppid() + ", appSecret + " + min.getAppSecret());
             accessToken = wechatApiService.getAccessToken(min.getAppid(), min.getAppSecret());
             /* param.put("keyword1", new TemplateData(oderIterm.getTitle(), "#EE0000"));*/
             com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(JSON.toJSONString(param));
 //        //调用发送微信消息给用户的接口    ********这里写自己在微信公众平台拿到的模板ID
-             String ret = WX_TemplateMsgUtil.sendWechatMsgToUser(opedid, messageTemplate.getOriginalTemplateId(), messageTemplate.getAddress(),
+            String ret = WX_TemplateMsgUtil.sendWechatMsgToUser(opedid, messageTemplate.getOriginalTemplateId(), messageTemplate.getAddress(),
                     formId, jsonObject, accessToken);
             if ("success".equals(ret)) {
                 EsShopFormid shopFormid = new EsShopFormid();
@@ -590,7 +593,7 @@ public class AppletOrderController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-       return null;
+        return null;
     }
 
 

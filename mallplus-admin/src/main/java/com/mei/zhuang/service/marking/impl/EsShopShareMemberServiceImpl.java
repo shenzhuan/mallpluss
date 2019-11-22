@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.mei.zhuang.dao.marking.EsShopShareMemberMapper;
-import com.mei.zhuang.service.marking.EsShopShareMemberService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopShareMemberMapper;
 import com.mei.zhuang.entity.marking.EsShopShareMember;
+import com.mei.zhuang.service.marking.EsShopShareMemberService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

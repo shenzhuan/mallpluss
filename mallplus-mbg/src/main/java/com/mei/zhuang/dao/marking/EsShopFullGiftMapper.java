@@ -14,8 +14,10 @@ import com.mei.zhuang.entity.marking.EsShopFullGift;
 public interface EsShopFullGiftMapper extends BaseMapper<EsShopFullGift> {
 
     void stopFullGift();
+
     //选赠礼状态数量
     Integer selectstatus();
+
     //满赠礼
     Integer selectstatus2();
 

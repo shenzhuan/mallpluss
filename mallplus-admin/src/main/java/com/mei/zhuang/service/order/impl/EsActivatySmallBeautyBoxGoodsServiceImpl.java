@@ -24,31 +24,31 @@ public class EsActivatySmallBeautyBoxGoodsServiceImpl extends ServiceImpl<EsActi
 
     @Override
     public Map<String, Object> selPageList(EsActivatySmallBeautyBoxGoods entity) {
-        Page<EsActivatySmallBeautyBoxGoods> page = new Page<>(entity.getCurrent(),entity.getSize());
-        Map<String,Object> result = new HashMap<String,Object>();
-        List<EsActivatySmallBeautyBoxGoods> list=esActivatySmallBeautyBoxGoodsMapper.selectPage(page,new QueryWrapper<>(entity)).getRecords();
+        Page<EsActivatySmallBeautyBoxGoods> page = new Page<>(entity.getCurrent(), entity.getSize());
+        Map<String, Object> result = new HashMap<String, Object>();
+        List<EsActivatySmallBeautyBoxGoods> list = esActivatySmallBeautyBoxGoodsMapper.selectPage(page, new QueryWrapper<>(entity)).getRecords();
         int count = esActivatySmallBeautyBoxGoodsMapper.count(entity);
-        result.put("rows",list);
-        result.put("total",count);
-        result.put("current",entity.getCurrent());
-        result.put("size",entity.getSize());
+        result.put("rows", list);
+        result.put("total", count);
+        result.put("current", entity.getCurrent());
+        result.put("size", entity.getSize());
         return result;
     }
 
     @Override
     public Boolean inserts(List<EsActivatySmallBeautyBoxGoods> entity) {
         //1.删除活动下的阶段中的产品
-        for (EsActivatySmallBeautyBoxGoods goods:entity) {
+        for (EsActivatySmallBeautyBoxGoods goods : entity) {
             boolean bool = this.removeById(goods.getId());
-            if(bool == true ){
+            if (bool == true) {
                 bool = this.save(goods);
-                if(bool ==true){
+                if (bool == true) {
                     return true;
                 }
                 return false;
             }
         }
-       return false;
+        return false;
     }
 
     /*@Override

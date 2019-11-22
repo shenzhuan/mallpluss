@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -17,6 +17,7 @@ import java.util.List;
 public interface ISysDbResourceService extends IService<SysDbResource> {
     /**
      * 获取数据源字典列表
+     *
      * @return
      */
     List<DictData> getDictList();

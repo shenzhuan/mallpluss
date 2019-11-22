@@ -54,7 +54,9 @@ public class CrmPreventHarassmentConfig extends Model<CrmPreventHarassmentConfig
     @TableField(value = "update_time", fill = FieldFill.UPDATE)
     private String updateTime;
 
-    /** 新增短信、微信、邮件、彩信渠道防骚扰配置，限制次数、是否启用防骚扰设置 */
+    /**
+     * 新增短信、微信、邮件、彩信渠道防骚扰配置，限制次数、是否启用防骚扰设置
+     */
     @TableField(value = "data_config")
     private String dataConfig;
 

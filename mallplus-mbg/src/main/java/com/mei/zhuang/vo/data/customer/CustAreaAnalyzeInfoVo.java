@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description: 地域分析Vo
  */
 @Data
-public class CustAreaAnalyzeInfoVo  {
+public class CustAreaAnalyzeInfoVo {
 
     private int top; //排名
 
@@ -20,7 +20,8 @@ public class CustAreaAnalyzeInfoVo  {
 
     private Integer id;//微信对应省份的id
 
-    public CustAreaAnalyzeInfoVo(){}
+    public CustAreaAnalyzeInfoVo() {
+    }
 
     public CustAreaAnalyzeInfoVo(String area, int custCountByArea, Integer id, double proCountToSale) {
         this.area = area;
@@ -36,7 +37,6 @@ public class CustAreaAnalyzeInfoVo  {
         this.id = id;
         this.proCountToSale = proCountToSale;
     }
-
 
 
 }

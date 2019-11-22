@@ -47,9 +47,9 @@ public class EsShopCustomizedCard extends Model<EsShopCustomizedCard> {
     @TableField("create_time")
     private Date createTime;
     @TableField(exist = false)
-    private Integer current=1;
+    private Integer current = 1;
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
 
     @Override
     protected Serializable pkVal() {

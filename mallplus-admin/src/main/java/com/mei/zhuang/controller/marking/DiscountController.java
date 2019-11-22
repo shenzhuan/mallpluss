@@ -74,6 +74,7 @@ public class DiscountController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "限时折扣管理", REMARK = "更新限时折扣")
     @ApiOperation("更新限时折扣")
     @PostMapping(value = "/update")
@@ -127,6 +128,7 @@ public class DiscountController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "限时折扣管理", REMARK = "查询折扣商品明细")
     @ApiOperation("查询折扣商品明细")
     @PostMapping(value = "/detailgoods")
@@ -141,6 +143,7 @@ public class DiscountController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "限时折扣管理", REMARK = "查询折扣优惠设置明细")
     @ApiOperation("查询折扣优惠设置明细")
     @PostMapping(value = "/detailcouponid")
@@ -156,6 +159,7 @@ public class DiscountController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "限时折扣管理", REMARK = "修改状态")
     @ApiOperation("修改状态 status 为列表的状态")
     @PostMapping(value = "/updateStatus")
@@ -166,6 +170,7 @@ public class DiscountController {
         }
         return new CommonResult().success();
     }
+
     @SysLog(MODULE = "限时折扣管理", REMARK = "修改状态查询")
     @ApiOperation("修改状态查询")
     @PostMapping(value = "/Status")

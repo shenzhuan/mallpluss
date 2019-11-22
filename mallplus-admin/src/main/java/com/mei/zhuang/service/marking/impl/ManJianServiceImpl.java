@@ -288,7 +288,7 @@ public class ManJianServiceImpl extends ServiceImpl<EsShopManjianMapper, EsShopM
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopManjian entity)  {
+    public boolean save(EsShopManjian entity) {
         // entity.setSource(1);
         // 0:启用 1：禁用
         entity.setStatus(1);

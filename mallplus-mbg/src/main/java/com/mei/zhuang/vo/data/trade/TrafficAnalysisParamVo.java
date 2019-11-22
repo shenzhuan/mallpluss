@@ -11,13 +11,13 @@ public class TrafficAnalysisParamVo {
     private double SharedVisitorsVo;//分享访问人数比例
     private double SharedVisitsVo;//分享访问次数比例
 
-    public TrafficAnalysisParamVo(double visitorsVo,double viewsVo,double shopVisitorsVo,double shopViewsVo,double SharedVisitorsVo,double SharedVisitsVo){
-        this.shopViewsVo=viewsVo;
-        this.visitorsVo=visitorsVo;
-        this.shopViewsVo=shopViewsVo;
-        this.shopVisitorsVo=shopVisitorsVo;
-        this.SharedVisitsVo=SharedVisitsVo;
-        this.SharedVisitorsVo=SharedVisitorsVo;
+    public TrafficAnalysisParamVo(double visitorsVo, double viewsVo, double shopVisitorsVo, double shopViewsVo, double SharedVisitorsVo, double SharedVisitsVo) {
+        this.shopViewsVo = viewsVo;
+        this.visitorsVo = visitorsVo;
+        this.shopViewsVo = shopViewsVo;
+        this.shopVisitorsVo = shopVisitorsVo;
+        this.SharedVisitsVo = SharedVisitsVo;
+        this.SharedVisitorsVo = SharedVisitorsVo;
     }
 
 

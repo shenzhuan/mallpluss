@@ -124,12 +124,13 @@ public class GoodsRulesController {
         }
         return new CommonResult().failed("查询明细失败");
     }
+
     @SysLog(MODULE = "商品规则同步", REMARK = "商品规则同步")
     @ApiOperation("商品规则同步")
     @PostMapping(value = "/updateRule")
-    public Object updateRule(@RequestParam String goodsname,@RequestParam long goodsId) {
+    public Object updateRule(@RequestParam String goodsname, @RequestParam long goodsId) {
         try {
-            return new CommonResult().success(rulesService.updateRule(goodsname,goodsId));
+            return new CommonResult().success(rulesService.updateRule(goodsname, goodsId));
         } catch (Exception e) {
             log.error("商品规则同步：%s", e.getMessage(), e);
         }
@@ -139,9 +140,9 @@ public class GoodsRulesController {
     @SysLog(MODULE = "商品规则删除同步", REMARK = "商品规则删除同步")
     @ApiOperation("商品规则删除同步")
     @PostMapping(value = "/deleterules")
-    public Object deleterules(@RequestParam long goodsId,@RequestParam int according) {
+    public Object deleterules(@RequestParam long goodsId, @RequestParam int according) {
         try {
-            return new CommonResult().success(rulesService.delete(goodsId,according));
+            return new CommonResult().success(rulesService.delete(goodsId, according));
         } catch (Exception e) {
             log.error("商品规则删除同步：%s", e.getMessage(), e);
         }

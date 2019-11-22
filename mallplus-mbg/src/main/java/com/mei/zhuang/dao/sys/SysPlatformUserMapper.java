@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -23,18 +23,21 @@ public interface SysPlatformUserMapper extends BaseMapper<SysPlatformUser> {
 
     /**
      * 锁定用户
+     *
      * @param userId
      */
     void lockAccount(@Param("userId") Integer userId);
 
     /**
      * 查询用户信息
+     *
      * @param username
      * @return
      */
     SysPlatformUser selectByUsername(@Param("username") String username);
 
     int getPagingTotal(@Param("param") SysPlatformUserPagingParam param);
+
     List<SysPlatformUserPagingData> getPagingList(@Param("param") SysPlatformUserPagingParam param);
 
     Integer updatestatus(@Param("status") String status, @Param("username") String username);

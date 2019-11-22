@@ -11,8 +11,4 @@ import com.mei.zhuang.entity.order.EsShopOrderSettings;
 public interface ShopOrderSettingsService extends IService<EsShopOrderSettings> {
 
 
-
-
-
-
 }

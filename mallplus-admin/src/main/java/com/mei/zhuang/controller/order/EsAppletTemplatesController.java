@@ -1,13 +1,13 @@
 package com.mei.zhuang.controller.order;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mei.zhuang.controller.SysLog;
+import com.mei.zhuang.entity.order.EsAppletTemplates;
 import com.mei.zhuang.service.order.EsAppletTemplateService;
 import com.mei.zhuang.service.order.impl.WechatApiService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mei.zhuang.entity.order.EsAppletTemplates;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +25,9 @@ import javax.annotation.Resource;
 public class EsAppletTemplatesController {
 
     @Resource
-    private EsAppletTemplateService esAppletTemplateService;
-    @Resource
     WechatApiService wechatApiService;
+    @Resource
+    private EsAppletTemplateService esAppletTemplateService;
 
     @SysLog(MODULE = "模版消息库接口管理", REMARK = "查询模版消息库接口")
     @ApiOperation("查询模版消息库接口")

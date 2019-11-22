@@ -73,7 +73,7 @@ public class GoodsSample extends Model<GoodsSample> {
     @TableField("product_sn")
     private String productSn;//产品介绍
     @TableField("promotion_time")
-    private String promotionTime ;
+    private String promotionTime;
 
     private String channelName;//渠道名称
 
@@ -235,8 +235,6 @@ public class GoodsSample extends Model<GoodsSample> {
     private Long diyPageId;//模板编号
     @TableField(exist = false)
     private String data;
-
-
 
 
     @Override

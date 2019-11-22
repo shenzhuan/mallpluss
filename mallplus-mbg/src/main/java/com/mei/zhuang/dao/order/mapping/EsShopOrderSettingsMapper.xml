@@ -4,16 +4,16 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsShopOrderSettings">
-        <id column="id" property="id" />
-        <result column="auto_close_time" property="autoCloseTime" />
-        <result column="auto_finsh_day" property="autoFinshDay" />
-        <result column="is_get_address" property="isGetAddress" />
-        <result column="create_time" property="createTime" />
-        <result column="create_by_id" property="createById" />
-        <result column="update_time" property="updateTime" />
-        <result column="update_by_id" property="updateById" />
-        <result column="is_delete" property="isDelete" />
-        <result column="shop_id" property="shopId" />
+        <id column="id" property="id"/>
+        <result column="auto_close_time" property="autoCloseTime"/>
+        <result column="auto_finsh_day" property="autoFinshDay"/>
+        <result column="is_get_address" property="isGetAddress"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by_id" property="createById"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by_id" property="updateById"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="shop_id" property="shopId"/>
     </resultMap>
 
 </mapper>

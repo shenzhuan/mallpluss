@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Api(value="系统用户模块-用户",description = "",tags={"系统用户"})
+@Api(value = "系统用户模块-用户", description = "", tags = {"系统用户"})
 @RestController
 @RequestMapping("user")
 public class UserController extends BaseController {
@@ -44,25 +44,25 @@ public class UserController extends BaseController {
     @SysLog(MODULE = "系统用户模块", REMARK = "分页获取用户信息")
     @ApiOperation("分页获取用户信息")
     @PostMapping(value = "/getUserByPage")
-    public Map<String,Object> getUserByPage(CrmSysUser user,
-                                            @RequestParam(value = "current", defaultValue = "1") Integer current,
-                                            @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        Map<String,Object> result = new HashMap<String,Object>();
-        PageHelper.startPage(current,size);
+    public Map<String, Object> getUserByPage(CrmSysUser user,
+                                             @RequestParam(value = "current", defaultValue = "1") Integer current,
+                                             @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        PageHelper.startPage(current, size);
         List<CrmSysUser> crmSysUsers = userBiz.selectUserList(user);
         //user.setTotal((int) PageHelper.freeTotal());
         result.put("total", user.getTotal());
-        result.put("rows",crmSysUsers);
-        result.put("size",size);
-        result.put("current",current);
+        result.put("rows", crmSysUsers);
+        result.put("size", size);
+        result.put("current", current);
         return result;
     }
 
     @SysLog(MODULE = "系统用户模块", REMARK = "获取所有的用户信息")
     @ApiOperation("获取所有的用户信息")
     @PostMapping(value = "/users/all")
-    public Map<String,Object> getAllUser() {
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getAllUser() {
+        Map<String, Object> result = new HashMap<>();
         result.put("all", userBiz.selectAllUser());
         return result;
     }
@@ -86,7 +86,7 @@ public class UserController extends BaseController {
         CrmSysUser currentUser = super.getCurrentUser();
         user.setCreateUserId(currentUser.getId());
         DataSourceDto dataSourceDto = getDataSourceDto();
-        return userBiz.insertSelective(user,currentUser,dataSourceDto,getCurrentPlatUserId());
+        return userBiz.insertSelective(user, currentUser, dataSourceDto, getCurrentPlatUserId());
     }
 
     @SysLog(MODULE = "系统用户模块", REMARK = "更新用户信息,用户名是不可以修改的")
@@ -108,7 +108,7 @@ public class UserController extends BaseController {
     @SysLog(MODULE = "系统用户模块", REMARK = "通过用户id获取用户信息")
     @ApiOperation("通过用户id获取用户信息")
     @PostMapping(value = "/getUserById")
-    public JSONObject getUserById( Integer id) {
+    public JSONObject getUserById(Integer id) {
         return userBiz.getUserById(id);
     }
 
@@ -135,8 +135,8 @@ public class UserController extends BaseController {
     @SysLog(MODULE = "系统用户模块", REMARK = "重置用户密码")
     @ApiOperation("重置用户密码")
     @PostMapping(value = "/users/password")
-    public BaseResponse resetPassword(@RequestParam int id,@RequestParam String password) {
-        userBiz.resetPassword(id,password);
+    public BaseResponse resetPassword(@RequestParam int id, @RequestParam String password) {
+        userBiz.resetPassword(id, password);
         return BaseResponse.successResponnse();
     }
 
@@ -149,9 +149,10 @@ public class UserController extends BaseController {
         crmSysUser.setId(currentUser.getId());
         return userBiz.modifyPassword(crmSysUser);
     }
+
     //用户状态修改
     @PostMapping(value = "/updatestatus")
-    public Object userstatus(@RequestParam String status,@RequestParam String username) {
+    public Object userstatus(@RequestParam String status, @RequestParam String username) {
         if (status.equals("0")) {
             if (userBiz.updatestatususer(status, username) > 0) {
                 return new CommonResult().success("用户已解锁");
@@ -159,13 +160,13 @@ public class UserController extends BaseController {
                 return new CommonResult().failed("修改状态失败");
             }
         }
-            if (status.equals("1")) {
-                if (userBiz.updatestatususer(status, username) > 0) {
-                    return new CommonResult().success("用户已被锁定");
-                } else {
-                    return new CommonResult().failed("修改状态失败");
-                }
+        if (status.equals("1")) {
+            if (userBiz.updatestatususer(status, username) > 0) {
+                return new CommonResult().success("用户已被锁定");
+            } else {
+                return new CommonResult().failed("修改状态失败");
             }
+        }
         return new CommonResult().success();
     }
 }

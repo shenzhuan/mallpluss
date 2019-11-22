@@ -17,13 +17,13 @@ import java.net.URLDecoder;
 @Slf4j
 public class UserNameDecodeUtil {
 
-    public static  String getDecodeUserName(HttpServletRequest request){
+    public static String getDecodeUserName(HttpServletRequest request) {
         String userName = request.getHeader(CommonConstant.CONTEXT_KEY_USERNAME);
-        if(StringUtils.isNotEmpty(userName)){
+        if (StringUtils.isNotEmpty(userName)) {
             try {
-                userName = URLDecoder.decode(userName,"utf-8");
+                userName = URLDecoder.decode(userName, "utf-8");
             } catch (UnsupportedEncodingException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
         return userName;

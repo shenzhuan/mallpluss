@@ -4,99 +4,99 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysUser">
-        <id column="id" property="id" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="name" property="name" />
-        <result column="birthday" property="birthday" />
-        <result column="address" property="address" />
-        <result column="mobile" property="mobile" />
-        <result column="email" property="email" />
-        <result column="sex" property="sex" />
-        <result column="type" property="type" />
-        <result column="status" property="status" />
-        <result column="dept_id" property="deptId" />
-        <result column="manage_dept_id" property="manageDeptId" />
-        <result column="create_user_id" property="createUserId" />
-        <result column="create_date" property="createDate" />
-        <result column="create_time" property="createTime" />
-        <result column="update_user_id" property="updateUserId" />
-        <result column="update_date" property="updateDate" />
-        <result column="update_time" property="updateTime" />
-        <result column="version" property="version" />
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="name" property="name"/>
+        <result column="birthday" property="birthday"/>
+        <result column="address" property="address"/>
+        <result column="mobile" property="mobile"/>
+        <result column="email" property="email"/>
+        <result column="sex" property="sex"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="manage_dept_id" property="manageDeptId"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
     </resultMap>
 
     <sql id="whereCondition">
-       <where>
-           <if test="username != null and username != ''">
-               t.username like CONCAT('%', #{username}, '%')
-           </if>
-           <if test="name != null and name != ''">
-               and t.name like CONCAT('%', #{name}, '%')
-           </if>
-           <if test="mobile != null and mobile != ''">
-               and t.mobile like CONCAT('%', #{mobile}, '%')
-           </if>
-           <if test=" sex !='-1' and sex != null and sex != ''">
-               and t.sex = #{sex}
-           </if>
-           <if test="status !='-1' and status != null and status != ''">
-               and t.status = #{status}
-           </if>
-       </where>
+        <where>
+            <if test="username != null and username != ''">
+                t.username like CONCAT('%', #{username}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                and t.name like CONCAT('%', #{name}, '%')
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and t.mobile like CONCAT('%', #{mobile}, '%')
+            </if>
+            <if test=" sex !='-1' and sex != null and sex != ''">
+                and t.sex = #{sex}
+            </if>
+            <if test="status !='-1' and status != null and status != ''">
+                and t.status = #{status}
+            </if>
+        </where>
     </sql>
 
     <select id="selectUserCount" resultType="int" parameterType="com.mei.zhuang.entity.sys.CrmSysUser">
-       select
-           count(0)
-       from
-           crm_sys_user t
-       <include refid="whereCondition"></include>
+        select
+        count(0)
+        from
+        crm_sys_user t
+        <include refid="whereCondition"></include>
     </select>
 
     <select id="selectUserWithSchema" resultMap="BaseResultMap">
-       select
-           t.id,
-           t.username,
-           t.name,
-           t.birthday,
-           t.address,
-           t.mobile,
-           t.email,
-           t.create_date,
-           t.password,
-           t.status status
-       from
-           ${schemaName}.crm_sys_user t
-           where t.username=#{username}
-<!--        <include refid="whereCondition"></include> -->
+        select
+        t.id,
+        t.username,
+        t.name,
+        t.birthday,
+        t.address,
+        t.mobile,
+        t.email,
+        t.create_date,
+        t.password,
+        t.status status
+        from
+        ${schemaName}.crm_sys_user t
+        where t.username=#{username}
+        <!--        <include refid="whereCondition"></include> -->
     </select>
 
     <select id="selectUserList" resultMap="BaseResultMap">
-       select
-           t.id,
-           t.username,
-           t.name,
-           t.birthday,
-           t.address,
-           t.mobile,
-           t.email,
-           t.status,
-           t1.text sex,
-           t.create_date
+        select
+        t.id,
+        t.username,
+        t.name,
+        t.birthday,
+        t.address,
+        t.mobile,
+        t.email,
+        t.status,
+        t1.text sex,
+        t.create_date
 
-       from
-           crm_sys_user t
-           LEFT JOIN ec_sys_dict t1
-           on t.sex = t1."value"
-           and t1."table_name" = 'global'
-           and t1.field = 'gender'
-           LEFT JOIN ec_sys_dict t2
-           on t.status = t2."value"
-           and t2."table_name" = 'crm_sys_user'
-           and t2.field = 'status'
-       <include refid="whereCondition"></include>
-       order by t.id desc
+        from
+        crm_sys_user t
+        LEFT JOIN ec_sys_dict t1
+        on t.sex = t1."value"
+        and t1."table_name" = 'global'
+        and t1.field = 'gender'
+        LEFT JOIN ec_sys_dict t2
+        on t.status = t2."value"
+        and t2."table_name" = 'crm_sys_user'
+        and t2.field = 'status'
+        <include refid="whereCondition"></include>
+        order by t.id desc
     </select>
 
     <select id="deptTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
@@ -128,36 +128,36 @@
 
     <select id="manageDeptTree" resultType="java.lang.Integer">
         SELECT
-            m1.id AS id,
-            (
-                CASE
-                WHEN (m2.id = 0 OR m2.id IS NULL) THEN
-                    0
-                ELSE
-                    m2.id
-                END
-            ) AS pId,
-            m1. NAME AS NAME,
-            (
-                CASE
-                WHEN (m3.id is not null) THEN
-                    'true'
-                ELSE
-                    'false'
-                END
-            ) "checked"
+        m1.id AS id,
+        (
+        CASE
+        WHEN (m2.id = 0 OR m2.id IS NULL) THEN
+        0
+        ELSE
+        m2.id
+        END
+        ) AS pId,
+        m1. NAME AS NAME,
+        (
+        CASE
+        WHEN (m3.id is not null) THEN
+        'true'
+        ELSE
+        'false'
+        END
+        ) "checked"
         FROM
-            crm_sys_dept m1
+        crm_sys_dept m1
         LEFT JOIN crm_sys_dept m2 ON m1.p_id = m2.id
-                LEFT JOIN (
-                    select id from crm_sys_dept where id in
-                    <foreach collection="manageDeptList" index="index" item="deptId" open="(" close=")" separator=",">
-                        #{deptId}
-                    </foreach>
-                ) m3
-                on m3.id = m1.id
+        LEFT JOIN (
+        select id from crm_sys_dept where id in
+        <foreach collection="manageDeptList" index="index" item="deptId" open="(" close=")" separator=",">
+            #{deptId}
+        </foreach>
+        ) m3
+        on m3.id = m1.id
         ORDER BY
-            m1.num,m1.id
+        m1.num,m1.id
     </select>
 
     <select id="selectAllUser" resultMap="BaseResultMap">
@@ -220,7 +220,7 @@
         select * from crm_sys_user cs where  cs.username = #{username}
     </select>
 
-    <select id="selectid"  resultType="java.lang.Integer">
+    <select id="selectid" resultType="java.lang.Integer">
           select id from crm_sys_user  where  username = #{username}
     </select>
 

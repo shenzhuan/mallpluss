@@ -25,6 +25,7 @@ public interface EsShopOrderGoodsMapper extends BaseMapper<EsShopOrderGoods> {
     List<Long> selOgByCondition(OrderParam param);
 
     List<EsShopOrderGoods> OrderGoods(GoodsAnalyzeParam param);
+
     //复购人数
     List<EsShopOrderGoods> purchaseGoods(GoodsAnalyzeParam param);
 

@@ -47,7 +47,7 @@ public class SingleGiftController {
     ) {
         try {
             PageHelper.startPage(current, size);
-           // List<EsShopSingleGift> esShopDiscount = singleGiftService.slelectPurchase();
+            // List<EsShopSingleGift> esShopDiscount = singleGiftService.slelectPurchase();
             return new CommonResult().success(PageInfo.of(singleGiftService.slelectPurchase()));
         } catch (Exception e) {
             log.error("根据条件查询所有单品赠礼列表：%s", e.getMessage(), e);

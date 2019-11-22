@@ -30,35 +30,35 @@ public interface GoodsFegin {
     @PostMapping(value = "/api/sku/updateSkuById")
     void updateSkuById(@RequestBody EsShopGoodsOption option);
 
-    @PostMapping(value = "/api/sku/updateGoodsById" )
+    @PostMapping(value = "/api/sku/updateGoodsById")
     void updateGoodsById(@RequestBody EsShopGoods goods);
 
-    @PostMapping(value = "/api/sku/decrSkuStock" )
+    @PostMapping(value = "/api/sku/decrSkuStock")
     int decrSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total, @RequestParam("goodsId") Long goodsId, @RequestParam("type") Integer type);
 
-    @PostMapping(value = "/api/sku/decrGoodsStock" )
+    @PostMapping(value = "/api/sku/decrGoodsStock")
     int decrGoodsStock(@RequestParam("goodsId") Long goodsId, @RequestParam("total") Integer total);
 
-    @PostMapping(value = "/api/sku/addSkuStock" )
+    @PostMapping(value = "/api/sku/addSkuStock")
     void addSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total, @RequestParam("goodsId") Long goodsId);
 
-    @PostMapping(value = "/api/sku/addGoodsStock" )
+    @PostMapping(value = "/api/sku/addGoodsStock")
     void addGoodsStock(@RequestParam("goodsId") Long goodsId, @RequestParam("total") Integer total);
 
     //样图详情
-    @PostMapping(value = "/shop/basic/detailLegend" )
+    @PostMapping(value = "/shop/basic/detailLegend")
     Object detailLegend(@RequestParam("id") Long id);
 
     //刻字服务基础信息详情
-    @PostMapping(value = "/shop/basic/detailBasic" )
+    @PostMapping(value = "/shop/basic/detailBasic")
     Object detailBasics(EsShopCustomizedBasic entity);
 
     //定制卡片详情
-    @PostMapping(value = "/shop/card/detail" )
+    @PostMapping(value = "/shop/card/detail")
     Object detail(@RequestParam("id") Long id);
 
     //套装详情
-    @PostMapping(value = "/shop/package/detail" )
+    @PostMapping(value = "/shop/package/detail")
     Object details(@RequestParam("id") Long id);
 
     /*//根据购物车id 获得定制服务信息
@@ -69,6 +69,7 @@ public interface GoodsFegin {
     //根据商品id查询商品定制服务
     @PostMapping(value = "/applet/selectCust")
     Object selectCust(@RequestParam("id") Long id);
+
     //根据套装ids 获得封套/包装盒信息List
     @PostMapping(value = "/api/goods/custMarking/getPackInfo")
     List<EsShopCustomizedPacket> getPackInfo(@RequestParam("套装ids") List<Long> packIds);
@@ -76,7 +77,7 @@ public interface GoodsFegin {
     @PostMapping(value = "/api/goods/custMarking/getPackInfoByOne")
     EsShopCustomizedPacket getPackInfoByOne(@RequestParam("套装id") Long packId);
 
-    @PostMapping(value = "/shop/basic/detailBasics" )
+    @PostMapping(value = "/shop/basic/detailBasics")
     EsShopCustomizedBasic detailBasics(@RequestParam("id") Long id);
 
     @PostMapping("/api/goods/custMarking/getCustBasicById")
@@ -93,7 +94,7 @@ public interface GoodsFegin {
                                          @RequestParam("vituralStock") Integer vituralStock,
                                          @RequestParam("price") BigDecimal price,
                                          @RequestParam("id") Long id,
-                                         @RequestParam("productSn") String productSn) ;
+                                         @RequestParam("productSn") String productSn);
 
     //编辑小美盒定制礼盒
     @PostMapping("/api/goods/updSmallBeautyBoxCust")
@@ -103,11 +104,11 @@ public interface GoodsFegin {
                                   @RequestParam("vituralStock") Integer vituralStock,
                                   @RequestParam("price") BigDecimal price,
                                   @RequestParam("id") Long id,
-                                  @RequestParam("productSn") String productSn) ;
+                                  @RequestParam("productSn") String productSn);
 
     //删除小美盒定制礼盒
     @PostMapping("/api/goods/delSmallBeautyBoxCust")
-    boolean delSmallBeautyBoxCust(@RequestParam("id") Long id) ;
+    boolean delSmallBeautyBoxCust(@RequestParam("id") Long id);
 
     //查询商品中的定制商品
     @PostMapping("/api/goods/goodsDetail")

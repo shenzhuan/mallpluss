@@ -98,7 +98,7 @@ public class WX_TemplateMsgUtil {
         try {
             JSONObject resultJson = WX_HttpsUtil.httpsRequest(tmpurl, "POST", json.toString());
             // JSONObject resultJson = new JSONObject(result);
-            log.info("发送微信消息返回信息：openid="+touser+",formId="+formId +"," +resultJson);
+            log.info("发送微信消息返回信息：openid=" + touser + ",formId=" + formId + "," + resultJson);
             String errmsg = (String) resultJson.get("errmsg");
             if (!"ok".equals(errmsg)) {  //如果为errmsg为ok，则代表发送成功，公众号推送信息给用户了。
                 return "error";

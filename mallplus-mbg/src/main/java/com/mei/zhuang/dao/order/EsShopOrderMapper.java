@@ -79,7 +79,9 @@ public interface EsShopOrderMapper extends BaseMapper<EsShopOrder> {
 
     //公用时间查orderid
     List<Long> orderIdList(GoodsAnalyzeParam param);
+
     List<Long> orderIdList2(TradeAnalyzeParam param);
+
     //付款人数
     List<Long> memberIdList(TradeAnalyzeParam param);
 

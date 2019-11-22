@@ -32,8 +32,8 @@ public class EsActivatySmallBeautyBoxServiceImpl extends ServiceImpl<EsActivatyS
 
     @Override
     public Map<String, Object> selPageList(EsActivatySmallBeautyBox entity) {
-        Page<EsActivatySmallBeautyBox> page = new Page<EsActivatySmallBeautyBox>(entity.getCurrent(),entity.getSize());
-        Map<String,Object> result = new HashMap<String,Object>();
+        Page<EsActivatySmallBeautyBox> page = new Page<EsActivatySmallBeautyBox>(entity.getCurrent(), entity.getSize());
+        Map<String, Object> result = new HashMap<String, Object>();
         List<EsActivatySmallBeautyBox> selList = esActivatySmallBeautyBoxMapper.selList(entity);
         int count = esActivatySmallBeautyBoxMapper.count(entity);
         result.put("rows", selList);
@@ -47,7 +47,7 @@ public class EsActivatySmallBeautyBoxServiceImpl extends ServiceImpl<EsActivatyS
     public boolean deleteById(Long id) {
         Integer num = esActivatySmallBeautyBoxMapper.deleteById(id);
         //1.删除活动
-        if(num > 0){
+        if (num > 0) {
             //2.删除产品
             EsActivatySmallBeautyBoxGoods box = new EsActivatySmallBeautyBoxGoods();
             box.setActivatyId(id);

@@ -32,38 +32,38 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
 
     @Override
     public Map<String, Object> selPageList(EsShopActivity entity) {
-        Map<String,Object> map=new HashMap<String,Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         PageHelper.startPage(entity.getCurrent(), entity.getSize());
-        List<EsShopActivity> list=esShopActivityMapper.selPageList(entity);
+        List<EsShopActivity> list = esShopActivityMapper.selPageList(entity);
         EsMemberActivatyRecord esMemberActivatyRecord = new EsMemberActivatyRecord();
 
-        if(list != null){
-            for (EsShopActivity activity:list) {
+        if (list != null) {
+            for (EsShopActivity activity : list) {
                 try {
 
-                   if(entity.getCurrentTime()>=activity.getActivityStartTime()){
-                        if(entity.getCurrentTime()>activity.getActivityEndTime()){
+                    if (entity.getCurrentTime() >= activity.getActivityStartTime()) {
+                        if (entity.getCurrentTime() > activity.getActivityEndTime()) {
                             activity.setStatus(3);
-                        }else{
+                        } else {
                             activity.setStatus(1);
                         }
-                   }else{
+                    } else {
                         activity.setStatus(2);
-                   }
+                    }
 
-                   esMemberActivatyRecord.setActivatyId(activity.getId());
-                   List<EsMemberActivatyRecord> listRecord = esMemberActivatyRecordMapper.distinctMember(activity.getId());
-                   activity.setTotalNumber(listRecord.size());//参与总人数
-                   List<EsMemberActivatyRecord> listSize = esMemberActivatyRecordMapper.selectList(new QueryWrapper<>(esMemberActivatyRecord));
-                   activity.setTotalFrequency(listSize.size());//参与总次数
-                   Integer num1=0;//中奖人数
-                   Integer num2=0;//未中奖人数
-                   for (EsMemberActivatyRecord record:listSize
-                         ) {
-                        if(record.getIsWin() == 0){
-                            num2+=1;
-                        }else{
-                            num1+=1;
+                    esMemberActivatyRecord.setActivatyId(activity.getId());
+                    List<EsMemberActivatyRecord> listRecord = esMemberActivatyRecordMapper.distinctMember(activity.getId());
+                    activity.setTotalNumber(listRecord.size());//参与总人数
+                    List<EsMemberActivatyRecord> listSize = esMemberActivatyRecordMapper.selectList(new QueryWrapper<>(esMemberActivatyRecord));
+                    activity.setTotalFrequency(listSize.size());//参与总次数
+                    Integer num1 = 0;//中奖人数
+                    Integer num2 = 0;//未中奖人数
+                    for (EsMemberActivatyRecord record : listSize
+                    ) {
+                        if (record.getIsWin() == 0) {
+                            num2 += 1;
+                        } else {
+                            num1 += 1;
                         }
                     }
                     activity.setWinPrizeNumber(num1);//中奖人数
@@ -73,10 +73,9 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
                 }
 
 
-
             }
         }
-        Integer count=esShopActivityMapper.count(entity);
+        Integer count = esShopActivityMapper.count(entity);
         map.put("rows", list);
         map.put("total", count);
         map.put("current", entity.getCurrent());
@@ -89,17 +88,17 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
     public boolean save(EsShopActivity entity) {
 
 
-        Integer num =100;
-        if(entity.getList()!=null &&entity.getList().size()>0){
-            for (EsShopActivityPrize es:entity.getList()) {
-                if(es!=null){
+        Integer num = 100;
+        if (entity.getList() != null && entity.getList().size() > 0) {
+            for (EsShopActivityPrize es : entity.getList()) {
+                if (es != null) {
                     es.setActivatyId(entity.getId());
-                    num-=es.getWinning();
+                    num -= es.getWinning();
                     esShopActivityPrizeMapper.insert(es);
                 }
             }
-            if(num <0){
-                num=0;
+            if (num < 0) {
+                num = 0;
             }
             entity.setWinRate(num);
             this.save(entity);
@@ -110,15 +109,15 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
 
     @Override
     public boolean updates(EsShopActivity entity) {
-        if(this.updateById(entity)){
+        if (this.updateById(entity)) {
             EsShopActivityPrize prize = new EsShopActivityPrize();
             prize.setActivatyId(entity.getId());
             List<EsShopActivityPrize> list = esShopActivityPrizeMapper.selectList(new QueryWrapper<>(prize));
-            for (EsShopActivityPrize es:list) {
+            for (EsShopActivityPrize es : list) {
                 esShopActivityPrizeMapper.deleteById(es.getId());
             }
-            if(entity.getList()!=null &&entity.getList().size()>0){
-                for (EsShopActivityPrize es:entity.getList()) {
+            if (entity.getList() != null && entity.getList().size() > 0) {
+                for (EsShopActivityPrize es : entity.getList()) {
                     es.setActivatyId(entity.getId());
                     esShopActivityPrizeMapper.insert(es);
                 }
@@ -131,7 +130,7 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
 
     @Override
     public boolean deletes(Long id) {
-        if(this.removeById(id)){
+        if (this.removeById(id)) {
             EsShopActivityPrize prize = new EsShopActivityPrize();
             prize.setActivatyId(id);
             esShopActivityPrizeMapper.delete(new QueryWrapper<>(prize));
@@ -141,11 +140,11 @@ public class EsShopActivityServiceImpl extends ServiceImpl<EsShopActivityMapper,
 
     @Override
     public EsShopActivity detail(Long id) {
-        EsShopActivity activity=esShopActivityMapper.selectById(id);
-        if(activity!=null){
+        EsShopActivity activity = esShopActivityMapper.selectById(id);
+        if (activity != null) {
             EsShopActivityPrize prize = new EsShopActivityPrize();
             prize.setActivatyId(activity.getId());
-            List<EsShopActivityPrize> list=esShopActivityPrizeMapper.selectList(new QueryWrapper<>(prize));
+            List<EsShopActivityPrize> list = esShopActivityPrizeMapper.selectList(new QueryWrapper<>(prize));
             activity.setList(list);
         }
         return activity;

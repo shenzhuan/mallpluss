@@ -25,6 +25,4 @@ public class WxVistedTrendVo {
     private double visit_depth;//4平均访问深度 (浮点型)
 
 
-
-
 }

@@ -7,7 +7,6 @@ import com.mei.zhuang.vo.data.customer.CustGroupIndexParam;
 import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
 import org.apache.ibatis.annotations.Param;
 
-
 import java.util.List;
 
 /**

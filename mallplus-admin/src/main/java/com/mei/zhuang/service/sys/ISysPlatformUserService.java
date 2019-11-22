@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
@@ -19,10 +19,12 @@ import java.util.List;
 public interface ISysPlatformUserService extends IService<SysPlatformUser> {
 
     int getPagingTotal(SysPlatformUserPagingParam param);
+
     List<SysPlatformUserPagingData> getPagingList(SysPlatformUserPagingParam param);
 
     /**
      * 密码加密
+     *
      * @param password
      * @return
      */
@@ -32,6 +34,7 @@ public interface ISysPlatformUserService extends IService<SysPlatformUser> {
 
     /**
      * 密码匹配
+     *
      * @param password
      * @param encryptedPassword
      * @return
@@ -40,9 +43,11 @@ public interface ISysPlatformUserService extends IService<SysPlatformUser> {
 
     /**
      * 平台账户初始化
+     *
      * @param platformUser
      */
     void platformUserInit(SysPlatformUser platformUser);
+
     //修改状态
     Integer updatestatus(String status, String username);
 }

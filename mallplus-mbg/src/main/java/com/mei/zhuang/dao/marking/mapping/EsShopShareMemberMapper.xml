@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopShareMember">
-        <id column="id" property="id" />
-        <result column="share_id" property="shareId" />
-        <result column="launch_member_id" property="launchMemberId" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="share_id" property="shareId"/>
+        <result column="launch_member_id" property="launchMemberId"/>
+        <result column="create_time" property="createTime"/>
         <result column="is_close" property="isClose"/>
         <result column="is_confirm" property="isConfirm"/>
     </resultMap>

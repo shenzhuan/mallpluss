@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsCoreLogType">
-        <result column="id" property="id" />
-        <result column="operation_type" property="operationType" />
-        <result column="desc" property="desc" />
+        <result column="id" property="id"/>
+        <result column="operation_type" property="operationType"/>
+        <result column="desc" property="desc"/>
     </resultMap>
 
 </mapper>

@@ -8,15 +8,17 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author arvato team
  * @since 2019-05-18
  */
 public interface CouponManualService extends IService<EsShopCouponManual> {
-    boolean save(EsShopCouponManual esShopCouponManual) ;
+    boolean save(EsShopCouponManual esShopCouponManual);
+
     Integer deleteManual(long id);
+
     boolean update(EsShopCouponManual esShopCouponManual) throws Exception;
 
     //状态 1 已完成，2 发送中 3，未开始
@@ -27,8 +29,8 @@ public interface CouponManualService extends IService<EsShopCouponManual> {
     EsShopCouponManual ManualList(long id);
 
     //手工发券查询
-    List<Map<String,Object>> selectmanual(EsShopCouponManual esShopCouponManual) throws Exception;
+    List<Map<String, Object>> selectmanual(EsShopCouponManual esShopCouponManual) throws Exception;
 
-   // void sendManualCoupon(CartMarkingVo vo) throws ParseException;
+    // void sendManualCoupon(CartMarkingVo vo) throws ParseException;
 
 }

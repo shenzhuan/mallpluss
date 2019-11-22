@@ -17,74 +17,36 @@ import java.util.List;
 
 
 public class TestCSVUtil extends Thread {
+    //private static MemberCouponService couponMapper;
+    @Resource
+    public static EsMemberCouponMapper couponMapper;
     private final int STOP = -1;
     private final int SUSPEND = 0;
     private final int RUNNING = 1;
+    /*  String path="https://hrecminiprogramstorage.blob.core.chinacloudapi.cn/test-mini/file/4331250cf69050397fb78cf168a1b755.csv";
+  System.out.println(readcsvFile(path));*/
+    // String restor="C:\\Users\\mayn\\Desktop\\test\\openid.csv";
+    // System.out.println(getSource(restor)+"--------------");
+    EsMemberCoupon coupon = new EsMemberCoupon();
+    // getHSSFWorkbook(null);
+      /*  File f = new File("G:\\tmp\\"+sheetTitle+".xls");
+        try {
+           // FileUtils.writeByteArrayToFile(f, b, true);
+        } catch (IOException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+    EsMemberCouponController couponController = new EsMemberCouponController();
+    String schemeId = "发放记录";
     private int status = 1;
     private long count = 0;
-
     private String name;
 
     public TestCSVUtil(String name) {
         this.name = name;
     }
+
     public TestCSVUtil() {
 
-    }
-
-    public synchronized void run() {
-        int aa=101;
-        // 判断是否停止
-        while (status != STOP) {
-            // 判断是否挂起
-            if (status == SUSPEND) {
-                try {
-                    // 若线程挂起则阻塞自己
-                    wait();
-                } catch (InterruptedException e) {
-                    System.out.println("线程异常终止...");
-                }
-            } else {
-                count++;
-                System.out.println(this.name + "第" + count + "次运行...");
-                for(int i=1;i<=10;i++){
-                    System.out.println(i+"----");
-                }
-                aa-=10;
-                System.out.println(aa);
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    System.out.println("线程异常终止...");
-                }
-            }
-        }
-    }
-
-    /**
-     * 恢复
-     */
-    public synchronized void myResume() {
-        // 修改状态
-        status = RUNNING;
-        // 唤醒
-        notifyAll();
-    }
-
-    /**
-     * 挂起
-     */
-    public void mySuspend() {
-        // 修改状态
-        status = SUSPEND;
-    }
-
-    /**
-     * 停止
-     */
-    public void myStop() {
-        // 修改状态
-        status = STOP;
     }
 
 
@@ -159,10 +121,6 @@ public class TestCSVUtil extends Thread {
         thread.shutdown();
     }*/
 
-    //private static MemberCouponService couponMapper;
-    @Resource
-    public static EsMemberCouponMapper couponMapper;
-
     /**
      * @param multipartFile
      * @param request
@@ -186,38 +144,6 @@ public class TestCSVUtil extends Thread {
         multipartFile.transferTo(restore);
         return newFileName;
     }
-
-
-    //文件读取
-    public List<String> readcsvFile(String URL) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        URLConnection connection = null;
-        BufferedReader br = null;
-        String everyLine;
-        List<String> allString = new ArrayList<>();
-        try {
-
-            URL url = new URL(URL);
-            connection = url.openConnection();
-            InputStream is = connection.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is, "GBK"));//gb2312
-            String temp = null;
-            while ((temp = br.readLine()) != null) {
-                String[] info = temp.split(",");
-                everyLine = new String(info[0]);
-                allString.add(new StringBuilder().append(everyLine).toString());
-            }
-            allString.remove(0);
-            System.out.println(allString.toString());
-        } catch (Exception e) {
-        } finally {
-            if (br != null) {
-                br.close();
-            }
-        }
-        return allString;
-    }
-
 
     /**
      * 导出Excel
@@ -295,7 +221,6 @@ public class TestCSVUtil extends Thread {
         return wb;
     }
 
-
     public static void main(String[] args) {
        /* Thread thread = new Thread(new MyTask());
         thread.start();
@@ -332,6 +257,45 @@ public class TestCSVUtil extends Thread {
         System.out.println("主线程终止...");
     }
 
+    public synchronized void run() {
+        int aa = 101;
+        // 判断是否停止
+        while (status != STOP) {
+            // 判断是否挂起
+            if (status == SUSPEND) {
+                try {
+                    // 若线程挂起则阻塞自己
+                    wait();
+                } catch (InterruptedException e) {
+                    System.out.println("线程异常终止...");
+                }
+            } else {
+                count++;
+                System.out.println(this.name + "第" + count + "次运行...");
+                for (int i = 1; i <= 10; i++) {
+                    System.out.println(i + "----");
+                }
+                aa -= 10;
+                System.out.println(aa);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.out.println("线程异常终止...");
+                }
+            }
+        }
+    }
+
+    /**
+     * 恢复
+     */
+    public synchronized void myResume() {
+        // 修改状态
+        status = RUNNING;
+        // 唤醒
+        notifyAll();
+    }
+
 
 
 
@@ -350,26 +314,53 @@ public class TestCSVUtil extends Thread {
 
     //    File f = new File("G:\\tmp\\"+sheetTitle+".xls");
 
-    /*  String path="https://hrecminiprogramstorage.blob.core.chinacloudapi.cn/test-mini/file/4331250cf69050397fb78cf168a1b755.csv";
-  System.out.println(readcsvFile(path));*/
-    // String restor="C:\\Users\\mayn\\Desktop\\test\\openid.csv";
-    // System.out.println(getSource(restor)+"--------------");
-    EsMemberCoupon coupon = new EsMemberCoupon();
-    // getHSSFWorkbook(null);
-      /*  File f = new File("G:\\tmp\\"+sheetTitle+".xls");
+    /**
+     * 挂起
+     */
+    public void mySuspend() {
+        // 修改状态
+        status = SUSPEND;
+    }
+
+    /**
+     * 停止
+     */
+    public void myStop() {
+        // 修改状态
+        status = STOP;
+    }
+
+    //文件读取
+    public List<String> readcsvFile(String URL) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        URLConnection connection = null;
+        BufferedReader br = null;
+        String everyLine;
+        List<String> allString = new ArrayList<>();
         try {
-           // FileUtils.writeByteArrayToFile(f, b, true);
-        } catch (IOException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-    EsMemberCouponController couponController = new EsMemberCouponController();
-    String schemeId = "发放记录";
+
+            URL url = new URL(URL);
+            connection = url.openConnection();
+            InputStream is = connection.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is, "GBK"));//gb2312
+            String temp = null;
+            while ((temp = br.readLine()) != null) {
+                String[] info = temp.split(",");
+                everyLine = new String(info[0]);
+                allString.add(new StringBuilder().append(everyLine).toString());
+            }
+            allString.remove(0);
+            System.out.println(allString.toString());
+        } catch (Exception e) {
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+        return allString;
+    }
     //List<Map<String, Object>> maps = couponMapper.selectMemberCoupon(coupon);
     //System.out.println(maps+"2222222222222222222");
-
-
-
-
 
 
 }

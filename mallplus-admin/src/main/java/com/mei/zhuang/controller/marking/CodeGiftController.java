@@ -57,13 +57,14 @@ public class CodeGiftController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "验证码下载csv", REMARK = "验证码下载csv")
     @ApiOperation("验证码下载csv")
     @PostMapping(value = "/codecsv")
     public Object codecsv(HttpServletRequest request, HttpServletResponse response) {
         try {
-            ExcelExportUtil excelExportUtil=new ExcelExportUtil();
-          return   excelExportUtil.getHSSFWorkbook(request,response);
+            ExcelExportUtil excelExportUtil = new ExcelExportUtil();
+            return excelExportUtil.getHSSFWorkbook(request, response);
         } catch (Exception e) {
             log.error("根据条件查询所有验证码赠礼列表：%s", e.getMessage(), e);
         }
@@ -73,7 +74,7 @@ public class CodeGiftController {
     @SysLog(MODULE = "验证码赠礼管理", REMARK = "保存验证码赠礼")
     @ApiOperation("保存验证码赠礼")
     @PostMapping(value = "/save")
-    public Object saveCodeGift( EsShopCodeGift entity) {
+    public Object saveCodeGift(EsShopCodeGift entity) {
         try {
             //商品
             List<GoodsSepcVo> list = JSONObject.parseArray(entity.getGoodSpecList(), GoodsSepcVo.class);
@@ -85,9 +86,9 @@ public class CodeGiftController {
             entity.setGoodsCouponList(list3);
             TestCSVUtil csvUtil = new TestCSVUtil();
             //唯一验证
-            if(entity.getType() ==1){
-                EsShopCodeGiftRule codegif  = codeGiftService.codegif2(list2.get(0).getCode());
-                if(codegif!=null&&codegif.getCount()>0){
+            if (entity.getType() == 1) {
+                EsShopCodeGiftRule codegif = codeGiftService.codegif2(list2.get(0).getCode());
+                if (codegif != null && codegif.getCount() > 0) {
                     return new CommonResult().failed("验证码已存在");
                 }
             }
@@ -124,7 +125,7 @@ public class CodeGiftController {
     @SysLog(MODULE = "验证码赠礼管理", REMARK = "更新验证码赠礼")
     @ApiOperation("更新验证码赠礼")
     @PostMapping(value = "/update")
-    public Object updateCodeGift( EsShopCodeGift entity) {
+    public Object updateCodeGift(EsShopCodeGift entity) {
         try {
             //商品
             List<GoodsSepcVo> list = JSONObject.parseArray(entity.getGoodSpecList(), GoodsSepcVo.class);
@@ -136,17 +137,17 @@ public class CodeGiftController {
             entity.setGoodsCouponList(list3);
             TestCSVUtil csvUtil = new TestCSVUtil();
             //唯一验证
-            if(entity.getType() ==1){
-                String code=list2.get(0).getCode();
+            if (entity.getType() == 1) {
+                String code = list2.get(0).getCode();
                 //本身code是否相等
                 EsShopCodeGiftRule codegif = codeGiftService.codegif(entity.getId());
                 EsShopCodeGiftRule code2 = codeGiftService.codegif2(code);
-                if(code.equals(codegif.getCode())){
+                if (code.equals(codegif.getCode())) {
                     return new CommonResult().success(codeGiftService.update(entity));
-                }else if(code2==null||code2.getCount()==0){
+                } else if (code2 == null || code2.getCount() == 0) {
                     return new CommonResult().success(codeGiftService.update(entity));
-                }else{
-                    if (code2.getCount()> 0) {
+                } else {
+                    if (code2.getCount() > 0) {
                         return new CommonResult().failed("验证码已存在");
                     }
                 }

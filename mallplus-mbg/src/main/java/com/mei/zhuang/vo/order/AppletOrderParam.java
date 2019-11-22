@@ -21,7 +21,7 @@ public class AppletOrderParam {
     private Integer status;
 
     /**
-     *页码
+     * 页码
      */
     private Integer current = 1;
 
@@ -38,7 +38,7 @@ public class AppletOrderParam {
     private Integer giftGiving;
 
     /**
-     *是否顺序
+     * 是否顺序
      */
 //    private Boolean isAsc = false;
     private Integer isAsc = 0;

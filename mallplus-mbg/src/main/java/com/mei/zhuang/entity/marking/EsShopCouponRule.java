@@ -1,10 +1,10 @@
 package com.mei.zhuang.entity.marking;
 
 
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -68,9 +68,9 @@ public class EsShopCouponRule extends Model<EsShopCouponRule> {
     private Integer goodsLimitedId;
     //可使用优惠条件 0单选，1且，2或 ，3无条件
     private Integer conditions;
-  /*  //营销规则——赠品营销 2
-    @TableField("marketing_gid")
-    private String marketingGid;*/
+    /*  //营销规则——赠品营销 2
+      @TableField("marketing_gid")
+      private String marketingGid;*/
     //优惠使用限制 1无使用限制,2不与其他营销规则同时使用
     @TableField("coupon_limit")
     private Integer couponLimit;

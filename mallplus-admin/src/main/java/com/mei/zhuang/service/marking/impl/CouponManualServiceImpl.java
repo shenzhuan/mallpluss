@@ -24,7 +24,7 @@ import java.util.*;
 
 /**
  * <p>
-     *  手工发券
+ * 手工发券
  * </p>
  *
  * @author arvato team
@@ -36,6 +36,7 @@ import java.util.*;
 @EnableAsync
 public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMapper, EsShopCouponManual> implements CouponManualService {
 
+    MemberCouponServiceImpl memberCouponService = new MemberCouponServiceImpl();
     @Resource
     private EsShopCouponManualMapper couponManualMapper;
     @Resource
@@ -48,23 +49,42 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
     private EsShopCouponManualUserMapper manualUserMapper;
     @Resource
     private EsMemberCouponMapper couponMapper;
-
     @Resource
     private EsShopCouponMapper escouponMapper;
     @Resource
     private EsMemberMapper memberMapper;
-
     private int cou;
 
-    public void SetCou(int cou){
-        this.cou=cou;
+    public static String addDay(Date s, int n) {
+        SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(s);
+        cd.add(5, n);
+        return FORMATER_DATE_YMD.format(cd.getTime());
+    }
+
+    public static Date addDays(Date s, int n) {
+
+        try {
+            SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar cd = Calendar.getInstance();
+            cd.setTime(s);
+            cd.add(5, n);
+            return FORMATER_DATE_YMD.parse(FORMATER_DATE_YMD.format(cd.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date();
+    }
+
+    public void SetCou(int cou) {
+        this.cou = cou;
     }
 
     public int getCou() {
         return cou;
     }
 
-    MemberCouponServiceImpl memberCouponService=new MemberCouponServiceImpl();
     public void datetime(EsShopCouponManual en) throws Exception {
         // 1.发送 2.停止  1，开启，2指定时间，3关闭
         if (en.getActivityOpen() == 1) {
@@ -83,71 +103,73 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
             }
         }
     }
+
     //读取上传用户文件
     public void csvfile(EsShopCouponManual entity) throws IOException {
-        TestCSVUtil csvUtil=new TestCSVUtil();
-        if(entity.getSendObject()==2) {
+        TestCSVUtil csvUtil = new TestCSVUtil();
+        if (entity.getSendObject() == 2) {
             List<String> source = csvUtil.readcsvFile(entity.getPath());
-            StringBuilder builder=new StringBuilder();
-            for(int i=0;i<source.size();i++){
-                if(i==source.size()-1){
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < source.size(); i++) {
+                if (i == source.size() - 1) {
                     builder.append(source.get(i));
                     break;
                 }
                 builder.append(source.get(i)).append(",");
                 System.out.println(builder.toString());
             }
-            String value=builder.toString();
-            String st[]=value.split(",");
-          for(String str: st){
-               EsShopCouponManualUser manualUser=new EsShopCouponManualUser();
-               manualUser.setUserId(str);
-               manualUser.setManualId(entity.getId());
-              manualUserMapper.insert(manualUser);
-          }
+            String value = builder.toString();
+            String st[] = value.split(",");
+            for (String str : st) {
+                EsShopCouponManualUser manualUser = new EsShopCouponManualUser();
+                manualUser.setUserId(str);
+                manualUser.setManualId(entity.getId());
+                manualUserMapper.insert(manualUser);
+            }
         }
     }
 
-
-    @Transactional(rollbackFor =Exception.class )
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopCouponManual entity)  {
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0,20);
+    public boolean save(EsShopCouponManual entity) {
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
         entity.setCouponManualid(uuid);
         try {
             datetime(entity);
             couponManualMapper.insert(entity);
             csvfile(entity);
             addsave(entity);
-            if(entity.getMessage()==3){
+            if (entity.getMessage() == 3) {
                 sendManualCoupon(entity.getMessage(), entity.getId());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
     }
+
     //立即发放
     @Async
-    public  void makeRealData (EsShopCouponManual topup){
-        try{
+    public void makeRealData(EsShopCouponManual topup) {
+        try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             EsMemberCoupon member = new EsMemberCoupon();
-            Timer time2=new Timer();
+            Timer time2 = new Timer();
             time2.schedule(new TimerTask() {
-                boolean b=false;
-                Integer current=0;
+                boolean b = false;
+                Integer current = 0;
                 List<EsShopCouponNewRule> couponNewRules = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
+
                 @Override
                 public void run() {
                     EsShopCoupon escoupon = escouponMapper.selectById(couponNewRules.get(0).getCouponid());
-                    if(escoupon.getStock()==0){
+                    if (escoupon.getStock() == 0) {
                         ShopCouponManual(topup);
                         time2.cancel();
                     }
-                    if(escoupon.getStock()<topup.getStampsNumber()){
-                        Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(),topup.getId());
-                        System.out.println("数量发券--"+namesum);
+                    if (escoupon.getStock() < topup.getStampsNumber()) {
+                        Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(), topup.getId());
+                        System.out.println("数量发券--" + namesum);
                         EsShopCouponManual manuall = new EsShopCouponManual();
                         manuall.setId(topup.getId());
                         manuall.setStatus(4);
@@ -156,9 +178,9 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                         couponManualMapper.updateById(manuall);
                         time2.cancel();
                     }
-                    if(cou==1){
-                        Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(),topup.getId());
-                        System.out.println("数量发券--"+namesum);
+                    if (cou == 1) {
+                        Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(), topup.getId());
+                        System.out.println("数量发券--" + namesum);
                         EsShopCouponManual manuall = new EsShopCouponManual();
                         manuall.setId(topup.getId());
                         manuall.setStatus(4);
@@ -167,13 +189,13 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                         time2.cancel();
                     }
                     if (cou == 0) {
-                        List<EsMember> memberselect = memberMapper.memberselect(10,current);
+                        List<EsMember> memberselect = memberMapper.memberselect(10, current);
                         Integer sum = memberselect.size();
                         current += 10;
-                        if(memberselect.size()==0){
+                        if (memberselect.size() == 0) {
                             ShopCouponManual(topup);
                             time2.cancel();
-                        }else {
+                        } else {
                             for (EsMember me : memberselect) {
                                 if (sum < 10) {
                                     System.out.println("sumsdsadasd" + sum);
@@ -185,7 +207,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                                     addManualCoupon(member, sdf, topup, me.getId(), me.getOpenid());
                                 }
                             }
-                            if (b==true) {
+                            if (b == true) {
 
                                 if (memberselect.size() < 0 && memberselect == null) {
                                     time2.cancel();
@@ -200,24 +222,27 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                         }
                     }
                 }
-            },1000,5000);
+            }, 1000, 5000);
 
-        }catch(Throwable t){}
+        } catch (Throwable t) {
+        }
     }
+
     //指定发放
-    public synchronized void specifiedCoupon(EsShopCouponManual topup){
+    public synchronized void specifiedCoupon(EsShopCouponManual topup) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         EsMemberCoupon member = new EsMemberCoupon();
-        Timer time2=new Timer();
+        Timer time2 = new Timer();
         time2.schedule(new TimerTask() {
-            Integer current=0;
-            List<EsShopCouponNewRule> couponNewRules = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid",topup.getCouponManualid()));
+            Integer current = 0;
+            List<EsShopCouponNewRule> couponNewRules = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
+
             @Override
             public void run() {
                 EsShopCoupon escoupon = escouponMapper.selectById(couponNewRules.get(0).getCouponid());
-                if(escoupon.getStock()==0){
-                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(),topup.getId());
-                    System.out.println("数量发券--"+namesum);
+                if (escoupon.getStock() == 0) {
+                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(), topup.getId());
+                    System.out.println("数量发券--" + namesum);
                     EsShopCouponManual manuall = new EsShopCouponManual();
                     manuall.setId(topup.getId());
                     manuall.setStatus(4);
@@ -226,9 +251,9 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     couponManualMapper.updateById(manuall);
                     time2.cancel();
                 }
-                if(escoupon.getStock()<topup.getStampsNumber()){
-                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(),topup.getId());
-                    System.out.println("数量发券--"+namesum);
+                if (escoupon.getStock() < topup.getStampsNumber()) {
+                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(), topup.getId());
+                    System.out.println("数量发券--" + namesum);
                     EsShopCouponManual manuall = new EsShopCouponManual();
                     manuall.setId(topup.getId());
                     manuall.setStatus(4);
@@ -237,9 +262,9 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     couponManualMapper.updateById(manuall);
                     time2.cancel();
                 }
-                if(cou==1){
-                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(),topup.getId());
-                    System.out.println("数量发券--"+namesum);
+                if (cou == 1) {
+                    Integer namesum = couponMapper.namesum(couponNewRules.get(0).getCouponName(), topup.getId());
+                    System.out.println("数量发券--" + namesum);
                     EsShopCouponManual manuall = new EsShopCouponManual();
                     manuall.setId(topup.getId());
                     manuall.setStatus(4);
@@ -247,7 +272,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     couponManualMapper.updateById(manuall);
                     time2.cancel();
                 }
-                if(cou==0){
+                if (cou == 0) {
                     List<EsMember> memberselect = memberMapper.memberselect(0, 0);
                     //current += 100;
                 /*    if(memberselect.size()==0){
@@ -255,31 +280,31 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                         ShopCouponManual(topup);
                         time2.cancel();
                     }else{*/
-                        List<EsShopCouponManualUser> userList = manualUserMapper.selectList(new QueryWrapper<EsShopCouponManualUser>().eq("manual_id",topup.getId()).eq("status","1"));
-                        if (userList != null && userList.size() > 0) {
-                            for (EsShopCouponManualUser me : userList) {
-                                for (EsMember mes : memberselect) {
-                                    if (me.getUserId().contains(mes.getOpenid())) {
-                                        System.out.println("指定用户已执行");
-                                        manualUserMapper.updateuser(me.getUserId(),me.getManualId());
-                                        addManualCoupon(member, sdf,topup, mes.getId(), mes.getOpenid());
-                                    }
+                    List<EsShopCouponManualUser> userList = manualUserMapper.selectList(new QueryWrapper<EsShopCouponManualUser>().eq("manual_id", topup.getId()).eq("status", "1"));
+                    if (userList != null && userList.size() > 0) {
+                        for (EsShopCouponManualUser me : userList) {
+                            for (EsMember mes : memberselect) {
+                                if (me.getUserId().contains(mes.getOpenid())) {
+                                    System.out.println("指定用户已执行");
+                                    manualUserMapper.updateuser(me.getUserId(), me.getManualId());
+                                    addManualCoupon(member, sdf, topup, mes.getId(), mes.getOpenid());
                                 }
                             }
-                        }else{
-                            ShopCouponManual(topup);
-                            time2.cancel();
                         }
+                    } else {
+                        ShopCouponManual(topup);
+                        time2.cancel();
+                    }
 
                 }
             }
-        },1000,6000);
+        }, 1000, 6000);
     }
 
-    public void ShopCouponManual(EsShopCouponManual topup){
+    public void ShopCouponManual(EsShopCouponManual topup) {
         List<EsShopCouponNewRule> couponNewRules2 = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
-        Integer namesum = couponMapper.namesum(couponNewRules2.get(0).getCouponName(),topup.getId());
-        System.out.println("数量发券--"+namesum);
+        Integer namesum = couponMapper.namesum(couponNewRules2.get(0).getCouponName(), topup.getId());
+        System.out.println("数量发券--" + namesum);
         EsShopCouponManual manuall = new EsShopCouponManual();
         manuall.setId(topup.getId());
         manuall.setStatus(1);
@@ -288,29 +313,27 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
         couponManualMapper.updateById(manuall);
     }
 
-
-
-    void sendManualCoupon(Integer message,long id) throws ParseException {
+    void sendManualCoupon(Integer message, long id) throws ParseException {
         EsMemberCoupon member = new EsMemberCoupon();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        List<EsShopCouponManual> list = couponManualMapper.selectList(new QueryWrapper<EsShopCouponManual>().eq("status", 2).eq("message",message).eq("id",id));
+        List<EsShopCouponManual> list = couponManualMapper.selectList(new QueryWrapper<EsShopCouponManual>().eq("status", 2).eq("message", message).eq("id", id));
         for (EsShopCouponManual topup : list) {
             // 活动开启 1，开启，2指定时间，3关闭
-            if (topup.getActivityOpen()== 3||topup.getActivityOpen()== 2) {
+            if (topup.getActivityOpen() == 3 || topup.getActivityOpen() == 2) {
                 continue;
-            }else{
+            } else {
                 //发券对象 1,全部用户2，指定用户，3仅会员4，会员等级
                 if (topup.getSendObject() == 2) {
-                    new Thread(){
-                        public void run(){
+                    new Thread() {
+                        public void run() {
                             specifiedCoupon(topup);
                         }
                     }.start();
 
                 } else {
                     System.out.println("执行立即发");
-                    new Thread(){
-                        public void run(){
+                    new Thread() {
+                        public void run() {
                             makeRealData(topup);
                         }
                     }.start();
@@ -319,16 +342,15 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
         }
     }
 
-
     @Async
-   public  void addManualCoupon( EsMemberCoupon member, SimpleDateFormat sdf, EsShopCouponManual topup,long memberid,String openid) {
+    public void addManualCoupon(EsMemberCoupon member, SimpleDateFormat sdf, EsShopCouponManual topup, long memberid, String openid) {
         List<EsShopCouponNewRule> couponNewRules = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
         for (EsShopCouponNewRule rule : couponNewRules) {
             EsShopCoupon coupon = escouponMapper.selectById(rule.getCouponid());
             Integer coupon3 = 0;
             if (coupon.getStock() > 0) {
                 if (coupon.getStock() < topup.getStampsNumber()) {
-                   continue;
+                    continue;
                 } else {
                     coupon3 = topup.getStampsNumber();
                 }
@@ -373,36 +395,13 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
         }
     }
 
-    public static String addDay(Date s, int n) {
-        SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar cd = Calendar.getInstance();
-        cd.setTime(s);
-        cd.add(5, n);
-        return FORMATER_DATE_YMD.format(cd.getTime());
-    }
-
-    public static Date addDays(Date s, int n) {
-
-        try {
-            SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Calendar cd = Calendar.getInstance();
-            cd.setTime(s);
-            cd.add(5, n);
-            return FORMATER_DATE_YMD.parse(FORMATER_DATE_YMD.format(cd.getTime()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return new Date();
-    }
-
-
     //连表删除
-    @Transactional(rollbackFor =Exception.class )
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deleteManual(long id) {
         EsShopCouponManual esManual = couponManualMapper.selectById(id);
-        couponNewRuleMapper.delete(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid",esManual.getCouponManualid()));
-        couponManualMapper.delete(new QueryWrapper<EsShopCouponManual>().eq("coupon_manualid",esManual.getCouponManualid()));
+        couponNewRuleMapper.delete(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", esManual.getCouponManualid()));
+        couponManualMapper.delete(new QueryWrapper<EsShopCouponManual>().eq("coupon_manualid", esManual.getCouponManualid()));
         return 1;
     }
 
@@ -417,33 +416,33 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
         List<EsShopCouponNewRule> physicalId = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", manual.getCouponManualid()));
 
         //实物商品和赠品
-         couponsTopupGoodsMapper.delete(new QueryWrapper<EsShopCouponsTopupGoods>().eq("physical_id", physicalId.get(0).getId()));
-         couponNewRuleMapper.delete(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", manual.getCouponManualid()));
+        couponsTopupGoodsMapper.delete(new QueryWrapper<EsShopCouponsTopupGoods>().eq("physical_id", physicalId.get(0).getId()));
+        couponNewRuleMapper.delete(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", manual.getCouponManualid()));
         CouponManual.setCouponManualid(manual.getCouponManualid());
         addsave(CouponManual);
-        if(CouponManual.getMessage()==3){
-            sendManualCoupon(CouponManual.getMessage(),CouponManual.getId());
+        if (CouponManual.getMessage() == 3) {
+            sendManualCoupon(CouponManual.getMessage(), CouponManual.getId());
         }
         return true;
     }
 
     @Override
-    public Integer updatestatus(long id,Integer  statusissue) {
-           //  1.发送 2.停止  statusissue   1 已完成，2 发送中 3，未开始 4.停止
-        if( statusissue==1) {
+    public Integer updatestatus(long id, Integer statusissue) {
+        //  1.发送 2.停止  statusissue   1 已完成，2 发送中 3，未开始 4.停止
+        if (statusissue == 1) {
             EsShopCouponManual manual = new EsShopCouponManual();
             manual.setId(id);
             manual.setStatusissue(1);
             manual.setStatus(2);
             Calendar c = new GregorianCalendar();
-            Date date=new Date();
+            Date date = new Date();
             c.setTime(date);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            c.add(Calendar.SECOND,+60);
-            date=c.getTime();
+            c.add(Calendar.SECOND, +60);
+            date = c.getTime();
             manual.setTime(sdf.format(date));
             return couponManualMapper.updateById(manual);
-        }else{
+        } else {
             EsShopCouponManual manual = new EsShopCouponManual();
             manual.setId(id);
             manual.setStatusissue(2);
@@ -455,7 +454,7 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
     @Override
     public EsShopCouponManual ManualList(long id) {
         EsShopCouponManual manual = couponManualMapper.selectById(id);
-        List<EsShopCouponNewRule> couponid = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid",manual.getCouponManualid()));
+        List<EsShopCouponNewRule> couponid = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", manual.getCouponManualid()));
         manual.setNewRuleList(couponid);
         return manual;
     }
@@ -464,15 +463,14 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
     @Override
     public List<Map<String, Object>> selectmanual(EsShopCouponManual esShopCouponManual) throws Exception {
 
-        return couponManualMapper.selectmanual(esShopCouponManual );
+        return couponManualMapper.selectmanual(esShopCouponManual);
     }
 
 
-
     public void addsave(EsShopCouponManual entity) throws Exception {
-        if(entity.getNewRuleList()!=null&&entity.getNewRuleList().size()>0){
-            for(EsShopCouponNewRule cnr:entity.getNewRuleList()){
-                EsShopCouponNewRule  ecn=new EsShopCouponNewRule();
+        if (entity.getNewRuleList() != null && entity.getNewRuleList().size() > 0) {
+            for (EsShopCouponNewRule cnr : entity.getNewRuleList()) {
+                EsShopCouponNewRule ecn = new EsShopCouponNewRule();
                 ecn.setCouponid(cnr.getCouponid());
                 ecn.setInventory(cnr.getInventory());
                 ecn.setCouponName(cnr.getCouponName());
@@ -481,9 +479,9 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                 couponNewRuleMapper.insert(ecn);
                 EsShopCouponNewRule NewRule = couponNewRuleMapper.selectById(ecn.getId());
                 //赠品券
-                if(NewRule.getCouponTypes()==4){
+                if (NewRule.getCouponTypes() == 4) {
                     List<EsShopCouponGoodsMap> GoodsMaps = goodsMapMapper.selcetcoupongoods(NewRule.getCouponid());
-                    for(EsShopCouponGoodsMap goods:GoodsMaps) {
+                    for (EsShopCouponGoodsMap goods : GoodsMaps) {
                         EsShopCouponsTopupGoods trg = new EsShopCouponsTopupGoods();
                         trg.setGoodId(goods.getGoodsId());
                         trg.setSpecificationsId(goods.getSpecIds());
@@ -492,9 +490,9 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
                     }
                 }
                 //商品券
-                if(NewRule.getCouponTypes()==3){
+                if (NewRule.getCouponTypes() == 3) {
                     List<EsShopCouponGoodsMap> GoodsMaps = goodsMapMapper.selectgoods2(NewRule.getCouponid());
-                    for(EsShopCouponGoodsMap goods:GoodsMaps) {
+                    for (EsShopCouponGoodsMap goods : GoodsMaps) {
                         EsShopCouponsTopupGoods trg = new EsShopCouponsTopupGoods();
                         trg.setGoodId(goods.getGoodsId());
                         trg.setSpecificationsId(goods.getSpecIds());
@@ -505,7 +503,6 @@ public class CouponManualServiceImpl extends ServiceImpl<EsShopCouponManualMappe
             }
         }
     }
-
 
 
 }

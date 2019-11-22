@@ -48,18 +48,15 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/applet/pay")
 public class PayController {
-    @Resource
-    private GoodsFegin goodsFegin;
     String getCode = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=STAT#wechat_redirect";
-
     String orderquery = "https://api.mch.weixin.qq.com/pay/orderquery";
     String refundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
     String refundqueryUrl = "https://api.mch.weixin.qq.com/pay/refundquery";
-
     String uniformorder = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     String userMessage = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
     String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-
+    @Resource
+    private GoodsFegin goodsFegin;
     @Resource
     private MembersFegin membersFegin;
 
@@ -88,6 +85,76 @@ public class PayController {
     }
 
     /**
+     * 微信查询订单状态
+     */
+   /* @ApiOperation(value = "查询订单状态")
+    @PostMapping("query")
+    public Object orderQuery( @RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        UmsMember user = UserUtils.getCurrentMember();
+
+        OmsOrder orderDetail = orderService.getById(id);
+        if (id == null) {
+            return new CommonResult().failed("订单不存在");
+        }
+        Map<Object, Object> parame = new TreeMap<Object, Object>();
+        parame.put("appid", wxAppletProperties.getAppId());
+
+        parame.put("mch_id", wxAppletProperties.getMchId());
+        String randomStr = CharUtil.getRandomNum(18).toUpperCase();
+
+        parame.put("nonce_str", randomStr);
+
+        parame.put("out_trade_no", orderDetail.getOrderSn());
+
+        String sign = WechatUtil.arraySign(parame, wxAppletProperties.getPaySignKey());
+
+        parame.put("sign", sign);
+
+        String xml = MapUtils.convertMap2Xml(parame);
+        log.info("xml:" + xml);
+        Map<String, Object> resultUn = null;
+        try {
+            resultUn = XmlUtil.xmlStrToMap(WechatUtil.requestOnce(wxAppletProperties.getOrderquery(), xml));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new CommonResult().failed("查询失败,error=" + e.getMessage());
+        }
+
+        String return_code = MapUtils.getString("return_code", resultUn);
+        String return_msg = MapUtils.getString("return_msg", resultUn);
+
+        if (!"SUCCESS".equals(return_code)) {
+            return new CommonResult().failed("查询失败,error=" + return_msg);
+        }
+
+        String trade_state = MapUtils.getString("trade_state", resultUn);
+        if ("SUCCESS".equals(trade_state)) {
+
+            OmsOrder orderInfo = new OmsOrder();
+            orderInfo.setId(id);
+            orderInfo.setStatus(2);
+            orderInfo.setConfirmStatus(1);
+            orderInfo.setPaymentTime(new Date());
+            orderService.updateById(orderInfo);
+            return toResponsMsgSuccess("支付成功");
+        } else if ("USERPAYING".equals(trade_state)) {
+
+
+        } else {
+
+            return new CommonResult().failed("查询失败,error=" + trade_state);
+        }
+
+        return new CommonResult().failed("查询失败，未知错误");
+    }*/
+    public static void main(String[] args) {
+        String a = "广东省";
+        System.out.println(a.substring(0, 2));
+        System.out.println(com.mei.zhuang.utils.DateUtils.addDay(new Date(), -5));
+        System.out.println(System.currentTimeMillis());
+    }
+
+    /**
      * 获取支付的请求参数
      */
     @SysLog(MODULE = "商户支付管理", REMARK = "获取支付的请求参数")
@@ -107,7 +174,7 @@ public class PayController {
         queryPay.setIsDelete(0);
         EsShopPayment payment = paymentMapper.selectOne(new QueryWrapper<>(queryPay));
         EsShopOrder orderInfo = orderService.getById(orderId);
-        if (null == miniprogram || payment==null) {
+        if (null == miniprogram || payment == null) {
             return new CommonResult().failed("支付参数为空");
         }
         log.info("prepay");
@@ -136,12 +203,12 @@ public class PayController {
             parame.put("body", "小程序支付");
             //订单的商品
             List<EsShopOrderGoods> orderGoods = orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderId));
-            System.out.println(orderGoods+"商品订单");
+            System.out.println(orderGoods + "商品订单");
             if (null != orderGoods) {
                 String body = "";
                 int count = 0;
                 for (EsShopOrderGoods goodsVo : orderGoods) {
-                    if (rePay == 1 && goodsVo.getIsGifts()==0) {
+                    if (rePay == 1 && goodsVo.getIsGifts() == 0) {
                         EsShopGoods goods = goodsFegin.getGoodsById(goodsVo.getGoodsId());
                         if (goods.getNumMax() > 0 && goodsVo.getCount() > goods.getNumMax()) {
                             return new CommonResult().failed("单次最多购买:" + goods.getNumMax() + "件,当前件数:" + goodsVo.getCount());
@@ -268,7 +335,7 @@ public class PayController {
             EsShopOrder param = new EsShopOrder();
             param.setOrderNo(out_trade_no);
             System.out.println(param);
-            List<EsShopOrder> list = orderService.list(new QueryWrapper<EsShopOrder>().eq("order_no",out_trade_no));
+            List<EsShopOrder> list = orderService.list(new QueryWrapper<EsShopOrder>().eq("order_no", out_trade_no));
             EsShopOrder orderInfo = list.get(0);
             if (result_code.equalsIgnoreCase("FAIL")) {
                 //订单编号
@@ -277,124 +344,55 @@ public class PayController {
                 response.getWriter().write(setXml("SUCCESS", "OK"));
             } else if (result_code.equalsIgnoreCase("SUCCESS")) {
                 log.error("订单" + out_trade_no + "支付成功");
-                if(orderInfo.getOrderType()==2){
+                if (orderInfo.getOrderType() == 2) {
                     orderInfo.setStatus(OrderStatus.RECEIVE.getValue());
-                }else {
+                } else {
                     orderInfo.setStatus(OrderStatus.TO_DELIVER.getValue());
                 }
                 orderInfo.setPayTime(new Date());
                 orderInfo.setPayType(1);
                 orderService.updateById(orderInfo);
-                    CompletableFuture.runAsync(() -> {
-                        try {
-                            List<EsShopOrderGoods> orderGoods = orderGoodsMapper.selectList(
-                                    new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderInfo.getId()).eq("is_gifts",0));
-                            EsMember user = membersFegin.getMemberById(orderInfo.getMemberId());
-                          if (orderService.hasPayied(user.getId())>0){
-                              markingFegin.sendNewCoupon(user.getId(), 3);
-                          }
-                            CartMarkingVo vo = new CartMarkingVo();
-                            vo.setMemberId(orderInfo.getMemberId());
-                            vo.setPayAmount(orderInfo.getPayPrice());
-                            vo.setShopOrderGoodsList(orderGoods);
-                            vo.setScope(2);
-                            vo.setOpenId(user.getOpenid());
-                            markingFegin.sendManualCoupon(vo);
-                            markingFegin.sendFillFillCoupon(vo);
-                            markingFegin.sendShopCoupon(vo);
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        List<EsShopOrderGoods> orderGoods = orderGoodsMapper.selectList(
+                                new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderInfo.getId()).eq("is_gifts", 0));
+                        EsMember user = membersFegin.getMemberById(orderInfo.getMemberId());
+                        if (orderService.hasPayied(user.getId()) > 0) {
+                            markingFegin.sendNewCoupon(user.getId(), 3);
+                        }
+                        CartMarkingVo vo = new CartMarkingVo();
+                        vo.setMemberId(orderInfo.getMemberId());
+                        vo.setPayAmount(orderInfo.getPayPrice());
+                        vo.setShopOrderGoodsList(orderGoods);
+                        vo.setScope(2);
+                        vo.setOpenId(user.getOpenid());
+                        markingFegin.sendManualCoupon(vo);
+                        markingFegin.sendFillFillCoupon(vo);
+                        markingFegin.sendShopCoupon(vo);
 
-                            for (EsShopOrderGoods goodsVo : orderGoods) {
-                                EsShopGoods goods = goodsFegin.getGoodsById(goodsVo.getGoodsId());
-                                goods.setSalesCount(goods.getSalesCount() + goodsVo.getCount());
-                                goodsFegin.updateGoodsById(goods);
-                                // 锁库存
-                                orderService.lockStock(goodsVo, 1);
-                            }
-                            orderService.push(user,orderInfo,orderInfo.getOutTradeNo(),2,orderGoods);
+                        for (EsShopOrderGoods goodsVo : orderGoods) {
+                            EsShopGoods goods = goodsFegin.getGoodsById(goodsVo.getGoodsId());
+                            goods.setSalesCount(goods.getSalesCount() + goodsVo.getCount());
+                            goodsFegin.updateGoodsById(goods);
+                            // 锁库存
+                            orderService.lockStock(goodsVo, 1);
+                        }
+                        orderService.push(user, orderInfo, orderInfo.getOutTradeNo(), 2, orderGoods);
                            /* String formid=orderService.getFormIdByMemberId(user.getId());
                             if (ValidatorUtils.notEmpty(formid)){
                                 orderService.push(user,orderInfo,formid,2,orderGoods);
                             }else {
                                 log.error("支付消息推送formId不够,memberId="+user.getId());
                             }*/
-                        } catch (Exception e) {
-                            log.error("异步更新失败：{}", e.getMessage());
-                        }
-                    });
+                    } catch (Exception e) {
+                        log.error("异步更新失败：{}", e.getMessage());
+                    }
+                });
                 response.getWriter().write(setXml("SUCCESS", "OK"));
             }
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-    }
-    /**
-     * 微信查询订单状态
-     */
-   /* @ApiOperation(value = "查询订单状态")
-    @PostMapping("query")
-    public Object orderQuery( @RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = UserUtils.getCurrentMember();
-
-        OmsOrder orderDetail = orderService.getById(id);
-        if (id == null) {
-            return new CommonResult().failed("订单不存在");
-        }
-        Map<Object, Object> parame = new TreeMap<Object, Object>();
-        parame.put("appid", wxAppletProperties.getAppId());
-
-        parame.put("mch_id", wxAppletProperties.getMchId());
-        String randomStr = CharUtil.getRandomNum(18).toUpperCase();
-
-        parame.put("nonce_str", randomStr);
-
-        parame.put("out_trade_no", orderDetail.getOrderSn());
-
-        String sign = WechatUtil.arraySign(parame, wxAppletProperties.getPaySignKey());
-
-        parame.put("sign", sign);
-
-        String xml = MapUtils.convertMap2Xml(parame);
-        log.info("xml:" + xml);
-        Map<String, Object> resultUn = null;
-        try {
-            resultUn = XmlUtil.xmlStrToMap(WechatUtil.requestOnce(wxAppletProperties.getOrderquery(), xml));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new CommonResult().failed("查询失败,error=" + e.getMessage());
-        }
-
-        String return_code = MapUtils.getString("return_code", resultUn);
-        String return_msg = MapUtils.getString("return_msg", resultUn);
-
-        if (!"SUCCESS".equals(return_code)) {
-            return new CommonResult().failed("查询失败,error=" + return_msg);
-        }
-
-        String trade_state = MapUtils.getString("trade_state", resultUn);
-        if ("SUCCESS".equals(trade_state)) {
-
-            OmsOrder orderInfo = new OmsOrder();
-            orderInfo.setId(id);
-            orderInfo.setStatus(2);
-            orderInfo.setConfirmStatus(1);
-            orderInfo.setPaymentTime(new Date());
-            orderService.updateById(orderInfo);
-            return toResponsMsgSuccess("支付成功");
-        } else if ("USERPAYING".equals(trade_state)) {
-
-
-        } else {
-
-            return new CommonResult().failed("查询失败,error=" + trade_state);
-        }
-
-        return new CommonResult().failed("查询失败，未知错误");
-    }*/
-    public static void main(String[] args) {
-        String a ="广东省";
-        System.out.println(a.substring(0,2));
-        System.out.println(com.mei.zhuang.utils.DateUtils.addDay(new Date(),-5));
-        System.out.println(System.currentTimeMillis());
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author arvato team
@@ -46,7 +46,7 @@ public class CrmSysDeptServiceImpl extends ServiceImpl<CrmSysDeptMapper, CrmSysD
 
     @Override
     public List<ZTreeNode> getDeptTreeByOrgType(int orgType, List<Integer> roleDeptIds) {
-        return crmSysDeptMapper.getDeptTreeByOrgType(orgType,roleDeptIds);
+        return crmSysDeptMapper.getDeptTreeByOrgType(orgType, roleDeptIds);
     }
 
 //    @Override
@@ -55,9 +55,9 @@ public class CrmSysDeptServiceImpl extends ServiceImpl<CrmSysDeptMapper, CrmSysD
 //    }
 
     @Override
-    public List<Integer> getDeptIds(Integer menuId,CrmSysUser crmSysUser) {
+    public List<Integer> getDeptIds(Integer menuId, CrmSysUser crmSysUser) {
         List<Integer> roleIds = userRoleMapper.getRoleIdsbyUserId(crmSysUser.getId());
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("roleIds", roleIds);
         map.put("menuId", menuId);
         Integer dataAuthLevel = dataAuthMapper.getAuthLevelByMenuIdAndRoleIds(map);
@@ -76,12 +76,12 @@ public class CrmSysDeptServiceImpl extends ServiceImpl<CrmSysDeptMapper, CrmSysD
 //				}
 //			}
 //	    }
-        if(dataAuthLevel == null){
+        if (dataAuthLevel == null) {
             return null;
         }
         if (dataAuthLevel == 1) {
             return null;
-        } else if (dataAuthLevel == 2){
+        } else if (dataAuthLevel == 2) {
 //		    List<Integer> deptIdsList = dataAuthMapper.getDeptIdById(deptId);
 //		    if(deptIdsList != null){
 //		    	deptIdList.addAll(deptIdsList);
@@ -103,9 +103,9 @@ public class CrmSysDeptServiceImpl extends ServiceImpl<CrmSysDeptMapper, CrmSysD
     }
 
     @Override
-    public List<ZTreeNode> initDeptDatasByCurrentUser(Integer pid,Integer menuId,CrmSysUser crmSysUser) {
-        List<Integer> roleDeptIds=this.getDeptIds(menuId,crmSysUser);
-        return crmSysDeptMapper.initDeptDatasByCurrentUser(pid,roleDeptIds);
+    public List<ZTreeNode> initDeptDatasByCurrentUser(Integer pid, Integer menuId, CrmSysUser crmSysUser) {
+        List<Integer> roleDeptIds = this.getDeptIds(menuId, crmSysUser);
+        return crmSysDeptMapper.initDeptDatasByCurrentUser(pid, roleDeptIds);
     }
 
     @Override

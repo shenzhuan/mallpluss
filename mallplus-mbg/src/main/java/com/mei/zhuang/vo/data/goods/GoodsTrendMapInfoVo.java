@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description:商品趋势图Vo类
  */
 @Data
-public class GoodsTrendMapInfoVo{
+public class GoodsTrendMapInfoVo {
 
     private String relationDate;//关系日期
 
@@ -17,7 +17,8 @@ public class GoodsTrendMapInfoVo{
     private int goodsUvCount;//商品访问量
 
 
-    public GoodsTrendMapInfoVo(){}
+    public GoodsTrendMapInfoVo() {
+    }
 
     public GoodsTrendMapInfoVo(String relaDate, int goodsSaleTotalCount, int goodsUvCount) {
         this.relationDate = relaDate;

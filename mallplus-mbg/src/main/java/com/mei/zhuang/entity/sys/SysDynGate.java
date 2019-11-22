@@ -1,18 +1,13 @@
 package com.mei.zhuang.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -35,7 +30,7 @@ public class SysDynGate extends Model<SysDynGate> {
      */
     private String id;
     /**
-     *  路由器路径
+     * 路由器路径
      */
     private String path;
     /**

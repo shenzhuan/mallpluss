@@ -4,13 +4,13 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsAppletTemplates">
-        <id column="id" property="id" />
-        <result column="template_id" property="templateId" />
-        <result column="title" property="title" />
-        <result column="contents" property="content" />
-        <result column="example" property="example" />
-        <result column="status" property="status" />
-        <result column="create_time" property="createTime" />
+        <id column="id" property="id"/>
+        <result column="template_id" property="templateId"/>
+        <result column="title" property="title"/>
+        <result column="contents" property="content"/>
+        <result column="example" property="example"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
     <select id="select" resultType="com.mei.zhuang.entity.order.EsAppletTemplates">
         select * from es_applet_templates

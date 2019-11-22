@@ -1,11 +1,14 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.mei.zhuang.dao.marking.*;
-import com.mei.zhuang.service.marking.EsShopShareService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.marking.EsShopCouponGoodsMapMapper;
+import com.mei.zhuang.dao.marking.EsShopShareMapMapper;
+import com.mei.zhuang.dao.marking.EsShopShareMapper;
+import com.mei.zhuang.dao.marking.EsShopShareMemberMapper;
 import com.mei.zhuang.entity.marking.EsShopShare;
 import com.mei.zhuang.entity.marking.EsShopShareMap;
+import com.mei.zhuang.service.marking.EsShopShareService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,11 +57,11 @@ public class EsShopShareServiceImpl extends ServiceImpl<EsShopShareMapper, EsSho
         return 1;
     }
 
-    public void addShare(EsShopShare share){
+    public void addShare(EsShopShare share) {
         //发起者
-        if(share.getSharemapList()!=null&&share.getSharemapList().size()>0){
-            for(EsShopShareMap shareMap:share.getSharemapList()){
-                EsShopShareMap map=new EsShopShareMap();
+        if (share.getSharemapList() != null && share.getSharemapList().size() > 0) {
+            for (EsShopShareMap shareMap : share.getSharemapList()) {
+                EsShopShareMap map = new EsShopShareMap();
                 map.setShareId(share.getId());
                 map.setType(share.getGiftPrize());
                 map.setWinningId(shareMap.getWinningId());
@@ -72,9 +75,9 @@ public class EsShopShareServiceImpl extends ServiceImpl<EsShopShareMapper, EsSho
                 shopShareMapMapper.insert(map);
             }
         }
-        if(share.getSharemapList2()!=null&&share.getSharemapList2().size()>0){
-            for(EsShopShareMap shareMap:share.getSharemapList2()){
-                EsShopShareMap map=new EsShopShareMap();
+        if (share.getSharemapList2() != null && share.getSharemapList2().size() > 0) {
+            for (EsShopShareMap shareMap : share.getSharemapList2()) {
+                EsShopShareMap map = new EsShopShareMap();
                 map.setShareId(share.getId());
                 map.setType(share.getHelpPrize());
                 map.setWinningId(shareMap.getWinningId());
@@ -83,35 +86,37 @@ public class EsShopShareServiceImpl extends ServiceImpl<EsShopShareMapper, EsSho
                     map.setPic(pic.getPic());
                     map.setGoodsId(pic.getGoodsId());
                 }*/
-              //  获赠类型 1 发起者 2.助力
+                //  获赠类型 1 发起者 2.助力
                 map.setWinningType(2);
                 map.setWinningName(share.getActivityName());
                 shopShareMapMapper.insert(map);
             }
         }
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer delete(long id) {
-        EsShopShare share=new EsShopShare();
+        EsShopShare share = new EsShopShare();
         share.setId(id);
         share.setIsDel(2);
         return shopShareMapper.updateById(share);
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer update(EsShopShare share) throws Exception {
         datetime(share);
         share.setUpdateTime(new Date());
         shopShareMapper.updateById(share);
-        shopShareMapMapper.delete(new QueryWrapper<EsShopShareMap>().eq("share_id",share.getId()));
+        shopShareMapMapper.delete(new QueryWrapper<EsShopShareMap>().eq("share_id", share.getId()));
         addShare(share);
         return 1;
     }
 
     @Override
     public Integer updatestatus(long id, Integer status) {
-        return shopShareMapper.updateStatus(id,status);
+        return shopShareMapper.updateStatus(id, status);
     }
 
     @Override
@@ -129,7 +134,6 @@ public class EsShopShareServiceImpl extends ServiceImpl<EsShopShareMapper, EsSho
     public Integer status(Integer status) {
         return shopShareMapper.status(status);
     }
-
 
 
 }

@@ -13,16 +13,19 @@ public class DictData {
     private String value;
     @ApiModelProperty("字典文本")
     private String text;
-    /**字典分类名称 //比如：性别 */
+    /**
+     * 字典分类名称 //比如：性别
+     */
     private String fieldName;
     /**
      * 排序
      */
     private Integer sort;
 
-    public DictData(){}
+    public DictData() {
+    }
 
-    public DictData(String value,String text){
+    public DictData(String value, String text) {
         this.setValue(value);
         this.setText(text);
     }

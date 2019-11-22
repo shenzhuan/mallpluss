@@ -74,6 +74,28 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static String addDay(Date s, int n) {
+        SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(s);
+        cd.add(5, n);
+        return FORMATER_DATE_YMD.format(cd.getTime());
+    }
+
+    public static Date addDays(Date s, int n) {
+
+        try {
+            SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar cd = Calendar.getInstance();
+            cd.setTime(s);
+            cd.add(5, n);
+            return FORMATER_DATE_YMD.parse(FORMATER_DATE_YMD.format(cd.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date();
+    }
+
     /**
      * 查询赠品券得赠品
      *
@@ -185,7 +207,6 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
         return vo.getPayAmount();
     }
 
-
     /**
      * 手工发券
      *
@@ -227,8 +248,6 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
             }
         }
     }
-
-
 
     void addManualCoupon(CartMarkingVo vo, EsMemberCoupon member, SimpleDateFormat sdf, EsShopCouponManual topup) {
         List<EsShopCouponNewRule> couponNewRules = couponNewRuleMapper.selectList(new QueryWrapper<EsShopCouponNewRule>().eq("public_couponid", topup.getCouponManualid()));
@@ -627,7 +646,7 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
     }
 
     @Override
-    public List<EsMemberCoupon> selectUserMemberCoupon(CartMarkingVo vo) throws ParseException {
+    public List<EsMemberCoupon> selectUserMemberCoupon(CartMarkingVo vo) {
         BigDecimal totalAmount = new BigDecimal(0);
         int count = 0;
 
@@ -880,35 +899,18 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
 
     }
 
-    public static String addDay(Date s, int n) {
-        SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar cd = Calendar.getInstance();
-        cd.setTime(s);
-        cd.add(5, n);
-        return FORMATER_DATE_YMD.format(cd.getTime());
-    }
-
-    public static Date addDays(Date s, int n) {
-
-        try {
-            SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Calendar cd = Calendar.getInstance();
-            cd.setTime(s);
-            cd.add(5, n);
-            return FORMATER_DATE_YMD.parse(FORMATER_DATE_YMD.format(cd.getTime()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return new Date();
-    }
-
-    private int checkCoupon(EsShopCoupon coupon) throws ParseException {
+    private int checkCoupon(EsShopCoupon coupon) {
         int isExire = 0;
         if (coupon != null) {
             Date da = new Date();
             SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm:ss");
             String format = sdf2.format(da);
-            Date f = sdf2.parse(format);
+            Date f = null;
+            try {
+                f = sdf2.parse(format);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             // 未开始
             if (ValidatorUtils.notEmpty(coupon.getStartTime())) {
                 String statime = DateUtil.format(coupon.getStartTime(), "HH:mm:ss");
@@ -1164,8 +1166,8 @@ public class MemberCouponServiceImpl extends ServiceImpl<EsMemberCouponMapper, E
 
     @Override
     public List<EsMemberCoupon> selectCountMax(EsMemberCoupon entity) {
-        entity.setBeginTime(sdf.format(new Date())+" 00:00:00");
-        entity.setEndTimes(sdf.format(new Date())+" 59:59:59");
+        entity.setBeginTime(sdf.format(new Date()) + " 00:00:00");
+        entity.setEndTimes(sdf.format(new Date()) + " 59:59:59");
         return couponMapper.selectCountMax(entity);
     }
 

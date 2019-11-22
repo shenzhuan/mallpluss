@@ -34,14 +34,15 @@ public class EsShopGoodsRules extends Model<EsShopGoodsRules> {
     @TableField("goods_id")
     private Long goodsId;
     //1.显示  2.隐藏
-    private int according=1;
+    private int according = 1;
 
     @TableField(exist = false)
     private List<GoodsSepcVo> Listrulesgoods;
     @TableField(exist = false)
     private String rulegoods;
-    @TableField(exist =  false)
+    @TableField(exist = false)
     private Integer total;
+
     @Override
     protected Serializable pkVal() {
         return null;

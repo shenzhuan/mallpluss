@@ -52,5 +52,4 @@ public class AdminCommonConstant {
     public final static int SYS_DEPT_IT_ID = 1;
 
 
-
 }

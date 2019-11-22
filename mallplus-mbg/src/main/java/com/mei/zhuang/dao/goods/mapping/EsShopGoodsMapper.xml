@@ -91,14 +91,14 @@
         <result column="category_name" property="categoryName"/>
         <result column="delete_time" property="deleteTime"/>
         <result column="sellout_time" property="selloutTime"/>
-        <result column="uniform_postage_status" property="uniformPostageStatus" />
-        <result column="uniform_postage_price" property="uniformPostagePrice" />
-        <result column="letter_ids" property="letterIds" />
-        <result column="letter_type" property="letterType" />
-        <result column="pack_box_status" property="packBoxStatus" />
-        <result column="packet_box_content" property="packBoxContent" />
-        <result column="packet_box_type" property="packBoxType" />
-        <result column="default_spec" property="defaultSpec" />
+        <result column="uniform_postage_status" property="uniformPostageStatus"/>
+        <result column="uniform_postage_price" property="uniformPostagePrice"/>
+        <result column="letter_ids" property="letterIds"/>
+        <result column="letter_type" property="letterType"/>
+        <result column="pack_box_status" property="packBoxStatus"/>
+        <result column="packet_box_content" property="packBoxContent"/>
+        <result column="packet_box_type" property="packBoxType"/>
+        <result column="default_spec" property="defaultSpec"/>
         <result column="pay_by_post" property="payByPost"/>
         <result column="letter_content" property="letterContent"/>
         <result column="small_beauty_box_id" property="smallBeautyBoxId"/>
@@ -156,7 +156,8 @@
     </select>
     <!--查询赠品商品-->
     <select id="selectgiftsgoods" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
-        select id,shop_id,title,type,thumb,vitural_stock,price from es_shop_goods where type='3' and status = 1 and vitural_stock &gt; 0
+        select id,shop_id,title,type,thumb,vitural_stock,price from es_shop_goods where type='3' and status = 1 and
+        vitural_stock &gt; 0
         <if test="title!=null and title!=''">
             and title like concat(concat('%',#{title},'%'))
         </if>
@@ -172,7 +173,8 @@
         </if>
 
         <if test="idAndName!=null and idAndName!=''">
-            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            and
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
 
         </if>
         <if test="putawayType != null and putawayType != ''">
@@ -204,7 +206,8 @@
         </if>
 
         <if test="idAndName!=null and idAndName!=''">
-            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            and
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -236,7 +239,8 @@
         </if>
 
         <if test="idAndName!=null and idAndName!=''">
-            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            and
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -327,15 +331,15 @@
     </update>
 
     <select id="selectSaleByDate" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
-       select to_char(create_time,'yyyy-MM-dd') createTime ,sum(sales_count) salesCount
+        select to_char(create_time,'yyyy-MM-dd') createTime ,sum(sales_count) salesCount
         from es_shop_goods where 1=1
         <if test="startDate!=null and startDate!=''">
-            and to_char(create_time,'yyyy-MM-dd')  >= to_char(${startDate},'yyyy-MM-dd')
+            and to_char(create_time,'yyyy-MM-dd') >= to_char(${startDate},'yyyy-MM-dd')
         </if>
         <if test="endDate!=null and endDate!=''">
             and to_char(${endDate},'yyyy-MM-dd') >=to_char(create_time,'yyyy-MM-dd')
         </if>
-    group by to_char(create_time,'yyyy-MM-dd')
+        group by to_char(create_time,'yyyy-MM-dd')
 
     </select>
     <select id="lists" resultType="com.mei.zhuang.entity.goods.EsShopGoods">
@@ -347,7 +351,8 @@
         </if>
 
         <if test="idAndName!=null and idAndName!=''">
-            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            and
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -375,7 +380,8 @@
         </if>
 
         <if test="idAndName!=null and idAndName!=''">
-            and <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            and
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -394,7 +400,8 @@
         </if>
     </select>
 
-    <select id="selRankTopList" resultMap="BaseResultMap" parameterType="com.arvato.ec.common.vo.data.goods.GoodsRankTopParam">
+    <select id="selRankTopList" resultMap="BaseResultMap"
+            parameterType="com.arvato.ec.common.vo.data.goods.GoodsRankTopParam">
         select * from es_shop_goods
         where 1 = 1
         and status != -1
@@ -405,7 +412,6 @@
             and create_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
         </if>
         ORDER BY sales_count desc limit 10 offset 0
-
 
 
     </select>

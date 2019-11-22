@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -17,8 +17,7 @@ import java.util.Map;
 public interface EsShopCouponShoppingMapper extends BaseMapper<EsShopCouponShopping> {
 
     //购物发券联查
-    List<Map<String,Object>>selectshopping();
-
+    List<Map<String, Object>> selectshopping();
 
 
     //修改满额状态

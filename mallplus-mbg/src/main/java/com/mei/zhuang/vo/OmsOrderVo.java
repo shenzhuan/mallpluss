@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Administrator on 2019/7/15.
  */
 @Data
-public class OmsOrderVo  implements Serializable{
+public class OmsOrderVo implements Serializable {
     private EsShopOrder order;
     private List<EsShopOrderGoods> orderGoodsList;
     private EsMember member;

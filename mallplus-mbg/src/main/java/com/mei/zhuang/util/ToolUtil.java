@@ -37,10 +37,10 @@ public class ToolUtil {
      * @author arvato team
      * @Date 2017/4/18 12:55
      */
-    public static String dateType(Object o){
-        if(o instanceof Date){
+    public static String dateType(Object o) {
+        if (o instanceof Date) {
             return DateUtil.getYYYY_MM_DDFormat((Date) o);
-        }else{
+        } else {
             return o.toString();
         }
     }
@@ -54,16 +54,16 @@ public class ToolUtil {
      */
     public static String getExceptionMsg(Exception e) {
         StringWriter sw = new StringWriter();
-        try{
+        try {
             e.printStackTrace(new PrintWriter(sw));
-        }finally {
+        } finally {
             try {
                 sw.close();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
-        return sw.getBuffer().toString().replaceAll("\\$","T");
+        return sw.getBuffer().toString().replaceAll("\\$", "T");
     }
 
     /**
@@ -216,6 +216,7 @@ public class ToolUtil {
 
     /**
      * 对象是否不为空(新增)
+     *
      * @return
      */
     public static boolean isNotEmpty(Object o) {
@@ -224,6 +225,7 @@ public class ToolUtil {
 
     /**
      * 对象是否为空
+     *
      * @return
      */
     @SuppressWarnings("rawtypes")
@@ -421,7 +423,7 @@ public class ToolUtil {
      * map的key转为小写
      *
      * @param map
-     * @return Map<String,Object>
+     * @return Map<String, Object>
      */
     public static Map<String, Object> caseInsensitiveMap(Map<String, Object> map) {
         Map<String, Object> tempMap = new HashMap<>();
@@ -498,7 +500,7 @@ public class ToolUtil {
      * @author arvato team
      * @Date 2017/5/7 21:56
      */
-    public static String currentTime(){
+    public static String currentTime() {
         return DateUtil.getYYYY_MM_DD_HH_MM_SSFormat();
     }
 
@@ -538,11 +540,11 @@ public class ToolUtil {
      * @author arvato team
      * @Date 2017/5/24 22:34
      */
-    public static Boolean isWinOs(){
+    public static Boolean isWinOs() {
         String os = System.getProperty("os.name");
-        if(os.toLowerCase().startsWith("win")){
+        if (os.toLowerCase().startsWith("win")) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -553,7 +555,7 @@ public class ToolUtil {
      * @author arvato team
      * @Date 2017/5/24 22:35
      */
-    public static String getTempPath(){
+    public static String getTempPath() {
         return System.getProperty("java.io.tmpdir");
     }
 
@@ -565,10 +567,10 @@ public class ToolUtil {
      */
     public static String formatNumber(Object obj) {
 
-    	if (obj == null) {
-    		return null;
-    	}
+        if (obj == null) {
+            return null;
+        }
 
-    	return new DecimalFormat(",###").format(obj);
+        return new DecimalFormat(",###").format(obj);
     }
 }

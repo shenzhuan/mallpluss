@@ -18,10 +18,10 @@ public class EsCoreAddressServiceImpl extends ServiceImpl<EsCoreAddressMapper, E
 
     @Override
     public List<EsCoreAddress> selEsCoreAddress(EsCoreAddress entity) {
-        List<EsCoreAddress> list=esCoreAddressMapper.selEsCoreAddress(entity.getLevel(), entity.getParentId());
-        if(list != null){
+        List<EsCoreAddress> list = esCoreAddressMapper.selEsCoreAddress(entity.getLevel(), entity.getParentId());
+        if (list != null) {
             //查询子分类
-            for (EsCoreAddress coreAddress:list) {
+            for (EsCoreAddress coreAddress : list) {
                 EsCoreAddress esCoreAddress = new EsCoreAddress();
                 esCoreAddress.setParentId(coreAddress.getCodeId());
                 coreAddress.setListEsCoreAddress(esCoreAddressMapper.selectList(new QueryWrapper<>(esCoreAddress)));

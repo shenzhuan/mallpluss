@@ -10,7 +10,6 @@ import com.mei.zhuang.util.JsonUtils;
 import com.mei.zhuang.vo.MemberDetails;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.vo.Rediskey;
-import javax.annotation.Resource;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +29,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -70,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/admin/login", "/admin/register")// 对登录注册要允许匿名访问
                 .permitAll()
-               // .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
+                // .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 //.permitAll()
                 .antMatchers("/**")//测试时全部运行访问
                 .permitAll()
@@ -107,14 +108,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 try {
 
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)),UmsMember.class);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)), UmsMember.class);
                     if (member != null) {
                         return new MemberDetails(member);
-                    }else {
+                    } else {
                         member = memberService.getByUsername(username);
                         return new MemberDetails(member);
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;

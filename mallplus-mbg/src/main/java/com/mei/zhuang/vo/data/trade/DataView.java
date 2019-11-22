@@ -21,25 +21,21 @@ public class DataView {
     private double DaPrice;//客单价
     private double DaRefund;//退款金额
 
-    public DataView(double Daviews,double Davisitors,double Daorder,BigDecimal DaAmount,double DaShop,double DaBynumber,double Dasold,double Dasoldout,double DaNumber
-    ,double DaOrder,double DaPrice,double DaRefund){
-        this.Daviews=Daviews;
-        this.Davisitors=Davisitors;
-        this.Daorder=Daorder;
-        this.DaAmount=DaAmount;
-        this.DaShop=DaShop;
-        this.DaBynumber=DaBynumber;
-        this.Dasold=Dasold;
-        this.Dasoldout=Dasoldout;
-        this.DaNumber=DaNumber;
-        this.DaOrder=DaOrder;
-        this.DaPrice=DaPrice;
-        this.DaRefund=DaRefund;
+    public DataView(double Daviews, double Davisitors, double Daorder, BigDecimal DaAmount, double DaShop, double DaBynumber, double Dasold, double Dasoldout, double DaNumber
+            , double DaOrder, double DaPrice, double DaRefund) {
+        this.Daviews = Daviews;
+        this.Davisitors = Davisitors;
+        this.Daorder = Daorder;
+        this.DaAmount = DaAmount;
+        this.DaShop = DaShop;
+        this.DaBynumber = DaBynumber;
+        this.Dasold = Dasold;
+        this.Dasoldout = Dasoldout;
+        this.DaNumber = DaNumber;
+        this.DaOrder = DaOrder;
+        this.DaPrice = DaPrice;
+        this.DaRefund = DaRefund;
     }
-
-
-
-
 
 
 }

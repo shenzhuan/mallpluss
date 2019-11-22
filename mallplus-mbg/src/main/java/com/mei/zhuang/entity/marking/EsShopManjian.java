@@ -1,10 +1,10 @@
 package com.mei.zhuang.entity.marking;
 
 
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,7 +30,9 @@ import java.util.List;
 public class EsShopManjian extends Model<EsShopManjian> {
 
     private static final long serialVersionUID = 1L;
-
+    //order联调的活动调用
+    @TableField(exist = false)
+    List<EsShopManjianRule> manjianRuleList;
     /**
      * 时间间隔
      */
@@ -60,7 +62,6 @@ public class EsShopManjian extends Model<EsShopManjian> {
     @TableField("start_time")
     // @JSONField(format="HH:mm:ss", deserializeUsing = SqlTimeDeserializer.class)
     private Time startTime;
-
     @TableField("shop_id")
     private Long shopId;
     /**
@@ -91,7 +92,6 @@ public class EsShopManjian extends Model<EsShopManjian> {
      */
     @TableField("goods_mode")
     private Integer goodsMode;
-
     //商品id 绑定添加
     @TableField(exist = false)
     private List<GoodsSepcVo> goodsSepcVoList;
@@ -157,7 +157,6 @@ public class EsShopManjian extends Model<EsShopManjian> {
     // 活动渠道
     @TableField("small_program")
     private Integer smallProgram;
-
     // 优惠规则设置
     @TableField(exist = false)
     private List<EsShopManjianRule> ruleList;
@@ -166,21 +165,17 @@ public class EsShopManjian extends Model<EsShopManjian> {
      */
     @TableField(exist = false)
     private String selectrule;
-    //活动时间
-    @TableField(exist = false)
-    private String time;
    /* //高级选项活动段时间
     @TableField(exist = false)
     private String periodtime;*/
-
+    //活动时间
+    @TableField(exist = false)
+    private String time;
     @TableField(exist = false)
     private Integer total;
     @TableField(exist = false)
     private Integer counts;
 
-    //order联调的活动调用
-    @TableField(exist = false)
-    List<EsShopManjianRule> manjianRuleList;
     @Override
     protected Serializable pkVal() {
         return this.id;

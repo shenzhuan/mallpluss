@@ -29,23 +29,23 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
     @Resource
     private EsShopGoodsService goodsServiceFegin;
 
-    public void datetime(EsShopPackageGoods en)  {
-       try {
-           if(en.getTime()!=null) {
-               String[] times = en.getTime().split(",");
-               SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-               en.setStartingTime(sdf.parse(times[0]));
-               en.setEndTime(sdf.parse(times[1]));
-               System.out.println(en.getTime());
-           }
-       }catch (Exception e){
-           e.printStackTrace();
-       }
+    public void datetime(EsShopPackageGoods en) {
+        try {
+            if (en.getTime() != null) {
+                String[] times = en.getTime().split(",");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                en.setStartingTime(sdf.parse(times[0]));
+                en.setEndTime(sdf.parse(times[1]));
+                System.out.println(en.getTime());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopPackageGoods entity)  {
+    public boolean save(EsShopPackageGoods entity) {
         EsShopGoods goods = new EsShopGoods();
         goods.setTitle(entity.getPackageName());
         goods.setType(5);
@@ -68,9 +68,10 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
         addspec(entity);
         return true;
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(EsShopPackageGoods entity)  {
+    public boolean update(EsShopPackageGoods entity) {
         EsShopPackageGoods PackageGoods = PackageGoodsMapper.selectById(entity.getId());
         datetime(entity);
         entity.setGoodId(PackageGoods.getGoodId());
@@ -80,29 +81,31 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
         goods.setId(entity.getGoodId());
         goodsServiceFegin.updateById(goods);
 
-        packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id",entity.getId()));
+        packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id", entity.getId()));
         addspec(entity);
         return true;
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer deletePackage(String id) {
-        String sid [] =id.split(",");
-        for(String pid:sid) {
+        String sid[] = id.split(",");
+        for (String pid : sid) {
             EsShopPackageGoods PackageGoods = PackageGoodsMapper.selectById(Long.parseLong(pid));
             goodsServiceFegin.removeById(PackageGoods.getGoodId());
             PackageGoods.setAccording(2);
             PackageGoodsMapper.updateById(PackageGoods);
-            packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id",Integer.parseInt(pid)));
+            packageGoodsSpecMapper.delete(new QueryWrapper<EsShopPackageGoodsSpec>().eq("package_id", Integer.parseInt(pid)));
         }
         return 1;
     }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer updatestatus(Integer status, String pid) {
-        String sid [] =pid.split(",");
-        for(String id:sid) {
-            PackageGoodsMapper.updatestatus(status,Long.parseLong(id));
+        String sid[] = pid.split(",");
+        for (String id : sid) {
+            PackageGoodsMapper.updatestatus(status, Long.parseLong(id));
         }
         return 1;
     }
@@ -121,10 +124,10 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
     }
 
     @Override
-    public Integer delete(long goodId,int according) {
+    public Integer delete(long goodId, int according) {
         EsShopPackageGoods PackageGoods = PackageGoodsMapper.selectById(goodId);
         PackageGoods.setAccording(according);
-        return  PackageGoodsMapper.updateById(PackageGoods);
+        return PackageGoodsMapper.updateById(PackageGoods);
     }
 
     @Override
@@ -134,11 +137,11 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
 
     public void addspec(EsShopPackageGoods entity) {
         if (entity.getPackageGoodsSpecList() != null && entity.getPackageGoodsSpecList().size() > 0) {
-            for(EsShopPackageGoodsSpec goods:entity.getPackageGoodsSpecList()) {
+            for (EsShopPackageGoodsSpec goods : entity.getPackageGoodsSpecList()) {
                 EsShopPackageGoodsSpec goodsspec = new EsShopPackageGoodsSpec();
                 goodsspec.setPackageId(entity.getId());
                 goodsspec.setGoodsId(goods.getGoodsId());
-                if(entity.getPackageType()==1) {
+                if (entity.getPackageType() == 1) {
                     if (!goods.getSpecsId().equals("")) {
                         String[] spec = goods.getSpecsId().split(",");
                         String[] speprice = goods.getSpecprice().split(",");
@@ -151,7 +154,7 @@ public class PackageGoodsServiceImpl extends ServiceImpl<EsShopPackageGoodsMappe
                     } else {
                         packageGoodsSpecMapper.insert(goodsspec);
                     }
-                }else{
+                } else {
                     goodsspec.setSpecsId(goods.getSpecsId());
                     goodsspec.setPackagePrice(goods.getPackagePrice());
                     packageGoodsSpecMapper.insert(goodsspec);

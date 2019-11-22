@@ -1,9 +1,7 @@
 package com.mei.zhuang.controller.sys;
 
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.entity.CrmOperationLog;
 import com.mei.zhuang.service.sys.biz.OperationLogBiz;
 import com.mei.zhuang.utils.DateUtil;
 import com.mei.zhuang.utils.DateUtils;
@@ -15,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -36,7 +33,6 @@ public class OperationLogController {
     private OperationLogBiz operationLogBiz;
 
 
-
     @SysLog(MODULE = "系统操作日志管理", REMARK = "根据条件导出所有操作日志列表")
     @ApiOperation("根据条件导出所有操作日志列表")
     @PostMapping(value = "/exportLogList")
@@ -45,7 +41,7 @@ public class OperationLogController {
               /*if (ValidatorUtils.empty(exportParam.getColumns())) {
                 return new CommonResult().failed("需要导出的字段不能为空！");
             }*/
-            exportParam.setFileName(DateUtils.format(new Date(),DateUtil.YYYY_MM_DD) + "操作日志导出列表");
+            exportParam.setFileName(DateUtils.format(new Date(), DateUtil.YYYY_MM_DD) + "操作日志导出列表");
             exportParam.setSheetName("系统操作日志导出列表");
             exportParam.setPath("D:/A");
             exportParam.setHeaders("编号,店员,操作类型,操作内容,操作IP,操作时间");
@@ -76,6 +72,7 @@ public class OperationLogController {
 
     /**
      * 供开发人员添加模块名称
+     *
      * @param typeNames
      * @return
      */
@@ -85,13 +82,12 @@ public class OperationLogController {
     public Object insertModuleName(String typeNames, String belongModule) {
         try {
             String[] strs = typeNames.split(",");
-            return new CommonResult().success(operationLogBiz.insertModuleName(strs,belongModule));
+            return new CommonResult().success(operationLogBiz.insertModuleName(strs, belongModule));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new CommonResult().failed();
     }
-
 
 
 }

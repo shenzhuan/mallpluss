@@ -25,7 +25,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_shop_coupon_new")
-public class    EsShopCouponNew extends Model<EsShopCouponNew> {
+public class EsShopCouponNew extends Model<EsShopCouponNew> {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,6 +71,7 @@ public class    EsShopCouponNew extends Model<EsShopCouponNew> {
     private String couponNewid;
     @TableField("create_time")
     private Date createTime;
+
     @Override
     protected Serializable pkVal() {
         return null;

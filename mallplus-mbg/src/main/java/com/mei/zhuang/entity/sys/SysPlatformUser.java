@@ -36,11 +36,11 @@ public class SysPlatformUser extends Model<SysPlatformUser> {
     /**
      * 管理的租户，租户id数组
      */
-    @TableField(value = "manage_tenant_ids",el ="manageTenantIds,typeHandler=com.arvato.utils.util.ArrayTypeHandler")
+    @TableField(value = "manage_tenant_ids", el = "manageTenantIds,typeHandler=com.arvato.utils.util.ArrayTypeHandler")
     private Integer[] manageTenantIds;
     /**
      * 0=租户管理员
-        1=普通用户
+     * 1=普通用户
      */
     @TableField("user_type")
     private String userType;
@@ -49,7 +49,6 @@ public class SysPlatformUser extends Model<SysPlatformUser> {
      */
     @TableField
     private String status;
-
 
 
     @TableField(value = "create_date", fill = FieldFill.INSERT)

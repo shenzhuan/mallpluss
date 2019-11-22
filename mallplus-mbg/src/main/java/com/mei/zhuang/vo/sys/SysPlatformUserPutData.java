@@ -10,4 +10,5 @@ import lombok.Data;
 public class SysPlatformUserPutData {
     private Integer id;
     @ApiModelProperty("管理的租户id list")
-    private Integer[] manageTenantIds;}
+    private Integer[] manageTenantIds;
+}

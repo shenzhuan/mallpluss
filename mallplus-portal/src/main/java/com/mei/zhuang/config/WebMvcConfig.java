@@ -36,8 +36,9 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+
     @Bean
-     public HandlerInterceptor getMyInterceptor(){
-                return new WxPayInterceptor();
-            }
+    public HandlerInterceptor getMyInterceptor() {
+        return new WxPayInterceptor();
+    }
 }

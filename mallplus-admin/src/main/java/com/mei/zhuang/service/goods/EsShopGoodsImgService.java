@@ -26,5 +26,4 @@ public interface EsShopGoodsImgService extends IService<EsShopGoodsImg> {
     List<EsShopGoodsImg> selImgs(EsShopGoodsImg entity);
 
 
-
 }

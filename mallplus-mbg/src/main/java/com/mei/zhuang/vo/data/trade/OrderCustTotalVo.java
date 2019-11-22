@@ -27,7 +27,4 @@ public class OrderCustTotalVo {
     private String relationEndDate;//选中日期内的数据  取截止日期
 
 
-
-
-
 }

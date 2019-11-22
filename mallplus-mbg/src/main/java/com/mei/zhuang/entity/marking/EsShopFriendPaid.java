@@ -12,35 +12,34 @@ import java.math.BigDecimal;
 
 /**
  * 朋友代付
- *
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_shop_friend_paid")
-public class EsShopFriendPaid  extends Model<EsShopFriendPaid> {
+public class EsShopFriendPaid extends Model<EsShopFriendPaid> {
     /**
-     *编号
+     * 编号
      */
     private Long id;
     /**
-     *求助语句
+     * 求助语句
      */
     @TableField("help_statment")
     private String helpStatment;
     /**
-     *代付金额
+     * 代付金额
      */
     @TableField("paid_money")
     private BigDecimal paidMoney;
     /**
-     *满额
+     * 满额
      */
     @TableField("top_up")
     private BigDecimal topUp;
 
     /**
-     *立减
+     * 立减
      */
     private BigDecimal knock;
 

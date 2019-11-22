@@ -17,7 +17,8 @@ public class OrderUtils {
         }
         return false;
     }
-    public static String orderStatus(int status){
+
+    public static String orderStatus(int status) {
         if (status == OrderStatus.INIT.getValue()) {
             return "待付款";
         }
@@ -54,7 +55,7 @@ public class OrderUtils {
         if (status == OrderStatus.PARTDELIVE.getValue()) {
             return "部分发货状态";
         }
-        if(status ==OrderStatus.RECEIVE.getValue()){
+        if (status == OrderStatus.RECEIVE.getValue()) {
             return "待领取";
         }
         return null;

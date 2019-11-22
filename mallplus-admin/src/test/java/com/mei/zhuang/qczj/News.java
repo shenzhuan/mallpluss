@@ -10,6 +10,7 @@ public class News {
     private String content;
     private String date;
     private String photoUrl;
+
     public News() {
     }
 

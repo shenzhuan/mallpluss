@@ -28,18 +28,26 @@ import java.util.Random;
 public class EsCoreAttachmentController {
 
 
-    @Resource
-    private EsCoreAttachmentService esCoreAttachmentService;
-
-
     //设置缩略图的宽高
     private static int thumbnailWidth = 150;
     private static int thumbnailHeight = 100;
-
+    @Resource
+    private EsCoreAttachmentService esCoreAttachmentService;
     private String defaultEndpointsProtocol = "https";
     private String blobEndpoint = "https://hrecminiprogramstorage.blob.core.chinacloudapi.cn/";
     private String queueEndpoint = "https://hrecminiprogramstorage.queue.core.chinacloudapi.cn/";
     private String tableEndpoint = "https://hrecminiprogramstorage.table.core.chinacloudapi.cn/";
+
+    private static ByteArrayInputStream getRandomDataStream(int length) {
+        return new ByteArrayInputStream(getRandomBuffer(length));
+    }
+
+    private static byte[] getRandomBuffer(int length) {
+        final Random randGenerator = new Random();
+        final byte[] buff = new byte[length];
+        randGenerator.nextBytes(buff);
+        return buff;
+    }
 
     @SysLog(MODULE = "文件管理", REMARK = "查询文件列表")
     @ApiOperation("查询文件列表")
@@ -64,19 +72,6 @@ public class EsCoreAttachmentController {
             return new CommonResult().failed("请指定编号");
         }
         return new CommonResult().success("success", esCoreAttachmentService.removeById(id));
-    }
-
-
-
-    private static ByteArrayInputStream getRandomDataStream(int length) {
-        return new ByteArrayInputStream(getRandomBuffer(length));
-    }
-
-    private static byte[] getRandomBuffer(int length) {
-        final Random randGenerator = new Random();
-        final byte[] buff = new byte[length];
-        randGenerator.nextBytes(buff);
-        return buff;
     }
 
     private String getFileExtension(String fileName) {

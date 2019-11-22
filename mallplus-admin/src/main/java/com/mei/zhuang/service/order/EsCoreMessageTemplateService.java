@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface EsCoreMessageTemplateService extends IService<EsCoreMessageTemplate> {
 
-    Map<String,Object> select(EsCoreMessageTemplate entity);
+    Map<String, Object> select(EsCoreMessageTemplate entity);
 }

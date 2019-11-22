@@ -21,15 +21,15 @@ public class SysPlatUserBiz {
     private SysPlatformUserMapper sysPlatformUserMapper;
 
     @DynamicData
-    public boolean checkUserNameValid(String username, DataSourceDto dto){
-        if(sysPlatformUserMapper.selectByUsername(username) == null){
+    public boolean checkUserNameValid(String username, DataSourceDto dto) {
+        if (sysPlatformUserMapper.selectByUsername(username) == null) {
             return true;
         }
         return false;
     }
 
     @DynamicData
-    public void addPlatFormUser(String username,String password,Integer managerId,Integer[] tenantIds,DataSourceDto dto){
+    public void addPlatFormUser(String username, String password, Integer managerId, Integer[] tenantIds, DataSourceDto dto) {
         SysPlatformUser sysPlatformUser = new SysPlatformUser();
         sysPlatformUser.setUsername(username);
         sysPlatformUser.setPassword(password);
@@ -40,7 +40,7 @@ public class SysPlatUserBiz {
     }
 
     @DynamicData
-    public void updateByUsername(String username,SysPlatformUser sysPlatformUser,DataSourceDto dto){
+    public void updateByUsername(String username, SysPlatformUser sysPlatformUser, DataSourceDto dto) {
         sysPlatformUserMapper.update(
                 sysPlatformUser,
                 new QueryWrapper<>(new SysPlatformUser().setUsername(username))
@@ -48,7 +48,7 @@ public class SysPlatUserBiz {
     }
 
     @DynamicData
-    public SysPlatformUser getByUsername(String username,DataSourceDto dto){
+    public SysPlatformUser getByUsername(String username, DataSourceDto dto) {
         return this.sysPlatformUserMapper.selectByUsername(username);
     }
 

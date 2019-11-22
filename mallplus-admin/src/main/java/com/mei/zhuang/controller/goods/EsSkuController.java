@@ -1,26 +1,24 @@
 package com.mei.zhuang.controller.goods;
 
 
-import com.mei.zhuang.redis.template.RedisRepository;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.constant.RedisConstant;
-
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.dao.goods.EsShopGoodsGroupMapMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsMapper;
 import com.mei.zhuang.dao.goods.EsShopGoodsOptionMapper;
-import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
-import com.mei.zhuang.service.goods.EsShopGoodsService;
-import com.mei.zhuang.service.goods.EsShopSkuService;
-import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.service.order.ShopOrderService;
-import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsGroupMap;
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
+import com.mei.zhuang.redis.template.RedisRepository;
+import com.mei.zhuang.service.goods.EsShopGoodsCategoryService;
+import com.mei.zhuang.service.goods.EsShopGoodsService;
+import com.mei.zhuang.service.goods.EsShopSkuService;
+import com.mei.zhuang.service.order.ShopOrderService;
+import com.mei.zhuang.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -53,7 +51,6 @@ public class EsSkuController {
     private ShopOrderService orderFegin;
 
 
-
     @SysLog(MODULE = "商品规格管理", REMARK = "查询sku明细")
     @ApiOperation("查询sku明细")
     @PostMapping(value = "/detail")
@@ -67,7 +64,7 @@ public class EsSkuController {
     public EsShopGoods getGoodsById(@RequestParam("goodsId") Long goodsId) {
         EsShopGoods goods = null;
         try {
-             goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, goodsId + ""));
+            goods = (EsShopGoods) redisRepository.get(String.format(RedisConstant.GOODS, goodsId + ""));
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getId())) {
                 goods = goodsMapper.selectById(goodsId);
                 if (goods != null) {
@@ -77,7 +74,7 @@ public class EsSkuController {
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             goods = goodsMapper.selectById(goodsId);
             if (goods != null) {
                 List<EsShopGoodsOption> optionList = skuMapper.selectList(new QueryWrapper<EsShopGoodsOption>().eq("goods_id", goodsId));
@@ -138,12 +135,12 @@ public class EsSkuController {
     //@SysLog(MODULE = "商品规格管理", REMARK = "减sku库存")
     @ApiOperation("减sku库存")
     @PostMapping(value = "/decrSkuStock")
-    public int decrSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total,@RequestParam("goodsId") Long goodsId,@RequestParam("type") Integer type) {
+    public int decrSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total, @RequestParam("goodsId") Long goodsId, @RequestParam("type") Integer type) {
 
         //判断是否是定制礼盒
         EsShopGoods goods = goodsMapper.selectById(goodsId);
-        if(type == 6){
-            orderFegin.updvituralStock(goods.getSmallBeautyBoxId(),total);
+        if (type == 6) {
+            orderFegin.updvituralStock(goods.getSmallBeautyBoxId(), total);
         }
         return skuMapper.decrSkuStock(optionId, total);
     }
@@ -159,7 +156,7 @@ public class EsSkuController {
     @SysLog(MODULE = "商品规格管理", REMARK = "增加商品Sku库存")
     @ApiOperation("增加商品Sku库存")
     @PostMapping(value = "/addSkuStock")
-    void addSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total,@RequestParam("goodsId") Long goodsId) {
+    void addSkuStock(@RequestParam("optionId") Long optionId, @RequestParam("total") Integer total, @RequestParam("goodsId") Long goodsId) {
 
         skuMapper.addSkuStock(optionId, total);
     }

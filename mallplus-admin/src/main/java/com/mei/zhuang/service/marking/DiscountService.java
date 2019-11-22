@@ -18,12 +18,13 @@ import java.util.List;
  * @Description:
  */
 public interface DiscountService extends IService<EsShopDiscount> {
-    boolean save(EsShopDiscount entity) ;
+    boolean save(EsShopDiscount entity);
 
     int updateShowStatus(Long ids, Integer status);
 
     //商品明细查询
     List<EsShopDiscountGoodsMap> selectgoodsid(Long discountId);
+
     //优惠设置明细
     List<EsShopDiscountRule> selectcouponid(Long discountId);
 
@@ -34,6 +35,7 @@ public interface DiscountService extends IService<EsShopDiscount> {
 
     //删除关联id
     Integer deleteid(Long id);
+
     //状态数量
     Integer selectstatus();
 

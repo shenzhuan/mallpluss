@@ -17,9 +17,12 @@ public class DataSourceDto implements Serializable {
     private String dataSource;
 
     private String schema;
-    public DataSourceDto(){}
-    public DataSourceDto(String dataSource,String schema){
-        this.dataSource=dataSource;
-        this.schema=schema;
+
+    public DataSourceDto() {
+    }
+
+    public DataSourceDto(String dataSource, String schema) {
+        this.dataSource = dataSource;
+        this.schema = schema;
     }
 }

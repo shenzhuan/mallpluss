@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author arvato team
@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant> implements ISysTenantService {
 
-  //  @Resource
-   // private SysTenantInitConfig sysTenantInitConfig;
+    //  @Resource
+    // private SysTenantInitConfig sysTenantInitConfig;
     @Resource
     private SysDbResourceMapper sysDbResourceMapper;
 
@@ -45,7 +45,7 @@ public class SysTenantServiceImpl extends ServiceImpl<SysTenantMapper, SysTenant
 
     @Override
     public boolean schemaNameCheck(String schema) {
-        return Pattern.matches("^[a-zA-Z0-9_]+$",schema);
+        return Pattern.matches("^[a-zA-Z0-9_]+$", schema);
     }
 
     @Override

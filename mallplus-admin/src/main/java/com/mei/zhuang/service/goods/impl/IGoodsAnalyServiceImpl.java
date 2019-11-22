@@ -37,7 +37,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
     @Resource
     private EsShopGoodsMapper esShopGoodsMapper;
 
-    private String WeiXinPage="https://api.weixin.qq.com/datacube/getweanalysisappidvisitpage?access_token=%s";
+    private String WeiXinPage = "https://api.weixin.qq.com/datacube/getweanalysisappidvisitpage?access_token=%s";
     @Resource
     private EsShopGoodsMapper goodsMapper;
     @Resource
@@ -49,7 +49,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
     private List<EsShopGoods> selGoodsList(GoodsAnalyzeParam param) {
 
-         //status商品状态（1为出售中，3为已售罄，-2为仓库中，-1为回收站）
+        //status商品状态（1为出售中，3为已售罄，-2为仓库中，-1为回收站）
         //条件
         QueryWrapper<EsShopGoods> condition = new QueryWrapper();
 
@@ -57,7 +57,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
             condition.ge("create_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)));
         if (ValidatorUtils.notEmpty(param.getEndTime()))
             condition.le("create_time", Timestamp.valueOf(param.getEndTime()));
-        if(ValidatorUtils.notEmpty(param.getShopId())){
+        if (ValidatorUtils.notEmpty(param.getShopId())) {
             condition.eq("shop_id", param.getShopId());
         }
 
@@ -67,7 +67,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
 
     @Override
-    public Object goodsStatic(GoodsAnalyzeParam param) throws Exception{
+    public Object goodsStatic(GoodsAnalyzeParam param) throws Exception {
         GoodsHeadDataEntity vo = new GoodsHeadDataEntity();
         param.setEndTime(param.getEndTime() + " 23:59:59.999");
         List<EsShopGoods> goodsList = this.selGoodsList(param);
@@ -92,11 +92,11 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
 
         List<EsShopOrder> orderList = orderService.selOrderListByGoodsAnay(param);
-        System.out.println(orderList.toString()+"总金额");
-        for(EsShopOrder order : orderList){
-            if(order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3){
+        System.out.println(orderList.toString() + "总金额");
+        for (EsShopOrder order : orderList) {
+            if (order.getStatus() == 1 || order.getStatus() == 2 || order.getStatus() == 3) {
                 payTotalPrice = payTotalPrice.add(order.getPayPrice());
-            }else if(order.getStatus() == 4){
+            } else if (order.getStatus() == 4) {
                 refundCount++;
                 refundTotalPrice = refundTotalPrice.add(order.getPayPrice());
             }
@@ -104,12 +104,12 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
         //商品总销量
         count4 = orderService.selGoodsTotalSaleCount(param);
-        System.out.println(count4+"銷量");
+        System.out.println(count4 + "銷量");
 
 
         long len = DateUtil.getDaySub(param.getStartTime(), param.getEndTime(), DateUtil.YYYY_MM_DD);//相差天数
 
-        if(DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())){
+        if (DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())) {
             vo.setSetIsDisplayBeforeData(true);
 
             double saleTotCounToScale;//商品总销量前一日比例
@@ -129,18 +129,18 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
             paramBefore.setStartTime(DateUtils.addDay(DateUtils.toDate(param.getStartTime()), -1));
             paramBefore.setEndTime(DateUtils.addDay(DateUtils.toDate(param.getEndTime()), -1));
             paramBefore.setSource(param.getSource());
-            System.out.println(paramBefore.getEndTime()+"时间");
+            System.out.println(paramBefore.getEndTime() + "时间");
             paramBefore.setEndTime(paramBefore.getEndTime() + " 23:59:59.999");
             System.out.println(paramBefore.getEndTime());
             //前一日商品销量数据
             saleTotCountBefore = orderService.selGoodsTotalSaleCount(paramBefore);
-            System.out.println("昨天销售"+saleTotCountBefore);
+            System.out.println("昨天销售" + saleTotCountBefore);
             //前一日订单数据
             List<EsShopOrder> beforeOrderList = orderService.selOrderListByGoodsAnay(paramBefore);
-            for(EsShopOrder item : beforeOrderList){
-                if(item.getStatus() == 1 || item.getStatus() == 2 || item.getStatus() == 3){
+            for (EsShopOrder item : beforeOrderList) {
+                if (item.getStatus() == 1 || item.getStatus() == 2 || item.getStatus() == 3) {
                     payTotalPriceBefore = payTotalPriceBefore.add(item.getPayPrice());
-                }else if(item.getStatus() == 4){
+                } else if (item.getStatus() == 4) {
                     refundCountBefore++;
                     refundTotalPriceBefore = refundTotalPriceBefore.add(item.getPayPrice());
                 }
@@ -150,19 +150,19 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
             //优化处理 百分率后保留2位小数
             //销售数量
             saleTotCounToScale = saleTotCountBefore != 0 ?
-                    BigDecimal.valueOf((double)(count4-saleTotCountBefore) / (saleTotCountBefore))
+                    BigDecimal.valueOf((double) (count4 - saleTotCountBefore) / (saleTotCountBefore))
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.0;
             //金额数量
             payTotAmountToScale = payTotalPriceBefore.doubleValue() != 0.0 ?
-                    BigDecimal.valueOf((payTotalPrice.doubleValue()-payTotalPriceBefore.doubleValue()) / payTotalPriceBefore.doubleValue())
+                    BigDecimal.valueOf((payTotalPrice.doubleValue() - payTotalPriceBefore.doubleValue()) / payTotalPriceBefore.doubleValue())
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.0;
             //退款数量
             refuCountToScale = refundCountBefore != 0 ?
-                    BigDecimal.valueOf((double)(refundCount-refundCountBefore) / (refundCountBefore))
+                    BigDecimal.valueOf((double) (refundCount - refundCountBefore) / (refundCountBefore))
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
             //退款金额
             refuTotaAmountToScale = refundTotalPriceBefore.doubleValue() != 0.0 ?
-                    BigDecimal.valueOf((refundTotalPrice.doubleValue()-refundTotalPriceBefore.doubleValue()) / (refundTotalPriceBefore.doubleValue()))
+                    BigDecimal.valueOf((refundTotalPrice.doubleValue() - refundTotalPriceBefore.doubleValue()) / (refundTotalPriceBefore.doubleValue()))
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
 
             //赋值比例数据
@@ -183,7 +183,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
     }
 
     @Override
-    public List<GoodsTrendMapInfoVo> goodsTrendMapStatic(GoodsTrendMapParam param) throws Exception{
+    public List<GoodsTrendMapInfoVo> goodsTrendMapStatic(GoodsTrendMapParam param) throws Exception {
 
         Map<String, GoodsTrendMapInfoVo> dataMap = new HashMap<>();
 
@@ -203,24 +203,24 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         //key:日期  value：存放的是访问的用户id  value（set集合数量就是访客数）
         Map<String, Set<String>> goodsUVMap = new HashMap<>();
 
-        for(CrmOperationLog logTemp : logList){
+        for (CrmOperationLog logTemp : logList) {
             String refDate = DateUtil.format(logTemp.getAddTime(), DateUtil.YYYY_MM_DD);
-            if(!goodsUVMap.containsKey(refDate)){
+            if (!goodsUVMap.containsKey(refDate)) {
                 goodsUVMap.put(refDate, new HashSet<>());
             }
             Set<String> uvSet = goodsUVMap.get(refDate);
-            if(!uvSet.contains(logTemp.getUserName())){
+            if (!uvSet.contains(logTemp.getUserName())) {
                 uvSet.add(logTemp.getUserName());
             }
 
         }
 
         List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(param);
-        if(orderGoodsList != null && orderGoodsList.size() != 0){
-            orderGoodsList.forEach((og)->{
-                String refDate = DateUtil.format(og.getCreateTime(),DateUtils.DATE_PATTERN);
+        if (orderGoodsList != null && orderGoodsList.size() != 0) {
+            orderGoodsList.forEach((og) -> {
+                String refDate = DateUtil.format(og.getCreateTime(), DateUtils.DATE_PATTERN);
                 GoodsTrendMapInfoVo trendVo = null;
-                if(!dataMap.containsKey(refDate)){
+                if (!dataMap.containsKey(refDate)) {
                     dataMap.put(refDate, new GoodsTrendMapInfoVo());
                     dataMap.get(refDate).setRelationDate(refDate);
                 }
@@ -231,7 +231,6 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
                 trendVo.setGoodsUvCount(refDateUvSet != null ? refDateUvSet.size() : 0);
             });
         }
-
 
 
         //如果某天没有数据， 当天数据展示默认值
@@ -254,14 +253,14 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
 
         List<GoodsTrendMapInfoVo> list = new ArrayList<>();
-        for(Map.Entry<String, GoodsTrendMapInfoVo> itemMap : dataMap.entrySet()){
+        for (Map.Entry<String, GoodsTrendMapInfoVo> itemMap : dataMap.entrySet()) {
             list.add(itemMap.getValue());
         }
 
         Collections.sort(list, new Comparator<GoodsTrendMapInfoVo>() {
             @Override
             public int compare(GoodsTrendMapInfoVo o1, GoodsTrendMapInfoVo o2) {
-                return (int)DateUtil.getDaySub(o1.getRelationDate(), o2.getRelationDate(), DateUtil.YYYY_MM_DD);
+                return (int) DateUtil.getDaySub(o1.getRelationDate(), o2.getRelationDate(), DateUtil.YYYY_MM_DD);
             }
         });//升序排序
 
@@ -281,7 +280,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setEndTime(param.getEndTime() + " 23:59:59.0");
 
         List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
-        if(orderGoodsList!=null&&orderGoodsList.size()>0) {
+        if (orderGoodsList != null && orderGoodsList.size() > 0) {
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
                 GoodsRankTopSaleVo trendVo = null;
@@ -297,7 +296,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         }
         List<GoodsRankTopSaleVo> dataList = new ArrayList<>();
         for (Map.Entry<Long, GoodsRankTopSaleVo> obj : dataMap.entrySet()) {
-            if(dataList.size() == 10){//只限制前10的商品销量排行榜。
+            if (dataList.size() == 10) {//只限制前10的商品销量排行榜。
                 break;
             }
             dataList.add(obj.getValue());
@@ -312,7 +311,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
         //将考前的设置top //
         int len = dataList.size();
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++) {
             dataList.get(i).setTop(i + 1);
         }
 
@@ -333,7 +332,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setEndTime(param.getEndTime() + " 23:59:59.0");
 
         List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
-        if(orderGoodsList!=null&&orderGoodsList.size()>0) {
+        if (orderGoodsList != null && orderGoodsList.size() > 0) {
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
                 GoodsRankTopPayPriceVo trendVo = null;
@@ -352,7 +351,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         }
         List<GoodsRankTopPayPriceVo> dataList = new ArrayList<>();
         for (Map.Entry<Long, GoodsRankTopPayPriceVo> obj : dataMap.entrySet()) {
-            if(dataList.size() == 10){//只显示前10的商品销量排行榜。
+            if (dataList.size() == 10) {//只显示前10的商品销量排行榜。
                 break;
             }
             dataList.add(obj.getValue());
@@ -384,7 +383,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
 
         //将考前的设置top //
         int len = dataList.size();
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++) {
             dataList.get(i).setTop(i + 1);
         }
 
@@ -398,12 +397,12 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         param.setEndTime(param.getEndTime() + " 23:59:59.999");
         List<CrmOperationLog> logList = crmOperationLogMapper.selectList(
                 new QueryWrapper<>(new CrmOperationLog())
-                .eq("module", "小程序商品管理")
-                .eq("method", "商品详情")
-                .ge("add_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)))
-                .le("add_time", Timestamp.valueOf(param.getEndTime()))
+                        .eq("module", "小程序商品管理")
+                        .eq("method", "商品详情")
+                        .ge("add_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)))
+                        .le("add_time", Timestamp.valueOf(param.getEndTime()))
 //                .eq("shop_id", param.getShopId())
-                .notIn("params", "")
+                        .notIn("params", "")
         );
 
         //将小程序商品详情的日志包装成我们要的
@@ -413,7 +412,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         //key:商品id  value：存放的是访问的用户id  value（set集合数量就是访客数）
         Map<String, Set<String>> goodsUVMap = new HashMap<>();
 
-        for(CrmOperationLog logTemp : logList){
+        for (CrmOperationLog logTemp : logList) {
             String params = logTemp.getParams();
 //            if(("").equals(params)){
 //                continue;
@@ -421,16 +420,16 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
             String goodsIdS = params.substring(params.indexOf(":") + 1, params.indexOf(";"));
 
             GoodsVisitInfo visitInfo = null;
-            if(!logMap.containsKey(goodsIdS)){
+            if (!logMap.containsKey(goodsIdS)) {
                 logMap.put(goodsIdS, new GoodsVisitInfo());
             }
 
-            if(!goodsUVMap.containsKey(goodsIdS)){
+            if (!goodsUVMap.containsKey(goodsIdS)) {
                 goodsUVMap.put(goodsIdS, new HashSet<>());
             }
 
             Set<String> uvSet = goodsUVMap.get(goodsIdS);
-            if(!uvSet.contains(logTemp.getUserName())){
+            if (!uvSet.contains(logTemp.getUserName())) {
                 uvSet.add(logTemp.getUserName());
             }
             //添加用户到goodsUVmap
@@ -458,11 +457,11 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         tempParam.setEndTime(param.getEndTime());
 
         List<EsShopOrderGoods> orderGoodsList = orderService.selOrderGoodsByGoodsAnaly(tempParam);
-        if(orderGoodsList != null && orderGoodsList.size() != 0 ){
+        if (orderGoodsList != null && orderGoodsList.size() != 0) {
             for (EsShopOrderGoods og : orderGoodsList) {
                 Long goodsId = og.getGoodsId();
                 GoodsRankTopDetailVo rankTopDetailVo = null;
-                if(!dataMap.containsKey(goodsId)){
+                if (!dataMap.containsKey(goodsId)) {
                     rankTopDetailVo = new GoodsRankTopDetailVo();
                     dataMap.put(goodsId, rankTopDetailVo);
                 }
@@ -472,7 +471,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
                 rankTopDetailVo.setTotalPayAmount(rankTopDetailVo.getTotalPayAmount() + og.getPrice().doubleValue());
 
 
-                if(!orderUVMap.containsKey(goodsId)){
+                if (!orderUVMap.containsKey(goodsId)) {
                     orderUVMap.put(goodsId, new HashSet<>());
                 }
 
@@ -481,7 +480,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
                 if (goodsIdSet.contains(og.getMemberId())) {
                     //复加
                     orderUVMapValue.put(goodsId, orderUVMapValue.get(goodsId) + 1);
-                }else{
+                } else {
                     //复购人数 逻辑
                     goodsIdSet.add(og.getMemberId());
                 }
@@ -514,7 +513,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         param.setStartTime(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS));
         //时间内订单商品
         List<EsShopOrderGoods> orderLis = orderService.orderGoodsList(param);
-        System.out.println(orderLis.toString()+"数据");
+        System.out.println(orderLis.toString() + "数据");
 //转化成微信所需时间
        /* String wxNeedStartTime = DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
         String wxNeedEndTime = DateUtil.format(param.getEndTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
@@ -534,7 +533,7 @@ public class IGoodsAnalyServiceImpl implements IGoodsAnalyService {
         return orderLis;
     }
 
-    private JSONObject getWxVisitedData(String dateUrl,String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
+    private JSONObject getWxVisitedData(String dateUrl, String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
         JSONObject result = null;
         try {
             JSONObject jsonParamData = new JSONObject();

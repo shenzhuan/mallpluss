@@ -1,12 +1,12 @@
 package com.mei.zhuang.controller.goods;
 
-import com.mei.zhuang.service.goods.EsShopGoodsImgGroupService;
-import com.mei.zhuang.service.goods.EsShopGoodsImgService;
-import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.controller.SysLog;
-import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.entity.goods.EsShopGoodsImg;
 import com.mei.zhuang.entity.goods.EsShopGoodsImgGroup;
+import com.mei.zhuang.service.goods.EsShopGoodsImgGroupService;
+import com.mei.zhuang.service.goods.EsShopGoodsImgService;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- *       发券公用的指定商品
+ * 发券公用的指定商品
  * </p>
  *
  * @author arvato team
@@ -48,7 +48,6 @@ public class EsShopCouponsTopupGoods extends Model<EsShopCouponsTopupGoods> {
     protected Serializable pkVal() {
         return null;
     }
-
 
 
 }

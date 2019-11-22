@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * <p>
- *      手工发券
+ * 手工发券
  * </p>
  *
  * @author arvato team
@@ -81,9 +81,9 @@ public class EsShopCouponManual extends Model<EsShopCouponManual> {
     private Integer couponTypes;
     //指定用户open上传链接
     private String path;
-  /*  //对应用户发券
-    @TableField("user_openid")
-    private String userOpenid;*/
+    /*  //对应用户发券
+      @TableField("user_openid")
+      private String userOpenid;*/
     @TableField(exist = false)
     private Integer total;
 

@@ -17,52 +17,52 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_shop_activity_prize")
-public class EsShopActivityPrize  extends Model<EsShopActivityPrize> {
+public class EsShopActivityPrize extends Model<EsShopActivityPrize> {
     /**
-     *编号
+     * 编号
      */
     private Long id;
     /**
-     *抽奖活动iD
+     * 抽奖活动iD
      */
     @TableField("activaty_id")
     private Long activatyId;
     /**
-     *奖品等级 （1、一等奖 2、二等奖 ~~~~）
+     * 奖品等级 （1、一等奖 2、二等奖 ~~~~）
      */
     private Integer level;
     /**
-     *奖品名称
+     * 奖品名称
      */
     private String name;
     /**
-     *奖品类型（1、赠品 2、优惠卷 3、送积分）
+     * 奖品类型（1、赠品 2、优惠卷 3、送积分）
      */
     private Integer type;
     /**
-     *赠品信息
+     * 赠品信息
      */
     @TableField("goods_content")
     private String goodsContent;
     /**
-     *总数
+     * 总数
      */
     private Integer total;
     /**
-     *单日最低发放
+     * 单日最低发放
      */
     private Integer minimum;
     /**
-     *单日最多发放
+     * 单日最多发放
      */
     private Integer most;
     /**
-     *单人中奖个数上限
+     * 单人中奖个数上限
      */
     @TableField("upper_limit")
     private Integer upperLimit;
     /**
-     *奖品图片
+     * 奖品图片
      */
     private String img;
     /**

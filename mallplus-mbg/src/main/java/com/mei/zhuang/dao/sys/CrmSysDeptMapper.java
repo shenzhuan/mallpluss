@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * <p>
-  *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -19,10 +19,12 @@ import java.util.List;
  */
 public interface CrmSysDeptMapper extends BaseMapper<CrmSysDept> {
     List<ZTreeNode> getDeptTree();
+
     List<ZTreeNode> getDeptTreeByOrgType(@Param("orgType") int orgType, @Param("roleDeptIds") List<Integer> roleDeptIds);
 
     /**
      * deptChildren 是为 deptId 的child,返回所属child id
+     *
      * @param deptId
      * @param deptChildren
      * @return
@@ -31,7 +33,8 @@ public interface CrmSysDeptMapper extends BaseMapper<CrmSysDept> {
 
     /**
      * 获取用户的当前部门
-     * @param roleDeptIds  权限部门
+     *
+     * @param roleDeptIds 权限部门
      */
     List<ZTreeNode> initDeptDatasByCurrentUser(@Param("pid") Integer pid, @Param("roleDeptIds") List<Integer> roleDeptIds);
 

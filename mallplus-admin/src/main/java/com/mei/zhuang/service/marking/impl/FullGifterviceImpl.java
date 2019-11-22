@@ -1,20 +1,20 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.mei.zhuang.utils.Weekutils;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.dao.marking.EsShopFullGiftGoodsMapMapper;
 import com.mei.zhuang.dao.marking.EsShopFullGiftMapper;
 import com.mei.zhuang.dao.marking.EsShopFullGiftRuleMapper;
-import com.mei.zhuang.service.marking.FullGiftService;
-import com.mei.zhuang.utils.DateUtil;
-import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
 import com.mei.zhuang.entity.marking.EsShopFullGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFullGiftRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.FullGiftService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,11 +108,12 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
         }
         return null;
     }
+
     //满赠礼
     @Override
     public List<EsShopFullGift> matchFullGift(List<EsShopCart> cartList) throws Exception {
         List<EsShopFullGift> relManjianList = new ArrayList<>();
-        List<EsShopFullGift> manjianList = fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("status", 0).eq("type",2));
+        List<EsShopFullGift> manjianList = fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("status", 0).eq("type", 2));
         BigDecimal totalAmount = new BigDecimal("0");//实付金额
         int count = 0;
         for (EsShopCart cart : cartList) {
@@ -155,7 +156,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                         List<EsShopFullGiftGoodsMap> manjianGoodsMaps = fullGiftGoodsMapMapper.selectList(new QueryWrapper<EsShopFullGiftGoodsMap>().
                                 eq("full_gift_id", manjian.getId()).eq("goods_type", 1));
                         boolean falg = false;
-                        int sizeM =manjianGoodsMaps.size();
+                        int sizeM = manjianGoodsMaps.size();
                         if (manjianGoodsMaps != null && manjianGoodsMaps.size() > 0) {
                             int countS = 0;
                             List<Long> ids = new ArrayList<>();
@@ -171,7 +172,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                                 }
                             }
                             for (EsShopCart cart : cartList) {
-                                if (!ids.contains(cart.getId())){
+                                if (!ids.contains(cart.getId())) {
                                     totalSingAmount = totalSingAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getTotal())));
                                     singCount = singCount + cart.getTotal();
                                 }
@@ -192,7 +193,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
     @Override
     public List<EsShopFullGift> ChooseFullGift(List<EsShopCart> cartList) throws Exception {
         List<EsShopFullGift> relManjianList = new ArrayList<>();
-        List<EsShopFullGift> manjianList = fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("status", 0).eq("type",1));
+        List<EsShopFullGift> manjianList = fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("status", 0).eq("type", 1));
         BigDecimal totalAmount = new BigDecimal("0");//实付金额
         int count = 0;
         for (EsShopCart cart : cartList) {
@@ -235,7 +236,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                         List<EsShopFullGiftGoodsMap> manjianGoodsMaps = fullGiftGoodsMapMapper.selectList(new QueryWrapper<EsShopFullGiftGoodsMap>().
                                 eq("full_gift_id", manjian.getId()).eq("goods_type", 1));
                         boolean falg = false;
-                        int sizeM =manjianGoodsMaps.size();
+                        int sizeM = manjianGoodsMaps.size();
                         if (manjianGoodsMaps != null && manjianGoodsMaps.size() > 0) {
                             int countS = 0;
                             List<Long> ids = new ArrayList<>();
@@ -251,7 +252,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                                 }
                             }
                             for (EsShopCart cart : cartList) {
-                                if (!ids.contains(cart.getId())){
+                                if (!ids.contains(cart.getId())) {
                                     totalSingAmount = totalSingAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getTotal())));
                                     singCount = singCount + cart.getTotal();
                                 }
@@ -267,6 +268,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
         }
         return relManjianList;
     }
+
     private void ChooseFullList(List<EsShopFullGift> relManjianList, EsShopFullGift manjian, BigDecimal totalSingAmount, int singCount) {
         List<EsShopFullGiftRule> relfullGiftRuleList = new ArrayList<>();
         boolean falg = false;
@@ -305,6 +307,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
             }
         }
     }
+
     private boolean checkManjian(EsShopFullGift manjian) throws ParseException {
         if (manjian != null) {
             Date da = new Date();
@@ -370,45 +373,45 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                 manjian.setFullGiftRuleList(relfullGiftRuleList);
                 relManjianList.add(manjian);
             }*/
-            List<EsShopFullGiftRule> list = fullGiftRuleMapper.selectList(
-                    new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderByDesc("full_level"));
-            if (list != null && list.size() > 0) {
-                for (EsShopFullGiftRule rule : list) {
-                    if (rule.getConditions() == 1 && totalSingAmount.compareTo(rule.getPrice()) >= 0 && singCount >= rule.getAmount()) {
-                        List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
-                                new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
-                        rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
-                        relfullGiftRuleList.add(rule);
-                        falg = true;
-                        break;
-                    }
-                    if (rule.getConditions() == 2 && (totalSingAmount.compareTo(rule.getPrice()) >= 0 || singCount >= rule.getAmount())) {
-                        List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
-                                new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
-                        rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
-                        relfullGiftRuleList.add(rule);
-                        falg = true;
-                        break;
-                    }
-                    if (rule.getConditions() == 0 && ((totalSingAmount.compareTo(rule.getPrice()) >= 0 && rule.getPrice().compareTo(new BigDecimal(0)) > 0) || (singCount >= rule.getAmount() && rule.getAmount() > 0))) {
-                        List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
-                                new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
-                        rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
-                        relfullGiftRuleList.add(rule);
-                        falg = true;
-                        break;
-                    }
+        List<EsShopFullGiftRule> list = fullGiftRuleMapper.selectList(
+                new QueryWrapper<EsShopFullGiftRule>().eq("full_gift_id", manjian.getId()).orderByDesc("full_level"));
+        if (list != null && list.size() > 0) {
+            for (EsShopFullGiftRule rule : list) {
+                if (rule.getConditions() == 1 && totalSingAmount.compareTo(rule.getPrice()) >= 0 && singCount >= rule.getAmount()) {
+                    List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
+                            new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
+                    rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
+                    relfullGiftRuleList.add(rule);
+                    falg = true;
+                    break;
                 }
-                if (falg) {
-                    manjian.setFullGiftRuleList(relfullGiftRuleList);
-                    relManjianList.add(manjian);
+                if (rule.getConditions() == 2 && (totalSingAmount.compareTo(rule.getPrice()) >= 0 || singCount >= rule.getAmount())) {
+                    List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
+                            new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
+                    rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
+                    relfullGiftRuleList.add(rule);
+                    falg = true;
+                    break;
+                }
+                if (rule.getConditions() == 0 && ((totalSingAmount.compareTo(rule.getPrice()) >= 0 && rule.getPrice().compareTo(new BigDecimal(0)) > 0) || (singCount >= rule.getAmount() && rule.getAmount() > 0))) {
+                    List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList = fullGiftGoodsMapMapper.selectList(
+                            new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()).eq("goods_type", 2));
+                    rule.setFullGiftGoodsMapList(fullGiftGoodsMapList);
+                    relfullGiftRuleList.add(rule);
+                    falg = true;
+                    break;
                 }
             }
+            if (falg) {
+                manjian.setFullGiftRuleList(relfullGiftRuleList);
+                relManjianList.add(manjian);
+            }
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(EsShopFullGift entity)  {
+    public boolean update(EsShopFullGift entity) {
         try {
             datetime(entity);
         } catch (Exception e) {
@@ -439,29 +442,29 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
             listmap.add(map);
             return listmap;
         } else {*/
-            List<Map<String, Object>> listmap2 = new ArrayList<>();
-            for (EsShopFullGiftRule rule : fullgiftids) {
-                Map<String, Object> map2 = new HashMap<>();
-                Map<String, Object> map3 = new HashMap<>();
-                List<EsShopFullGiftGoodsMap> ruleId = fullGiftGoodsMapMapper.selectList(new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()));
-                map2.put("rows", ruleId);
-                map2.put("rows2", rule);
-                map3.put("rows3", map2);
-                listmap2.add(map3);
-            }
-            return listmap2;
-      //  }
+        List<Map<String, Object>> listmap2 = new ArrayList<>();
+        for (EsShopFullGiftRule rule : fullgiftids) {
+            Map<String, Object> map2 = new HashMap<>();
+            Map<String, Object> map3 = new HashMap<>();
+            List<EsShopFullGiftGoodsMap> ruleId = fullGiftGoodsMapMapper.selectList(new QueryWrapper<EsShopFullGiftGoodsMap>().eq("rule_id", rule.getId()));
+            map2.put("rows", ruleId);
+            map2.put("rows2", rule);
+            map3.put("rows3", map2);
+            listmap2.add(map3);
+        }
+        return listmap2;
+        //  }
 
     }
 
     @Override
     public List<EsShopFullGift> slelectPurchase() {
-        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",2).orderByDesc("id"));
+        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type", 2).orderByDesc("id"));
     }
 
     @Override
     public List<EsShopFullGift> slelectPurchase2() {
-        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type",1).orderByDesc("id"));
+        return fullGiftMapper.selectList(new QueryWrapper<EsShopFullGift>().eq("type", 1).orderByDesc("id"));
     }
 
     public void datetime(EsShopFullGift en) throws Exception {
@@ -473,7 +476,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopFullGift entity)  {
+    public boolean save(EsShopFullGift entity) {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);
@@ -532,34 +535,34 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
                 }
             }
         } else {*/
-            if ( entity.getFullGiftList() != null&&entity.getFullGiftList().size() > 0) {
-                for (EsShopFullGift gift : entity.getFullGiftList()) {
-                    if (gift.getRuleList() != null && gift.getRuleList().size() > 0) {
-                        for (EsShopFullGiftRule rule : gift.getRuleList()) {
-                            rule.setActivityType(entity.getType());
-                            rule.setFullGiftId(entity.getId());
-                            rule.setShopId(entity.getShopId());
-                            rule.setActivityName(entity.getTitles());
-                            fullGiftRuleMapper.insert(rule);
-                            if (gift.getFullGiftGoodsList() != null&&gift.getFullGiftGoodsList().size()> 0) {
-                                for (EsShopFullGiftGoodsMap gid : gift.getFullGiftGoodsList()) {
-                                    EsShopFullGiftGoodsMap group = new EsShopFullGiftGoodsMap();
-                                    group.setFullGiftId(entity.getId());
-                                    group.setGoodsId(gid.getGoodsId());
-                                    group.setRuleId(rule.getId());
-                                    group.setGoodsName(gid.getGoodsName());
-                                    group.setActivityName(entity.getTitles());
-                                    group.setPic(gid.getPic());
-                                    //赠品类型
-                                    group.setGoodsType(2);
-                                    fullGiftGoodsMapMapper.insert(group);
-                                }
+        if (entity.getFullGiftList() != null && entity.getFullGiftList().size() > 0) {
+            for (EsShopFullGift gift : entity.getFullGiftList()) {
+                if (gift.getRuleList() != null && gift.getRuleList().size() > 0) {
+                    for (EsShopFullGiftRule rule : gift.getRuleList()) {
+                        rule.setActivityType(entity.getType());
+                        rule.setFullGiftId(entity.getId());
+                        rule.setShopId(entity.getShopId());
+                        rule.setActivityName(entity.getTitles());
+                        fullGiftRuleMapper.insert(rule);
+                        if (gift.getFullGiftGoodsList() != null && gift.getFullGiftGoodsList().size() > 0) {
+                            for (EsShopFullGiftGoodsMap gid : gift.getFullGiftGoodsList()) {
+                                EsShopFullGiftGoodsMap group = new EsShopFullGiftGoodsMap();
+                                group.setFullGiftId(entity.getId());
+                                group.setGoodsId(gid.getGoodsId());
+                                group.setRuleId(rule.getId());
+                                group.setGoodsName(gid.getGoodsName());
+                                group.setActivityName(entity.getTitles());
+                                group.setPic(gid.getPic());
+                                //赠品类型
+                                group.setGoodsType(2);
+                                fullGiftGoodsMapMapper.insert(group);
                             }
                         }
                     }
                 }
             }
-      //  }
+        }
+        //  }
 
         return true;
     }
@@ -587,12 +590,12 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
 
     @Override
     public List<EsShopFullGift> selectrule() {
-        EsShopFullGift manjian =new  EsShopFullGift();
-        List<EsShopFullGift> relManjianList=new ArrayList<EsShopFullGift>();
+        EsShopFullGift manjian = new EsShopFullGift();
+        List<EsShopFullGift> relManjianList = new ArrayList<EsShopFullGift>();
         EsShopFullGift selectfull = fullGiftMapper.selectfull();
-        if(selectfull!=null){
+        if (selectfull != null) {
             try {
-                if(checkManjian(selectfull)){
+                if (checkManjian(selectfull)) {
                     List<EsShopFullGiftRule> selectgif = fullGiftRuleMapper.selectgif(selectfull.getId());
                     manjian.setFullGiftRuleList2(selectgif);
                     List<EsShopFullGiftGoodsMap> slecetgoods = fullGiftGoodsMapMapper.slecetgoods(selectgif.get(0).getId());
@@ -619,6 +622,7 @@ public class FullGifterviceImpl extends ServiceImpl<EsShopFullGiftMapper, EsShop
     public Integer selectstatus() {
         return fullGiftMapper.selectstatus();
     }
+
     @Override
     public Integer selectstatus2() {
         return fullGiftMapper.selectstatus2();

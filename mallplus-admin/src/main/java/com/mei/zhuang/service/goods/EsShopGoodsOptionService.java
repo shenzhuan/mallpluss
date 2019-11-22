@@ -12,5 +12,5 @@ public interface EsShopGoodsOptionService extends IService<EsShopGoodsOption> {
     @ApiOperation("查询单个商品的所有SKU")
     List<EsShopGoodsOption> listGoodsOptionDetail(Long goodsId);
 
-    Map<String,Object> selPageList(EsShopGoodsOption entity);
+    Map<String, Object> selPageList(EsShopGoodsOption entity);
 }

@@ -5,6 +5,7 @@ import com.mei.zhuang.entity.marking.EsShopGoodsRules;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+
 public interface EsShopGoodsRulesMapper extends BaseMapper<EsShopGoodsRules> {
 
     List<EsShopGoodsRules> lsitrules(@Param("goodsname") String goodsname);

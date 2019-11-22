@@ -3,7 +3,6 @@ package com.mei.zhuang.vo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,16 +33,17 @@ public class CommonResult {
 
         return this;
     }
+
     /**
      * 普通成功返回
-     *
      */
     public CommonResult success() {
         this.code = SUCCESS;
         this.message = "操作成功";
-        this.data =  "操作成功";
+        this.data = "操作成功";
         return this;
     }
+
     /**
      * 普通成功返回
      */
@@ -79,12 +79,13 @@ public class CommonResult {
         return this;
     }
 
-    public CommonResult failed(Integer code,String message) {
+    public CommonResult failed(Integer code, String message) {
         this.code = code;
         this.message = message;
         return this;
     }
-    public CommonResult failed(Integer code,Object data) {
+
+    public CommonResult failed(Integer code, Object data) {
         this.code = code;
         this.data = data;
         return this;
@@ -96,6 +97,7 @@ public class CommonResult {
         this.message = message;
         return this;
     }
+
     /**
      * 普通失败提示信息
      */
@@ -110,6 +112,7 @@ public class CommonResult {
         this.message = message;
         return this;
     }
+
     public int getCode() {
         return code;
     }

@@ -24,7 +24,7 @@ public class StoreBiz {
     /**
      * 查询所有的交易发生渠道/门店
      *
-     * @return List<Map<String, Object>>
+     * @return List<Map < String, Object>>
      */
     public List<Map<String, Object>> getStoreList() {
         return crmStoreMapper.getStoreList();

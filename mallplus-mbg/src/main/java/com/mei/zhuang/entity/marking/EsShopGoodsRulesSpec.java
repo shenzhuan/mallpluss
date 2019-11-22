@@ -21,6 +21,7 @@ public class EsShopGoodsRulesSpec extends Model<EsShopGoodsRulesSpec> {
     private Long goodsId;
     @TableField("spec_ids")
     private String specIds;
+
     @Override
     protected Serializable pkVal() {
         return null;

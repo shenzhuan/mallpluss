@@ -1,7 +1,6 @@
 package com.mei.zhuang.vo.order;
 
 
-
 import com.mei.zhuang.entity.marking.EsShopCodeGiftGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseRule;
 import com.mei.zhuang.entity.marking.EsShopFullGift;
@@ -22,6 +21,11 @@ import java.util.List;
 @Data
 public class ConfirmOrderResult {
 
+    List<EsShopFirstPurchaseRule> firstPurchaseRuleList;
+    List<EsShopFullGift> fullGiftList;
+    //选赠礼
+    List<EsShopFullGift> ChoosGiftList;
+    List<EsShopFullGift> fullGiftListtwo;
     private EsDeliveryAddresser defaultAddress;
     //包含优惠信息的购物车信息
     private List<EsShopCart> cartList;
@@ -36,18 +40,12 @@ public class ConfirmOrderResult {
     //计算的金额
     private CalcAmount calcAmount;
     private MjDcVo manjianRule;
-
-    private MjDcVo  discountRule;
-    List<EsShopFirstPurchaseRule> firstPurchaseRuleList;
-    List<EsShopFullGift> fullGiftList;
-    //选赠礼
-    List<EsShopFullGift> ChoosGiftList;
-    List<EsShopFullGift> fullGiftListtwo;
+    private MjDcVo discountRule;
     private List<EsMemberCoupon> memberCouponList;
 
     private List<EsShopSingleGift> shopSingleGiftList;
 
-    private List<EsShopCodeGiftGoodsMap>  codeGiftGoodsMapList;
+    private List<EsShopCodeGiftGoodsMap> codeGiftGoodsMapList;
 
     public static class CalcAmount {
         //订单商品总金额
@@ -61,6 +59,7 @@ public class ConfirmOrderResult {
 
         private BigDecimal couponAmount;
         private BigDecimal cardAmount;
+
         public BigDecimal getTotalAmount() {
             return totalAmount;
         }
@@ -97,6 +96,10 @@ public class ConfirmOrderResult {
             return couponAmount;
         }
 
+        public void setCouponAmount(BigDecimal couponAmount) {
+            this.couponAmount = couponAmount;
+        }
+
         public BigDecimal getCardAmount() {
             return cardAmount;
         }
@@ -104,12 +107,7 @@ public class ConfirmOrderResult {
         public void setCardAmount(BigDecimal cardAmount) {
             this.cardAmount = cardAmount;
         }
-
-        public void setCouponAmount(BigDecimal couponAmount) {
-            this.couponAmount = couponAmount;
-        }
     }
-
 
 
 }

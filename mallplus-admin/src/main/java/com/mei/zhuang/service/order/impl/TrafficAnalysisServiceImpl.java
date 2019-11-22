@@ -92,9 +92,9 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             dataMap.put(orderDate, new TrafficAnalysisParam());
             TrafficAnalysisParam dataTempByMap = dataMap.get(orderDate);
             //转化成微信所需时间
-            JSONObject wxVisitedData=  WxVisitData(VisitUrl,orderDate,param);
-            JSONObject wxVisitedData2 =   WxVisitData(ShopUrl,orderDate,param);
-            JSONObject wxVisitedData3 =  WxVisitData(SharedUrl,orderDate,param);
+            JSONObject wxVisitedData = WxVisitData(VisitUrl, orderDate, param);
+            JSONObject wxVisitedData2 = WxVisitData(ShopUrl, orderDate, param);
+            JSONObject wxVisitedData3 = WxVisitData(SharedUrl, orderDate, param);
             if (wxVisitedData != null) {
                 dataTempByMap.setViews((Integer) wxVisitedData.get("visit_pv"));
                 dataTempByMap.setVisitors((Integer) wxVisitedData.get("visit_uv"));
@@ -147,25 +147,25 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             Datelist.add(format.format(calBegin.getTime()));
         }
         //转化成微信所需时间
-        for(String orderDate:Datelist) {
-            JSONObject wxVisitedData=  WxVisitData(VisitUrl,orderDate,param);
-            JSONObject wxVisitedData2 =   WxVisitData(ShopUrl,orderDate,param);
-            JSONObject wxVisitedData3 =  WxVisitData(SharedUrl,orderDate,param);
+        for (String orderDate : Datelist) {
+            JSONObject wxVisitedData = WxVisitData(VisitUrl, orderDate, param);
+            JSONObject wxVisitedData2 = WxVisitData(ShopUrl, orderDate, param);
+            JSONObject wxVisitedData3 = WxVisitData(SharedUrl, orderDate, param);
 
             if (wxVisitedData != null) {
                 visitors += (Integer) wxVisitedData.get("visit_pv");
                 views += (Integer) wxVisitedData.get("visit_uv");
             }
             if (wxVisitedData2 != null) {
-                JSONArray itemlist=new JSONArray();
+                JSONArray itemlist = new JSONArray();
                 itemlist.add(wxVisitedData2);
                 List<Map<String, Integer>> listMaps = (List<Map<String, Integer>>) JSONArray.parse(itemlist.toString());
                 System.out.println(listMaps.toString());
-                 for (int i = 0; i < listMaps.size(); i++) {
-                   shopVisitors+=listMaps.get(i).get("page_visit_pv");
-                   shopViews+=listMaps.get(i).get("page_visit_uv");
-                 }
-             }
+                for (int i = 0; i < listMaps.size(); i++) {
+                    shopVisitors += listMaps.get(i).get("page_visit_pv");
+                    shopViews += listMaps.get(i).get("page_visit_uv");
+                }
+            }
             if (wxVisitedData3 != null) {
                 if (wxVisitedData3.getString("index").equals("access_source_session_cnt")) {
                     JSONArray itemlist = wxVisitedData3.getJSONArray("item_list");
@@ -173,8 +173,8 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
                     for (int i = 0; i < listMaps.size(); i++) {
                         int jsonObject = listMaps.get(i).get("value");
                         if (jsonObject == 4) {
-                            SharedVisitors+=listMaps.get(i).get("key");
-                            SharedVisits+=listMaps.get(i).get("key");
+                            SharedVisitors += listMaps.get(i).get("key");
+                            SharedVisits += listMaps.get(i).get("key");
                         }
                     }
                 }
@@ -188,10 +188,10 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             paramBefore.setStartTime(DateUtils.addDay(DateUtils.toDate(param.getStartTime()), -1));
             paramBefore.setEndTime(DateUtils.addDay(DateUtils.toDate(param.getEndTime()), -1));
             paramBefore.setSource(param.getSource());
-            System.out.println(paramBefore.getEndTime()+"昨天时间");
-            JSONObject wxVisitedData=  WxVisitData(VisitUrl,paramBefore.getEndTime(),paramBefore);
-            JSONObject wxVisitedData2 =   WxVisitData(ShopUrl,paramBefore.getEndTime(),paramBefore);
-            JSONObject wxVisitedData3 =  WxVisitData(SharedUrl,paramBefore.getEndTime(),paramBefore);
+            System.out.println(paramBefore.getEndTime() + "昨天时间");
+            JSONObject wxVisitedData = WxVisitData(VisitUrl, paramBefore.getEndTime(), paramBefore);
+            JSONObject wxVisitedData2 = WxVisitData(ShopUrl, paramBefore.getEndTime(), paramBefore);
+            JSONObject wxVisitedData3 = WxVisitData(SharedUrl, paramBefore.getEndTime(), paramBefore);
             int visitors2 = 0;//访客数
             int views2 = 0;//浏览量
             int shopVisitors2 = 0;//商品访客数
@@ -203,12 +203,12 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
                 views2 += (Integer) wxVisitedData.get("visit_uv");
             }
             if (wxVisitedData2 != null) {
-                JSONArray itemlist=new JSONArray();
+                JSONArray itemlist = new JSONArray();
                 itemlist.add(wxVisitedData2);
                 List<Map<String, Integer>> listMaps = (List<Map<String, Integer>>) JSONArray.parse(itemlist.toString());
                 for (int i = 0; i < listMaps.size(); i++) {
-                    shopVisitors2+=listMaps.get(i).get("page_visit_pv");
-                    shopViews2+=listMaps.get(i).get("page_visit_uv");
+                    shopVisitors2 += listMaps.get(i).get("page_visit_pv");
+                    shopViews2 += listMaps.get(i).get("page_visit_uv");
                 }
             }
             if (wxVisitedData3 != null) {
@@ -218,19 +218,19 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
                     for (int i = 0; i < listMaps.size(); i++) {
                         int jsonObject = listMaps.get(i).get("value");
                         if (jsonObject == 4) {
-                            SharedVisitors2+=listMaps.get(i).get("key");
-                            SharedVisits2+=listMaps.get(i).get("key");
+                            SharedVisitors2 += listMaps.get(i).get("key");
+                            SharedVisits2 += listMaps.get(i).get("key");
                         }
                     }
                 }
             }
-            double visitorsvo= visitors2 != 0 ?(double)(visitors/ visitors2)*100 :0.0;
-            double viewsvo= views2 != 0 ?(double)(views/ views2)*100 :0.0;
-            double shopVisitorsvo= shopVisitors2 != 0 ?(double)(shopVisitors/ shopVisitors2)*100 :0.0;
-            double shopViewsvo= shopViews2 != 0 ?(double)(shopViews/ shopViews2)*100 :0.0;
-            double SharedVisitorsvo= SharedVisitors2 != 0 ?(double)(SharedVisitors/ SharedVisitors2)*100 :0.0;
-            double SharedVisitsvo= SharedVisits2 != 0 ?(double)(SharedVisits/ SharedVisits2)*100 :0.0;
-            Tap.setParamVo(new TrafficAnalysisParamVo(visitorsvo,viewsvo,shopVisitorsvo,shopViewsvo,SharedVisitorsvo,SharedVisitsvo));
+            double visitorsvo = visitors2 != 0 ? (double) (visitors / visitors2) * 100 : 0.0;
+            double viewsvo = views2 != 0 ? (double) (views / views2) * 100 : 0.0;
+            double shopVisitorsvo = shopVisitors2 != 0 ? (double) (shopVisitors / shopVisitors2) * 100 : 0.0;
+            double shopViewsvo = shopViews2 != 0 ? (double) (shopViews / shopViews2) * 100 : 0.0;
+            double SharedVisitorsvo = SharedVisitors2 != 0 ? (double) (SharedVisitors / SharedVisitors2) * 100 : 0.0;
+            double SharedVisitsvo = SharedVisits2 != 0 ? (double) (SharedVisits / SharedVisits2) * 100 : 0.0;
+            Tap.setParamVo(new TrafficAnalysisParamVo(visitorsvo, viewsvo, shopVisitorsvo, shopViewsvo, SharedVisitorsvo, SharedVisitsvo));
         }
         Tap.setVisitors(visitors);
         Tap.setViews(views);
@@ -242,9 +242,9 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
     }
 
     @Override
-    public  Map<String, Object>  TrSelect(TradeAnalyzeParam param) throws Exception {
+    public Map<String, Object> TrSelect(TradeAnalyzeParam param) throws Exception {
         //合计
-        int shopVisitors=0;
+        int shopVisitors = 0;
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calBegin = Calendar.getInstance();
         calBegin.setTime(format.parse(param.getStartTime()));
@@ -253,7 +253,7 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
         calEnd.setTime(format.parse(param.getEndTime()));
         List<String> Datelist = new ArrayList<String>();
         Datelist.add(format.format(calBegin.getTime()));
-        TrafficAnalysis view=new TrafficAnalysis();
+        TrafficAnalysis view = new TrafficAnalysis();
         // 每次循环给calBegin日期加一天，直到calBegin.getTime()时间等于dEnd
         while (format.parse(param.getEndTime()).after(calBegin.getTime())) {
             // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
@@ -262,21 +262,21 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
         }
         Map<String, TrafficAnalysis> dataMap = new HashMap<>();
         for (String orderDate : Datelist) {
-            String str=orderDate.substring(5,10);
+            String str = orderDate.substring(5, 10);
             dataMap.put(orderDate, new TrafficAnalysis());
             dataMap.get(orderDate).setDataTime(orderDate);
             dataMap.get(orderDate).setTime(str);
             TrafficAnalysis dataTempByMap = dataMap.get(orderDate);
 
             //转化成微信所需时间
-            JSONObject wxVisitedData = WxVisitData(ShopUrl,orderDate,param);
+            JSONObject wxVisitedData = WxVisitData(ShopUrl, orderDate, param);
             if (wxVisitedData != null) {
-                JSONArray itemlist=new JSONArray();
+                JSONArray itemlist = new JSONArray();
                 itemlist.add(wxVisitedData);
                 List<Map<String, Integer>> listMaps = (List<Map<String, Integer>>) JSONArray.parse(itemlist.toString());
                 for (int i = 0; i < listMaps.size(); i++) {
-                    dataTempByMap.setBounceRate(dataTempByMap.getBounceRate()+(double)listMaps.get(i).get("exitpage_pv"));
-                    shopVisitors+=listMaps.get(i).get("exitpage_pv");
+                    dataTempByMap.setBounceRate(dataTempByMap.getBounceRate() + (double) listMaps.get(i).get("exitpage_pv"));
+                    shopVisitors += listMaps.get(i).get("exitpage_pv");
                 }
             }
         }
@@ -297,25 +297,25 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             start=format.format(calBegin.getTime());
             numerical(start,end,shopVisitors,param,view);
         }*/
-        long subDay = DateUtil.getDaySub(param.getEndTime(),param.getStartTime(), DateUtil.YYYY_MM_DD);
+        long subDay = DateUtil.getDaySub(param.getEndTime(), param.getStartTime(), DateUtil.YYYY_MM_DD);
         subDay = Math.abs(subDay);//相差的天数
         view.setBounceTotal(shopVisitors);
-        BigDecimal bd = BigDecimal.valueOf(shopVisitors/subDay);
-       double number = bd.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+        BigDecimal bd = BigDecimal.valueOf(shopVisitors / subDay);
+        double number = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         view.setBounceAvg(number);
-        List<TrafficAnalysis> TrendList=new ArrayList<>();
+        List<TrafficAnalysis> TrendList = new ArrayList<>();
         for (Map.Entry<String, TrafficAnalysis> obj : dataMap.entrySet()) {
             TrendList.add(obj.getValue());
         }
         Collections.sort(TrendList, new Comparator<TrafficAnalysis>() {
             public int compare(TrafficAnalysis m1, TrafficAnalysis m2) {
                 //升序
-                return new Long(DateUtil.getDaySub(m1.getDataTime(),m2.getDataTime(),DateUtil.YYYY_MM_DD)).intValue();
+                return new Long(DateUtil.getDaySub(m1.getDataTime(), m2.getDataTime(), DateUtil.YYYY_MM_DD)).intValue();
             }
         });
         Map<String, Object> Map = new HashMap<>();
-        Map.put("data",view);
-        Map.put("excle",TrendList);
+        Map.put("data", view);
+        Map.put("excle", TrendList);
         return Map;
     }
 
@@ -329,7 +329,7 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
         calEnd.setTime(format.parse(param.getEndTime()));
         List<String> Datelist = new ArrayList<String>();
         Datelist.add(format.format(calBegin.getTime()));
-        TrafficAnalysis view=new TrafficAnalysis();
+        TrafficAnalysis view = new TrafficAnalysis();
         // 每次循环给calBegin日期加一天，直到calBegin.getTime()时间等于dEnd
         while (format.parse(param.getEndTime()).after(calBegin.getTime())) {
             // 根据日历的规则，为给定的日历字段添加或减去指定的时间量
@@ -338,37 +338,37 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
         }
         Map<String, TrafficAnalysis> dataMap = new HashMap<>();
         for (String orderDate : Datelist) {
-            String str=orderDate.substring(5,10);
+            String str = orderDate.substring(5, 10);
             dataMap.put(orderDate, new TrafficAnalysis());
             dataMap.get(orderDate).setDataTime(orderDate);
             dataMap.get(orderDate).setTime(str);
             TrafficAnalysis dataTempByMap = dataMap.get(orderDate);
 
             //转化成微信所需时间
-            JSONObject wxVisitedData = WxVisitData(ShopUrl,orderDate,param);
+            JSONObject wxVisitedData = WxVisitData(ShopUrl, orderDate, param);
             if (wxVisitedData != null) {
-                JSONArray itemlist=new JSONArray();
+                JSONArray itemlist = new JSONArray();
                 itemlist.add(wxVisitedData);
                 List<Map<String, Integer>> listMaps = (List<Map<String, Integer>>) JSONArray.parse(itemlist.toString());
                 for (int i = 0; i < listMaps.size(); i++) {
-                    dataTempByMap.setBounceRate(dataTempByMap.getBounceRate()+(double)listMaps.get(i).get("entrypage_pv"));
+                    dataTempByMap.setBounceRate(dataTempByMap.getBounceRate() + (double) listMaps.get(i).get("entrypage_pv"));
                 }
             }
         }
-        List<TrafficAnalysis> TrendList=new ArrayList<>();
+        List<TrafficAnalysis> TrendList = new ArrayList<>();
         for (Map.Entry<String, TrafficAnalysis> obj : dataMap.entrySet()) {
             TrendList.add(obj.getValue());
         }
         Collections.sort(TrendList, new Comparator<TrafficAnalysis>() {
             public int compare(TrafficAnalysis m1, TrafficAnalysis m2) {
                 //升序
-                return new Long(DateUtil.getDaySub(m1.getDataTime(),m2.getDataTime(),DateUtil.YYYY_MM_DD)).intValue();
+                return new Long(DateUtil.getDaySub(m1.getDataTime(), m2.getDataTime(), DateUtil.YYYY_MM_DD)).intValue();
             }
         });
         return TrendList;
     }
 
-    public void  numerical(String start,String end,int shopVisitors,TradeAnalyzeParam param,TrafficAnalysis view) throws ParseException {
+    public void numerical(String start, String end, int shopVisitors, TradeAnalyzeParam param, TrafficAnalysis view) throws ParseException {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         //环比（本期数-上期数）/上期数×100%。 今年
         double SeNumber;
@@ -379,27 +379,27 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
         Calendar calEnd2 = Calendar.getInstance();
         calEnd2.setTime(format.parse(param.getEndTime()));
         calBegin2.add(Calendar.YEAR, -1);
-        calEnd2.add(Calendar.YEAR,-1);
-        end=format.format(calEnd2.getTime())+" 23:59:59.999";
-        start=format.format(calBegin2.getTime());
+        calEnd2.add(Calendar.YEAR, -1);
+        end = format.format(calEnd2.getTime()) + " 23:59:59.999";
+        start = format.format(calBegin2.getTime());
 
     }
 
-    public JSONObject WxVisitData(String Url,String orderDate, TradeAnalyzeParam param) throws ParseException {
-            String wxNeedStartTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
-            String wxNeedEndTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
-            //微信 获取token
-            EsMiniprogram miniprogram = membersFegin.getByShopId(param.getShopId() == null ? 1 : param.getShopId());
-            String code = WX_HttpsUtil.wxGetQrcode(miniprogram.getAppid(), miniprogram.getAppSecret());
-            JSONObject tokenObj = WX_HttpsUtil.httpsRequest(code, "GET", null);
-            String token = tokenObj.getString("access_token");
-            JSONObject wxVisitedData = getWxVisitedData(Url, token, wxNeedStartTime, wxNeedEndTime);
+    public JSONObject WxVisitData(String Url, String orderDate, TradeAnalyzeParam param) throws ParseException {
+        String wxNeedStartTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
+        String wxNeedEndTime = DateUtil.format(orderDate, DateUtil.YYYY_MM_DD, DateUtil.YYYYMMDD);
+        //微信 获取token
+        EsMiniprogram miniprogram = membersFegin.getByShopId(param.getShopId() == null ? 1 : param.getShopId());
+        String code = WX_HttpsUtil.wxGetQrcode(miniprogram.getAppid(), miniprogram.getAppSecret());
+        JSONObject tokenObj = WX_HttpsUtil.httpsRequest(code, "GET", null);
+        String token = tokenObj.getString("access_token");
+        JSONObject wxVisitedData = getWxVisitedData(Url, token, wxNeedStartTime, wxNeedEndTime);
 
-            return wxVisitedData;
+        return wxVisitedData;
 
-}
+    }
 
-    private JSONObject getWxVisitedData(String dateUrl,String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
+    private JSONObject getWxVisitedData(String dateUrl, String accessToken, String wxNeedStartTime, String wxNeedEndTime) {
         JSONObject result = null;
         try {
             JSONObject jsonParamData = new JSONObject();
@@ -409,15 +409,13 @@ public class TrafficAnalysisServiceImpl implements TrafficAnalysiService {
             if (resultByMonthData.getString("errcode") != null) {
                 return null;
             }
-                result = JSON.parseArray(resultByMonthData.getString("list")).getJSONObject(0);
+            result = JSON.parseArray(resultByMonthData.getString("list")).getJSONObject(0);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
-
-
 
 
 }

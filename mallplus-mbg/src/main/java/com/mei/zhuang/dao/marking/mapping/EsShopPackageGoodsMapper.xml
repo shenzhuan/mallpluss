@@ -4,20 +4,20 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopPackageGoods">
-        <result column="id" property="id" />
-        <result column="package_type" property="packageType" />
-        <result column="package_name" property="packageName" />
-        <result column="picture" property="picture" />
-        <result column="by_picture" property="byPicture" />
-        <result column="order_picture" property="orderPicture" />
-        <result column="starting_time" property="startingTime" />
-        <result column="end_time" property="endTime" />
-        <result column="status" property="status" />
-        <result column="package_price" property="packagePrice" />
-        <result column="price" property="price" />
-        <result column="cost_price" property="costPrice" />
-        <result column="good_id" property="goodId" />
-        <result column="according" property="according" />
+        <result column="id" property="id"/>
+        <result column="package_type" property="packageType"/>
+        <result column="package_name" property="packageName"/>
+        <result column="picture" property="picture"/>
+        <result column="by_picture" property="byPicture"/>
+        <result column="order_picture" property="orderPicture"/>
+        <result column="starting_time" property="startingTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="package_price" property="packagePrice"/>
+        <result column="price" property="price"/>
+        <result column="cost_price" property="costPrice"/>
+        <result column="good_id" property="goodId"/>
+        <result column="according" property="according"/>
     </resultMap>
     <update id="updatestatus">
         update es_shop_package_goods_spec set status=#{param1} where id=#{param2}
@@ -36,7 +36,7 @@
         order by id desc
     </select>
 
-    <update id="updatePackage" >
+    <update id="updatePackage">
         update es_shop_package_goods set package_name=#{packageName} where good_id=#{goodId}
     </update>
 

@@ -17,6 +17,4 @@ public class UserDiffOrderStatusCount {
     private Integer closedCount;// 已关闭 // 已取消 统一
 
 
-
-
 }

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_core_attachment_category")
-public class EsCoreAttachmentCategory  extends Model<EsCoreAttachmentCategory> {
+public class EsCoreAttachmentCategory extends Model<EsCoreAttachmentCategory> {
     /**
      * 编号
      */

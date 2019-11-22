@@ -41,6 +41,9 @@ public class DateUtils {
             {"\\d{4}((([0][1,3-9]|[1][0-2]|[1-9])([0-2]\\d|[3][0,1]|[1-9]))|((02|2)(([1-9])|[0-2]\\d)))([0,1]\\d|[2][0-3])([0-5]\\d|\\d)([0-5]\\d|\\d)\\d{1,3}",
                     DATE_TIME_PATTERN_YYYY_MM_DD_HH_MM_SS_SSS}
     };
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+    private static Calendar calendar = Calendar.getInstance();
+
     public static Date toDate(String d) throws Exception {
         return FORMATER_DATE_YMD.parse(d);
     }
@@ -113,6 +116,7 @@ public class DateUtils {
         r += "前";
         return r;
     }
+
     public static String timeToStr(Long time, String pattern) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
         if (time.toString().length() < 13) {
@@ -122,6 +126,7 @@ public class DateUtils {
         String value = dateFormat.format(date);
         return value;
     }
+
     public static String addDay(Date s, int n) {
 
         SimpleDateFormat FORMATER_DATE_YMD = new SimpleDateFormat("yyyy-MM-dd");
@@ -132,6 +137,7 @@ public class DateUtils {
         return FORMATER_DATE_YMD.format(cd.getTime());
 
     }
+
     /**
      * 转换为时间类型格式
      *
@@ -147,7 +153,6 @@ public class DateUtils {
             return null;
         }
     }
-
 
     /**
      * 根据传入的日期格式字符串，获取日期的格式
@@ -172,6 +177,7 @@ public class DateUtils {
         }
         return style;
     }
+
     /**
      * 返回当前时间的"yyyy-MM-dd"格式字符串
      */
@@ -294,15 +300,12 @@ public class DateUtils {
         return cal.getTime();
     }
 
-    private static SimpleDateFormat sdf=new SimpleDateFormat("yyyyMM");
-    private static Calendar calendar=Calendar.getInstance();
-
     /*
     输入日期字符串比如201703，返回当月第一天的Date
     */
-    public static Date getMinDateMonth(String month){
+    public static Date getMinDateMonth(String month) {
         try {
-            Date nowDate=sdf.parse(month);
+            Date nowDate = sdf.parse(month);
             calendar = Calendar.getInstance();
             calendar.setTime(nowDate);
             calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -316,9 +319,9 @@ public class DateUtils {
     /*
     输入日期字符串，返回当月最后一天的Date
     */
-    public static Date getMaxDateMonth(String month){
+    public static Date getMaxDateMonth(String month) {
         try {
-            Date nowDate=sdf.parse(month);
+            Date nowDate = sdf.parse(month);
             calendar = Calendar.getInstance();
             calendar.setTime(nowDate);
             calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -328,13 +331,15 @@ public class DateUtils {
         }
         return null;
     }
+
     /**
      * 给时间加上几个小时
-     * @param day 当前时间 格式：yyyy-MM-dd HH:mm:ss
+     *
+     * @param day  当前时间 格式：yyyy-MM-dd HH:mm:ss
      * @param hour 需要加的时间
      * @return
      */
-    public static String addDateHour(String day, int hour){
+    public static String addDateHour(String day, int hour) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -353,8 +358,9 @@ public class DateUtils {
         return format.format(date);
 
     }
+
     public static void main(String[] args) throws Exception {
-        String month="201705";
+        String month = "201705";
         System.out.println(getMinDateMonth(month));
         System.out.println(getMaxDateMonth(month));
         System.out.println(DateUtils.geLastDayByMonth());

@@ -2,13 +2,13 @@ package com.mei.zhuang.controller.marking;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.service.marking.CouponsTopupService;
-import com.mei.zhuang.vo.CommonResult;
-import com.mei.zhuang.controller.SysLog;
 import com.github.pagehelper.PageHelper;
+import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopCouponNewRule;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopup;
 import com.mei.zhuang.entity.marking.EsShopCouponsTopupGoods;
+import com.mei.zhuang.service.marking.CouponsTopupService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -134,7 +134,7 @@ public class CouponTopupController {
         try {
             PageHelper.startPage(current, size);
             List<Map<String, Object>> maps = couponService.selectTopup(topup);
-          //  topup.setTotal((int) PageHelper.freeTotal());
+            //  topup.setTotal((int) PageHelper.freeTotal());
             Map<String, Object> map = new HashMap<>();
             map.put("rows", maps);
             map.put("total", topup.getTotal());

@@ -49,9 +49,9 @@ public class PackageGoodsController {
     @SysLog(MODULE = "套餐商品管理", REMARK = "保存套餐商品")
     @ApiOperation("保存套餐商品")
     @PostMapping(value = "/save")
-    public Object savePackage( EsShopPackageGoods entity) {
+    public Object savePackage(EsShopPackageGoods entity) {
         try {
-            List<EsShopPackageGoodsSpec> list = JSONObject.parseArray(entity.getPackagespecList(),EsShopPackageGoodsSpec.class);
+            List<EsShopPackageGoodsSpec> list = JSONObject.parseArray(entity.getPackagespecList(), EsShopPackageGoodsSpec.class);
             entity.setPackageGoodsSpecList(list);
             if (packageService.save(entity)) {
                 return new CommonResult().success();
@@ -122,23 +122,25 @@ public class PackageGoodsController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "套餐商品同步", REMARK = "套餐商品同步")
     @ApiOperation("套餐商品同步")
     @PostMapping(value = "/updatepackage")
     public Object updatepackage(@RequestParam String packageName, @RequestParam long goodId) {
         try {
-            return new CommonResult().success(packageService.updatePackage(packageName,goodId));
+            return new CommonResult().success(packageService.updatePackage(packageName, goodId));
         } catch (Exception e) {
             log.error("套餐商品同步：%s", e.getMessage(), e);
             return new CommonResult().failed("套餐商品同步失败");
         }
     }
+
     @SysLog(MODULE = "套餐商品删除同步", REMARK = "套餐商品删除同步")
     @ApiOperation("套餐商品删除同步")
     @PostMapping(value = "/deletepackage")
-    public Object delete(@RequestParam long goodId,@RequestParam int according) {
+    public Object delete(@RequestParam long goodId, @RequestParam int according) {
         try {
-            return new CommonResult().success(packageService.delete(goodId,according));
+            return new CommonResult().success(packageService.delete(goodId, according));
         } catch (Exception e) {
             log.error("套餐商品删除同步：%s", e.getMessage(), e);
             return new CommonResult().failed("套餐商品删除同步失败");

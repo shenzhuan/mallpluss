@@ -7,5 +7,5 @@ import java.util.Map;
 
 public interface EsAppletTemplateService extends IService<EsAppletTemplates> {
 
-    Map<String,Object> select(EsAppletTemplates entity);
+    Map<String, Object> select(EsAppletTemplates entity);
 }

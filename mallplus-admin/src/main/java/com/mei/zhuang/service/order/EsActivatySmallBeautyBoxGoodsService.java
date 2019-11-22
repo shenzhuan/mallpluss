@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface EsActivatySmallBeautyBoxGoodsService extends IService<EsActivatySmallBeautyBoxGoods> {
 
-    Map<String,Object> selPageList(EsActivatySmallBeautyBoxGoods entity);
+    Map<String, Object> selPageList(EsActivatySmallBeautyBoxGoods entity);
 
     Boolean inserts(List<EsActivatySmallBeautyBoxGoods> entity);
 

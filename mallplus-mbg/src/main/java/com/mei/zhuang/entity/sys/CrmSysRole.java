@@ -25,84 +25,84 @@ public class CrmSysRole extends Model<CrmSysRole> {
     /**
      * 主键ID
      */
-    @ApiModelProperty(value = "主键ID",hidden = true)
-	private Integer id;
+    @ApiModelProperty(value = "主键ID", hidden = true)
+    private Integer id;
     /**
      * 角色名称
      */
-    @ApiModelProperty(value = "角色名称",required = true)
-	private String name;
+    @ApiModelProperty(value = "角色名称", required = true)
+    private String name;
     /**
      * 状态 1：启用 2：禁用
      */
-    @ApiModelProperty(value = "状态 1：启用 2：禁用",hidden = true)
-	private String status;
+    @ApiModelProperty(value = "状态 1：启用 2：禁用", hidden = true)
+    private String status;
     /**
      * 描述
      */
-    @ApiModelProperty(value = "描述",required = true)
-	private String description;
+    @ApiModelProperty(value = "描述", required = true)
+    private String description;
     /**
      * 创建者ID
      */
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	@ApiModelProperty(value = "创建者ID",hidden = true)
-	private Integer createUserId;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "创建者ID", hidden = true)
+    private Integer createUserId;
     /**
      * 创建日期
      */
-	@ApiModelProperty(value = "创建日期")
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
+    @ApiModelProperty(value = "创建日期")
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
     /**
      * 创建时间
      */
-	@ApiModelProperty(value = "创建时间")
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
+    @ApiModelProperty(value = "创建时间")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
     /**
      * 更新者ID
      */
-	@TableField(value = "update_user_id", fill = FieldFill.UPDATE)
-	@ApiModelProperty(value = "更新者ID",hidden = true)
-	private Integer updateUserId;
+    @TableField(value = "update_user_id", fill = FieldFill.UPDATE)
+    @ApiModelProperty(value = "更新者ID", hidden = true)
+    private Integer updateUserId;
     /**
      * 更新日期
      */
-	@ApiModelProperty(value = "更新日期")
-	@TableField(value = "update_date", fill = FieldFill.UPDATE)
-	private String updateDate;
+    @ApiModelProperty(value = "更新日期")
+    @TableField(value = "update_date", fill = FieldFill.UPDATE)
+    private String updateDate;
     /**
      * 更新时间
      */
-	@ApiModelProperty(value = "更新时间")
-	@TableField(value = "update_time", fill = FieldFill.UPDATE)
-	private String updateTime;
+    @ApiModelProperty(value = "更新时间")
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    private String updateTime;
     /**
      * 乐观锁用
      */
-	@Version
-	@ApiModelProperty(value = "乐观锁用",hidden = true)
-	private Integer version;
+    @Version
+    @ApiModelProperty(value = "乐观锁用", hidden = true)
+    private Integer version;
 
-	@ApiModelProperty(value = "每页显示数",hidden = true)
-	@TableField(exist = false)
-	private Integer limit = 10;
+    @ApiModelProperty(value = "每页显示数", hidden = true)
+    @TableField(exist = false)
+    private Integer limit = 10;
 
-	@ApiModelProperty(value = "开始行数",hidden = true)
-	@TableField(exist = false)
-	private Integer offset = 0;
+    @ApiModelProperty(value = "开始行数", hidden = true)
+    @TableField(exist = false)
+    private Integer offset = 0;
 
-	@TableField(exist = false)
-	@ApiModelProperty(value = "上级角色ID",hidden = true)
-	private Integer pId = 0;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "上级角色ID", hidden = true)
+    private Integer pId = 0;
 
-	@TableField(exist = false)
-	private Integer total;
+    @TableField(exist = false)
+    private Integer total;
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

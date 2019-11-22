@@ -14,14 +14,14 @@ import java.math.BigDecimal;
 public class CartPromotionItem {
     EsShopCart esShopCart;
     EsShopGoodsOption goodsOption;
+    //商品定制服务
+    EsShopCustomizedApplet esShopCustApplet;
     //促销活动信息
     private String promotionMessage;
     //促销活动减去的金额，针对每个商品
     private BigDecimal reduceAmount = BigDecimal.ZERO;
     //商品的真实库存（剩余库存-锁定库存）
     private Integer realStock;
-    //商品定制服务
-    EsShopCustomizedApplet esShopCustApplet;
 
 
 }

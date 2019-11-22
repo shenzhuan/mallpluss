@@ -1,7 +1,5 @@
 package com.mei.zhuang.annotation;
 
-import java.lang.annotation.*;
-
 /**
  * 系统日志注解
  *

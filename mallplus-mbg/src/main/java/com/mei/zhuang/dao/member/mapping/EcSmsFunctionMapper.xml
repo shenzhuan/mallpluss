@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.member.EcSmsFunction">
-        <id column="id" property="id" />
-        <result column="function_name" property="functionName" />
-        <result column="create_time" property="createTime" />
-        <result column="create_by" property="createBy" />
-        <result column="update_time" property="updateTime" />
-        <result column="update_by" property="updateBy" />
-        <result column="is_delete" property="isDelete" />
-        <result column="description" property="description" />
-        <result column="sms_type_id" property="smsTypeId" />
+        <id column="id" property="id"/>
+        <result column="function_name" property="functionName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="description" property="description"/>
+        <result column="sms_type_id" property="smsTypeId"/>
     </resultMap>
 
 </mapper>

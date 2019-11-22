@@ -26,8 +26,4 @@ public class OrderSettings {
     private Integer getWechatAddresInfo;
 
 
-
-
-
-
 }

@@ -1,6 +1,9 @@
 package com.mei.zhuang.util;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -11,6 +14,7 @@ import java.security.spec.X509EncodedKeySpec;
 public class RsaKeyHelper {
     /**
      * 获取公钥
+     *
      * @param filename
      * @return
      * @throws Exception
@@ -28,6 +32,7 @@ public class RsaKeyHelper {
 
     /**
      * 获取密钥
+     *
      * @param filename
      * @return
      * @throws Exception
@@ -45,13 +50,14 @@ public class RsaKeyHelper {
 
     /**
      * 生存rsa公钥和密钥
+     *
      * @param publicKeyFilename
      * @param privateKeyFilename
      * @param password
      * @throws IOException
      * @throws NoSuchAlgorithmException
      */
-    public void generateKey(String publicKeyFilename,String privateKeyFilename,String password) throws IOException, NoSuchAlgorithmException {
+    public void generateKey(String publicKeyFilename, String privateKeyFilename, String password) throws IOException, NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom secureRandom = new SecureRandom(password.getBytes());
         keyPairGenerator.initialize(1024, secureRandom);

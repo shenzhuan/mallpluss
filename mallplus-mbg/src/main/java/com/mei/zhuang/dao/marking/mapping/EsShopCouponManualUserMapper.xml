@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopCouponManualUser">
-        <id column="id" property="id" />
-        <result column="manual_id" property="manualId" />
-        <result column="user_id" property="userId" />
-        <result column="status" property="status" />
+        <id column="id" property="id"/>
+        <result column="manual_id" property="manualId"/>
+        <result column="user_id" property="userId"/>
+        <result column="status" property="status"/>
     </resultMap>
 
 

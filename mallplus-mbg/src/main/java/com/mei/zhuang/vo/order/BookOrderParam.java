@@ -12,7 +12,7 @@ public class BookOrderParam {
     private String page;
     //小程序推送需要的formid
     private String formid;
-    private  String platform = "2";
+    private String platform = "2";
     //收货地址id
     private Long addressId;
     //會員优惠券id

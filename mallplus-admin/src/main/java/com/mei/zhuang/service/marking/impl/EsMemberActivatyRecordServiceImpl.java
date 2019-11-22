@@ -36,23 +36,23 @@ public class EsMemberActivatyRecordServiceImpl extends ServiceImpl<EsMemberActiv
         /**
          * 时间戳转Date
          */
-        if(entity.getBeginTimeS() != null && !entity.getBeginTimeS().equals("")){
+        if (entity.getBeginTimeS() != null && !entity.getBeginTimeS().equals("")) {
             long lt = new Long(entity.getBeginTimeS());
-            entity.setBeginTimeD( new Date(lt));
+            entity.setBeginTimeD(new Date(lt));
         }
-        if(entity.getEndTimeS() != null && !entity.getEndTimeS().equals("")){
+        if (entity.getEndTimeS() != null && !entity.getEndTimeS().equals("")) {
             long lt = new Long(entity.getEndTimeS());
-            entity.setEndTimeD( new Date(lt));
+            entity.setEndTimeD(new Date(lt));
         }
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         PageHelper.startPage(entity.getCurrent(), entity.getSize());
         List<EsMemberActivatyRecord> selPageList = esMemberActivatyRecordMapper.selPageList(entity);
-        if(selPageList != null && selPageList.size()>0){
-            for (EsMemberActivatyRecord record:selPageList) {
-                if(record.getIsWin() == 1){
+        if (selPageList != null && selPageList.size() > 0) {
+            for (EsMemberActivatyRecord record : selPageList) {
+                if (record.getIsWin() == 1) {
                     //查询奖品
-                    EsShopActivityPrize prize =  esShopActivityPrizeMapper.selectById(record.getPrizeId());
-                    if(prize != null){
+                    EsShopActivityPrize prize = esShopActivityPrizeMapper.selectById(record.getPrizeId());
+                    if (prize != null) {
                         EsShopCoupon coupon = esShopCouponMapper.selectById(Long.parseLong(prize.getGoodsContent()));
                         record.setPrizeName(coupon.getCouponsName());
                     }

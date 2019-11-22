@@ -14,28 +14,27 @@ import java.util.List;
  * @Description:
  */
 @Data
-public class CartMarkingVo  implements Serializable{
-    private List<EsShopCart> cartList ;
-    private List<EsShopOrderGoods> shopOrderGoodsList ;
+public class CartMarkingVo implements Serializable {
+    private List<EsShopCart> cartList;
+    private List<EsShopOrderGoods> shopOrderGoodsList;
     /**
-     *
      * 首购礼
      * 类型1 第一单获取 2 所有订单获取
      */
-    private int type ;
+    private int type;
     /**
      * 新人券 1首次进入 2首次下单 3 首次支付
      * 满额发券 1 订单完成 2 支付完成
      * g购物发券  1 订单完成 2 支付完成
      * 手工改发券  1 订单完成 2 支付完成
      */
-    private int scope ;
-    private Long  ruleId ;
-    private String  ruleIds ;
-    private Long  memberId ;
-    private String  code ;
-    private String  marketingId ;
-    private Long  memberCouponId;
+    private int scope;
+    private Long ruleId;
+    private String ruleIds;
+    private Long memberId;
+    private String code;
+    private String marketingId;
+    private Long memberCouponId;
     private BigDecimal payAmount;
-    private String  openId ;
+    private String openId;
 }

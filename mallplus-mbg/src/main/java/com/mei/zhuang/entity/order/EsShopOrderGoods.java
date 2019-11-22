@@ -131,7 +131,7 @@ public class EsShopOrderGoods extends Model<EsShopOrderGoods> {
      * 价格折扣
      */
     @TableField("price_discount")
-    private BigDecimal priceDiscount ;
+    private BigDecimal priceDiscount;
     /**
      * 总金额
      */
@@ -212,7 +212,6 @@ public class EsShopOrderGoods extends Model<EsShopOrderGoods> {
 
     /**
      * 是否赠品   0:非赠品  1：赠品
-     *
      */
     @TableField("is_gifts")
     private Integer isGifts;
@@ -220,7 +219,6 @@ public class EsShopOrderGoods extends Model<EsShopOrderGoods> {
     /**
      * 赠礼类型
      * 1 首赠礼 2 满赠礼 3 单品礼赠 4 验证码赠品 5赠品券赠品 6选赠礼
-     *
      */
     @TableField("gift_type")
     private Integer giftType;
@@ -239,18 +237,17 @@ public class EsShopOrderGoods extends Model<EsShopOrderGoods> {
     private String SpecInfo;*/
 
     //复购人数
-      @TableField(exist = false)
-     private Integer purchaseNumber=0;
-      //数量
     @TableField(exist = false)
-    private Integer goodscount=0;
+    private Integer purchaseNumber = 0;
+    //数量
+    @TableField(exist = false)
+    private Integer goodscount = 0;
     //商品访客数
     @TableField(exist = false)
-    private int goodsUV=0;
+    private int goodsUV = 0;
     //商品浏览量
     @TableField(exist = false)
-    private int gooodsPU=0;
-
+    private int gooodsPU = 0;
 
 
     /**

@@ -1,18 +1,13 @@
 package com.mei.zhuang.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -56,8 +51,8 @@ public class SysLoginLog extends Model<SysLoginLog> {
     private String loginTime;
     /**
      * 解锁标识
-0：密码错误时未解锁
-1：用户已解锁标识，用于用户解锁后重新统计密码错误次数
+     * 0：密码错误时未解锁
+     * 1：用户已解锁标识，用于用户解锁后重新统计密码错误次数
      */
     @TableField("unlock_flag")
     private Integer unlockFlag;

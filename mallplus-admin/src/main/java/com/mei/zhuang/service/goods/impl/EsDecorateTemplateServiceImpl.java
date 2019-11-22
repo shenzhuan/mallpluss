@@ -40,7 +40,7 @@ public class EsDecorateTemplateServiceImpl extends ServiceImpl<EsDecorateTemplat
         page.setShopId(entity.getShopId());
         page.setTemplateId(entity.getId());
 
-        return decorateTemplatePageMapper.insert(page)>0;
+        return decorateTemplatePageMapper.insert(page) > 0;
     }
 
     @Override

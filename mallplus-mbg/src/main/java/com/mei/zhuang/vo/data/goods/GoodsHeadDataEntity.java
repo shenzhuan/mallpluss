@@ -29,7 +29,4 @@ public class GoodsHeadDataEntity {
     private Boolean setIsDisplayBeforeData = false;//是否显示比例数据 false：不显示 true：显示
 
 
-
-
-
 }

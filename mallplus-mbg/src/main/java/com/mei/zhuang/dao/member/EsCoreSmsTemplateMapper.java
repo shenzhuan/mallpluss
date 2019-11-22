@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -19,9 +19,9 @@ public interface EsCoreSmsTemplateMapper extends BaseMapper<EsCoreSmsTemplate> {
 
     List<EsCoreSmsTemplate> selectSmsTemplateList(SmsParam smsParam);
 
-/*
-    EsCoreSmsTemplate selectById(Long id);
-*/
+    /*
+        EsCoreSmsTemplate selectById(Long id);
+    */
     Integer selectSmsTemplateCount(SmsParam smsParam);
 
 }

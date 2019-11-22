@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 @Data
 //@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
-public class    TradeDataByHeadVo implements Serializable {
+public class TradeDataByHeadVo implements Serializable {
 
     private BigDecimal payAmount = BigDecimal.valueOf(0.0);//支付金额
 
@@ -25,7 +25,6 @@ public class    TradeDataByHeadVo implements Serializable {
     private BigDecimal unitPriceByOne = BigDecimal.valueOf(0.0);//客单价
 
     private BigDecimal refundPrice = BigDecimal.valueOf(0.0);//退款订单金额
-
 
 
     private BigDecimal newConsumeAmount = BigDecimal.valueOf(0.0);//新客户金额
@@ -51,7 +50,6 @@ public class    TradeDataByHeadVo implements Serializable {
     private Boolean isDisplayBeforeData = false;//是否显示前一日比例数据
 
     private TradeDataBeforeVo beforeData = null;//前一日比例数据
-
 
 
 }

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  * @Description:交易设置实体类
  */
 @Data
-public class TradeDataEntity{
+public class TradeDataEntity {
 
     private BigDecimal payAmount = new BigDecimal("0.00");//支付金额
 

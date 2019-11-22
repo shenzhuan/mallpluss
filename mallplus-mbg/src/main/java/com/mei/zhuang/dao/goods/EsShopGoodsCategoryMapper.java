@@ -1,7 +1,6 @@
 package com.mei.zhuang.dao.goods;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.goods.EsShopGoodsCategory;
 import org.apache.ibatis.annotations.Param;
 
@@ -50,7 +49,7 @@ public interface EsShopGoodsCategoryMapper extends BaseMapper<EsShopGoodsCategor
 
     Integer updDisplayOrder(@Param("id") Long id, @Param("displayOrder") Integer displayOrder);
 
-  //  List<EsShopGoodsCategory> list(Pagination page, @Param("current") Integer current, @Param("size") Integer size);
+    //  List<EsShopGoodsCategory> list(Pagination page, @Param("current") Integer current, @Param("size") Integer size);
 
     int count();
 

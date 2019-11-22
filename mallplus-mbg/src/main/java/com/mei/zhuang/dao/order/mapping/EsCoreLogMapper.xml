@@ -4,14 +4,14 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.order.EsCoreLog">
-        <id column="id" property="id" />
-        <result column="content" property="content" />
-        <result column="create_time" property="createTime" />
-        <result column="ip" property="ip" />
-        <result column="type" property="type" />
-        <result column="uid" property="uid" />
-        <result column="employee_name" property="employeeName" />
-        <result column="operation_type_id" property="operationTypeId" />
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="ip" property="ip"/>
+        <result column="type" property="type"/>
+        <result column="uid" property="uid"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="operation_type_id" property="operationTypeId"/>
 
     </resultMap>
 
@@ -32,7 +32,7 @@
 
     </select>
 
-    <select id="selectLogCount"  parameterType="com.mei.zhuang.vo.order.EsCoreLogParam" resultType="java.lang.Integer">
+    <select id="selectLogCount" parameterType="com.mei.zhuang.vo.order.EsCoreLogParam" resultType="java.lang.Integer">
         select count(*) from es_core_log log
         left join es_core_log_type t
         on log.operation_type_id = t.id

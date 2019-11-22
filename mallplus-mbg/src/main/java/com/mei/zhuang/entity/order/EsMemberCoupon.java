@@ -30,7 +30,11 @@ import java.util.List;
 public class EsMemberCoupon extends Model<EsMemberCoupon> {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * 赠品券的赠品
+     */
+    @TableField(exist = false)
+    List<EsShopCouponGoodsMap> giftGoodsList;
     /**
      * 结束时间
      */
@@ -57,7 +61,6 @@ public class EsMemberCoupon extends Model<EsMemberCoupon> {
      */
     @TableField("create_time")
     private String createTime;
-
     /**
      * 不可用日期
      */
@@ -101,7 +104,6 @@ public class EsMemberCoupon extends Model<EsMemberCoupon> {
      */
     @TableField("goods_ids")
     private String goodsIds;
-
     /**
      * 订单编号
      */
@@ -134,44 +136,33 @@ public class EsMemberCoupon extends Model<EsMemberCoupon> {
      * 0使用,1未使用,2是锁定
      */
     private Integer status;
-
     @TableField(exist = false)
     private Integer total;
     @TableField(exist = false)
     private String nickname;
-
     //条件 0单个值，1且，2或 3是无限制条件
     private Integer conditions;
     //件数
     private Integer enoughtwo;
     //有效状态1有效  2，未生效，3失效
     private Integer effective;
-
     //用户opendid信息
     @TableField("user_openid")
     private String userOpenid;
-
     //时间条件
     @TableField(exist = false)
     private String createDate;
     @TableField(exist = false)
     private String uesdDate;
-
     /**
      * 0 正常 1未开始 2已过期
      */
     @TableField(exist = false)
     private Integer isExpire;
     @TableField(exist = false)
-    private  EsShopCoupon coupon;
+    private EsShopCoupon coupon;
     @TableField(exist = false)
     private List<EsShopCouponRule> couponRuleList;
-    /**
-     * 赠品券的赠品
-     */
-    @TableField(exist = false)
-    List<EsShopCouponGoodsMap> giftGoodsList ;
-
     //未使用图片
     @TableField(exist = false)
     private String donUsePic;
@@ -187,6 +178,7 @@ public class EsMemberCoupon extends Model<EsMemberCoupon> {
     private String beginTime;
     @TableField(exist = false)
     private String endTimes;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

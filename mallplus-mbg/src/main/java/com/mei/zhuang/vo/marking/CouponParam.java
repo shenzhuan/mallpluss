@@ -43,7 +43,4 @@ import java.io.Serializable;
 public class CouponParam implements Serializable {
 
 
-
-
-
 }

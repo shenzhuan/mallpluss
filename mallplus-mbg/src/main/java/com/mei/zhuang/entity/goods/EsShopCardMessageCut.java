@@ -25,7 +25,7 @@ public class EsShopCardMessageCut extends Model<EsShopCardMessageCut> {
     private Long cardMessageId;
 
     /**
-     *切割图
+     * 切割图
      */
     @TableField("cut_img")
     private String cutImg;

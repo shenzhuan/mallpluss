@@ -53,7 +53,7 @@ public class EsShopCustomizedApplet extends Model<EsShopCustomizedApplet> {
     @TableField("packet_id")
     private Long packetId;
     /**
-     *      * 刻字内容
+     * * 刻字内容
      */
     @TableField("basic_content")
     private String basicContent;

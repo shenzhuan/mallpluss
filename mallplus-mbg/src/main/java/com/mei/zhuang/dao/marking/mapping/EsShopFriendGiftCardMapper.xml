@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.marking.EsShopFriendGiftCard">
-        <id column="id" property="id" />
-        <result column="gift_id" property="giftId" />
-        <result column="gift_picture" property="giftPicture" />
-        <result column="title" property="title" />
-        <result column="according" property="according" />
+        <id column="id" property="id"/>
+        <result column="gift_id" property="giftId"/>
+        <result column="gift_picture" property="giftPicture"/>
+        <result column="title" property="title"/>
+        <result column="according" property="according"/>
     </resultMap>
 
 
-    <update id="updatecard" >
+    <update id="updatecard">
     update es_shop_friend_gift_card set according=2 where gift_id=#{giftId}
 
     </update>

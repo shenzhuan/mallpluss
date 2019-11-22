@@ -66,12 +66,12 @@ public class EsShopCustomizedLegend extends Model<EsShopCustomizedLegend> {
      * 当前页码
      */
     @TableField(exist = false)
-    private Integer current=1;
+    private Integer current = 1;
     /**
      * 每页显示条数
      */
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
 
     @Override
     protected Serializable pkVal() {

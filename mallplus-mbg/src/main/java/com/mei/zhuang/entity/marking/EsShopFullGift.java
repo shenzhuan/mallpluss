@@ -1,7 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -140,7 +139,7 @@ public class EsShopFullGift extends Model<EsShopFullGift> {
     private String selectgoods;
     //满赠赠品添加
     @TableField(exist = false)
-    private  List<EsShopFullGiftGoodsMap> fullGiftGoodsList;
+    private List<EsShopFullGiftGoodsMap> fullGiftGoodsList;
     @TableField(exist = false)
     private String selectfullgift;
     @TableField(exist = false)
@@ -162,7 +161,8 @@ public class EsShopFullGift extends Model<EsShopFullGift> {
 
     //小程序调用
     @TableField(exist = false)
-    private  List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList;
+    private List<EsShopFullGiftGoodsMap> fullGiftGoodsMapList;
+
     @Override
     protected Serializable pkVal() {
         return this.id;

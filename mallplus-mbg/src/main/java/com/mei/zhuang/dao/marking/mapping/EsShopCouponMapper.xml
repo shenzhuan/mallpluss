@@ -43,11 +43,12 @@
         <if test="couponsName!=null and couponsName!=''">
             and coupons_name like concat(concat('%',#{couponsName},'%'))
         </if>
-       order by id desc
+        order by id desc
     </select>
 
     <select id="selectmapcoupon" resultType="java.util.Map">
-        select sc.id,sc.coupons_name,sc.channel_id,sc.type,sc.stock,sc.create_time,sc.status,sc.status_open,expiry_begin_time,sc.expiry_end_time,scr.coupon_id,scr.single_consumer,scr.single_batch,scr.conditions
+        select
+        sc.id,sc.coupons_name,sc.channel_id,sc.type,sc.stock,sc.create_time,sc.status,sc.status_open,expiry_begin_time,sc.expiry_end_time,scr.coupon_id,scr.single_consumer,scr.single_batch,scr.conditions
         from es_shop_coupon sc,es_shop_coupon_rule scr where sc.id=scr.coupon_id
         <if test="channelId!=null and channelId!=''">
             and channel_id=#{channelId}
@@ -59,9 +60,9 @@
             and type=#{type}
         </if>
         <if test="exBeginTime!=null and exEndTime!=null">
-          and create_time &gt;=#{exBeginTime} and create_time &lt;=#{exEndTime}
+            and create_time &gt;=#{exBeginTime} and create_time &lt;=#{exEndTime}
         </if>
-            order by sc.id desc
+        order by sc.id desc
     </select>
 
     <select id="couponlimit" resultType="java.util.Map">

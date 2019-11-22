@@ -50,13 +50,13 @@ public class ShareController {
     @PostMapping(value = "/save")
     public Object saveSingleGift(EsShopShare entity) {
         try {
-            if(!entity.getShareMapinitiate().equals("")){
+            if (!entity.getShareMapinitiate().equals("")) {
                 List<EsShopShareMap> list3 = JSONObject.parseArray(entity.getShareMapinitiate(), EsShopShareMap.class);
                 entity.setSharemapList(list3);
-            }else{
+            } else {
                 return new CommonResult().failed("发起者获赠奖品不能为空");
             }
-            if(entity.getActivityType()==1) {
+            if (entity.getActivityType() == 1) {
                 if (!entity.getSharehelp().equals("")) {
                     List<EsShopShareMap> list4 = JSONObject.parseArray(entity.getSharehelp(), EsShopShareMap.class);
                     entity.setSharemapList2(list4);
@@ -64,7 +64,7 @@ public class ShareController {
                     return new CommonResult().failed("助力者获赠奖品不能为空");
                 }
             }
-            if (service.saveShare(entity)>0) {
+            if (service.saveShare(entity) > 0) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -79,13 +79,13 @@ public class ShareController {
     @PostMapping(value = "/update")
     public Object update(EsShopShare entity) {
         try {
-            if(!entity.getShareMapinitiate().equals("")){
+            if (!entity.getShareMapinitiate().equals("")) {
                 List<EsShopShareMap> list3 = JSONObject.parseArray(entity.getShareMapinitiate(), EsShopShareMap.class);
                 entity.setSharemapList(list3);
-            }else{
+            } else {
                 return new CommonResult().failed("发起者获赠奖品不能为空");
             }
-            if(entity.getActivityType()==1) {
+            if (entity.getActivityType() == 1) {
                 if (!entity.getSharehelp().equals("")) {
                     List<EsShopShareMap> list4 = JSONObject.parseArray(entity.getSharehelp(), EsShopShareMap.class);
                     entity.setSharemapList2(list4);
@@ -93,7 +93,7 @@ public class ShareController {
                     return new CommonResult().failed("助力者获赠奖品不能为空");
                 }
             }
-            if (service.update(entity)>0) {
+            if (service.update(entity) > 0) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -109,7 +109,7 @@ public class ShareController {
     @PostMapping(value = "/updatestatus")
     public Object updatestatus(@RequestParam long id, @RequestParam Integer status) {
         try {
-            if (service.updatestatus(id,status)>0) {
+            if (service.updatestatus(id, status) > 0) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class ShareController {
     @PostMapping(value = "/delete")
     public Object delete(@RequestParam long id) {
         try {
-            if (service.delete(id)>0) {
+            if (service.delete(id) > 0) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -139,7 +139,7 @@ public class ShareController {
     @PostMapping(value = "/detail")
     public Object detail(@RequestParam long id) {
         try {
-                return new CommonResult().success(service.sharedetail(id));
+            return new CommonResult().success(service.sharedetail(id));
         } catch (Exception e) {
             log.error("分享助力明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -151,9 +151,9 @@ public class ShareController {
     @PostMapping(value = "/selectStatus")
     public Object deselectStatustail(@RequestParam Integer status) {
         try {
-            if (status==1) {
+            if (status == 1) {
                 int man = service.status(status);
-                System.out.println(man+"数量");
+                System.out.println(man + "数量");
                 if (man >= 1) {
                     return new CommonResult().success(3);
                 } else {
@@ -174,10 +174,10 @@ public class ShareController {
     @PostMapping(value = "/shareCode")
     public Object shareCode(@RequestParam long id) {
         try {
-            if(ValidatorUtils.empty(id)){
+            if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定分享助力编号");
             }
-            String img = ImgBase64Util.StringUtil(id,"add/shareHelp/index/index");
+            String img = ImgBase64Util.StringUtil(id, "add/shareHelp/index/index");
             return new CommonResult().success(img);
         } catch (Exception e) {
             log.error("分享助力明细：%s", e.getMessage(), e);

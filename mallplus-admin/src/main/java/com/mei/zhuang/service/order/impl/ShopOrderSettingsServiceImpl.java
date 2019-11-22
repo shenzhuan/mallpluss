@@ -1,9 +1,9 @@
 package com.mei.zhuang.service.order.impl;
 
-import com.mei.zhuang.dao.order.EsShopOrderSettingsMapper;
-import com.mei.zhuang.service.order.ShopOrderSettingsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.dao.order.EsShopOrderSettingsMapper;
 import com.mei.zhuang.entity.order.EsShopOrderSettings;
+import com.mei.zhuang.service.order.ShopOrderSettingsService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,8 +18,6 @@ public class ShopOrderSettingsServiceImpl extends ServiceImpl<EsShopOrderSetting
 
     @Resource
     private EsShopOrderSettingsMapper shopOrderSettingsMapper;
-
-
 
 
 }

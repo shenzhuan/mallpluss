@@ -2,7 +2,6 @@ package com.mei.zhuang.dao.goods;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.goods.EsShopGoods;
 import com.mei.zhuang.entity.goods.EsShopGoodsCategory;
 import com.mei.zhuang.vo.data.goods.GoodsRankTopParam;
@@ -27,6 +26,7 @@ public interface EsShopGoodsMapper extends BaseMapper<EsShopGoods> {
     int decrGoodsStock(@Param("id") long id, @Param("count") int count);
 
     int addGoodsStock(@Param("id") long id, @Param("count") int count);
+
     /**
      * 修改商品状态
      *
@@ -103,7 +103,7 @@ public interface EsShopGoodsMapper extends BaseMapper<EsShopGoods> {
      */
     List<EsShopGoods> selectgiftsgoods(@Param("title") String title);
 
-    List<EsShopGoods> selGoodsPageList( GoodsQuery esShopGoods);
+    List<EsShopGoods> selGoodsPageList(GoodsQuery esShopGoods);
 
     List<EsShopGoods> selGoodsPageLists(GoodsQuery esShopGoods);
 
@@ -122,20 +122,22 @@ public interface EsShopGoodsMapper extends BaseMapper<EsShopGoods> {
     List<EsShopGoods> selectgoodsListByCateIds(@Param("ids") List<String> ids);
 
     List<EsShopGoods> selGoodsPutAwayTime();
+
     @ApiOperation("修改商品上架时间")
     Integer updPutawayTime(@Param("id") Long id, @Param("putawayTime") Long putawayTime);
 
-    List<EsShopGoods> selGoodsPutaway( GoodsQuery entity);
+    List<EsShopGoods> selGoodsPutaway(GoodsQuery entity);
 
     Integer selGoodsPutawayCount(GoodsQuery entity);
 
     List<EsShopGoods> selectSaleByDate(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    List<EsShopGoods> lists( GoodsQuery esShopGoods);
+    List<EsShopGoods> lists(GoodsQuery esShopGoods);
+
     int counts(GoodsQuery esShopGoods);
 
     List<EsShopGoods> selRankTopList(GoodsRankTopParam param);
 
 
-    List<Map<String,Object>> searchGoods(String keywords);
+    List<Map<String, Object>> searchGoods(String keywords);
 }

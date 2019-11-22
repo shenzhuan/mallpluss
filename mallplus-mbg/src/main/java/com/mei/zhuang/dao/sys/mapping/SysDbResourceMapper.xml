@@ -4,12 +4,12 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.arvato.common.orm.model.SysDbResource">
-        <id column="id" property="id" />
-        <result column="source_name" property="sourceName" />
-        <result column="url" property="url" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="db_name" property="dbName" />
+        <id column="id" property="id"/>
+        <result column="source_name" property="sourceName"/>
+        <result column="url" property="url"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="db_name" property="dbName"/>
     </resultMap>
 
     <select id="getDictList" resultType="com.arvato.common.msg.DictData">

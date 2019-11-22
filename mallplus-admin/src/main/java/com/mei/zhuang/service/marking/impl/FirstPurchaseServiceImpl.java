@@ -1,20 +1,20 @@
 package com.mei.zhuang.service.marking.impl;
 
-import com.mei.zhuang.utils.Weekutils;
-import com.mei.zhuang.vo.marking.GoodsSepcVo;
-import com.mei.zhuang.vo.order.CartMarkingVo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.dao.marking.EsShopFirstPurchaseGoodsMapMapper;
 import com.mei.zhuang.dao.marking.EsShopFirstPurchaseMapper;
 import com.mei.zhuang.dao.marking.EsShopFirstPurchaseRuleMapper;
-import com.mei.zhuang.service.marking.FirstPurchaseService;
-import com.mei.zhuang.utils.DateUtil;
-import com.mei.zhuang.utils.ValidatorUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchase;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopFirstPurchaseRule;
 import com.mei.zhuang.entity.order.EsShopCart;
+import com.mei.zhuang.service.marking.FirstPurchaseService;
+import com.mei.zhuang.utils.DateUtil;
+import com.mei.zhuang.utils.ValidatorUtils;
+import com.mei.zhuang.utils.Weekutils;
+import com.mei.zhuang.vo.marking.GoodsSepcVo;
+import com.mei.zhuang.vo.order.CartMarkingVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,18 +116,18 @@ public class FirstPurchaseServiceImpl extends ServiceImpl<EsShopFirstPurchaseMap
                     } else {
                         List<EsShopFirstPurchaseGoodsMap> manjianGoodsMaps = firstPurchaseGoodsMapMapper.selectList(new QueryWrapper<EsShopFirstPurchaseGoodsMap>().
                                 eq("first_purchase_id", manjian.getId()));
-                        boolean falg =false;
+                        boolean falg = false;
                         if (manjianGoodsMaps != null && manjianGoodsMaps.size() > 0) {
                             for (EsShopFirstPurchaseGoodsMap manjianGoodsMap : manjianGoodsMaps) {
                                 for (EsShopCart cart : cartList) {
                                     if (manjianGoodsMap.getGoodsId().equals(cart.getGoodsId()) && (ValidatorUtils.empty(manjianGoodsMap.getSpecIds())
                                             || manjianGoodsMap.getSpecIds().contains(cart.getOptionId() + ""))) {
                                         relManjianList.add(manjian);
-                                        falg=true;
+                                        falg = true;
                                         break;
                                     }
                                 }
-                                if (falg){
+                                if (falg) {
                                     break;
                                 }
                             }
@@ -136,22 +136,22 @@ public class FirstPurchaseServiceImpl extends ServiceImpl<EsShopFirstPurchaseMap
                 }
             }
             if (relManjianList != null && relManjianList.size() > 0) {
-                    for (EsShopFirstPurchase purchase : relManjianList) {
-                        if (purchase.getType() == 1) {
-                            onejianList.add(purchase.getId());
-                        } else {
-                            alljianList.add(purchase.getId());
-                        }
-                    }
-                    if (onejianList != null && onejianList.size() > 0 && vo.getType() == 1) {
-                        list = firstPurchaseRuleMapper.selectList(
-                                new QueryWrapper<EsShopFirstPurchaseRule>().in("first_purchase_id", onejianList).eq("activity_type", 1));
-                    } else  if (alljianList != null && alljianList.size() > 0 && vo.getType() == 2) {
-                        list = firstPurchaseRuleMapper.selectList(
-                                new QueryWrapper<EsShopFirstPurchaseRule>().in("first_purchase_id", alljianList).eq("activity_type", 2));
+                for (EsShopFirstPurchase purchase : relManjianList) {
+                    if (purchase.getType() == 1) {
+                        onejianList.add(purchase.getId());
+                    } else {
+                        alljianList.add(purchase.getId());
                     }
                 }
+                if (onejianList != null && onejianList.size() > 0 && vo.getType() == 1) {
+                    list = firstPurchaseRuleMapper.selectList(
+                            new QueryWrapper<EsShopFirstPurchaseRule>().in("first_purchase_id", onejianList).eq("activity_type", 1));
+                } else if (alljianList != null && alljianList.size() > 0 && vo.getType() == 2) {
+                    list = firstPurchaseRuleMapper.selectList(
+                            new QueryWrapper<EsShopFirstPurchaseRule>().in("first_purchase_id", alljianList).eq("activity_type", 2));
+                }
             }
+        }
 
         return list;
     }
@@ -242,7 +242,7 @@ public class FirstPurchaseServiceImpl extends ServiceImpl<EsShopFirstPurchaseMap
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopFirstPurchase entity)  {
+    public boolean save(EsShopFirstPurchase entity) {
         entity.setSource(1);
         entity.setStatus(1);
         entity.setShopId((long) 1);

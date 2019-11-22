@@ -2,27 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mei.zhuang.dao.sys.CrmSysMenuMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysMenu">
-		<id column="id" property="id" />
-		<result column="code" property="code" />
-		<result column="name" property="name" />
-		<result column="type" property="type" />
-		<result column="p_id" property="pId" />
-		<result column="href" property="href" />
-		<result column="icon" property="icon" />
-		<result column="order_num" property="orderNum" />
-		<result column="description" property="description" />
-		<result column="create_user_id" property="createUserId" />
-		<result column="create_date" property="createDate" />
-		<result column="create_time" property="createTime" />
-		<result column="update_user_id" property="updateUserId" />
-		<result column="update_date" property="updateDate" />
-		<result column="update_time" property="updateTime" />
-		<result column="version" property="version" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysMenu">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="p_id" property="pId"/>
+        <result column="href" property="href"/>
+        <result column="icon" property="icon"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="description" property="description"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+    </resultMap>
 
-	<select id="getMenuIdsByRoleId" resultType="int">
+    <select id="getMenuIdsByRoleId" resultType="int">
         SELECT
             menu_id
         FROM
@@ -52,41 +52,41 @@
 
     <select id="menuTreeListByMenuIds" resultType="com.arvato.admin.vo.ZTreeNode">
         SELECT
-		    m1.id,
-		    (
-		        CASE
-		        WHEN (m2.id = 0 OR m2.id IS NULL) THEN
-		            0
-		        ELSE
-		            m2.id
-		        END
-		    ) pId,
-		    m1.name "NAME",
-		    (
-		        CASE
-		        WHEN (m3.ID = 0 OR m3.ID IS NULL) THEN
-		            'false'
-		        ELSE
-		            'true'
-		        END
-		    ) "checked"
-		FROM
-		    CRM_SYS_MENU m1
-		LEFT JOIN CRM_SYS_MENU m2 ON m1.p_id = m2.id
-		LEFT JOIN (
-		    SELECT
-		        ID
-		    FROM
-		        crm_sys_menu
-		    WHERE
-		        ID IN
-		        <foreach collection="list" index="index" item="i" open="("
-		            separator="," close=")">
-		            #{i}
-		        </foreach>
-		) m3 ON m1.id = m3.id
-		ORDER BY
-		    m1.order_num,id
+        m1.id,
+        (
+        CASE
+        WHEN (m2.id = 0 OR m2.id IS NULL) THEN
+        0
+        ELSE
+        m2.id
+        END
+        ) pId,
+        m1.name "NAME",
+        (
+        CASE
+        WHEN (m3.ID = 0 OR m3.ID IS NULL) THEN
+        'false'
+        ELSE
+        'true'
+        END
+        ) "checked"
+        FROM
+        CRM_SYS_MENU m1
+        LEFT JOIN CRM_SYS_MENU m2 ON m1.p_id = m2.id
+        LEFT JOIN (
+        SELECT
+        ID
+        FROM
+        crm_sys_menu
+        WHERE
+        ID IN
+        <foreach collection="list" index="index" item="i" open="("
+                 separator="," close=")">
+            #{i}
+        </foreach>
+        ) m3 ON m1.id = m3.id
+        ORDER BY
+        m1.order_num,id
     </select>
 
     <select id="menuTreeListByMenuId" resultType="com.arvato.admin.vo.ZTreeNode">
@@ -123,120 +123,120 @@
     <!-- 获取左侧菜单 -->
     <select id="leftMenu" resultMap="BaseResultMap">
         SELECT
-            id,
-			code,
-            name,
-            p_id,
-            href,
-            icon,
-            order_num,
-            type
+        id,
+        code,
+        name,
+        p_id,
+        href,
+        icon,
+        order_num,
+        type
         FROM
-            CRM_SYS_MENU t1
+        CRM_SYS_MENU t1
         INNER JOIN (
-			SELECT menu_id from CRM_SYS_ROLE_MENU WHERE role_id in
-			<foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
-                #{i}
-            </foreach>
-            group by menu_id
-		) t2 on t1.id = t2.menu_id
-	    AND t1.type != 3
-		ORDER BY order_num
+        SELECT menu_id from CRM_SYS_ROLE_MENU WHERE role_id in
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        group by menu_id
+        ) t2 on t1.id = t2.menu_id
+        AND t1.type != 3
+        ORDER BY order_num
     </select>
 
     <select id="getPermissionButtons" resultMap="BaseResultMap">
         SELECT
-		    t.id,
-            t.code,
-            t.icon,
-            t.name,
-            t.p_id,
-            t.type
-		FROM
-		    crm_sys_menu t
-		INNER JOIN (
-		    SELECT
-		        menu_id
-		    FROM
-		        crm_sys_role_menu t1
-		    WHERE
-		        t1.role_id IN
-		        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
-	                #{i}
-	            </foreach>
-	            group by menu_id
-		) t1 ON t.id = t1.menu_id
-		WHERE
-		    t.TYPE = 3
-		AND t.p_id = #{menuId}
-		order by t.order_num
+        t.id,
+        t.code,
+        t.icon,
+        t.name,
+        t.p_id,
+        t.type
+        FROM
+        crm_sys_menu t
+        INNER JOIN (
+        SELECT
+        menu_id
+        FROM
+        crm_sys_role_menu t1
+        WHERE
+        t1.role_id IN
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        group by menu_id
+        ) t1 ON t.id = t1.menu_id
+        WHERE
+        t.TYPE = 3
+        AND t.p_id = #{menuId}
+        order by t.order_num
     </select>
 
-	<select id="getAllPermission" resultMap="BaseResultMap">
-		SELECT
-		t.id,
-		t.code,
-		t.icon,
-		t.name,
-		t.p_id,
-		t.type
-		FROM
-		crm_sys_menu t
-		INNER JOIN (
-		SELECT
-		menu_id
-		FROM
-		crm_sys_role_menu t1
-		WHERE
-		t1.role_id IN
-		<foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
-			#{i}
-		</foreach>
-		group by menu_id
-		) t1 ON t.id = t1.menu_id
+    <select id="getAllPermission" resultMap="BaseResultMap">
+        SELECT
+        t.id,
+        t.code,
+        t.icon,
+        t.name,
+        t.p_id,
+        t.type
+        FROM
+        crm_sys_menu t
+        INNER JOIN (
+        SELECT
+        menu_id
+        FROM
+        crm_sys_role_menu t1
+        WHERE
+        t1.role_id IN
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        group by menu_id
+        ) t1 ON t.id = t1.menu_id
 
-		order by t.order_num
-	</select>
-	<select id="hasAuthByRoleIds" resultType="java.lang.Integer">
-		SELECT
-		count(1)
-		FROM
-		crm_sys_menu t
-		INNER JOIN (
-		SELECT
-		menu_id,count(menu_id)
-		FROM
-		crm_sys_role_menu t1
-		WHERE
-		t1.role_id IN
-		<foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
-			#{i}
-		</foreach>
-		group by menu_id
-		) t1 ON t.id = t1.menu_id where 	t.href = #{name}
+        order by t.order_num
+    </select>
+    <select id="hasAuthByRoleIds" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        crm_sys_menu t
+        INNER JOIN (
+        SELECT
+        menu_id,count(menu_id)
+        FROM
+        crm_sys_role_menu t1
+        WHERE
+        t1.role_id IN
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        group by menu_id
+        ) t1 ON t.id = t1.menu_id where t.href = #{name}
 
-	</select>
+    </select>
 
-	<select id="hasAuthByRoleIds2" resultType="java.lang.Integer">
-		SELECT
-		count(1)
-		FROM
-		crm_sys_menu_interface t
-		INNER JOIN (
-		SELECT
-		menu_id
-		FROM
-		crm_sys_role_menu t1
-		WHERE
-		t1.role_id IN
-		<foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
-			#{i}
-		</foreach>
-		group by menu_id
-		) t1 ON t.menu_id = t1.menu_id where 	t.menu_interface =#{name}
+    <select id="hasAuthByRoleIds2" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        crm_sys_menu_interface t
+        INNER JOIN (
+        SELECT
+        menu_id
+        FROM
+        crm_sys_role_menu t1
+        WHERE
+        t1.role_id IN
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+        group by menu_id
+        ) t1 ON t.menu_id = t1.menu_id where t.menu_interface =#{name}
 
 
-	</select>
+    </select>
 
 
     <resultMap type="com.arvato.admin.vo.AuthMenuNode" id="AuthMenuMap">
@@ -251,7 +251,7 @@
         <collection property="dataAuthList" column="{menuId = menu_id,roleId = role_id}" select="getAllDataAuth"/>
     </resultMap>
 
-	<select id="getMenuInfo" resultType="com.arvato.admin.vo.AuthMenuVo">
+    <select id="getMenuInfo" resultType="com.arvato.admin.vo.AuthMenuVo">
 		 select DISTINCT t.* from ( SELECT
 			t1.id menuId,
 			t1."name" menuName,
@@ -351,18 +351,18 @@
 		and field = 'data_auth_level'
     </select>
 
-	<select id="getCountByOrderNumAndPid" resultType="int">
-		select count(0) from crm_sys_menu where order_num = #{orderNum} and p_id = #{pid}
-		<if test="id != null">
-			and id != #{id}
-		</if>
-	</select>
+    <select id="getCountByOrderNumAndPid" resultType="int">
+        select count(0) from crm_sys_menu where order_num = #{orderNum} and p_id = #{pid}
+        <if test="id != null">
+            and id != #{id}
+        </if>
+    </select>
 
-	<select id="getMaxOrderNumByPid" resultType="int">
+    <select id="getMaxOrderNumByPid" resultType="int">
 		select COALESCE(max(order_num), 0) from crm_sys_menu where p_id = #{pid}
 	</select>
 
-	<select id="getLevelByPid" resultType="int">
+    <select id="getLevelByPid" resultType="int">
 		select level from crm_sys_menu where id = #{pid}
 	</select>
 

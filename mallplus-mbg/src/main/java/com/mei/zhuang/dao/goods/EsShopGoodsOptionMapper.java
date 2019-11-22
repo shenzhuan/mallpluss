@@ -2,7 +2,6 @@ package com.mei.zhuang.dao.goods;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.mei.zhuang.entity.goods.EsShopGoodsOption;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,7 +23,7 @@ public interface EsShopGoodsOptionMapper extends BaseMapper<EsShopGoodsOption> {
 
     List<EsShopGoodsOption> selectOption(@Param("goodsId") Long goodsId);
 
-  //  List<EsShopGoodsOption> selPageList(Pagination page, EsShopGoodsOption entity);
+    //  List<EsShopGoodsOption> selPageList(Pagination page, EsShopGoodsOption entity);
 
     EsShopGoodsOption selOption(EsShopGoodsOption option);
 

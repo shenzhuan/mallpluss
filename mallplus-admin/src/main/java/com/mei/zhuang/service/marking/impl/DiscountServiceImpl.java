@@ -252,7 +252,7 @@ public class DiscountServiceImpl extends ServiceImpl<EsShopDiscountMapper, EsSho
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean save(EsShopDiscount entity)  {
+    public boolean save(EsShopDiscount entity) {
         entity.setSource(1);
         // 1：未启用 0：启用
         entity.setStatus(1);

@@ -52,7 +52,7 @@ public class CouponShoppingController {
     @SysLog(MODULE = "购物发券管理", REMARK = "修改购物发券")
     @ApiOperation("修改购物发券")
     @PostMapping(value = "/update")
-    public Object CouponTopup( EsShopCouponShopping entity) {
+    public Object CouponTopup(EsShopCouponShopping entity) {
         try {
             List<EsShopCouponsTopupGoods> list = JSONObject.parseArray(entity.getCouponsGoodsList(), EsShopCouponsTopupGoods.class);
             entity.setShopGoodsList(list);

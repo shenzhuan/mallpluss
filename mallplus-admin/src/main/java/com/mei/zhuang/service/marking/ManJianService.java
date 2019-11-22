@@ -18,13 +18,16 @@ import java.util.List;
 public interface ManJianService extends IService<EsShopManjian> {
 
     MjDcVo matchManjian(List<EsShopCart> cartList) throws Exception;
-    boolean save(EsShopManjian entity) ;
+
+    boolean save(EsShopManjian entity);
 
     int updateShowStatus(Long ids, Integer status);
 
     Integer update(EsShopManjian entity) throws Exception;
+
     //商品明细查询
     List<EsShopManjianGoodsMap> selectgoodsid(Long manjianId);
+
     //优惠设置明细
     List<EsShopManjianRule> selectcouponid(Long couponid);
 

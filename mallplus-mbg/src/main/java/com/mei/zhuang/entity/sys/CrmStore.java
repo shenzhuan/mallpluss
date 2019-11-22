@@ -25,95 +25,95 @@ public class CrmStore extends Model<CrmStore> {
     private static final long serialVersionUID = 1L;
 
     @TableId(type = IdType.INPUT)
-	private Integer id;
-	private String name;
-	@TableField("dept_id")
-	private Integer deptId;
-	@TableField("channel_id")
-	private Integer channelId;
+    private Integer id;
+    private String name;
+    @TableField("dept_id")
+    private Integer deptId;
+    @TableField("channel_id")
+    private Integer channelId;
     /**
      * 门店图片
      */
-	@TableField("store_img")
-	private String storeImg;
+    @TableField("store_img")
+    private String storeImg;
     /**
      * 门店编号
      */
-	@TableField("store_no")
-	private String storeNo;
+    @TableField("store_no")
+    private String storeNo;
     /**
      * 省份
      */
-	private String province;
+    private String province;
     /**
      * 城市
      */
-	private String city;
+    private String city;
     /**
      * 区县
      */
-	private String region;
+    private String region;
     /**
      * 地址
      */
-	private String address;
+    private String address;
     /**
      * 经度
      */
-	private Double longitude;
+    private Double longitude;
     /**
      * 纬度
      */
-	private Double latitude;
+    private Double latitude;
     /**
      * 0 开店 1 闭店
      */
-	private String status;
+    private String status;
     /**
      * 创建人
      */
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	private Integer createUserId;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    private Integer createUserId;
     /**
      * 创建日期
      */
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
     /**
      * 创建时间
      */
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
     /**
      * 更新人
      */
-	@TableField(value = "update_user_id", fill = FieldFill.UPDATE)
-	private Integer updateUserId;
+    @TableField(value = "update_user_id", fill = FieldFill.UPDATE)
+    private Integer updateUserId;
     /**
      * 更新日期
      */
-	@TableField(value = "update_date", fill = FieldFill.UPDATE)
-	private String updateDate;
+    @TableField(value = "update_date", fill = FieldFill.UPDATE)
+    private String updateDate;
     /**
      * 更新时间
      */
-	@TableField(value = "update_time", fill = FieldFill.UPDATE)
-	private String updateTime;
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    private String updateTime;
     /**
      * 乐观锁用
      */
-	@Version
-	private Integer version;
+    @Version
+    private Integer version;
 
-	/**
-	 * 门店联系方式
-	 */
-	private String telphone;
+    /**
+     * 门店联系方式
+     */
+    private String telphone;
 
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

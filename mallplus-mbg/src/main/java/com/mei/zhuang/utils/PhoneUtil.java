@@ -10,21 +10,21 @@ import java.util.regex.Pattern;
  */
 public class PhoneUtil {
 
-	private static String REGEX = "^((13[0-9])|(14[0-9])|(15([0-9]))|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\\d{8}$";
-	private static Pattern P = Pattern.compile(REGEX);
+    private static String REGEX = "^((13[0-9])|(14[0-9])|(15([0-9]))|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\\d{8}$";
+    private static Pattern P = Pattern.compile(REGEX);
 
-	/**
-	 * 校验手机号
-	 *
-	 * @param phone
-	 * @return
-	 */
-	public static boolean checkPhone(String phone) {
-		if (phone == null || phone.length() != 11) {
-			return Boolean.FALSE;
-		}
+    /**
+     * 校验手机号
+     *
+     * @param phone
+     * @return
+     */
+    public static boolean checkPhone(String phone) {
+        if (phone == null || phone.length() != 11) {
+            return Boolean.FALSE;
+        }
 
-		Matcher m = P.matcher(phone);
-		return m.matches();
-	}
+        Matcher m = P.matcher(phone);
+        return m.matches();
+    }
 }

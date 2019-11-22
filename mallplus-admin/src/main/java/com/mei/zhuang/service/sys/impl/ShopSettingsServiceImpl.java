@@ -33,11 +33,11 @@ public class ShopSettingsServiceImpl extends ServiceImpl<EsShopNewMapper, EsShop
     public Page<EsShopNew> selectPageExt(ShopParam entity) {
         Page<EsShopNew> page = new Page<>(entity.getCurrent(), entity.getSize());
         List<EsShopNew> list = shopMapper.selectShopListByParam(entity);
-        for(EsShopNew item : list){
+        for (EsShopNew item : list) {
             item.setTypeEn(ShopTypeCharacterUtils.getChByShopType(item.getTypeId()));
         }
 
-       // page.setAsc(entity.getIsAsc() == 0 ? false : true);
+        // page.setAsc(entity.getIsAsc() == 0 ? false : true);
         page.setRecords(list);
         page.setTotal(shopMapper.selectShopCountByParam(entity));
         return page;

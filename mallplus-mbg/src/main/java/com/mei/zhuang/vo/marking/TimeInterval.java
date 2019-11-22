@@ -6,6 +6,6 @@ package com.mei.zhuang.vo.marking;
  * @Description:
  */
 public class TimeInterval {
-    String startHour ;
+    String startHour;
     String endHour;
 }

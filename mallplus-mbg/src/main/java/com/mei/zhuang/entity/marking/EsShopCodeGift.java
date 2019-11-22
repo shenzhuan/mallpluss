@@ -1,7 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -145,12 +144,13 @@ public class EsShopCodeGift extends Model<EsShopCodeGift> {
     private String time;
 
     @TableField(exist = false)
-    private Integer size=10;
+    private Integer size = 10;
     @TableField(exist = false)
-    private Integer current=1;
-  /* //接受上传验证码
-    @TableField(exist = false)
-    private String code;*/
+    private Integer current = 1;
+
+    /* //接受上传验证码
+      @TableField(exist = false)
+      private String code;*/
     @Override
     protected Serializable pkVal() {
         return this.id;

@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -16,10 +16,10 @@ import java.util.List;
 public interface EsShopCouponNewRuleMapper extends BaseMapper<EsShopCouponNewRule> {
 
     //根据发券的类型id删除对应的优惠券id
-   Integer deletetypeid(Long arg0, String arg1);
+    Integer deletetypeid(Long arg0, String arg1);
 
-   //首次下单
-   List<EsShopCouponNewRule> listrule(Integer vouchers);
+    //首次下单
+    List<EsShopCouponNewRule> listrule(Integer vouchers);
 
 
 }

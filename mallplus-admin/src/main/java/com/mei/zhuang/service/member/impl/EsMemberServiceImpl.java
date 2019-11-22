@@ -44,7 +44,8 @@ import java.util.concurrent.CompletableFuture;
 public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> implements EsMemberService {
 
     String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-
+    @Resource
+    EsCoreSmsMapper smsMapper;
     @Resource
     private EsMemberMapper memberMapper;
     @Resource
@@ -53,11 +54,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     private RedisRepository redisRepository;
     @Resource
     private ShopOrderService orderService;
-    @Resource
-    EsCoreSmsMapper smsMapper;
-
     private String REDIS_KEY_PREFIX_AUTH_CODE = "bindPhone:authCode:";
-
 
 
     @Override
@@ -73,7 +70,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
             String signature = entity.getSignature();
 
             Map<String, Object> me = JsonUtil.readJsonToMap(userInfos);
-            System.out.println(me+"登入数据");
+            System.out.println(me + "登入数据");
             if (null == me) {
                 return new CommonResult().failed("登录失败");
             }
@@ -116,11 +113,11 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
             umsMember.setNickname(me.get("nickName").toString());
             umsMember.setRealname(me.get("nickName").toString());
             //算法加密
-            String wxDecrypt = MiniAESUtil.wxDecrypt(entity.getEncryptedData(),sessionData.getString("session_key"),entity.getIv());
+            String wxDecrypt = MiniAESUtil.wxDecrypt(entity.getEncryptedData(), sessionData.getString("session_key"), entity.getIv());
             log.info(wxDecrypt);
-            Map<String, Object> uInfo =  JsonUtil.readJsonToMap(wxDecrypt);
+            Map<String, Object> uInfo = JsonUtil.readJsonToMap(wxDecrypt);
             log.info(uInfo.toString());
-            if (ValidatorUtils.notEmpty(uInfo) && ValidatorUtils.notEmpty(uInfo.get("unionId"))){
+            if (ValidatorUtils.notEmpty(uInfo) && ValidatorUtils.notEmpty(uInfo.get("unionId"))) {
                 umsMember.setUnionid(uInfo.get("unionId").toString());
             }
             if (null == userVo) {
@@ -140,7 +137,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
                 resultObj.put("userId", umsMember.getId());
                 redisRepository.del(String.format(RedisConstant.MEMBER, umsMember.getId() + ""));
             } else {
-                if (ValidatorUtils.notEmpty(uInfo) && ValidatorUtils.notEmpty(uInfo.get("unionId"))){
+                if (ValidatorUtils.notEmpty(uInfo) && ValidatorUtils.notEmpty(uInfo.get("unionId"))) {
                     userVo.setUnionid(uInfo.get("unionId").toString());
                 }
                 userVo.setProvince(me.get("province").toString());
@@ -166,7 +163,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
 
             CompletableFuture.runAsync(() -> {
                 try {
-                   // markingFegin.sendNewCoupon(umsMember.getId(), 1);
+                    // markingFegin.sendNewCoupon(umsMember.getId(), 1);
                 } catch (Exception e) {
                     log.error("發送新人券失败：{}", e.getMessage());
                 }
@@ -207,7 +204,6 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     }
 
 
-
     @Override
     public Object generateCode(String phone) {
         //   checkTodaySendCount(phone);
@@ -222,7 +218,7 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
         redisRepository.willExpire(REDIS_KEY_PREFIX_AUTH_CODE + phone, 60);
         EsCoreSms querySms = new EsCoreSms();
         querySms.setStatus(1);
-        EsCoreSms coreSms  = smsMapper.selectOne(new QueryWrapper<>(querySms));
+        EsCoreSms coreSms = smsMapper.selectOne(new QueryWrapper<>(querySms));
         //异步调用阿里短信接口发送短信
         CompletableFuture.runAsync(() -> {
             try {
@@ -277,9 +273,8 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
 
     @Override
     public List<EsMember> memberselect(Integer param1, Integer param2) {
-        return memberMapper.memberselect(param1,param2);
+        return memberMapper.memberselect(param1, param2);
     }
-
 
 
     private String countKey(String phone) {

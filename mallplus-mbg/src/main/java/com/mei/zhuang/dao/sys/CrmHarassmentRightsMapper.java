@@ -16,6 +16,6 @@ import java.util.Map;
  */
 public interface CrmHarassmentRightsMapper extends BaseMapper<CrmHarassmentRights> {
 
-	List<Map<String, Object>> getallstore();
+    List<Map<String, Object>> getallstore();
 
 }

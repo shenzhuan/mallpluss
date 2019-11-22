@@ -9,7 +9,7 @@ import java.util.Map;
 public interface EsActivatySmallBeautyBoxService extends IService<EsActivatySmallBeautyBox> {
 
     //查询小美盒活动列表
-    Map<String,Object> selPageList(EsActivatySmallBeautyBox entity);
+    Map<String, Object> selPageList(EsActivatySmallBeautyBox entity);
 
     //删除小美盒活动列表
     boolean deleteById(Long id);

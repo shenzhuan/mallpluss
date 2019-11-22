@@ -55,7 +55,7 @@ public class EsShopGoodsController {
     @PostMapping(value = "/list")
     public Object getGoodsByPages(GoodsQuery entity) {
         try {
-            if(entity.getPutawayType() != null && entity.getPutawayType().equals("-1")){
+            if (entity.getPutawayType() != null && entity.getPutawayType().equals("-1")) {
                 entity.setPutawayType("");
             }
             return new CommonResult().success(shopGoodsService.selGoodsPageList(entity));
@@ -121,49 +121,49 @@ public class EsShopGoodsController {
                 }
             }
             //判断价格是否为负数
-            if(entity.getPrice() != null ){
-                if(entity.getPrice().signum() == -1){
+            if (entity.getPrice() != null) {
+                if (entity.getPrice().signum() == -1) {
                     return new CommonResult().failed("价格不得为负数");
                 }
             }
-            if(entity.getVituralStock() != null ){
-                if(entity.getVituralStock() < 0){
+            if (entity.getVituralStock() != null) {
+                if (entity.getVituralStock() < 0) {
                     return new CommonResult().failed("库存不得为负数");
                 }
             }
-            if(entity.getSalesCount() != null){
-                if(entity.getSalesCount() <= 0){
+            if (entity.getSalesCount() != null) {
+                if (entity.getSalesCount() <= 0) {
                     return new CommonResult().failed("已出售数量不得为负数");
                 }
             }
 
-            if(entity.getDispatchPrice() != null ){
-                if(entity.getDispatchPrice().signum() == -1){
+            if (entity.getDispatchPrice() != null) {
+                if (entity.getDispatchPrice().signum() == -1) {
                     return new CommonResult().failed("运费模版价格不得为负数");
                 }
             }
-            if(entity.getEdmoney() != null){
-                if(entity.getEdmoney().signum() == -1){
+            if (entity.getEdmoney() != null) {
+                if (entity.getEdmoney().signum() == -1) {
                     return new CommonResult().failed("单品满额包邮价格不得为负数");
                 }
             }
-            if(entity.getOriginalCost() != null){
-                if(entity.getOriginalCost().signum() == -1){
+            if (entity.getOriginalCost() != null) {
+                if (entity.getOriginalCost().signum() == -1) {
                     return new CommonResult().failed("商品原价不得为负数");
                 }
             }
-            if(entity.getCostPrice() != null ){
-                if(entity.getCostPrice().signum() == -1){
+            if (entity.getCostPrice() != null) {
+                if (entity.getCostPrice().signum() == -1) {
                     return new CommonResult().failed("商品成本价不得为负数");
                 }
             }
-            if(entity.getPromotionMoney() != null){
-                    if(entity.getPromotionMoney().signum() == -1){
-                        return new CommonResult().failed("会员促销价格不得为负数");
-                    }
+            if (entity.getPromotionMoney() != null) {
+                if (entity.getPromotionMoney().signum() == -1) {
+                    return new CommonResult().failed("会员促销价格不得为负数");
+                }
             }
-            if(entity.getUniformPostagePrice() != null){
-                if(entity.getUniformPostagePrice().signum() == -1){
+            if (entity.getUniformPostagePrice() != null) {
+                if (entity.getUniformPostagePrice().signum() == -1) {
                     return new CommonResult().failed("统一邮费价格不得为负数");
                 }
             }
@@ -177,8 +177,8 @@ public class EsShopGoodsController {
             if (entity.getSpecItem() != null && !entity.getSpecItem().equals("")) {
                 List<EsShopGoodsSpecItem> list = JSONObject.parseArray(entity.getSpecItem(), EsShopGoodsSpecItem.class);
                 if (list != null) {
-                    for (EsShopGoodsSpecItem item:list) {
-                        if(item.getMoney().signum() == -1){
+                    for (EsShopGoodsSpecItem item : list) {
+                        if (item.getMoney().signum() == -1) {
                             return new CommonResult().failed("多规格价格不得为负数");
                         }
                     }
@@ -207,49 +207,49 @@ public class EsShopGoodsController {
         try {
 
             //判断价格是否为负数
-            if(entity.getPrice() != null ){
-                if(entity.getPrice().signum() == -1){
+            if (entity.getPrice() != null) {
+                if (entity.getPrice().signum() == -1) {
                     return new CommonResult().failed("价格不得为负数");
                 }
             }
-            if(entity.getVituralStock() != null ){
-                if(entity.getVituralStock() < 0){
+            if (entity.getVituralStock() != null) {
+                if (entity.getVituralStock() < 0) {
                     return new CommonResult().failed("库存不得为负数");
                 }
             }
-            if(entity.getSalesCount() != null){
-                if(entity.getSalesCount() <= 0){
+            if (entity.getSalesCount() != null) {
+                if (entity.getSalesCount() <= 0) {
                     return new CommonResult().failed("已出售数量不得为负数");
                 }
             }
 
-            if(entity.getDispatchPrice() != null ){
-                if(entity.getDispatchPrice().signum() == -1){
+            if (entity.getDispatchPrice() != null) {
+                if (entity.getDispatchPrice().signum() == -1) {
                     return new CommonResult().failed("运费模版价格不得为负数");
                 }
             }
-            if(entity.getEdmoney() != null){
-                if(entity.getEdmoney().signum() == -1){
+            if (entity.getEdmoney() != null) {
+                if (entity.getEdmoney().signum() == -1) {
                     return new CommonResult().failed("单品满额包邮价格不得为负数");
                 }
             }
-            if(entity.getOriginalCost() != null){
-                if(entity.getOriginalCost().signum() == -1){
+            if (entity.getOriginalCost() != null) {
+                if (entity.getOriginalCost().signum() == -1) {
                     return new CommonResult().failed("商品原价不得为负数");
                 }
             }
-            if(entity.getCostPrice() != null ){
-                if(entity.getCostPrice().signum() == -1){
+            if (entity.getCostPrice() != null) {
+                if (entity.getCostPrice().signum() == -1) {
                     return new CommonResult().failed("商品成本价不得为负数");
                 }
             }
-            if(entity.getPromotionMoney() != null){
-                if(entity.getPromotionMoney().signum() == -1){
+            if (entity.getPromotionMoney() != null) {
+                if (entity.getPromotionMoney().signum() == -1) {
                     return new CommonResult().failed("会员促销价格不得为负数");
                 }
             }
-            if(entity.getUniformPostagePrice() != null){
-                if(entity.getUniformPostagePrice().signum() == -1){
+            if (entity.getUniformPostagePrice() != null) {
+                if (entity.getUniformPostagePrice().signum() == -1) {
                     return new CommonResult().failed("统一邮费价格不得为负数");
                 }
             }
@@ -266,15 +266,14 @@ public class EsShopGoodsController {
             if (entity.getSpecItem() != null && !entity.getSpecItem().equals("")) {
                 List<EsShopGoodsSpecItem> list = JSONObject.parseArray(entity.getSpecItem(), EsShopGoodsSpecItem.class);
                 if (list != null) {
-                    for (EsShopGoodsSpecItem item:list) {
-                        if(item.getMoney().signum() == -1){
+                    for (EsShopGoodsSpecItem item : list) {
+                        if (item.getMoney().signum() == -1) {
                             return new CommonResult().failed("多规格价格不得为负数");
                         }
                     }
                     entity.setItemList(list);
                 }
             }
-
 
 
             if (ValidatorUtils.empty(entity.getId())) {
@@ -450,7 +449,7 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "查询省市名称")
     @ApiOperation("查询省市名称")
     @PostMapping("/selEsCoreAddress")
-    public Object selEsCoreAddress(@RequestParam(value = "parentId", defaultValue = "0") Long parentId,@RequestParam("level") Integer level) {
+    public Object selEsCoreAddress(@RequestParam(value = "parentId", defaultValue = "0") Long parentId, @RequestParam("level") Integer level) {
         try {
 
             EsCoreAddress esCoreAddress = new EsCoreAddress();
@@ -498,7 +497,7 @@ public class EsShopGoodsController {
             String[] attr = ids.split(",");
             for (int i = 0; i < attr.length; i++) {
                 EsShopGoods es = shopGoodsService.selShopGoodsDetail(Long.parseLong(attr[i]));
-                if(es != null){
+                if (es != null) {
                     list.add(es);
                 }
 
@@ -581,10 +580,10 @@ public class EsShopGoodsController {
     @PostMapping("/delSpec")
     public Object delSpec(EsShopGoodsSpec spec) {
         try {
-            if(ValidatorUtils.empty(spec.getGoodsId())){
+            if (ValidatorUtils.empty(spec.getGoodsId())) {
                 return new CommonResult().failed("请指定商品id");
             }
-            if(ValidatorUtils.empty(spec.getId())){
+            if (ValidatorUtils.empty(spec.getId())) {
                 return new CommonResult().failed("请指定规格id");
             }
             return new CommonResult().success("success", shopGoodsService.delSpec(spec));
@@ -599,13 +598,13 @@ public class EsShopGoodsController {
     @PostMapping("/delSpecItem")
     public Object delSpecItem(EsShopGoodsSpecItem item) {
         try {
-            if(ValidatorUtils.empty(item.getGoodsId())){
+            if (ValidatorUtils.empty(item.getGoodsId())) {
                 return new CommonResult().failed("请指定商品id");
             }
-            if(ValidatorUtils.empty(item.getSpecId())){
+            if (ValidatorUtils.empty(item.getSpecId())) {
                 return new CommonResult().failed("请指定规格id");
             }
-            if(ValidatorUtils.empty(item.getId())){
+            if (ValidatorUtils.empty(item.getId())) {
                 return new CommonResult().failed("请指定规格值id");
             }
             return new CommonResult().success("success", shopGoodsService.delSpecItem(item));
@@ -620,7 +619,7 @@ public class EsShopGoodsController {
     @PostMapping("/selOptionList")
     public Object selOptionList(EsShopGoodsOption entity) {
         try {
-            if(ValidatorUtils.empty(entity.getGoodsId())){
+            if (ValidatorUtils.empty(entity.getGoodsId())) {
                 return new CommonResult().failed("请指定商品编号");
             }
             return new CommonResult().success("success", optionService.selPageList(entity));
@@ -635,35 +634,35 @@ public class EsShopGoodsController {
     @PostMapping("/updOptionList")
     public Object updOptionList(EsShopGoodsOption entity) {
         try {
-            if(ValidatorUtils.empty(entity.getGoodsId())){
+            if (ValidatorUtils.empty(entity.getGoodsId())) {
                 return new CommonResult().failed("请指定商品编号");
             }
-            Integer virtualStock=0;
-            Long goodsId=null;
+            Integer virtualStock = 0;
+            Long goodsId = null;
             List<EsShopGoodsOption> listOption = JSONObject.parseArray(entity.getOptionList(), EsShopGoodsOption.class);
-            boolean bool=false;
-            for (EsShopGoodsOption option:listOption) {
-                if(ValidatorUtils.empty(option.getId())){
+            boolean bool = false;
+            for (EsShopGoodsOption option : listOption) {
+                if (ValidatorUtils.empty(option.getId())) {
                     return new CommonResult().failed("请指定列表编号");
                 }
-                if(option.getVirtualStock() == null ||option.getVirtualStock().equals("")){
+                if (option.getVirtualStock() == null || option.getVirtualStock().equals("")) {
                     option.setVirtualStock(0);
                 }
-                bool  = optionService.updateById(option);
+                bool = optionService.updateById(option);
             }
             EsShopGoodsOption option = new EsShopGoodsOption();
             option.setGoodsId(entity.getGoodsId());
             List<EsShopGoodsOption> list = optionService.list(new QueryWrapper<>(option));
-            for (EsShopGoodsOption options:list) {
-                if(options.getVirtualStock() == null ||options.getVirtualStock().equals("")){
-                    virtualStock=0;
-                }else{
+            for (EsShopGoodsOption options : list) {
+                if (options.getVirtualStock() == null || options.getVirtualStock().equals("")) {
+                    virtualStock = 0;
+                } else {
                     virtualStock += options.getVirtualStock();
                 }
             }
             EsShopGoods esShopGoods = shopGoodsService.getById(entity.getGoodsId());
-            if(esShopGoods.getStatus() == 3){
-                if(virtualStock>0){
+            if (esShopGoods.getStatus() == 3) {
+                if (virtualStock > 0) {
                     esShopGoods.setStatus(1);
                 }
             }
@@ -680,15 +679,15 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "新增小美盒中的定制礼盒")
     @ApiOperation("新增小美盒中的定制礼盒")
     @PostMapping("/insSmallBeautyBoxCust")
-    public boolean insSmallBeautyBoxCust(@RequestParam("boxName")String boxName,
-                                         @RequestParam("boxCode")String boxCode,
-                                         @RequestParam("boxImg")String boxImg,
-                                         @RequestParam("vituralStock")Integer vituralStock,
-                                         @RequestParam("price")BigDecimal price,
-                                         @RequestParam("id")Long id,
-                                         @RequestParam("productSn")String productSn) {
-        boolean bool=false;
-        try{
+    public boolean insSmallBeautyBoxCust(@RequestParam("boxName") String boxName,
+                                         @RequestParam("boxCode") String boxCode,
+                                         @RequestParam("boxImg") String boxImg,
+                                         @RequestParam("vituralStock") Integer vituralStock,
+                                         @RequestParam("price") BigDecimal price,
+                                         @RequestParam("id") Long id,
+                                         @RequestParam("productSn") String productSn) {
+        boolean bool = false;
+        try {
             //1.添加商品
             EsShopGoods goods = new EsShopGoods();
             goods.setTitle(boxName);
@@ -700,7 +699,7 @@ public class EsShopGoodsController {
             goods.setStatus(1);
             goods.setSmallBeautyBoxId(id);//定制礼盒id
             goods.setEnableSpec(1);
-            goods.setPutawayTime(String.valueOf( System.currentTimeMillis()));
+            goods.setPutawayTime(String.valueOf(System.currentTimeMillis()));
             goods.setPutawayType("微信小程序");
             goods.setDisplayOrder(0);
             goods.setDefaultSpec("规格:规格值");
@@ -745,9 +744,9 @@ public class EsShopGoodsController {
             option.setGoodsCode(boxCode);
             option.setProductsn(productSn);//条码
             bool = optionService.save(option);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            bool =false;
+            bool = false;
         }
         return bool;
     }
@@ -755,15 +754,15 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "新增小美盒中的定制礼盒")
     @ApiOperation("修改小美盒中的定制礼盒")
     @PostMapping("/updSmallBeautyBoxCust")
-    public boolean updSmallBeautyBoxCust(@RequestParam("boxName")String boxName,
-                                         @RequestParam("boxCode")String boxCode,
-                                         @RequestParam("boxImg")String boxImg,
-                                         @RequestParam("vituralStock")Integer vituralStock,
+    public boolean updSmallBeautyBoxCust(@RequestParam("boxName") String boxName,
+                                         @RequestParam("boxCode") String boxCode,
+                                         @RequestParam("boxImg") String boxImg,
+                                         @RequestParam("vituralStock") Integer vituralStock,
                                          @RequestParam("price") BigDecimal price,
-                                         @RequestParam("id")Long id,
-                                         @RequestParam("productSn")String productSn) {
-        boolean bool=false;
-        try{
+                                         @RequestParam("id") Long id,
+                                         @RequestParam("productSn") String productSn) {
+        boolean bool = false;
+        try {
             //查询商品id
             EsShopGoods goods = new EsShopGoods();
             goods.setSmallBeautyBoxId(id);
@@ -809,7 +808,7 @@ public class EsShopGoodsController {
             option.setTitle(specItem.getTitle());
             option.setDisplayOrder(0);
             option.setPrice(goods.getPrice());
-            option.setSpecs(spec.getTitle()+":"+specItem.getTitle());
+            option.setSpecs(spec.getTitle() + ":" + specItem.getTitle());
             option.setStock(goods.getVituralStock());
             option.setStockWarning(0);
             option.setVirtualStock(goods.getVituralStock());
@@ -819,7 +818,7 @@ public class EsShopGoodsController {
             option.setGoodsCode(boxCode);
             option.setProductsn(productSn);//条码
             bool = optionService.updateById(option);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -830,7 +829,7 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "删除小美盒中的定制礼盒")
     @ApiOperation("删除小美盒中的定制礼盒")
     @PostMapping("/delSmallBeautyBoxCust")
-    public boolean delSmallBeautyBoxCust(@RequestParam("id")Long id) {
+    public boolean delSmallBeautyBoxCust(@RequestParam("id") Long id) {
         EsShopGoods goods = new EsShopGoods();
         goods.setSmallBeautyBoxId(id);//定制礼盒id
         return shopGoodsService.remove(new QueryWrapper<>(goods));
@@ -839,7 +838,7 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "查询小美盒中的定制礼盒")
     @ApiOperation("查询小美盒中的定制礼盒")
     @PostMapping("/goodsDetail")
-    public EsShopGoods goodsDetail(@RequestParam("id")Long id) {
+    public EsShopGoods goodsDetail(@RequestParam("id") Long id) {
         EsShopGoods goods = new EsShopGoods();
         goods.setSmallBeautyBoxId(id);//定制礼盒id
         return shopGoodsService.getOne(new QueryWrapper<>(goods));
@@ -848,7 +847,7 @@ public class EsShopGoodsController {
     @SysLog(MODULE = "商品管理", REMARK = "查询sku")
     @ApiOperation("查询sku")
     @PostMapping("/goodsOption")
-    public EsShopGoodsOption goodsOption(@RequestParam("goodsId")Long goodsId){
+    public EsShopGoodsOption goodsOption(@RequestParam("goodsId") Long goodsId) {
         EsShopGoodsOption option = new EsShopGoodsOption();
         option.setGoodsId(goodsId);
         return optionService.getOne(new QueryWrapper<>(option));
@@ -857,7 +856,7 @@ public class EsShopGoodsController {
     //商品状态详情
     @PostMapping("/selShopGoodsList")
     public List<EsShopGoods> selShopGoodsList(@RequestBody TradeAnalyzeParam param) {
-      //  param.setEndTime(param.getEndTime() + " 23:59:59.999");
+        //  param.setEndTime(param.getEndTime() + " 23:59:59.999");
         //status商品状态（1为出售中，3为已售罄，-2为仓库中，-1为回收站）
         //条件
         QueryWrapper<EsShopGoods> condition = new QueryWrapper();
@@ -865,7 +864,7 @@ public class EsShopGoodsController {
             condition.ge("create_time", Timestamp.valueOf(DateUtil.format(param.getStartTime(), DateUtil.YYYY_MM_DD, DateUtil.YYYY_MM_DD_HH_MM_SS)));
         if (ValidatorUtils.notEmpty(param.getEndTime()))
             condition.le("create_time", Timestamp.valueOf(param.getEndTime()));
-        if(ValidatorUtils.notEmpty(param.getShopId())){
+        if (ValidatorUtils.notEmpty(param.getShopId())) {
             condition.eq("shop_id", param.getShopId());
         }
 

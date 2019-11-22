@@ -20,10 +20,10 @@ public interface EsShopCouponMapper extends BaseMapper<EsShopCoupon> {
     List<EsShopCoupon> selectcoupon(EsShopCoupon esShopCoupon);
 
     //优惠券管理面显示
-    List<Map<String,Object>> selectmapcoupon(EsShopCoupon esShopCoupon);
+    List<Map<String, Object>> selectmapcoupon(EsShopCoupon esShopCoupon);
 
     //优惠券明细
-    List<Map<String,Object>> couponlimit(Long id);
+    List<Map<String, Object>> couponlimit(Long id);
 
     //查询开启的数量
     Integer selectstatus();

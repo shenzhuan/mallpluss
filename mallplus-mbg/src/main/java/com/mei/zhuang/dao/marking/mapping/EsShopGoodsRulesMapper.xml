@@ -14,7 +14,7 @@
     </resultMap>
 
     <select id="lsitrules" resultType="com.mei.zhuang.entity.marking.EsShopGoodsRules">
-        select id,goodsname,price,create_time from  es_shop_goods_rules where according=1
+        select id,goodsname,price,create_time from es_shop_goods_rules where according=1
         <if test="goodsname!=null and goodsname!=''">
             and goodsname like concat(concat('%',#{goodsname},'%'))
         </if>

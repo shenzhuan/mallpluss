@@ -3,7 +3,6 @@ package com.mei.zhuang.controller.sys;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.entity.sys.CrmPreventHarassmentConfig;
 import com.mei.zhuang.service.sys.ICrmPreventHarassmentConfigService;
@@ -12,7 +11,6 @@ import com.mei.zhuang.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javax.annotation.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 

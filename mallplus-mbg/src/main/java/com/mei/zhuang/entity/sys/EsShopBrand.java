@@ -22,7 +22,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_shop_brand")
-public class EsShopBrand  extends Model<EsShopBrand> {
+public class EsShopBrand extends Model<EsShopBrand> {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class EsShopBrand  extends Model<EsShopBrand> {
      */
     @TableField("contact_mobile")
     private String contactMobile;
-     /**
+    /**
      * 联系人
      */
     @TableField("contact_name")

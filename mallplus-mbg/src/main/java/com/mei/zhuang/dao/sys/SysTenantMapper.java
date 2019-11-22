@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author arvato team
@@ -26,6 +26,7 @@ public interface SysTenantMapper extends BaseMapper<SysTenant> {
     DataSourceDto selectDataSourceById(@Param("tenantId") Integer tenantId);
 
     int getPagingTotal(@Param("param") SysTenantPagingParam param);
+
     List<SysTenantPagingData> getPagingList(@Param("param") SysTenantPagingParam param);
 
     List<DictData> getDictList();

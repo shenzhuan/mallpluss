@@ -18,12 +18,13 @@ public class EsAppletTemplateServiceImpl extends ServiceImpl<EsAppletTemplatesMa
 
     @Resource
     private EsAppletTemplatesMapper esAppletTemplatesMapper;
+
     @Override
     public Map<String, Object> select(EsAppletTemplates entity) {
-        Map<String,Object> map=new HashMap<String,Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         PageHelper.startPage(entity.getCurrent(), entity.getSize());
-        List<EsAppletTemplates> list=esAppletTemplatesMapper.selectList(new QueryWrapper<>(entity));
-        Integer count=esAppletTemplatesMapper.count();
+        List<EsAppletTemplates> list = esAppletTemplatesMapper.selectList(new QueryWrapper<>(entity));
+        Integer count = esAppletTemplatesMapper.count();
         map.put("rows", list);
         map.put("total", count);
         map.put("current", entity.getCurrent());

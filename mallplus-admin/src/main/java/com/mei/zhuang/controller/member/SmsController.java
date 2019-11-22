@@ -64,12 +64,12 @@ public class SmsController {
                 return result;
             }
             if (smsService.isExistRepeatName(entity.getSmsName()))
-                return new CommonResult().failed("已存在相同的模板名称，{"+entity.getSmsName()+"}");
+                return new CommonResult().failed("已存在相同的模板名称，{" + entity.getSmsName() + "}");
 
             List<SmsVariable> smsVariableList = JSON.parseArray(entity.getData(), SmsVariable.class);
-            if(smsVariableList != null && smsVariableList.size() != 0){
+            if (smsVariableList != null && smsVariableList.size() != 0) {
                 boolean existTemplateType = this.smsService.isExistTemplateByStatus(entity);
-                if(existTemplateType){
+                if (existTemplateType) {
                     return new CommonResult().failed("已存在正在启用的同一类型模板");
                 }
             }
@@ -107,21 +107,21 @@ public class SmsController {
     @PostMapping("/update")
     public Object update(EsCoreSmsTemplate entity) {
         try {
-            if(entity.getSmsName() == null){
+            if (entity.getSmsName() == null) {
                 return new CommonResult().paramFailed("短信模板名称不能为空");
             }
             List<EsCoreSmsTemplate> list = smsService.list(new QueryWrapper<>(new EsCoreSmsTemplate())
                     .eq("sms_name", entity.getSmsName()));
             for (EsCoreSmsTemplate template : list) {
-                if(template.getId().intValue() != entity.getId().intValue() && template.getSmsName().equals(entity.getSmsName())){
-                    return new CommonResult().failed("已存在相同的模板名称，{"+entity.getSmsName()+"}");
+                if (template.getId().intValue() != entity.getId().intValue() && template.getSmsName().equals(entity.getSmsName())) {
+                    return new CommonResult().failed("已存在相同的模板名称，{" + entity.getSmsName() + "}");
                 }
             }
 
             //如果想要启动一个模板， 就校验 是否存在已启用的模板
-            if(entity.getStatus() == 1){
+            if (entity.getStatus() == 1) {
                 List<SmsVariable> varList = JSON.parseArray(entity.getData(), SmsVariable.class);
-                if(varList != null && varList.size() !=0 ){
+                if (varList != null && varList.size() != 0) {
                     SmsVariable smsVariable = varList.get(0);
                     //查找出 同类别
                     EsCoreSmsTemplate template = this.smsService.getOne(new QueryWrapper<>(new EsCoreSmsTemplate())
@@ -131,7 +131,7 @@ public class SmsController {
                             .eq("server_id", entity.getServerId())
                     );
 
-                    if(template.getId() != entity.getId()){
+                    if (template.getId() != entity.getId()) {
                         return new CommonResult().failed("已存在正在启用的同一类型模板,不能将此模板设置为已启用,要将此模板设置启用，请先禁用");
                     }
                 }
@@ -258,10 +258,9 @@ public class SmsController {
         return new CommonResult().failed();
     }
 
-    private boolean isExistRepeatName(String templateName){
+    private boolean isExistRepeatName(String templateName) {
         return this.smsService.isExistRepeatName(templateName);
     }
-
 
 
 }

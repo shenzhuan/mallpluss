@@ -4,11 +4,11 @@ import com.mei.zhuang.search.dao.EsProductDao;
 import com.mei.zhuang.search.domain.EsProduct;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import javax.annotation.Resource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -19,16 +19,19 @@ public class MallSearchApplicationTests {
     private EsProductDao productDao;
     @Resource
     private ElasticsearchTemplate elasticsearchTemplate;
+
     @Test
     public void contextLoads() {
     }
+
     @Test
-    public void testGetAllEsProductList(){
+    public void testGetAllEsProductList() {
         List<EsProduct> esProductList = productDao.getAllEsProductList(null);
         System.out.print(esProductList);
     }
+
     @Test
-    public void testEsProductMapping(){
+    public void testEsProductMapping() {
         elasticsearchTemplate.putMapping(EsProduct.class);
         Map mapping = elasticsearchTemplate.getMapping(EsProduct.class);
         System.out.println(mapping);

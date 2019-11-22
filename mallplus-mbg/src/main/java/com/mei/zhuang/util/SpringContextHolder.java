@@ -16,14 +16,14 @@ public class SpringContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContextHolder.applicationContext = applicationContext;
-    }
-
     public static ApplicationContext getApplicationContext() {
         assertApplicationContext();
         return applicationContext;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SpringContextHolder.applicationContext = applicationContext;
     }
 
     @SuppressWarnings("unchecked")
@@ -38,8 +38,8 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
     public static <T> T getBean(Class<T> clazz, String beanName) throws BeansException {
-		return (T)applicationContext.getBean(beanName, clazz);
-	}
+        return (T) applicationContext.getBean(beanName, clazz);
+    }
 
     private static void assertApplicationContext() {
         if (SpringContextHolder.applicationContext == null) {

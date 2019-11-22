@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Api(value = "选赠礼管理", description = "", tags = {"选赠礼管理"})
@@ -42,15 +45,13 @@ public class ChooseGiftController {
     ) {
         try {
             PageHelper.startPage(current, size);
-           // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
+            // List<EsShopFullGift> esShopDiscount = fullGiftService.slelectPurchase2();
             return new CommonResult().success(PageInfo.of(fullGiftService.slelectPurchase2()));
         } catch (Exception e) {
             log.error("根据条件查询所有选赠礼列表：%s", e.getMessage(), e);
         }
         return new CommonResult().failed();
     }
-
-
 
 
     @SysLog(MODULE = "选赠礼管理", REMARK = "保存选赠礼")
@@ -62,17 +63,17 @@ public class ChooseGiftController {
             List<EsShopFullGiftRule> list2 = JSONObject.parseArray(entity.getSelectrule(), EsShopFullGiftRule.class);
             List<EsShopFullGiftGoodsMap> list3 = JSONObject.parseArray(entity.getSelectfullgift(), EsShopFullGiftGoodsMap.class);
             List<EsShopFullGift> list4 = JSONObject.parseArray(entity.getSelectfullList(), EsShopFullGift.class);
-            List list1=new ArrayList();
-            if(list4!=null) {
+            List list1 = new ArrayList();
+            if (list4 != null) {
                 for (EsShopFullGift gif : list4) {
                     for (EsShopFullGiftRule rule : gif.getRuleList()) {
                         list1.add(rule.getFullLevel());
                     }
                 }
             }
-            System.out.println(list1);
-            Set set=new HashSet(list1);
-            if(list1.size()!=set.size()){
+
+            Set set = new HashSet(list1);
+            if (list1.size() != set.size()) {
                 return new CommonResult().failed("排序出现重复值");
             }
             entity.setGoodsSepcVoList(list);
@@ -80,7 +81,7 @@ public class ChooseGiftController {
             entity.setFullGiftGoodsList(list3);
             entity.setFullGiftList(list4);
 
-            if (fullGiftService.save(entity) ) {
+            if (fullGiftService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -99,16 +100,16 @@ public class ChooseGiftController {
             List<EsShopFullGiftRule> list2 = JSONObject.parseArray(entity.getSelectrule(), EsShopFullGiftRule.class);
             List<EsShopFullGiftGoodsMap> list3 = JSONObject.parseArray(entity.getSelectfullgift(), EsShopFullGiftGoodsMap.class);
             List<EsShopFullGift> list4 = JSONObject.parseArray(entity.getSelectfullList(), EsShopFullGift.class);
-            List list1=new ArrayList();
-            if(list4!=null) {
+            List list1 = new ArrayList();
+            if (list4 != null) {
                 for (EsShopFullGift gif : list4) {
                     for (EsShopFullGiftRule rule : gif.getRuleList()) {
                         list1.add(rule.getFullLevel());
                     }
                 }
             }
-            Set set=new HashSet(list1);
-            if(list1.size()!=set.size()){
+            Set set = new HashSet(list1);
+            if (list1.size() != set.size()) {
                 return new CommonResult().failed("排序出现重复值");
             }
             entity.setGoodsSepcVoList(list);

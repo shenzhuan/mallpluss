@@ -9,7 +9,6 @@ import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +24,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,20 +36,6 @@ import java.util.Map;
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
-    @Resource
-    private UserDetailsService userDetailsService;
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Value("${jwt.tokenHeader}")
-    private String tokenHeader;
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
-
-    @Resource
-    public SysWebLogMapper fopSystemOperationLogService;
-
     public static final List<String> IGNORE_TENANT_TABLES = Lists.newArrayList(
             "user.info",
             "user.editinfo",
@@ -130,6 +114,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             "lottery-api-getLotteryConfig",
             "lottery-api-lottery",
             "lottery-api-lotteryLog");
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+    @Resource
+    public SysWebLogMapper fopSystemOperationLogService;
+    @Resource
+    private UserDetailsService userDetailsService;
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -161,31 +157,31 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
-        String tokenPre = this.tokenHeader ;
+        String tokenPre = this.tokenHeader;
         String authHeader = request.getParameter(tokenPre);
-        if (ValidatorUtils.empty(authHeader)){
+        if (ValidatorUtils.empty(authHeader)) {
             authHeader = request.getHeader(tokenPre);
         }
-      //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
+        //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
-            if (authHeader != null && authHeader.startsWith("Bearer")) {
-                String authToken = authHeader.substring("Bearer".length());
-                username = jwtTokenUtil.getUserNameFromToken(authToken);
-                LOGGER.info("checking username:{}", username);
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                    if (userDetails!=null && jwtTokenUtil.validateToken(authToken, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        LOGGER.info("authenticated user:{}", username);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }else{
-                        throw new ClassCastException();
-                    }
-
-            }else {
-                logger.info("no token"+request.getRequestURI());
+        if (authHeader != null && authHeader.startsWith("Bearer")) {
+            String authToken = authHeader.substring("Bearer".length());
+            username = jwtTokenUtil.getUserNameFromToken(authToken);
+            LOGGER.info("checking username:{}", username);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (userDetails != null && jwtTokenUtil.validateToken(authToken, userDetails)) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                LOGGER.info("authenticated user:{}", username);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                throw new ClassCastException();
             }
-       // }
+
+        } else {
+            logger.info("no token" + request.getRequestURI());
+        }
+        // }
 
         startTime = System.currentTimeMillis();
         chain.doFilter(request, response);
@@ -203,7 +199,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-        //    fopSystemOperationLogService.save(sysLog);
+            //    fopSystemOperationLogService.save(sysLog);
         }
     }
 

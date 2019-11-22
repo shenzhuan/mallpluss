@@ -11,7 +11,4 @@ import com.mei.zhuang.entity.sys.EsShopBrand;
 public interface IShopBrandService extends IService<EsShopBrand> {
 
 
-
-
-
 }

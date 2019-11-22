@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface UserMapper extends BaseMapper<CrmSysUser> {
     public List<CrmSysUser> selectMemberByGroupId(@Param("groupId") int groupId);
+
     public List<CrmSysUser> selectLeaderByGroupId(@Param("groupId") int groupId);
 }

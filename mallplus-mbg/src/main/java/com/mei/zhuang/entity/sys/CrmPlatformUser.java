@@ -26,33 +26,33 @@ public class CrmPlatformUser extends Model<CrmPlatformUser> {
 
     private static final long serialVersionUID = 1L;
 
-	private Integer id;
-	private String username;
-	@TableField("user_schema")
-	private String userSchema;
-	@TableField("is_admin")
-	private String isAdmin;
-	@TableField("company_id")
-	private Integer companyId;
-	@TableField(value = "create_user_id", fill = FieldFill.INSERT)
-	private Integer createUserId;
-	@TableField(value = "create_date", fill = FieldFill.INSERT)
-	private String createDate;
-	@TableField(value = "create_time", fill = FieldFill.INSERT)
-	private String createTime;
-	@TableField(value = "update_user_id", fill = FieldFill.UPDATE)
-	private Integer updateUserId;
-	@TableField(value = "update_date", fill = FieldFill.UPDATE)
-	private String updateDate;
-	@TableField(value = "update_time", fill = FieldFill.UPDATE)
-	private String updateTime;
-	@Version
-	private Integer version;
+    private Integer id;
+    private String username;
+    @TableField("user_schema")
+    private String userSchema;
+    @TableField("is_admin")
+    private String isAdmin;
+    @TableField("company_id")
+    private Integer companyId;
+    @TableField(value = "create_user_id", fill = FieldFill.INSERT)
+    private Integer createUserId;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private String createDate;
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    private String createTime;
+    @TableField(value = "update_user_id", fill = FieldFill.UPDATE)
+    private Integer updateUserId;
+    @TableField(value = "update_date", fill = FieldFill.UPDATE)
+    private String updateDate;
+    @TableField(value = "update_time", fill = FieldFill.UPDATE)
+    private String updateTime;
+    @Version
+    private Integer version;
 
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
 }

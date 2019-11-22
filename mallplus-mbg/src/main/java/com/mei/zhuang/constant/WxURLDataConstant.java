@@ -11,7 +11,4 @@ import lombok.Data;
 public class WxURLDataConstant {
 
 
-
-
-
 }

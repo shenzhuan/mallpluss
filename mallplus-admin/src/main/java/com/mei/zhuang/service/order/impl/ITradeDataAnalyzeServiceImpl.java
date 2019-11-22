@@ -29,7 +29,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
 
     @Override
     public TradeDataByHeadVo getHeadData(TradeAnalyzeParam param) throws Exception {
-        if(ValidatorUtils.empty(param.getStartTime())){//默认时间 开始时间店铺最小创建时间  最后时间：前端传吧
+        if (ValidatorUtils.empty(param.getStartTime())) {//默认时间 开始时间店铺最小创建时间  最后时间：前端传吧
             param.setStartTime(DateUtil.format(shopOrderService.getMinCreateTime(param.getShopId()), DateUtil.YYYY_MM_DD));
         }
 
@@ -42,18 +42,18 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
 
         //昨天执行操作， 确保日期符合正常逻辑
 //        if (Math.abs(len) == 1 && DateUtil.format(new Date(), DateUtil.YYYY_MM_DD).equals(param.getEndTime())) {
-        if(DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())){
+        if (DateCalendarUtils.isYestaday(param.getStartTime()) && DateCalendarUtils.isYestaday(param.getEndTime())) {
             headDataVo.setIsDisplayBeforeData(true);
             //前一日数据计算
             TradeAnalyzeParam paramBefore = new TradeAnalyzeParam();
             paramBefore.setStartTime(DateUtils.addDay(DateUtils.toDate(param.getEndTime()), -1));
             paramBefore.setEndTime(DateUtils.addDay(DateUtils.toDate(param.getEndTime()), -1));
             paramBefore.setSource(param.getSource());
-            beforeHeadData = this.getTradeHeadDataVoByOrderList(this.selOrderDataInfo(paramBefore),paramBefore);
+            beforeHeadData = this.getTradeHeadDataVoByOrderList(this.selOrderDataInfo(paramBefore), paramBefore);
         }
 
         //计算前一日比例数据
-        if(headDataVo.getIsDisplayBeforeData()){
+        if (headDataVo.getIsDisplayBeforeData()) {
 
             double payAmountBeforeOnePerc;//支付金额前一日比例
             double payCountBeforeOnePerc;//支付订单数前一日比例
@@ -63,37 +63,36 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
             double refundPriceBeforeOnePerc;//退款订单金额前一日比例
 
 
-
             payAmountBeforeOnePerc = beforeHeadData.getPayAmount().doubleValue() != 0.0 ?
                     BigDecimal.valueOf(
                             (headDataVo.getPayAmount().doubleValue() - beforeHeadData.getPayAmount().doubleValue())
-                            / beforeHeadData.getPayAmount().doubleValue())
+                                    / beforeHeadData.getPayAmount().doubleValue())
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
 
             payCountBeforeOnePerc = beforeHeadData.getPayCount() != 0 ?
-                    (double)(headDataVo.getPayCount() - beforeHeadData.getPayCount()) / (beforeHeadData.getPayCount()) * 100 : 0.00;
+                    (double) (headDataVo.getPayCount() - beforeHeadData.getPayCount()) / (beforeHeadData.getPayCount()) * 100 : 0.00;
             payCountByPeopleBeforeOnePerc = beforeHeadData.getPayCountByPeople() != 0 ?
-                    (double)(headDataVo.getPayCountByPeople() - beforeHeadData.getPayCountByPeople()) / (beforeHeadData.getPayCountByPeople()) * 100 :0.00;
+                    (double) (headDataVo.getPayCountByPeople() - beforeHeadData.getPayCountByPeople()) / (beforeHeadData.getPayCountByPeople()) * 100 : 0.00;
             actualPayCountBeforeOnePerc = beforeHeadData.getActualPayCount() != 0 ?
-                    (double)(headDataVo.getActualPayCount() - beforeHeadData.getActualPayCount()) / (beforeHeadData.getActualPayCount()) * 100 : 0.00;
+                    (double) (headDataVo.getActualPayCount() - beforeHeadData.getActualPayCount()) / (beforeHeadData.getActualPayCount()) * 100 : 0.00;
 
             unitPriceByOneBeforeOnePerc = beforeHeadData.getUnitPriceByOne().doubleValue() != 0.0 ?
                     BigDecimal.valueOf(
-                            (headDataVo.getUnitPriceByOne().doubleValue() - beforeHeadData.getUnitPriceByOne().doubleValue() )
+                            (headDataVo.getUnitPriceByOne().doubleValue() - beforeHeadData.getUnitPriceByOne().doubleValue())
                                     / beforeHeadData.getUnitPriceByOne().doubleValue())
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
 
 
-            refundPriceBeforeOnePerc = beforeHeadData.getRefundPrice() .doubleValue() != 0.0 ?
+            refundPriceBeforeOnePerc = beforeHeadData.getRefundPrice().doubleValue() != 0.0 ?
                     BigDecimal.valueOf(
                             (headDataVo.getRefundPrice().doubleValue() - beforeHeadData.getRefundPrice().doubleValue())
                                     / beforeHeadData.getRefundPrice().doubleValue())
                             .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() * 100 : 0.00;
 
             //优化处理 百分率后保留2位小数
-            payCountBeforeOnePerc =  BigDecimal.valueOf(payCountBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            payCountByPeopleBeforeOnePerc =  BigDecimal.valueOf(payCountByPeopleBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            actualPayCountBeforeOnePerc =  BigDecimal.valueOf(actualPayCountBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            payCountBeforeOnePerc = BigDecimal.valueOf(payCountBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            payCountByPeopleBeforeOnePerc = BigDecimal.valueOf(payCountByPeopleBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            actualPayCountBeforeOnePerc = BigDecimal.valueOf(actualPayCountBeforeOnePerc).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
 
             headDataVo.setBeforeData(new TradeDataBeforeVo(payAmountBeforeOnePerc, payCountBeforeOnePerc, payCountByPeopleBeforeOnePerc,
@@ -107,17 +106,17 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
         headDataVo.setOldConsumeAmount(BigDecimal.valueOf(orderCustTotalVo.getOldConsumeAmount()));
 
         int count = orderCustTotalVo.getCount();
-        headDataVo.setNewPerc(count != 0 ? (double)orderCustTotalVo.getNewClientCount() / (count) * 100 : 0.00);
-        headDataVo.setOldPerc(count != 0 ? (double)orderCustTotalVo.getOldClientCount() / (count) * 100 : 0.00);
+        headDataVo.setNewPerc(count != 0 ? (double) orderCustTotalVo.getNewClientCount() / (count) * 100 : 0.00);
+        headDataVo.setOldPerc(count != 0 ? (double) orderCustTotalVo.getOldClientCount() / (count) * 100 : 0.00);
         headDataVo.setNewPayAmountPerc(headDataVo.getPayAmount().doubleValue() != 0.0 ?
-            orderCustTotalVo.getNewConsumeAmount() / (headDataVo.getPayAmount().doubleValue()) * 100 : 0.00);
-        headDataVo.setOldPayAmountPerc(headDataVo.getNewPayAmountPerc() != 0.0 ? 100 - headDataVo.getNewPayAmountPerc(): 0.0);
+                orderCustTotalVo.getNewConsumeAmount() / (headDataVo.getPayAmount().doubleValue()) * 100 : 0.00);
+        headDataVo.setOldPayAmountPerc(headDataVo.getNewPayAmountPerc() != 0.0 ? 100 - headDataVo.getNewPayAmountPerc() : 0.0);
 
         //优化处理 百分率后保留2位小数
-        headDataVo.setNewPerc(BigDecimal.valueOf(headDataVo.getNewPerc()).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
-        headDataVo.setOldPerc(BigDecimal.valueOf(headDataVo.getOldPerc()).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
-        headDataVo.setNewPayAmountPerc(BigDecimal.valueOf(headDataVo.getNewPayAmountPerc()).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
-        headDataVo.setOldPayAmountPerc(BigDecimal.valueOf(headDataVo.getOldPayAmountPerc()).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+        headDataVo.setNewPerc(BigDecimal.valueOf(headDataVo.getNewPerc()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        headDataVo.setOldPerc(BigDecimal.valueOf(headDataVo.getOldPerc()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        headDataVo.setNewPayAmountPerc(BigDecimal.valueOf(headDataVo.getNewPayAmountPerc()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        headDataVo.setOldPayAmountPerc(BigDecimal.valueOf(headDataVo.getOldPayAmountPerc()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
 
         return headDataVo;
@@ -126,18 +125,18 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
     @Override
     public List<TradeDataEntity> getTradeData(TradeAnalyzeParam param, boolean isAsc) throws Exception {
         List<TradeDataEntity> dataList = this.getTradeData(param);
-        if(isAsc){//正序
+        if (isAsc) {//正序
             Collections.sort(dataList, new Comparator<TradeDataEntity>() {
                 @Override
                 public int compare(TradeDataEntity o1, TradeDataEntity o2) {
-                    return new Long(DateUtil.getDaySub(o1.getRelationDate(),o2.getRelationDate(),DateUtil.YYYY_MM_DD)).intValue();
+                    return new Long(DateUtil.getDaySub(o1.getRelationDate(), o2.getRelationDate(), DateUtil.YYYY_MM_DD)).intValue();
                 }
             });
-        }else{//倒序
+        } else {//倒序
             Collections.sort(dataList, new Comparator<TradeDataEntity>() {
                 @Override
                 public int compare(TradeDataEntity o1, TradeDataEntity o2) {
-                    return new Long(DateUtil.getDaySub(o2.getRelationDate(),o1.getRelationDate(),DateUtil.YYYY_MM_DD)).intValue();
+                    return new Long(DateUtil.getDaySub(o2.getRelationDate(), o1.getRelationDate(), DateUtil.YYYY_MM_DD)).intValue();
                 }
             });
         }
@@ -165,7 +164,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
 
 
     private List<TradeDataEntity> getTradeData(TradeAnalyzeParam param) throws Exception {
-        if(ValidatorUtils.empty(param.getStartTime())){//默认时间 开始时间店铺最小创建时间  最后时间：前端传吧
+        if (ValidatorUtils.empty(param.getStartTime())) {//默认时间 开始时间店铺最小创建时间  最后时间：前端传吧
             param.setStartTime(DateUtil.format(shopOrderService.getMinCreateTime(param.getShopId()), DateUtil.YYYY_MM_DD));
         }
         //key: 日期  value:数据
@@ -189,7 +188,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
                 }
             }
             if (order.getStatus() == OrderStatus.REFUND.getValue()) {
-                BigDecimal price=order.getRefundPrice()!=null?order.getRefundPrice(): BigDecimal.valueOf(0.0);
+                BigDecimal price = order.getRefundPrice() != null ? order.getRefundPrice() : BigDecimal.valueOf(0.0);
                 dataTempByMap.setRefundPrice(dataTempByMap.getRefundPrice().add(price));
             }
         }
@@ -226,7 +225,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
         for (Map.Entry<String, TradeDataEntity> obj : dataMap.entrySet()) {
             dataList.add(obj.getValue());
         }
-        System.out.println(dataList+"数据");
+        System.out.println(dataList + "数据");
         return dataList;
     }
 
@@ -290,7 +289,7 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
     }
 
 
-    private OrderCustTotalVo calcCustTotal(TradeAnalyzeParam param){
+    private OrderCustTotalVo calcCustTotal(TradeAnalyzeParam param) {
 
       /*  <!--获取新老顾客数据思路：
         1.首先从时间段内（所有条件） 取出member_id
@@ -327,10 +326,10 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
 
         OrderCustTotalVo oldConsumeInfo = shopOrderService.getOldConsumeInfo(param);
         OrderCustTotalVo totalInfo = shopOrderService.getTotalInfo(param);
-        if(oldConsumeInfo == null ){
+        if (oldConsumeInfo == null) {
             oldConsumeInfo = new OrderCustTotalVo();
         }
-        if(totalInfo == null){
+        if (totalInfo == null) {
             totalInfo = new OrderCustTotalVo();
         }
         oldConsumeInfo.setCount(totalInfo.getCount());

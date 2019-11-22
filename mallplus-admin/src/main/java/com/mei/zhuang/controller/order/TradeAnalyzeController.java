@@ -79,7 +79,7 @@ public class TradeAnalyzeController {
                          ExportParam exportParam,
                          HttpServletResponse response) {
         try {
-            exportParam.setFileName(DateUtils.format(new Date(),DateUtil.YYYY_MM_DD) + "导出交易分析详细数据");
+            exportParam.setFileName(DateUtils.format(new Date(), DateUtil.YYYY_MM_DD) + "导出交易分析详细数据");
             exportParam.setSheetName("导出交易分析详细数据");
             exportParam.setPath("D:/A");
             exportParam.setHeaders("数据关系日期,支付金额,付款人数,付款订单数,客单价,退款订单金额");

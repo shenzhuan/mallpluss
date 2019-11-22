@@ -19,6 +19,4 @@ public class TrafficAnalysisParam {
     private TrafficAnalysisParamVo paramVo;
 
 
-
-
 }

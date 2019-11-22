@@ -25,7 +25,7 @@ public class EsShopSingleGiftGoodsMap extends Model<EsShopSingleGiftGoodsMap> {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id ;
+    private Long id;
 
     /**
      * 满赠礼id
@@ -54,7 +54,8 @@ public class EsShopSingleGiftGoodsMap extends Model<EsShopSingleGiftGoodsMap> {
     @TableField("activity_name")
     private String activityName;
     @TableField(exist = false)
-    private Integer count ;
+    private Integer count;
+
     @Override
     protected Serializable pkVal() {
         return null;

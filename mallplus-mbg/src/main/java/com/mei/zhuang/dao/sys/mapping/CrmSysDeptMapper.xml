@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mei.zhuang.dao.sys.CrmSysDeptMapper">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysDept">
-		<id column="id" property="id" />
-		<result column="name" property="name" />
-		<result column="p_id" property="pId" />
-		<result column="num" property="num" />
-		<result column="create_user_id" property="createUserId" />
-		<result column="create_date" property="createDate" />
-		<result column="create_time" property="createTime" />
-		<result column="update_user_id" property="updateUserId" />
-		<result column="update_date" property="updateDate" />
-		<result column="update_time" property="updateTime" />
-		<result column="version" property="version" />
-		<result column="dept_no" property="deptNo" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mei.zhuang.entity.sys.CrmSysDept">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="p_id" property="pId"/>
+        <result column="num" property="num"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="version" property="version"/>
+        <result column="dept_no" property="deptNo"/>
+    </resultMap>
     <resultMap id="deptDict" type="com.arvato.admin.dto.DeptDictData">
         <result column="p_id" property="pId"></result>
     </resultMap>
@@ -66,9 +66,9 @@
             </if>
         </where>
         ORDER BY num,id
-	</select>
+    </select>
 
-	<select id="dpetTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
+    <select id="dpetTreeListByDeptId" resultType="com.arvato.common.vo.ZTreeNode">
         SELECT
             m1.id AS id,
             (
@@ -109,9 +109,9 @@
     <select id="isDeptChild" resultType="int">
         with RECURSIVE cte as
         (
-          select c1.id,c1.p_id from crm_sys_dept c1 where id=#{deptId}
-          union all
-          select c2.id,c2.p_id from crm_sys_dept c2 inner join cte c on c.id = c2.p_id
+        select c1.id,c1.p_id from crm_sys_dept c1 where id=#{deptId}
+        union all
+        select c2.id,c2.p_id from crm_sys_dept c2 inner join cte c on c.id = c2.p_id
         ) select id from cte
         where id in
         <foreach collection="deptChildren" index="index" item="item" separator="," open="(" close=")">
@@ -121,19 +121,19 @@
 
     <select id="initDeptDatasByCurrentUser" resultType="com.arvato.common.vo.ZTreeNode">
         select
-           a.id,
+        a.id,
         coalesce(p_id,-1) pId,
-           a.name,
-           (select case when count(*)>0 then false else true end as leafNode from CRM_SYS_DEPT t where t.p_id=a.id )
+        a.name,
+        (select case when count(*)>0 then false else true end as leafNode from CRM_SYS_DEPT t where t.p_id=a.id )
         from
         CRM_SYS_DEPT a
         <where>
             <choose>
                 <when test="pid==-1">
-                  a.id=0
+                    a.id=0
                 </when>
                 <otherwise>
-                  a.p_id=#{pid}
+                    a.p_id=#{pid}
                 </otherwise>
             </choose>
             <if test="roleDeptIds!=null">

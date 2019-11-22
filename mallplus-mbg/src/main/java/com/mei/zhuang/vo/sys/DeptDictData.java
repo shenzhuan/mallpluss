@@ -2,7 +2,6 @@ package com.mei.zhuang.vo.sys;
 
 
 import com.mei.zhuang.vo.DictData;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

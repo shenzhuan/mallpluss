@@ -7,9 +7,9 @@ import com.github.pagehelper.PageInfo;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.EsShopDiypage;
+import com.mei.zhuang.redis.template.RedisRepository;
 import com.mei.zhuang.service.goods.EsShopDiypageService;
 import com.mei.zhuang.service.goods.EsShopDiypageTemplateCategoryService;
-import com.mei.zhuang.redis.template.RedisRepository;
 import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
@@ -151,7 +151,7 @@ public class EsShopDiypageController {
     @PostMapping("/selDiyPage")
     public Object selDiyPage(EsShopDiypage entity) {
         try {
-            if(ValidatorUtils.empty(entity.getType())){
+            if (ValidatorUtils.empty(entity.getType())) {
                 return new CommonResult().failed("请指定页面类型");
             }
             PageHelper.startPage(entity.getCurrent(), entity.getSize());

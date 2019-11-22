@@ -1,11 +1,11 @@
 package com.mei.zhuang.controller.marking;
 
 import com.alibaba.fastjson.JSONObject;
-import com.mei.zhuang.service.marking.EsShopFriendGiftService;
-import com.mei.zhuang.vo.CommonResult;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.marking.EsShopFriendGift;
 import com.mei.zhuang.entity.marking.EsShopFriendGiftCard;
+import com.mei.zhuang.service.marking.EsShopFriendGiftService;
+import com.mei.zhuang.vo.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class EsShopFriendGiftController {
 
         try {
             List<EsShopFriendGiftCard> GiftCards = JSONObject.parseArray(entity.getGiftCardList(), EsShopFriendGiftCard.class);
-             entity.setFriendgifcard(GiftCards);
+            entity.setFriendgifcard(GiftCards);
             return new CommonResult().success(giftService.save(entity));
 
         } catch (Exception e) {
@@ -64,9 +64,9 @@ public class EsShopFriendGiftController {
     public Object list() {
         try {
             EsShopFriendGift friend = giftService.friend();
-            if(friend!=null){
+            if (friend != null) {
                 return new CommonResult().success(friend);
-            }else{
+            } else {
                 return new CommonResult().failed("未开启好友赠礼");
             }
         } catch (Exception e) {
@@ -75,8 +75,6 @@ public class EsShopFriendGiftController {
             return new CommonResult().failed();
         }
     }
-
-
 
 
 }

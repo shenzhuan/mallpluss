@@ -25,7 +25,4 @@ public class UserOrderDetail {
     private EsDeliveryAddresser addressInfo;//收货信息
 
 
-
-
-
 }

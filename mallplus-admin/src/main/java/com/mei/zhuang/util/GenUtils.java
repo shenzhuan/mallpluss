@@ -123,8 +123,8 @@ public class GenUtils {
         VelocityContext context = new VelocityContext(map);
         VelocityEngine velocityEngine = new VelocityEngine();
         Properties properties = new Properties();
-        properties.setProperty("resource.loader","class");
-        properties.setProperty("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        properties.setProperty("resource.loader", "class");
+        properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.init(properties);
         //获取模板列表
         List<String> templates = getTemplates();

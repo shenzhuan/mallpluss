@@ -19,6 +19,7 @@ public interface TrafficAnalysiService {
 
     //页面跳出率
     Map<String, Object> TrSelect(TradeAnalyzeParam param) throws Exception;
+
     //流量数据
     List<TrafficAnalysis> TrafficData(TradeAnalyzeParam param) throws Exception;
 

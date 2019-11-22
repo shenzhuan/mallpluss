@@ -19,32 +19,33 @@ public class EsShopCardMessageServerImpl extends ServiceImpl<EsShopCardMessageMa
     private EsShopCardMessageCutMapper esShopCardMessageCutMapper;
 
     @Resource
-    private  EsShopCardMessageMapper esShopCardMessageMapper;
+    private EsShopCardMessageMapper esShopCardMessageMapper;
+
     @Override
     public boolean save(EsShopCardMessage entity) {
-       if(esShopCardMessageMapper.insert(entity)>0){
-           if(entity.getListCut()!=null && entity.getListCut().size()>0){
-               EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
-               messageCut.setCardMessageId(entity.getId());
-               for (EsShopCardMessageCut cut:entity.getListCut()) {
-                   esShopCardMessageCutMapper.insert(cut);
-               }
-           }
+        if (esShopCardMessageMapper.insert(entity) > 0) {
+            if (entity.getListCut() != null && entity.getListCut().size() > 0) {
+                EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
+                messageCut.setCardMessageId(entity.getId());
+                for (EsShopCardMessageCut cut : entity.getListCut()) {
+                    esShopCardMessageCutMapper.insert(cut);
+                }
+            }
             return true;
-       }
-       return false;
+        }
+        return false;
     }
 
     @Override
     public Object updates(EsShopCardMessage entity) {
-        try{
-            if(this.updateById(entity)){
-                System.out.println("数据打印："+entity.getId());
+        try {
+            if (this.updateById(entity)) {
+                System.out.println("数据打印：" + entity.getId());
                 EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
                 messageCut.setCardMessageId(entity.getId());
                 esShopCardMessageCutMapper.delete(new QueryWrapper<>(messageCut));
-                if(entity.getListCut() != null){
-                    for (EsShopCardMessageCut cut:entity.getListCut()) {
+                if (entity.getListCut() != null) {
+                    for (EsShopCardMessageCut cut : entity.getListCut()) {
                         cut.setCardMessageId(entity.getId());
                         esShopCardMessageCutMapper.insert(cut);
                     }
@@ -53,7 +54,7 @@ public class EsShopCardMessageServerImpl extends ServiceImpl<EsShopCardMessageMa
                 return true;
             }
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -62,8 +63,8 @@ public class EsShopCardMessageServerImpl extends ServiceImpl<EsShopCardMessageMa
     @Override
     public EsShopCardMessage selPageList() {
 
-        EsShopCardMessage message=esShopCardMessageMapper.selectOne(new QueryWrapper<>());
-        if(message!=null){
+        EsShopCardMessage message = esShopCardMessageMapper.selectOne(new QueryWrapper<>());
+        if (message != null) {
             EsShopCardMessageCut messageCut = new EsShopCardMessageCut();
             messageCut.setCardMessageId(message.getId());
             message.setListCut(esShopCardMessageCutMapper.selectList(new QueryWrapper<>(messageCut)));
