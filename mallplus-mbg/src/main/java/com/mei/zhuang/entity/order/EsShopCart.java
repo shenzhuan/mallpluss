@@ -50,7 +50,7 @@ public class EsShopCart extends Model<EsShopCart> {
     private Long optionId;
     private BigDecimal price;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("goods_name")
     private String goodsName;
     @TableField("cust_id")

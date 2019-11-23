@@ -30,7 +30,7 @@ public class EsDecorateTemplateOrder extends Model<EsDecorateTemplateOrder> {
     @TableField("is_free")
     private Long isFree;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("template_id")
     private Long templateId;
     @TableField("start_time")

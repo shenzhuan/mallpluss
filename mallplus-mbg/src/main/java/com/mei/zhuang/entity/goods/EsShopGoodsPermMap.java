@@ -34,7 +34,7 @@ public class EsShopGoodsPermMap extends Model<EsShopGoodsPermMap> {
     @TableField("perm_type")
     private Long permType;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
 
 
     @Override

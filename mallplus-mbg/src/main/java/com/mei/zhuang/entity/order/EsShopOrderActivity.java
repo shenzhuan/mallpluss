@@ -40,7 +40,7 @@ public class EsShopOrderActivity extends Model<EsShopOrderActivity> {
      * 商品id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 活动id
      */

@@ -84,7 +84,7 @@ public class EsMemberCoupon extends Model<EsMemberCoupon> {
      * 商城id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 开始时间
      */

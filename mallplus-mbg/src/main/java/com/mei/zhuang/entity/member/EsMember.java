@@ -99,7 +99,7 @@ public class EsMember extends Model<EsMember> {
     private Integer mobileVerified;
     private String openid;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     //开卡号
     @TableField("open_card")
     private String openCard;

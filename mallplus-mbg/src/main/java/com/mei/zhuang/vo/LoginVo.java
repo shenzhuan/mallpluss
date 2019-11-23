@@ -15,7 +15,7 @@ public class LoginVo {
     private String userInfos;
     //签名
     private String signature;
-    private Long shopId;
+    private Long shopId=1l;
     //用户敏感信息
     private String encryptedData;
     //解密算法的向量

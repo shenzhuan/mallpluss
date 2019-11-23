@@ -114,7 +114,7 @@ public class EsShopOrderRefund extends Model<EsShopOrderRefund> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 步骤2时间
      */

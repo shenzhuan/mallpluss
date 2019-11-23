@@ -101,7 +101,7 @@ public class EsShopPayment extends Model<EsShopPayment> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 子支付商户号
      */

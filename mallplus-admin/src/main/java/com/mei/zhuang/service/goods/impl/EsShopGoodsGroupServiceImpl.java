@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,15 +62,21 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
 
 
     @ApiOperation("保存商品分组")
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @Override
     public Object saveGoodsGroup(EsShopGoodsGroup entity) {
-        try {
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date da = new Date();
             String str = sdf.format(da);
-            Date date = sdf.parse(str);
-            entity.setCreateTime(date);
+        Date date = null
+                ;
+        try {
+            date = sdf.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        entity.setCreateTime(date);
             // 1.添加分组信息
             goodsGroupService.save(entity);
             // 2.添加商品分组
@@ -87,10 +94,7 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
 
             return new CommonResult().success();
 
-        } catch (Exception e) {
-            log.error("保存商品分组：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
+
 
     }
 
@@ -102,11 +106,7 @@ public class EsShopGoodsGroupServiceImpl extends ServiceImpl<EsShopGoodsGroupMap
             // 1.更新分类信息
             this.baseMapper.updateById(entity);
             // 2.删除此分类下的商品
-            EsShopGoodsGroupMap group = new EsShopGoodsGroupMap();
-            group.setShopId(entity.getGoodsId());
-            group.setGroupId(entity.getId());
-
-            shopGoodsGroupMapMapper.delete(new QueryWrapper<>(group));
+            shopGoodsGroupMapMapper.delete(new QueryWrapper<EsShopGoodsGroupMap>().eq("group_id",entity.getId()));
 
             // 3.重新插入此分组下的商品
             if (ValidatorUtils.notEmpty(entity.getGoodsIds())) {

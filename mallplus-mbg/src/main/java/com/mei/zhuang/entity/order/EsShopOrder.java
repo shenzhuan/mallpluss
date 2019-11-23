@@ -57,7 +57,7 @@ public class EsShopOrder extends Model<EsShopOrder> {
      * 商店id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 地址详情  赋值到这里 ， 1. 方便修改 ，2. 意外情况
      */

@@ -130,7 +130,7 @@ public class EsShopOrderComment extends Model<EsShopOrderComment> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 附加内容
      */

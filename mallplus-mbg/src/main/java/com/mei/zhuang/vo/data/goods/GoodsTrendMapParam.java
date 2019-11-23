@@ -16,6 +16,6 @@ public class GoodsTrendMapParam {
 
     private String endTime;//结束时间
 
-    private Long shopId;//店铺id
+    private Long shopId=1l;//店铺id
 
 }

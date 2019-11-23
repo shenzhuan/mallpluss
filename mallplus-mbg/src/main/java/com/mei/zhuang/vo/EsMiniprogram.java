@@ -43,7 +43,7 @@ public class EsMiniprogram extends Model<EsMiniprogram> {
     private String appid;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("principal_name")
     private String principalName;
     @TableField("qrcode_url")

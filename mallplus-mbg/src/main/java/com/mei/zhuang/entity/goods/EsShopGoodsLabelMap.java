@@ -30,7 +30,7 @@ public class EsShopGoodsLabelMap extends Model<EsShopGoodsLabelMap> {
     @TableField("label_id")
     private Long labelId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
 
 
     @Override

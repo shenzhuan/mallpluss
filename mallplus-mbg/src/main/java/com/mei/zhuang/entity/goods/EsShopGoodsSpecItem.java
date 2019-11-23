@@ -30,7 +30,7 @@ public class EsShopGoodsSpecItem extends Model<EsShopGoodsSpecItem> {
     private Long goodsId;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("spec_id")
     private Long specId;
     private String title;

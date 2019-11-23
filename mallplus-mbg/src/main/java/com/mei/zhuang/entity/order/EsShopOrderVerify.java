@@ -36,7 +36,7 @@ public class EsShopOrderVerify extends Model<EsShopOrderVerify> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 存储，仓库id
      */

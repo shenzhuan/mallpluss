@@ -62,7 +62,7 @@ public class EsDeliveryInvoice extends Model<EsDeliveryInvoice> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 修改时间
      */

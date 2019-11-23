@@ -42,7 +42,7 @@ public class EsShopRechargeOrder extends Model<EsShopRechargeOrder> {
     private Date createTime;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private Integer status;
 
 

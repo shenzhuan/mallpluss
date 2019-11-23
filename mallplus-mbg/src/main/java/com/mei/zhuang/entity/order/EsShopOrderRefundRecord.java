@@ -68,7 +68,7 @@ public class EsShopOrderRefundRecord extends Model<EsShopOrderRefundRecord> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private Long id;
     /**
      * 图片

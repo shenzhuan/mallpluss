@@ -37,7 +37,7 @@ public class EsShopSingleGiftRule extends Model<EsShopSingleGiftRule> {
     private Long singleGiftId;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 满多少件
      */

@@ -37,7 +37,7 @@ public class EsShopCodeGiftRule extends Model<EsShopCodeGiftRule> {
     private Long codeGiftId;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 验证码Url
      */

@@ -39,7 +39,7 @@ public class EsShopFullGiftRule extends Model<EsShopFullGiftRule> {
     private Long fullGiftId;
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 消费满元
      */

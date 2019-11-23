@@ -32,7 +32,7 @@ public class EsShopMemberFootprint extends Model<EsShopMemberFootprint> {
     @TableField("member_id")
     private Long memberId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("create_time")
     private Date createTime;
 

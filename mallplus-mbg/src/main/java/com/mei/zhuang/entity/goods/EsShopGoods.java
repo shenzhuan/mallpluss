@@ -30,7 +30,7 @@ public class EsShopGoods extends Model<EsShopGoods> {
 
     private Long id;//编号
     @TableField("shop_id")
-    private Long shopId;//商铺ID
+    private Long shopId=1l;//商铺ID
     @TableField("brand_id")
     private Long branId;//品牌ID
     @TableField("create_time")

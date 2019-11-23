@@ -37,7 +37,7 @@ public class EsDecorateTemplate extends Model<EsDecorateTemplate> {
     @TableField("release_time")
     private Date releaseTime;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 1 保存 2 发布 3 禁用
      */

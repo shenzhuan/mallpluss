@@ -67,7 +67,7 @@ public class EsShopOrderPackage extends Model<EsShopOrderPackage> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 快递，快车编号
      */

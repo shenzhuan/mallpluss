@@ -30,7 +30,7 @@ public class EsShopGoodsCateMap extends Model<EsShopGoodsCateMap> {
     @TableField("goods_id")
     private Long goodsId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("category_name")
     private String categoryName;
 

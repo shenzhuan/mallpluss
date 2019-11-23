@@ -30,7 +30,7 @@ public class EsAppletTemplates extends Model<EsAppletTemplates> {
     @TableField("template_id")
     private String templateId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private String title;
     private String content;
     private String example;

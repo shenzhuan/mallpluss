@@ -30,7 +30,7 @@ public class EsShopOrderBatchSend extends Model<EsShopOrderBatchSend> {
      * 商品id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 用户uid
      */

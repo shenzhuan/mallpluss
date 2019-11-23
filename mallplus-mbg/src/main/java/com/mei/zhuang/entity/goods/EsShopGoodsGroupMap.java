@@ -26,7 +26,7 @@ public class EsShopGoodsGroupMap extends Model<EsShopGoodsGroupMap> {
     private static final long serialVersionUID = 1L;
 
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("goods_id")
     private Long goodsId;
     @TableField("group_id")

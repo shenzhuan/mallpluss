@@ -44,7 +44,7 @@ public class EsShopFirstPurchaseRule extends Model<EsShopFirstPurchaseRule> {
 
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 赠品id
      */

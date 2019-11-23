@@ -14,7 +14,7 @@ public class CustTradeSuccessParam {
 
     private String endTime;
 
-    private Long shopId;
+    private Long shopId=1l;
 
     private String source;
 

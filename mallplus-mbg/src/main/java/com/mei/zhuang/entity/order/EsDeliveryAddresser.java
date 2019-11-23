@@ -38,7 +38,7 @@ public class EsDeliveryAddresser extends Model<EsDeliveryAddresser> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 地址状态
      */

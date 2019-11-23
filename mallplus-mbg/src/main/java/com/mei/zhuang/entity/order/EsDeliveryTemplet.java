@@ -56,7 +56,7 @@ public class EsDeliveryTemplet extends Model<EsDeliveryTemplet> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private Long id;
     /**
      * 是否默认： 0：不默认 1： 默认

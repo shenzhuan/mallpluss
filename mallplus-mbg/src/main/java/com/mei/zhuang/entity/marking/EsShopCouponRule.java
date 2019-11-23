@@ -45,7 +45,7 @@ public class EsShopCouponRule extends Model<EsShopCouponRule> {
 
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     //单笔消费
     @TableField("single_consumer")
     private BigDecimal singleConsumer;

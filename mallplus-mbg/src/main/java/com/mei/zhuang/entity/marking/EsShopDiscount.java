@@ -63,7 +63,7 @@ public class EsShopDiscount extends Model<EsShopDiscount> {
     @TableField("start_time")
     private Time startTime;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 标题，主题
      */

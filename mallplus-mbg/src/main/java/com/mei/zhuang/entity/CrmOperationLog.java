@@ -70,7 +70,7 @@ public class CrmOperationLog extends Model<CrmOperationLog> {
      * 所属店铺
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 运行时间
      */

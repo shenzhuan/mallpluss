@@ -44,7 +44,7 @@ public class EsShopDiscountRule extends Model<EsShopDiscountRule> {
     private Integer total;
 
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("id")
     private Long id;
 

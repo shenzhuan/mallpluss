@@ -27,7 +27,7 @@ public class EsShopOperationLog extends Model<EsShopOperationLog> {
     private String ip;
     private String params;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
 
 
     @Override

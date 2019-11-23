@@ -39,7 +39,7 @@ public class EsShopManjianRule extends Model<EsShopManjianRule> {
 
     private Long id;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 总数,总计
      */

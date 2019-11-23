@@ -30,7 +30,7 @@ public class EsDeliverySetting extends Model<EsDeliverySetting> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 类型
      */

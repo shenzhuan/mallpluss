@@ -28,7 +28,7 @@ public class EsDecorateTemplateChannel extends Model<EsDecorateTemplateChannel> 
     private Long id;
     private String channel;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("template_id")
     private Long templateId;
 

@@ -49,7 +49,7 @@ public class BookOrderParam {
     private Long optionId;
     private Integer total;
     private Long goodsId;
-    private Long shopId;
+    private Long shopId=1l;
     private long giftId;
     // 满减
     private Long manjianId;

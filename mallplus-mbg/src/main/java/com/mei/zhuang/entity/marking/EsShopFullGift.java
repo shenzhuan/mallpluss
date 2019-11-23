@@ -62,7 +62,7 @@ public class EsShopFullGift extends Model<EsShopFullGift> {
     private Time startTime;
 
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 标题，主题
      */

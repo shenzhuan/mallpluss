@@ -26,7 +26,7 @@ public class EsShopGoodsDiyPageMap extends Model<EsShopGoodsDiyPageMap> {
     @TableField("diypage_id")
     private Long diyPageId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private String data;
 
     @Override

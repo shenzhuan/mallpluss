@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.dao.order.*;
 import com.mei.zhuang.entity.Table.TableColumnInfo;
@@ -849,7 +851,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     }
 
     @Override
-    public Page<EsShopOrder> selectPageExt(OrderParam entity) {
+    public PageInfo selectPageExt(OrderParam entity) {
         Page<EsShopOrder> page = new Page<EsShopOrder>(entity.getCurrent(), entity.getSize());
         //  page.setAsc(entity.getIsAsc() == 0 ? false : true);
         List<EsShopOrder> orderList = null;
@@ -863,7 +865,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             entity.setOrderIds(orderIdsByOg);
             if (orderIdsByOg != null && orderIdsByOg.size() != 0) {
                 orderList = this.orderMapper.selOrderByPage(entity);
-                total = orderMapper.getCountByPage(entity);
+             //   total = orderMapper.getCountByPage(entity);
                 for (EsShopOrder orderItem : orderList) {
                     orderItem.setOrderGoodsList(orderGoodsMapper.selectList
                             (new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", orderItem.getId())));
@@ -874,15 +876,15 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             }
         } else {
             // 单表查询
+            PageHelper.startPage(entity.getCurrent(), entity.getSize());
             orderList = orderMapper.getOrderListByCon(entity);
-            total = orderMapper.getCountByCon(entity);
+
             for (EsShopOrder order : orderList) {
                 order.setOrderGoodsList(orderGoodsMapper.selectList(new QueryWrapper<>(new EsShopOrderGoods()).eq("order_id", order.getId())));
             }
         }
-        page.setRecords(orderList);
-        page.setTotal(total);
-        return page;
+
+        return PageInfo.of(orderList);
     }
 
     //好友赠礼查询

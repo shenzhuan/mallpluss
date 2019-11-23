@@ -63,7 +63,7 @@ public class EsShopManjian extends Model<EsShopManjian> {
     // @JSONField(format="HH:mm:ss", deserializeUsing = SqlTimeDeserializer.class)
     private Time startTime;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 标题，主题
      */

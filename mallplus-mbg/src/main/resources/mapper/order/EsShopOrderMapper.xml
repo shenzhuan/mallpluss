@@ -165,7 +165,7 @@
         where 1=1
         <include refid="query_order_where"/>
         order by o.create_time desc
-        limit #{size} offset (#{current} - 1) * #{size}
+
     </select>
 
     <select id="getCountByCon" parameterType="com.mei.zhuang.vo.order.OrderParam" resultType="java.lang.Integer">

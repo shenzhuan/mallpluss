@@ -30,7 +30,7 @@ public class EsShopGoodsLabel extends Model<EsShopGoodsLabel> {
     private Long id;
     private String name;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     @TableField("sort_type")
     private String sortType;
     @TableField("create_time")

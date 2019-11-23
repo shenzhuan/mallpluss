@@ -40,7 +40,7 @@ public class EsDecorateTemplatePage extends Model<EsDecorateTemplatePage> {
     @TableField("system_id")
     private Long systemId;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private String content;
     @TableField("display_order")
     private Long displayOrder;

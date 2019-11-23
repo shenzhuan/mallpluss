@@ -40,7 +40,7 @@ public class EsDeliveryPanel extends Model<EsDeliveryPanel> {
      * 店铺id
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 面板账户
      */

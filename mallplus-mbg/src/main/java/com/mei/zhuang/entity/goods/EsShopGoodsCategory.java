@@ -29,7 +29,7 @@ public class EsShopGoodsCategory extends Model<EsShopGoodsCategory> {
     private static final long serialVersionUID = 1L;
 
     @TableField("shop_id")
-    private Long shopId;        //商铺ID
+    private Long shopId=1l;        //商铺ID
     private String thumb;          //分类图
     @TableField("display_order")
     private Integer displayOrder;//显示顺序

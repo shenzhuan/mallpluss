@@ -35,7 +35,7 @@ public class EsShopGoodsOption extends Model<EsShopGoodsOption> {
     private Long id;//编号
     private Long sales;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private String title;//规格名称
     @TableField("goods_code")
     private String goodsCode;//编码

@@ -41,7 +41,7 @@ public class EsCoreAttachment extends Model<EsCoreAttachment> {
      * 商铺ID
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 文件类型(image，video，audio)
      */

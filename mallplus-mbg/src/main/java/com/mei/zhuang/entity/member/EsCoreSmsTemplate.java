@@ -35,7 +35,7 @@ public class EsCoreSmsTemplate extends Model<EsCoreSmsTemplate> {
      * 店铺ID
      */
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     /**
      * 短信模板名称
      */

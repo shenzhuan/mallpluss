@@ -3,6 +3,7 @@ package com.mei.zhuang.service.order;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 import com.mei.zhuang.entity.Table.TableColumnInfo;
 import com.mei.zhuang.entity.member.EsMember;
 import com.mei.zhuang.entity.order.EsShopCart;
@@ -41,7 +42,7 @@ public interface ShopOrderService extends IService<EsShopOrder> {
 
     OrderDetail orderDetail(Long id);
 
-    Page<EsShopOrder> selectPageExt(OrderParam entity);
+    PageInfo selectPageExt(OrderParam entity);
 
     Page<EsShopOrder> selectPageExtByApplet(AppletOrderParam appletOrderParam);
 

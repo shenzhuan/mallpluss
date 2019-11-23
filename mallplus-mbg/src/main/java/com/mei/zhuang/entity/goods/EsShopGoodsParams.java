@@ -32,7 +32,7 @@ public class EsShopGoodsParams extends Model<EsShopGoodsParams> {
     private String img;
     private String name;
     @TableField("shop_id")
-    private Long shopId;
+    private Long shopId=1l;
     private String text;
     private Integer type;
 
