@@ -294,10 +294,12 @@ public class EsShopGoodsController {
     @ApiOperation("查询赠品商品")
     @PostMapping(value = "/gifts")
     public Object selectgiftgoods(EsShopGoods entity) {
-        Map<String, Object> map = new HashMap<String, Object>();
         try {
             PageHelper.startPage(entity.getCurrent(), entity.getSize());
-
+            entity.setType(3);
+            if (StringUtils.isBlank(entity.getTitle())){
+                entity.setTitle(null);
+            }
             return new CommonResult().success(PageInfo.of(shopGoodsService.list(new QueryWrapper<>(entity))));
         } catch (Exception e) {
             log.error("查询商品明细：%s", e.getMessage(), e);
