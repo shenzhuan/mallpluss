@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.member;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class EsMemberPortraitMap extends Model<EsMemberPortraitMap> {
 
     @TableField("shop_id")
     private Integer shopId;
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     @TableField("member_id")
     private Integer memberId;
     @TableField("portrait_id")

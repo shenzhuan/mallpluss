@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class EsShopCouponShopping extends Model<EsShopCouponShopping> {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * 活动开启 1开启，2关闭
      */

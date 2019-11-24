@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class EsProductAttributeValue implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     private Long productAttributeId;
     //属性值
     @Field(type = FieldType.Keyword)

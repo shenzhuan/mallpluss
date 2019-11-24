@@ -89,8 +89,8 @@
             resultType="java.lang.Long">
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
@@ -100,8 +100,8 @@
             resultType="java.lang.Long">
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
@@ -155,7 +155,7 @@
         <if test="isAsc == 1">
             order by o.id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
 
 
@@ -181,7 +181,7 @@
         <include refid="query_order_where_bypage"/>
         order by o.create_time desc
 
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
     <select id="getCountByPage" resultType="java.lang.Integer" parameterType="com.mei.zhuang.vo.order.OrderParam">
         SELECT count(*) from es_shop_order o
@@ -218,34 +218,34 @@
 
         <if test="timeType==1">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==2">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.pay_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString( )">
-                and o.pay_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.pay_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==3">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.send_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.send_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.send_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.send_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==4">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.finish_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.finish_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.finish_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.finish_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
@@ -280,34 +280,34 @@
 
         <if test="timeType==1">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==2">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.pay_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString( )">
-                and o.pay_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.pay_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==3">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.send_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.send_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.send_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.send_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="timeType==4">
             <if test="startTime != null and startTime !=''.toString()">
-                and o.finish_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.finish_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
             </if>
             <if test="endTime != null and endTime !=''.toString()">
-                and o.finish_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+                and o.finish_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
             </if>
         </if>
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
@@ -366,7 +366,7 @@
         <if test="isAsc == 1">
             order by o.id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>-->
 
     <select id="selectOrderListByApplet" parameterType="com.mei.zhuang.vo.order.AppletOrderParam"
@@ -388,7 +388,7 @@
         <if test="isAsc == 1">
             order by id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
 
 
@@ -456,8 +456,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         from es_shop_order_goods where goods_id=#{goodsId} and order_id in (select id
         from es_shop_order where es_shop_order.member_id=#{memberId} and status between 1 and 3
         <if test="startTime != null">
-            and pay_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-            and to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') >= pay_time
+            and pay_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+            and  DATE_FORMAT(#{endTime}, '%Y-%m-%d') >= pay_time
         </if>
         )
     </select>
@@ -473,8 +473,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         select sum(record.total) as oldConsumeAmount, sum(record.count) as oldClientCount
         from (select SUM(pay_price) as total ,count(member_id) as count, member_id
         from es_shop_order WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS') AND create_time &lt;=
-        to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d') AND create_time &lt;=
+         DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
@@ -487,14 +487,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         where member_id in
         (
         select member_id from es_shop_order
-        WHERE status NOT IN (0, 8) AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        WHERE status NOT IN (0, 8) AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id having count(member_id) > 1
         )
 
@@ -509,8 +509,8 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         SUM(pay_price) as total ,count(member_id) as count
         from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
@@ -525,10 +525,10 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         select count( distinct member_id) from es_shop_order
         where 1 = 1
         <if test="startTime != null and startTime !=''.toString()">
-            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
         </if>
         <if test="endTime != null and endTime !=''.toString()">
-            and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         </if>
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
@@ -547,14 +547,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         (
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id having count(member_id) = 1
         )
 
@@ -570,14 +570,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         (
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id having count(member_id) > 1
         )
 
@@ -599,14 +599,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         (
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id
         )
     </select>
@@ -622,14 +622,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         (
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id having count(member_id) > 1
         )
 
@@ -645,14 +645,14 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         (
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}
         </if>
         group by member_id
         )
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id having count(member_id) = 1
         )
 
@@ -689,32 +689,32 @@ from es_shop_order where es_shop_order.member_id=#{memberId} and status between 
         <if test="isAsc == 1">
             order by id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
     <select id="memberIdList" resultType="java.lang.Long"
             parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
         select member_id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         group by member_id
     </select>
     <select id="paymentNumber" resultType="java.lang.Integer">
-        select member_id from es_shop_order where status=3 AND create_time &gt;= to_timestamp(#{beginTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        select member_id from es_shop_order where status=3 AND create_time &gt;=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
     </select>
     <select id="selCountDateDetail" resultType="com.mei.zhuang.entity.order.EsShopOrder">
-        select * from es_shop_order where status=#{status} AND create_time &gt;= to_timestamp(#{beginTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        select * from es_shop_order where status=#{status} AND create_time &gt;=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
     </select>
 
 
     <sql id="timeCondtion">
         <if test="startTime != null and startTime !=''.toString()">
-            AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
         </if>
         <if test="startTime != null and startTime !=''.toString()">
-            AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         </if>
         <if test="source!=null and source !=''.toString() and source !='0'.toString() and source !='-1'.toString()">
             and soure_type = #{source}

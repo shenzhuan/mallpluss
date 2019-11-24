@@ -24,8 +24,7 @@ public class CrmSysUser extends Model<CrmSysUser> {
      * 主键 用户id
      */
     @ApiModelProperty("主键 用户id")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 用户名
      */

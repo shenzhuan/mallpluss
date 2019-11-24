@@ -24,9 +24,9 @@ public class CrmSysDict extends Model<CrmSysDict> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-    private String value;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
+    private String values;
     private String text;
     @TableField("table_name")
     private String tableName;

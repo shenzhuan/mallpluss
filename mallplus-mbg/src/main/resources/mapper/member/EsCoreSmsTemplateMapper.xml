@@ -46,7 +46,7 @@
         <if test="isAsc == 1">
             order by smsTemp.create_time,smsTemp.id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
 
     <!-- <select id="selectById" resultMap="smsDetailMap" parameterType="java.lang.Long">
@@ -70,10 +70,10 @@
 
     <sql id="query_sms_condition">
         <if test="startTime != null and startTime !=''.toString()">
-            and smsTemp.create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and smsTemp.create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
         </if>
         <if test="endTime != null and endTime !=''.toString()">
-            and smsTemp.create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and smsTemp.create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         </if>
         <if test="serverId != null and serverId !=''.toString()">
             and smsTemp.server_id = #{serverId}

@@ -291,37 +291,6 @@ public class ITradeDataAnalyzeServiceImpl implements ITradeDataAnalyzeService {
 
     private OrderCustTotalVo calcCustTotal(TradeAnalyzeParam param) {
 
-      /*  <!--获取新老顾客数据思路：
-        1.首先从时间段内（所有条件） 取出member_id
-        2.从小于选中截止日期中区分老客户，得到老客户id
-        3.最后根据老客户id 在选中日期内 累加计算
-        4.新客户从条件内用总的减掉老客户的数据
-                -->*/
-
-        //测试sql
-        /*--总金额
-        select sum(pay_price),count(member_id) from es_shop_order where status NOT IN (0, 8)
-        AND create_time >= to_timestamp('2019-06-09', 'YYYY/MM/DD HH24:MI:SS') AND create_time <= to_timestamp('2019-06-25', 'YYYY/MM/DD HH24:MI:SS');
-*/
-
-
-        /*
-        select sum(record.total) as oldConsumeAmount, sum(record.count) as oldClientCount
-        from (select SUM(pay_price) as total , count(member_id) as count,member_id
-                from es_shop_order WHERE status NOT IN (0, 8)
-                AND create_time >= to_timestamp('2019-06-09', 'YYYY/MM/DD HH24:MI:SS') AND create_time <= to_timestamp('2019-06-25', 'YYYY/MM/DD HH24:MI:SS')
-                group by member_id)
-        as record
-        where member_id in
-                (select member_id
-                        from es_shop_order
-                        where member_id in
-                                (select member_id from es_shop_order
-                                        WHERE status NOT IN (0, 8) AND create_time >= to_timestamp('2019-06-09', 'YYYY/MM/DD HH24:MI:SS') 							AND create_time <= to_timestamp('2019-06-25', 'YYYY/MM/DD HH24:MI:SS')
-                                        group by member_id)
-                        AND create_time < to_timestamp('2019-06-25', 'YYYY/MM/DD HH24:MI:SS')
-                        group by member_id having count(member_id) > 1
-                )*/
 
 
         OrderCustTotalVo oldConsumeInfo = shopOrderService.getOldConsumeInfo(param);

@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import java.util.Date;
 @TableName("es_shop_share_member")
 public class EsShopShareMember {
 
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @TableField("share_id")
     private Long shareId;//活动id
     @TableField("launch_member_id")

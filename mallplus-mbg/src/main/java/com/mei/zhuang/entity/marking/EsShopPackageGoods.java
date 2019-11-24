@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class EsShopPackageGoods extends Model<EsShopPackageGoods> {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 套餐类型1.自组套餐 2.固定套餐
      */

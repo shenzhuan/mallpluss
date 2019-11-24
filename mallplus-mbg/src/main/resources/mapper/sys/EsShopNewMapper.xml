@@ -29,12 +29,12 @@
     </resultMap>
     <resultMap id="shopItem" type="com.mei.zhuang.entity.sys.EsShopNew" extends="BaseResultMap">
         <association property="shopBrand" javaType="com.mei.zhuang.entity.goods.EsShopBrand"
-                     resultMap="com.mei.zhuang.dao.sys.EsShopBrandMapper.BaseResultMap"/>
+                     resultMap="com.mei.zhuang.dao.goods.EsShopBrandMapper.BaseResultMap"/>
     </resultMap>
 
     <select id="selectShopListByParam" parameterType="com.mei.zhuang.vo.ShopParam" resultMap="shopItem">
         select * from es_shop_new shop
-        left join es_shop_brand shopB on shop.brand_id = shopB."id"
+        left join es_shop_brand shopB on shop.brand_id = shopB.id
         where 1 = 1
         <if test="isDelete != null">
             and shop.is_delete = #{isDelete}
@@ -59,7 +59,7 @@
 
     <select id="selectShopCountByParam" resultType="java.lang.Integer" parameterType="com.mei.zhuang.vo.ShopParam">
         select count(*) from es_shop_new shop
-        left join es_shop_brand shopB on shop.brand_id = shopB."id"
+        left join es_shop_brand shopB on shop.brand_id = shopB.id
         where 1=1
         <if test="isDelete != null">
             and shop.is_delete = #{isDelete}

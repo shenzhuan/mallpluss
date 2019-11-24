@@ -1,6 +1,8 @@
 package com.mei.zhuang.entity.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -33,7 +35,7 @@ public class EsShopGoodsCategory extends Model<EsShopGoodsCategory> {
     private String thumb;          //分类图
     @TableField("display_order")
     private Integer displayOrder;//显示顺序
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     private String name;        //分类名称
     @TableField("parent_id")
     private Long parentId;      //父级iD

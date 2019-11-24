@@ -1,6 +1,6 @@
 package com.mei.zhuang.vo.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,7 +26,7 @@ public class GoodsSample extends Model<GoodsSample> {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;//编号
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;//编号
     @TableField("shop_id")
     private Long shopId=1l;//商铺ID
     @TableField("brand_id")

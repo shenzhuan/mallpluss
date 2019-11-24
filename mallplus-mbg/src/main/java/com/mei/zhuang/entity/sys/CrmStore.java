@@ -24,8 +24,8 @@ public class CrmStore extends Model<CrmStore> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.INPUT)
-    private Integer id;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     private String name;
     @TableField("dept_id")
     private Integer deptId;

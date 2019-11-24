@@ -1,7 +1,9 @@
 package com.mei.zhuang.entity.order;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.entity.goods.EsShopGoods;
@@ -73,7 +75,7 @@ public class EsShopOrderGoods extends Model<EsShopOrderGoods> {
      */
     @TableField("price_change")
     private BigDecimal priceChange;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * 会员价格
      */

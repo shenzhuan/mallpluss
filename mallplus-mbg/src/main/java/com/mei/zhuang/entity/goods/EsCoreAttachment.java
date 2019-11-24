@@ -1,7 +1,9 @@
 package com.mei.zhuang.entity.goods;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -19,7 +21,7 @@ public class EsCoreAttachment extends Model<EsCoreAttachment> {
     /**
      * 编号
      */
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * md5校验
      */

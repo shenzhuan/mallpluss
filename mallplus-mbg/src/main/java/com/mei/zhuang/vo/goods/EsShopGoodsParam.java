@@ -1,6 +1,6 @@
 package com.mei.zhuang.vo.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.mei.zhuang.entity.goods.*;
 import lombok.Data;
 

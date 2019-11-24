@@ -30,7 +30,7 @@
             order by log.id asc
         </if>
 
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
 
     <select id="exportLogList" resultMap="BaseResultMap" parameterType="com.mei.zhuang.vo.sys.SysOpertionLogParam">
@@ -58,10 +58,10 @@
 
     <sql id="query_condition_where">
         <if test="startTime != null and startTime !=''.toString()">
-            and log.add_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and log.add_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
         </if>
         <if test="endTime != null and endTime !=''.toString()">
-            and log.add_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and log.add_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         </if>
         <!--  <if test="operationTypeId != null">
               and log.operation_type_id = #{operationTypeId}

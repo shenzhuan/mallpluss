@@ -1,7 +1,7 @@
 package com.mei.zhuang.entity.marking;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
@@ -43,7 +43,7 @@ public class EsShopCouponRule extends Model<EsShopCouponRule> {
     //商品限制类型1商品分类,2指定商品
     private Integer extra;
 
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @TableField("shop_id")
     private Long shopId=1l;
     //单笔消费

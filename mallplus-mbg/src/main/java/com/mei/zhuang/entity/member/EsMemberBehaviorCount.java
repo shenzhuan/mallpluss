@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.member;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class EsMemberBehaviorCount extends Model<EsMemberBehaviorCount> {
     private String total;
     @TableField("activity_id")
     private Integer activityId;
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     private String key;
     @TableField("member_id")
     private Integer memberId;

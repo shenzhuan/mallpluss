@@ -1,7 +1,7 @@
 package com.mei.zhuang.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class CrmSysDataAuth extends Model<CrmSysDataAuth> {
     /**
      * 主键ID
      */
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 角色ID
      */

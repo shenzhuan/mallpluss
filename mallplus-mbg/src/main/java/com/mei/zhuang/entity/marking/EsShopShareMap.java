@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -52,7 +52,7 @@ public class EsShopShareMap extends Model<EsShopShareMap> {
     //商品id或赠品
     @TableField("goods_id")
     private long goodsId;
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     // 1.优惠 2 赠品
     private Integer type;
     @TableField(exist = false)

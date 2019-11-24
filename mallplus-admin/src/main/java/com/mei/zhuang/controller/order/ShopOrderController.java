@@ -2,6 +2,7 @@ package com.mei.zhuang.controller.order;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageInfo;
 import com.mei.zhuang.constant.OrderConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.order.EsDeliveryAddresser;
@@ -68,7 +69,7 @@ public class ShopOrderController {
             if (entity.getKeyword() != null) {
                 entity.setKeyword(entity.getKeyword().trim());
             }
-            Page<EsShopOrder> orderList = shopOrderService.selectPageExt(entity);
+            PageInfo orderList = shopOrderService.selectPageExt(entity);
             return new CommonResult().success(orderList);
         } catch (Exception e) {
             log.error("根据条件查询所有订单列表：%s", e.getMessage(), e);

@@ -154,7 +154,7 @@ public class TradeSettingsController {
         try {
             //非空处理
 //            String
-            entity.setKey(new Date() + "AGgedgfatw144325v");
+            entity.setKey1(new Date() + "AGgedgfatw144325v");
             entity.setCert(new Date() + "dsgkjdshweitrhjk");
             entity.setMchId(String.valueOf(IdWorker.getId()));
             entity.setAppid(String.valueOf(IdWorker.getId()));

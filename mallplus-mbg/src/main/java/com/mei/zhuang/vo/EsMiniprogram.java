@@ -1,6 +1,6 @@
 package com.mei.zhuang.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.entity.order.EsCoreMessageTemplate;
@@ -41,7 +41,7 @@ public class EsMiniprogram extends Model<EsMiniprogram> {
     @TableField("user_name")
     private String userName;
     private String appid;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @TableField("shop_id")
     private Long shopId=1l;
     @TableField("principal_name")

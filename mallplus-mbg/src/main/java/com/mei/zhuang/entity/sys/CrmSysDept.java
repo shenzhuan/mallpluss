@@ -1,7 +1,7 @@
 package com.mei.zhuang.entity.sys;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -27,7 +27,7 @@ public class CrmSysDept extends Model<CrmSysDept> {
      * 主键ID
      */
     @ApiModelProperty("主键ID")
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 部门名称
      */

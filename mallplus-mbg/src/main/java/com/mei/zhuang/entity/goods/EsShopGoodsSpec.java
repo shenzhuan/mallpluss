@@ -1,6 +1,8 @@
 package com.mei.zhuang.entity.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class EsShopGoodsSpec extends Model<EsShopGoodsSpec> {
 
     @TableField("goods_id")
     private Long goodsId;//商品id
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @TableField("shop_id")
     private Long shopId=1l;//品牌的id
     private String title;//规格名称

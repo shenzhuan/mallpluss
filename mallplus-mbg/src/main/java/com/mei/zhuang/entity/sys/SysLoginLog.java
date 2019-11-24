@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class SysLoginLog extends Model<SysLoginLog> {
     /**
      * 主键ID
      */
-    private Integer id;
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 登录用户名
      */

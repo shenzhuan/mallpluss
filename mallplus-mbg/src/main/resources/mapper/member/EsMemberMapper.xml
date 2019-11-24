@@ -44,8 +44,8 @@
     </resultMap>
     <select id="memberNumber" resultType="java.lang.Integer"
             parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
-        select count(*) from es_member where create_time &gt;= to_timestamp(#{param.startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        and create_time &lt;= to_timestamp(#{param.endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        select count(*) from es_member where create_time &gt;=  DATE_FORMAT(#{param.startTime}, '%Y-%m-%d')
+        and create_time &lt;=  DATE_FORMAT(#{param.endTime}, '%Y-%m-%d')
 
     </select>
 
@@ -53,10 +53,10 @@
             parameterType="com.mei.zhuang.vo.data.customer.CustGroupIndexParam">
         select count(id) from es_member where shop_id = #{shopId}
         <!-- <if test="startTime != null and startTime !=''.toString()">
-             and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+             and create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
          </if>
          <if test="endTime != null and endTime !=''.toString()">
-             and create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+             and create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
          </if>
  -->
 

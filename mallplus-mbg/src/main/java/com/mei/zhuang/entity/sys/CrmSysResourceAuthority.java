@@ -25,8 +25,8 @@ public class CrmSysResourceAuthority extends Model<CrmSysResourceAuthority> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 角色ID
      */

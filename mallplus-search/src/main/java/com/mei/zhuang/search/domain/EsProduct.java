@@ -17,7 +17,7 @@ import java.util.List;
 public class EsProduct implements Serializable {
     private static final long serialVersionUID = -1L;
     @Id
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @Field(type = FieldType.Keyword)
     private String productSn;
     private Long brandId;

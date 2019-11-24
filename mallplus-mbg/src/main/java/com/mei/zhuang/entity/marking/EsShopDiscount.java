@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.marking;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
@@ -109,7 +109,7 @@ public class EsShopDiscount extends Model<EsShopDiscount> {
      */
     @TableField("expiry_end_time")
     private Date expiryEndTime;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * 活动对象1 全部用户 2 仅注册会员 3 会员等级
      */

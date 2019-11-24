@@ -22,8 +22,8 @@ public class CrmSysGroupMember extends Model<CrmSysGroupMember> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     @TableField("group_id")
     private String groupId;
     @TableField("user_id")

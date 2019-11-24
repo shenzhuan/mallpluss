@@ -10,6 +10,6 @@ import java.math.BigDecimal;
  */
 @Data
 public class MjDcVo implements Serializable {
-    private Long id;
+       private Long id;
     private BigDecimal basicAmount = new BigDecimal(0);
 }

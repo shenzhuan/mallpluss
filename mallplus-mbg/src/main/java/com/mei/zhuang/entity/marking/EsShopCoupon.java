@@ -1,7 +1,7 @@
 package com.mei.zhuang.entity.marking;
 
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
@@ -125,7 +125,7 @@ public class EsShopCoupon extends Model<EsShopCoupon> {
     private Date exEndTime;
     @TableField(exist = false)
     private Date exBeginTime;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     //小程序
     @TableField("channel_id")
     private String channelId;

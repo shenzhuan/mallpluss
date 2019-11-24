@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.member;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -55,7 +55,7 @@ public class EsMember extends Model<EsMember> {
     //来自来源渠道
     @TableField("come_from")
     private Integer comeFrom;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     //邀请
     private Integer inviter;
     @TableField("openid_app")

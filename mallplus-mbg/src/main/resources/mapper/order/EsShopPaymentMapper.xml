@@ -45,7 +45,7 @@
         <if test="isAsc == 1">
             order by id asc
         </if>
-        limit #{size} offset (#{current} - 1) * #{size}
+        limit  #{current} ,#{size}
     </select>
 
 

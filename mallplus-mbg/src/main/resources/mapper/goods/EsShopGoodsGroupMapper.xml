@@ -69,10 +69,10 @@
         and status != 0 and status != 8
 
         <if test="startTime != null and startTime !=''.toString()">
-            and create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
         </if>
         <if test="endTime != null and endTime !=''.toString()">
-            and create_time &lt; to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+            and create_time &lt;  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         </if>
 
     </select>-->

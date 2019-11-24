@@ -54,7 +54,7 @@ public class OperationLogBiz {
         for (String item : strs) {
             CrmSysLogType logType = new CrmSysLogType();
             logType.setOperationType(item.trim());
-            logType.setDesc(item.trim());
+            logType.setDescs(item.trim());
             logType.setBelongModule(belongModule);
 //            list.add(logType);
             logTypeMapper.insert(logType);

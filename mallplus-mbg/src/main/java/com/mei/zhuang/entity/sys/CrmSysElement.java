@@ -22,8 +22,8 @@ public class CrmSysElement extends Model<CrmSysElement> {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 资源编码
      */

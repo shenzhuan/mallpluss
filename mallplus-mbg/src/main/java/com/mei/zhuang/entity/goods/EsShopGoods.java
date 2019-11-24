@@ -1,6 +1,8 @@
 package com.mei.zhuang.entity.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -28,7 +30,7 @@ public class EsShopGoods extends Model<EsShopGoods> {
 
     private static final long serialVersionUID = 1L;
 
-    private Long id;//编号
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;//编号
     @TableField("shop_id")
     private Long shopId=1l;//商铺ID
     @TableField("brand_id")
@@ -76,7 +78,7 @@ public class EsShopGoods extends Model<EsShopGoods> {
     private String productSn;//
     @TableField("promotion_time")
     private String promotionTime;
-
+    @TableField("channel_name")
     private String channelName;//渠道名称
     @TableField(exist = false)
     private List<EsShopGoodsSpec> specTitleList;
@@ -248,6 +250,7 @@ public class EsShopGoods extends Model<EsShopGoods> {
      *
      * @return
      */
+    @TableField("recom_type")
     private String recomType;//商品推荐类型（1.按商品分类   0.按单品）
     @TableField("recom_category_name")
     private String recomCategoryName;//商品分类名称

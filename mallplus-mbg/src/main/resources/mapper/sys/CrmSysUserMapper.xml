@@ -88,12 +88,12 @@
         from
         crm_sys_user t
         LEFT JOIN ec_sys_dict t1
-        on t.sex = t1."value"
-        and t1."table_name" = 'global'
+        on t.sex = t1.values
+        and t1.table_name = 'global'
         and t1.field = 'gender'
         LEFT JOIN ec_sys_dict t2
-        on t.status = t2."value"
-        and t2."table_name" = 'crm_sys_user'
+        on t.status = t2.values
+        and t2.table_name = 'crm_sys_user'
         and t2.field = 'status'
         <include refid="whereCondition"></include>
         order by t.id desc
@@ -175,12 +175,12 @@
        from
            crm_sys_user t
            LEFT JOIN ec_sys_dict t1
-           on t.sex = t1."value"
-           and t1."table_name" = 'global'
+           on t.sex = t1.values
+           and t1.table_name = 'global'
            and t1.field = 'gender'
            LEFT JOIN ec_sys_dict t2
            on t.status = t2."value"
-           and t2."table_name" = 'crm_sys_user'
+           and t2.table_name = 'crm_sys_user'
            and t2.field = 'status'
        order by t.id desc
     </select>
@@ -200,12 +200,12 @@
         from
         crm_sys_user t
         LEFT JOIN ec_sys_dict t1
-        on t.sex = t1."value"
-        and t1."table_name" = 'global'
+        on t.sex = t1.values
+        and t1.table_name = 'global'
         and t1.field = 'gender'
         LEFT JOIN ec_sys_dict t2
-        on t.status = t2."value"
-        and t2."table_name" = 'crm_sys_user'
+        on t.status = t2.values
+        and t2.table_name = 'crm_sys_user'
         and t2.field = 'status'
         <if test="deptIds != null and deptIds.size > 0">
             WHERE t.dept_id in

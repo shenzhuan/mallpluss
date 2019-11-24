@@ -26,7 +26,7 @@
     <select id="shopNumber" resultType="java.lang.Long"
             parameterType="com.mei.zhuang.vo.data.trade.TradeAnalyzeParam">
   select member_id from es_shop_cart where
-  create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-  AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS') group by member_id
+  create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+  AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d') group by member_id
     </select>
 </mapper>

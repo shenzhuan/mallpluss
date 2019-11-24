@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.goods;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.entity.order.EsAppletSet;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @TableName("es_core_message")
 public class EsCoreMessage extends Model<EsAppletSet> {
 
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * 应用名称
      */

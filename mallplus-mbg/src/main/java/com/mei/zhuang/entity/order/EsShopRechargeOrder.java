@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.order;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class EsShopRechargeOrder extends Model<EsShopRechargeOrder> {
     private String clientType;
     @TableField("create_time")
     private Date createTime;
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     @TableField("shop_id")
     private Long shopId=1l;
     private Integer status;

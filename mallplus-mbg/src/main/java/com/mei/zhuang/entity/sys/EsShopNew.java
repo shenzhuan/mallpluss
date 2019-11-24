@@ -1,6 +1,6 @@
 package com.mei.zhuang.entity.sys;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType; import com.baomidou.mybatisplus.annotation.TableField; import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.mei.zhuang.entity.goods.EsShopBrand;
@@ -29,7 +29,7 @@ public class EsShopNew extends Model<EsShopNew> {
     @TableField(exist = false)
     private String typeEn;//类型汉译
 
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)     private Long id;
     /**
      * 店铺名称
      */

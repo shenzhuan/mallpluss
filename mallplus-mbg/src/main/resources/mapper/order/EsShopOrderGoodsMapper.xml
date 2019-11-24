@@ -85,8 +85,8 @@
         select goods_id,sum(total)as total,title,thumb,count(goods_id) as count,sum(count) as goodscount from es_shop_order_goods where order_id in(
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         ) group by goods_id,title,thumb
     </select>
 
@@ -95,8 +95,8 @@
         select member_id,count(goods_id) as goodscount,goods_id from es_shop_order_goods where order_id in(
         select id from es_shop_order
         WHERE status NOT IN (0, 8)
-        AND create_time &gt;= to_timestamp(#{startTime}, 'YYYY/MM/DD HH24:MI:SS')
-        AND create_time &lt;= to_timestamp(#{endTime}, 'YYYY/MM/DD HH24:MI:SS')
+        AND create_time &gt;=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+        AND create_time &lt;=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
         )group by goods_id,member_id
     </select>
 

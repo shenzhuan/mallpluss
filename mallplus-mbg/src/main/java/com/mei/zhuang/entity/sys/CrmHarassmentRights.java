@@ -27,8 +27,8 @@ public class CrmHarassmentRights extends Model<CrmHarassmentRights> {
     /**
      * 会员id
      */
-    @TableId(value = "id", type = IdType.INPUT)
-    private Integer id;
+
+     @TableId(value = "id", type = IdType.AUTO)     private Integer id;
     /**
      * 防骚扰配置id
      */
