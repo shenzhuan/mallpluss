@@ -103,7 +103,7 @@ public class EsShopCoupon extends Model<EsShopCoupon> {
     /**
      * 使用条件 1无条件 2使用条件
      */
-    private Integer limit;
+    private Integer limits;
     /**
      * 创建时间
      */

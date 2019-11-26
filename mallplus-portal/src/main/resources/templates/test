@@ -4,6 +4,9 @@
 39.106.212.32
 
 
+nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+
+
 nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
 
 nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
@@ -55,7 +58,13 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
 put -r /Users/java/test/git/crmbmall/jsshop  /root/jm
 
-scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
+nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+
+
+put -r /Users/java/test/git/mallplus/mallplus-admin/target/meizhuang-admin-0.0.1-SNAPSHOT.jar  /root/jm
+put -r /Users/java/test/git/meihuang_admin_vue/h5bak  /root/jm
+
+
 
 scp /path/filename username@servername:/path
 

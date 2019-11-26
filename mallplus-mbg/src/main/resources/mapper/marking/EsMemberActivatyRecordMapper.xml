@@ -40,7 +40,7 @@
         order by id desc
     </select>
     <select id="distinctMember" resultType="com.mei.zhuang.entity.marking.EsMemberActivatyRecord">
-        SELECT DISTINCT open_id FROM "es_member_activaty_record"
+        SELECT DISTINCT open_id FROM es_member_activaty_record
         where activaty_id = #{actavatyId}
     </select>
 </mapper>

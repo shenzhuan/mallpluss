@@ -11,6 +11,7 @@ import com.mei.zhuang.entity.marking.EsShopCouponGoodsMap;
 import com.mei.zhuang.entity.marking.EsShopCouponRule;
 import com.mei.zhuang.entity.order.EsMemberCoupon;
 import com.mei.zhuang.service.marking.CouponService;
+import com.mei.zhuang.utils.ValidatorUtils;
 import com.mei.zhuang.vo.marking.GoodsSepcVo;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
@@ -146,9 +147,9 @@ public class CouponServiceImpl extends ServiceImpl<EsShopCouponMapper, EsShopCou
                 }
             }
         }
-        if (entity.getLimit() == 2) {
+        if (entity.getLimits() == 2) {
             //限制条件
-            rule.setActivityType(entity.getLimit());
+            rule.setActivityType(entity.getLimits());
             rule.setCouponId(entity.getId());
             //指定商品添加
             if (rule.getGoodsLimitedId() != 1 && rule.getGoodsSepcVoList() != null && rule.getGoodsSepcVoList().size() > 0) {
@@ -306,8 +307,12 @@ public class CouponServiceImpl extends ServiceImpl<EsShopCouponMapper, EsShopCou
 
     @Override
     public List<EsShopCoupon> couponbatch(String id) {
-        String str[] = id.split(",");
         List<EsShopCoupon> listcoupon = new ArrayList<>();
+        if (ValidatorUtils.isEmpty(id)){
+            return listcoupon;
+        }
+        String str[] = id.split(",");
+
         for (String st : str) {
             EsShopCoupon esShopCoupon = couponMapper.selectById(Integer.parseInt(st));
             listcoupon.add(esShopCoupon);
