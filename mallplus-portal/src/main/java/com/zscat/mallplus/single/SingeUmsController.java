@@ -18,7 +18,9 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
+import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
@@ -32,13 +34,12 @@ import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: shenzhuan
@@ -50,6 +51,11 @@ import java.util.Map;
 @RequestMapping("/api/single/user")
 public class SingeUmsController extends ApiBaseAction {
 
+    @Resource
+    private SysUserMapper userMapper;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
     @Resource
     private ISysSchoolService schoolService;
     @Resource
@@ -246,6 +252,39 @@ public class SingeUmsController extends ApiBaseAction {
             e.printStackTrace();
             return new CommonResult().failed("绑定区域失败");
         }
+    }
+
+    @SysLog(MODULE = "sys", REMARK = "保存")
+    @ApiOperation("保存")
+    @PostMapping(value = "/applyStore")
+    @Transactional
+    public Object applyStore(SysStore entity) {
+        try {
+            entity.setTryTime(new Date());
+            entity.setCreateTime(new Date());
+            UmsMember umsMember = memberService.getNewCurrentMember();
+            if (storeMapper.insert(entity)>0) {
+                SysUser user = new SysUser();
+                user.setUsername(umsMember.getUsername());
+                SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
+                if (umsAdminList!=null && umsAdminList.getId()!=null) {
+                    return new CommonResult().failed("保存失败");
+                }
+                user.setStatus(1);
+                user.setSupplyId(1L);
+                user.setPassword(umsMember.getPassword());
+                user.setCreateTime(new Date());
+                user.setIcon(entity.getLogo());
+                user.setNickName(entity.getName());
+                //user.setStoreId(entity.getId());
+                user.setEmail(entity.getSupportPhone());
+                userMapper.insert(user);
+                return new CommonResult().success();
+            }
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+        return new CommonResult().failed("保存失败");
     }
 
     /*@ApiOperation(value = "会员绑定区域")

@@ -25,11 +25,7 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
     public int updateStatus(Long id, Integer status) {
         SmsBasicGifts gifts = new SmsBasicGifts();
         gifts.setId(id);
-        if (status==1){
-            gifts.setStatus(0);
-        }else{
-            gifts.setStatus(1);
-        }
+        gifts.setStatus(status);
         return giftsMapper.updateById(gifts);
     }
 }

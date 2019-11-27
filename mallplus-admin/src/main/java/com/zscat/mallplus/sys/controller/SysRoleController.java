@@ -153,5 +153,19 @@ public class SysRoleController extends ApiController {
         List<SysRolePermission> rolePermission = sysRoleService.getRolePermission(roleId);
         return new CommonResult().success(rolePermission);
     }
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        SysRole role = new SysRole();
+        role.setId(ids);
+        role.setStatus(showStatus);
+        sysRoleService.updates(role);
+
+            return new CommonResult().success();
+
+    }
 }
 

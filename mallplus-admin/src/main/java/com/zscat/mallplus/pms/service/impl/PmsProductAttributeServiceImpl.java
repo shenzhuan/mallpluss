@@ -1,6 +1,8 @@
 package com.zscat.mallplus.pms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.exception.BusinessMallException;
 import com.zscat.mallplus.pms.entity.PmsProductAttribute;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
@@ -37,8 +39,13 @@ public class PmsProductAttributeServiceImpl extends ServiceImpl<PmsProductAttrib
     @Transactional
     @Override
     public boolean saveAndUpdate(PmsProductAttribute entity) {
+        int count = productAttributeMapper.selectCount(new QueryWrapper<PmsProductAttribute>().eq("product_attribute_category_id",entity.getProductAttributeCategoryId()).eq("type",entity.getType()));
+        if (count>=3){
+            throw new BusinessMallException("规格或者属性数量不能超过3个");
+        }
         productAttributeMapper.insert(entity);
         //新增商品属性以后需要更新商品属性分类数量
+
         PmsProductAttributeCategory pmsProductAttributeCategory = productAttributeCategoryMapper.selectById(entity.getProductAttributeCategoryId());
         if (entity.getType() == 0) {
             pmsProductAttributeCategory.setAttributeCount(pmsProductAttributeCategory.getAttributeCount() + 1);
