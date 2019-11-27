@@ -61,7 +61,17 @@
             <version>1.4.2.RELEASE</version>    <!-- 由于本项目SpringBoot版本为2.1.3早已不支持velocity，这里如果不指定版本会找不到   -->
         </dependency>
 
-
+        <!-- 定时任务 -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.mchange</groupId>
+                    <artifactId>c3p0</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.zscat.mallplus</groupId>
             <artifactId>mallplus-mbg</artifactId>

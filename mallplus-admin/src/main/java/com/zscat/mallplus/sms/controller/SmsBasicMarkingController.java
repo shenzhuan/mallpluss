@@ -46,7 +46,7 @@ public class SmsBasicMarkingController {
                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(ISmsBasicMarkingService.page(new Page<SmsBasicMarking>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(ISmsBasicMarkingService.page(new Page<SmsBasicMarking>(pageNum, pageSize), new QueryWrapper<>(entity).orderByAsc("big_type")));
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
         }
