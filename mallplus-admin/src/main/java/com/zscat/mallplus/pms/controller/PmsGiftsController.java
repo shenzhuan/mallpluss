@@ -39,7 +39,7 @@ public class PmsGiftsController {
     @PreAuthorize("hasAuthority('pms:PmsGifts:read')")
     public Object getPmsGiftsByPage(PmsGifts entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<>(entity)));

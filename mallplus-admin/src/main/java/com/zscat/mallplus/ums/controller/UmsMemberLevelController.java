@@ -39,7 +39,7 @@ public class UmsMemberLevelController {
     @PreAuthorize("hasAuthority('ums:UmsMemberLevel:read')")
     public Object getUmsMemberLevelByPage(UmsMemberLevel entity,
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsMemberLevelService.page(new Page<UmsMemberLevel>(pageNum, pageSize), new QueryWrapper<>(entity)));

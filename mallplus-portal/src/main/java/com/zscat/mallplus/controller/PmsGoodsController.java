@@ -153,7 +153,7 @@ public class PmsGoodsController {
     @GetMapping(value = "/attr/list")
     public Object getList(@RequestParam(value = "cid", required = false, defaultValue = "0") Long cid,
                           @RequestParam(value = "type") Integer type,
-                          @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProductAttribute q = new PmsProductAttribute();
         q.setType(type);
@@ -168,7 +168,7 @@ public class PmsGoodsController {
     @ResponseBody
     public Object list(@RequestParam(value = "goodsId", required = false, defaultValue = "0") Long goodsId,
                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         PmsProductConsult productConsult = new PmsProductConsult();
         productConsult.setGoodsId(goodsId);

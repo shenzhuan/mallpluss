@@ -39,7 +39,7 @@ public class PmsProductAttributeValueController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttributeValue:read')")
     public Object getPmsProductAttributeValueByPage(PmsProductAttributeValue entity,
                                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductAttributeValueService.page(new Page<PmsProductAttributeValue>(pageNum, pageSize), new QueryWrapper<>(entity)));

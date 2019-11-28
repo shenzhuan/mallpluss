@@ -108,7 +108,7 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"admin_sys_job","admin_sys_job_log"});
+        strategy.setInclude(new String[]{"building_room","building_unit","building_owner","building_community","building_floor"});
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
@@ -133,7 +133,7 @@ public class MpGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setParent("com.zscat.mallplus");
-        pc.setModuleName("sys");
+        pc.setModuleName("build");
         mpg.setPackageInfo(pc);
 
 

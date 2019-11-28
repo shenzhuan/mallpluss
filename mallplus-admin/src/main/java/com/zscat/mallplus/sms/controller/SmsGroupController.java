@@ -46,7 +46,7 @@ public class SmsGroupController {
     @PreAuthorize("hasAuthority('sms:SmsGroup:read')")
     public Object getSmsGroupByPage(SmsGroup entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsGroupService.page(new Page<SmsGroup>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -65,7 +65,7 @@ public class SmsGroupController {
     @GetMapping(value = "/listGroupMember")
     public Object listGroupMember(SmsGroupMember entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             List<SmsGroupMember> list = new ArrayList<>();

@@ -39,7 +39,7 @@ public class OmsOrderOperateHistoryController {
     @PreAuthorize("hasAuthority('oms:OmsOrderOperateHistory:read')")
     public Object getOmsOrderOperateHistoryByPage(OmsOrderOperateHistory entity,
                                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                  @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderOperateHistoryService.page(new Page<OmsOrderOperateHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));

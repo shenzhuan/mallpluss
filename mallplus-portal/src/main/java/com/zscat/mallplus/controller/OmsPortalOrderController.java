@@ -48,7 +48,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list(OmsOrder queryParam,
-                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         queryParam.setMemberId(memberService.getNewCurrentMember().getId());
         List<OmsOrder> orderList = orderService.list(new QueryWrapper<>(queryParam));

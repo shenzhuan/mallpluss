@@ -519,7 +519,7 @@ public class BHomeController {
     @ApiOperation(value = "查询首页推荐品牌")
     @PostMapping(value = "/recommendBrand/list")
     public Object getRecommendBrandList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
@@ -530,7 +530,7 @@ public class BHomeController {
     @ApiOperation(value = "查询首页新品")
     @PostMapping(value = "/groom/list")
     public Object getNewProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
         List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);

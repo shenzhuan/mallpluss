@@ -39,7 +39,7 @@ public class SmsCouponHistoryController {
     @PreAuthorize("hasAuthority('sms:SmsCouponHistory:read')")
     public Object getSmsCouponHistoryByPage(SmsCouponHistory entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsCouponHistoryService.page(new Page<SmsCouponHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));

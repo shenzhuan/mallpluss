@@ -40,7 +40,7 @@ public class SysDictController {
     @PreAuthorize("hasAuthority('sys:SysDict:read')")
     public Object getSysDictByPage(SysDict entity,
                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysDictService.page(new Page<SysDict>(pageNum, pageSize), new QueryWrapper<>(entity)));

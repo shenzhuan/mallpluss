@@ -37,7 +37,7 @@ public class PmsProductAttributeController {
     @GetMapping(value = "/listAll")
     public Object getPmsProductAttributeByPage(PmsProductAttribute entity,
                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductAttributeService.page(new Page<PmsProductAttribute>(pageNum, pageSize), new QueryWrapper<>(entity).orderByAsc("product_attribute_category_id")));
@@ -54,7 +54,7 @@ public class PmsProductAttributeController {
     @ResponseBody
     public Object getList(@PathVariable Long cid,
                           @RequestParam(value = "type") Integer type,
-                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         PmsProductAttribute entity = new PmsProductAttribute();
         entity.setProductAttributeCategoryId(cid);
