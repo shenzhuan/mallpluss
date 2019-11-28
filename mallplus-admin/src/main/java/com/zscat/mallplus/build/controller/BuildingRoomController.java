@@ -9,6 +9,7 @@ import com.zscat.mallplus.build.entity.BuildingRoom;
 import com.zscat.mallplus.build.entity.BuildingUnit;
 import com.zscat.mallplus.build.service.IBuildingFloorService;
 import com.zscat.mallplus.build.service.IBuildingUnitService;
+import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
@@ -16,8 +17,10 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -145,7 +148,20 @@ public class BuildingRoomController {
             return new CommonResult().failed();
         }
     }
+    @GetMapping("/exportExcel")
+    public void export(HttpServletResponse response, BuildingRoom entity) {
+        // 模拟从数据库获取需要导出的数据
+        List<BuildingRoom> personList = IBuildingRoomService.list(new QueryWrapper<>(entity));
+        // 导出操作
+        EasyPoiUtils.exportExcel(personList, "导出房屋数据", "房屋数据", BuildingRoom.class, "导出房屋数据.xls", response);
 
+    }
+
+    @PostMapping("/importExcel")
+    public void importUsers(@RequestParam MultipartFile file) {
+        List<BuildingRoom> personList = EasyPoiUtils.importExcel(file, BuildingRoom.class);
+        IBuildingRoomService.saveBatch(personList);
+    }
 }
 
 

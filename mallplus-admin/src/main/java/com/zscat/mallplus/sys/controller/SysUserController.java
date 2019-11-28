@@ -123,9 +123,9 @@ public class SysUserController extends ApiController {
             if (user.getSupplyId()!=null && user.getSupplyId()==1){
                 return new CommonResult().paramFailed("管理员账号不能删除");
             }
-            /*if (sysUserService.removeById(id)) {
+            if (sysUserService.removeById(id)) {
                 return new CommonResult().success();
-            }*/
+            }
         } catch (Exception e) {
             log.error("删除用户：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -277,6 +277,21 @@ public class SysUserController extends ApiController {
     public Object getPermissionList(@PathVariable Long adminId) {
         List<SysPermission> permissionList = sysUserService.getPermissionListByUserId(adminId);
         return new CommonResult().success(permissionList);
+    }
+
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        SysUser role = new SysUser();
+        role.setId(ids);
+        role.setStatus(showStatus);
+        sysUserService.updateById(role);
+
+        return new CommonResult().success();
+
     }
 
     @Resource

@@ -1,5 +1,6 @@
 package com.zscat.mallplus.build.entity;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -40,16 +41,19 @@ public class BuildingCommunity implements Serializable {
     /**
      * 小区名称
      */
+    @Excel(name = "名称",  orderNum = "1", width=30)
     private String name;
 
     /**
      * 小区栋数
      */
+    @Excel(name = "小区栋数",  orderNum = "2", width=30)
     private String counts;
 
     /**
      * 小区地址
      */
+    @Excel(name = "小区地址",  orderNum = "3", width=30)
     private String address;
 
     /**
@@ -62,29 +66,34 @@ public class BuildingCommunity implements Serializable {
      * 地标，如王府井北60米
      */
     @TableField("nearby_landmarks")
+    @Excel(name = "地标",  orderNum = "4", width=30)
     private String nearbyLandmarks;
 
     /**
      * 地区 纬度
      */
+    @Excel(name = "纬度",  orderNum = "5", width=30)
     private String latitude;
 
     /**
      * 地区 经度
      */
+    @Excel(name = "经度",  orderNum = "6", width=30)
     private String longitude;
 
     /**
      * 创建时间
      */
+    @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd",  orderNum = "9", width=30)
     @TableField("create_time")
     private Date createTime;
 
     /**
      * 1申请 2审核失败 3 审核成功
      */
+    @Excel(name = "状态",  orderNum = "8", width=30)
     private Integer status;
-
+    @Excel(name = "电话",  orderNum = "7", width=30)
     private String phone;
 
 

@@ -4,7 +4,9 @@ package com.zscat.mallplus.build.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.build.entity.BuildingCommunity;
 import com.zscat.mallplus.build.entity.BuildingOwner;
+import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
@@ -12,8 +14,10 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -142,7 +146,20 @@ public class BuildingOwnerController {
             return new CommonResult().failed();
         }
     }
+    @GetMapping("/exportExcel")
+    public void export(HttpServletResponse response, BuildingOwner entity) {
+        // 模拟从数据库获取需要导出的数据
+        List<BuildingOwner> personList = IBuildingOwnerService.list(new QueryWrapper<>(entity));
+        // 导出操作
+        EasyPoiUtils.exportExcel(personList, "导出业主数据", "业主数据", BuildingCommunity.class, "导出业主数据.xls", response);
 
+    }
+
+    @PostMapping("/importExcel")
+    public void importUsers(@RequestParam MultipartFile file) {
+        List<BuildingOwner> personList = EasyPoiUtils.importExcel(file, BuildingOwner.class);
+        IBuildingOwnerService.saveBatch(personList);
+    }
 }
 
 
