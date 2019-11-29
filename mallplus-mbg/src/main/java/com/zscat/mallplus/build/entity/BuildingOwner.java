@@ -1,5 +1,6 @@
 package com.zscat.mallplus.build.entity;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -34,38 +35,46 @@ public class BuildingOwner implements Serializable {
     /**
      * 业主ID
      */
+    @Excel(name = "业主ID",  orderNum = "1", width=30)
     @TableField("owner_id")
     private Long ownerId;
+    @Excel(name = "房屋编号",  orderNum = "2", width=30)
     @TableField("room_id")
     private Long roomId;
     /**
      * 业主名称
      */
+    @Excel(name = "名称",  orderNum = "3", width=30)
     private String name;
 
     /**
      * 性别
      */
+    @Excel(name = "性别",  orderNum = "4", width=30)
     private String sex;
 
     /**
      * 年龄
      */
+    @Excel(name = "年龄",  orderNum = "5", width=30)
     private Integer age;
 
     /**
      * 联系人手机号
      */
+    @Excel(name = "联系人手机号",  orderNum = "6", width=30)
     private String phone;
 
     /**
      * 备注
      */
+    @Excel(name = "北京",  orderNum = "7", width=30)
     private String remark;
 
     /**
      * 创建时间
      */
+    @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd",  orderNum = "8", width=30)
     @TableField("create_time")
     private Date createTime;
 
@@ -75,8 +84,9 @@ public class BuildingOwner implements Serializable {
     private String status;
 
     /**
-     * 1 业主本人 2 家庭成员
+     * 1 业主本人 2 家庭成员 3 租户
      */
+    @Excel(name = "名称",  orderNum = "3", width=30)
     private Integer type;
 
 
