@@ -69,7 +69,7 @@ public class EsShopDiypageController {
             String da = sdf.format(new Date());
             entity.setCreateTime(sdf.parse(da));
             diypageService.save(entity);
-            if (entity.getType() == 2 && entity.getStatus() == 1) {
+            if (entity.getType() == 2 ) {
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), entity);
             }
             return new CommonResult().success("success");
@@ -137,7 +137,7 @@ public class EsShopDiypageController {
             String time = sdf.format(new Date());
             entity.setLasteditTime(sdf.parse(time));
             diypageService.updateById(entity);
-            if (entity.getType() == 2 && entity.getStatus() == 1) {
+            if (entity.getType() == 2 ) {
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), entity);
             }
             return new CommonResult().success("success", 1);
