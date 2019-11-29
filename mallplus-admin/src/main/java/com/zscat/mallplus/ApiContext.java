@@ -1,4 +1,4 @@
-package com.zscat.mallplus.vo;
+package com.zscat.mallplus;
 
 import org.springframework.stereotype.Component;
 
