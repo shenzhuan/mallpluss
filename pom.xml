@@ -11,11 +11,7 @@
 
     <modules>
         <module>mallplus-mbg</module>
-
         <module>mallplus-admin</module>
-
-
-
     </modules>
 
 </project>

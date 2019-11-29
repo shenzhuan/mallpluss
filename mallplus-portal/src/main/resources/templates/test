@@ -3,7 +3,7 @@
 
 39.106.212.32
 
-
+put -r /Users/java/test/git/mallplus/mallplus-admin/target/meizhuang-admin-0.0.1-SNAPSHOT.jar  /root/jm
 nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
 
@@ -291,4 +291,5 @@ delete from sys_admin_log  ;
 
 1938186471@qq.com
 wx1d852ffdcbedd005
+ab9f4f588c539816f32f23dcce9b5835
 
