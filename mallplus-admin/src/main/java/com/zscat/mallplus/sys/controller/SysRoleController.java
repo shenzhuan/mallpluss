@@ -43,7 +43,7 @@ public class SysRoleController extends ApiController {
     @PreAuthorize("hasAuthority('sys:role:read')")
     public Object getRoleByPage(SysRole entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(sysRoleService.page(new Page<SysRole>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -152,6 +152,20 @@ public class SysRoleController extends ApiController {
     public Object rolePermission(@PathVariable Long roleId) {
         List<SysRolePermission> rolePermission = sysRoleService.getRolePermission(roleId);
         return new CommonResult().success(rolePermission);
+    }
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        SysRole role = new SysRole();
+        role.setId(ids);
+        role.setStatus(showStatus);
+        sysRoleService.updates(role);
+
+            return new CommonResult().success();
+
     }
 }
 

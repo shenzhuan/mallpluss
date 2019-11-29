@@ -37,10 +37,10 @@ public class PmsProductAttributeController {
     @GetMapping(value = "/listAll")
     public Object getPmsProductAttributeByPage(PmsProductAttribute entity,
                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsProductAttributeService.page(new Page<PmsProductAttribute>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IPmsProductAttributeService.page(new Page<PmsProductAttribute>(pageNum, pageSize), new QueryWrapper<>(entity).orderByAsc("product_attribute_category_id")));
         } catch (Exception e) {
             log.error("根据条件查询所有商品属性参数表列表：%s", e.getMessage(), e);
         }
@@ -54,7 +54,7 @@ public class PmsProductAttributeController {
     @ResponseBody
     public Object getList(@PathVariable Long cid,
                           @RequestParam(value = "type") Integer type,
-                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         PmsProductAttribute entity = new PmsProductAttribute();
         entity.setProductAttributeCategoryId(cid);
@@ -73,12 +73,15 @@ public class PmsProductAttributeController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttribute:create')")
     public Object savePmsProductAttribute(@RequestBody PmsProductAttribute entity) {
         try {
+            if (entity.getType().equals(null)){
+                entity.setType(0);
+            }
             if (IPmsProductAttributeService.saveAndUpdate(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
             log.error("保存商品属性参数表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().failed();
     }

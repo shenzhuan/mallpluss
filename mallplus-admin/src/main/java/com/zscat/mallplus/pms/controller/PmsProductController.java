@@ -47,7 +47,7 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:read')")
     public Object getPmsProductByPage(PmsProduct entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             IPage<PmsProduct> page = null;

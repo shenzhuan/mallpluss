@@ -39,7 +39,7 @@ public class SmsHomeNewProductController {
     @PreAuthorize("hasAuthority('sms:SmsHomeNewProduct:read')")
     public Object getSmsHomeNewProductByPage(SmsHomeNewProduct entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeNewProductService.page(new Page<SmsHomeNewProduct>(pageNum, pageSize), new QueryWrapper<>(entity)));

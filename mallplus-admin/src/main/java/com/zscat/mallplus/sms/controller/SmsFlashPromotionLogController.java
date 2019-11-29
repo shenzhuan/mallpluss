@@ -39,7 +39,7 @@ public class SmsFlashPromotionLogController {
     @PreAuthorize("hasAuthority('sms:SmsFlashPromotionLog:read')")
     public Object getSmsFlashPromotionLogByPage(SmsFlashPromotionLog entity,
                                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsFlashPromotionLogService.page(new Page<SmsFlashPromotionLog>(pageNum, pageSize), new QueryWrapper<>(entity)));

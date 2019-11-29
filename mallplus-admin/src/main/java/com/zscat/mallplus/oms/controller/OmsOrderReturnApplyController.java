@@ -40,7 +40,7 @@ public class OmsOrderReturnApplyController {
     @PreAuthorize("hasAuthority('oms:OmsOrderReturnApply:read')")
     public Object getOmsOrderReturnApplyByPage(OmsOrderReturnApply entity,
                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderReturnApplyService.page(new Page<OmsOrderReturnApply>(pageNum, pageSize), new QueryWrapper<>(entity)));

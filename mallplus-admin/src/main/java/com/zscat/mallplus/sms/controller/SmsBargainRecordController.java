@@ -35,7 +35,7 @@ public class SmsBargainRecordController {
     @GetMapping(value = "/list")
     public Object getSmsCouponByPage(SmsBargainRecord entity,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsCouponService.page(new Page<SmsBargainRecord>(pageNum, pageSize), new QueryWrapper<>(entity)));

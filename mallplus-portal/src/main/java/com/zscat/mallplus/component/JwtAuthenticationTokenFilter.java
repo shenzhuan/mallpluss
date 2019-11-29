@@ -189,7 +189,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
        // }
 
         startTime = System.currentTimeMillis();
-        chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         endTime = System.currentTimeMillis();
         logger.info(formMapKey(11, fullUrl, requestType,
                 IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), authHeader)

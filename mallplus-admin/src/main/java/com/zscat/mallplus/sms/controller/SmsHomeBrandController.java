@@ -39,7 +39,7 @@ public class SmsHomeBrandController {
     @PreAuthorize("hasAuthority('sms:SmsHomeBrand:read')")
     public Object getSmsHomeBrandByPage(SmsHomeBrand entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeBrandService.page(new Page<SmsHomeBrand>(pageNum, pageSize), new QueryWrapper<>(entity)));

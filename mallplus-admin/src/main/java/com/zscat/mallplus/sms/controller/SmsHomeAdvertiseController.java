@@ -42,7 +42,7 @@ public class SmsHomeAdvertiseController {
     @GetMapping(value = "/list")
     public Object getSmsHomeAdvertiseByPage(SmsHomeAdvertise entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeAdvertiseService.page(new Page<SmsHomeAdvertise>(pageNum, pageSize), new QueryWrapper<>(entity)));

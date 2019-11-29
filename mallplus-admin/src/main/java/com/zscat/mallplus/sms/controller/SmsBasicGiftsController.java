@@ -48,10 +48,10 @@ public class SmsBasicGiftsController {
     @PreAuthorize("hasAuthority('sms:SmsBasicGifts:read')")
     public Object getSmsBasicGiftsByPage(SmsBasicGifts entity,
                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                         @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(ISmsBasicGiftsService.page(new Page<SmsBasicGifts>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(ISmsBasicGiftsService.page(new Page<SmsBasicGifts>(pageNum, pageSize), new QueryWrapper<>(entity).orderByAsc("big_type")));
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
         }

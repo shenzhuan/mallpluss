@@ -39,7 +39,7 @@ public class UmsGrowthChangeHistoryController {
     @PreAuthorize("hasAuthority('ums:UmsGrowthChangeHistory:read')")
     public Object getUmsGrowthChangeHistoryByPage(UmsGrowthChangeHistory entity,
                                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                  @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsGrowthChangeHistoryService.page(new Page<UmsGrowthChangeHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));

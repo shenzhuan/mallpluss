@@ -39,7 +39,7 @@ public class PmsSmallNaviconCategoryController {
     @PreAuthorize("hasAuthority('pms:PmsSmallNaviconCategory:read')")
     public Object getPmsSmallNaviconCategoryByPage(PmsSmallNaviconCategory entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsSmallNaviconCategoryService.page(new Page<PmsSmallNaviconCategory>(pageNum, pageSize), new QueryWrapper<>(entity)));

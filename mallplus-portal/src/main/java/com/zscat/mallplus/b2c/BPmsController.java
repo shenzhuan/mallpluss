@@ -238,7 +238,7 @@ public class BPmsController extends ApiBaseAction {
     @ResponseBody
     public Object list(@RequestParam(value = "goodsId", required = false, defaultValue = "0") Long goodsId,
                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         Map<String, Object> objectMap = new HashMap<>();
         String json = redisService.get(Rediskey.goodsConsult+"goods"+goodsId);
@@ -498,7 +498,7 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询首页热销商品")
     @PostMapping(value = "/hotProductList/list")
     public Object getHotProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getHotProductList(pageNum,pageSize));

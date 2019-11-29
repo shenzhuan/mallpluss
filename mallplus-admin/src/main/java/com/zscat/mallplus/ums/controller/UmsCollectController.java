@@ -39,7 +39,7 @@ public class UmsCollectController {
     @PreAuthorize("hasAuthority('ums:UmsCollect:read')")
     public Object getUmsCollectByPage(UmsCollect entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsCollectService.page(new Page<UmsCollect>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -46,7 +46,7 @@ public class SmsFlashPromotionProductRelationController {
     @GetMapping(value = "/list")
     public Object getSmsFlashPromotionProductRelationByPage(SmsFlashPromotionProductRelation entity,
                                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             //分页查询

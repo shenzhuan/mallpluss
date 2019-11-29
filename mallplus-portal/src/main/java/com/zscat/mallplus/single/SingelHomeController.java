@@ -204,7 +204,7 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页推荐品牌")
     @GetMapping(value = "/recommendBrand/list")
     public Object getRecommendBrandList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(advertiseService.getRecommendBrandList(1, 1));
@@ -215,7 +215,7 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页新品")
     @GetMapping(value = "/newProductList/list")
     public Object getNewProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(advertiseService.getRecommendBrandList(1, 1));
@@ -226,7 +226,7 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页推荐商品")
     @GetMapping(value = "/hotProductList/list")
     public Object getHotProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(advertiseService.getHotProductList(1, 1));
@@ -237,7 +237,7 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页推荐文章")
     @GetMapping(value = "/recommendSubjectList/list")
     public Object getRecommendSubjectList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(advertiseService.getRecommendSubjectList(1, 1));

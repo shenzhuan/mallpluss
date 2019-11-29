@@ -36,7 +36,7 @@ public class SmsShareController {
     @GetMapping(value = "/list")
     public Object getSmsCouponByPage(SmsShare entity,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(smsShareService.page(new Page<SmsShare>(pageNum, pageSize), new QueryWrapper<>(entity)));
