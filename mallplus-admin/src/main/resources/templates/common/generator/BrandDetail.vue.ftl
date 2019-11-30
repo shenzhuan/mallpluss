@@ -2,7 +2,7 @@
     <el-card class="form-container" shadow="never">
         <el-form :model="${classname}" :rules="rules" ref="${classname}From" label-width="150px">
             #foreach($column in $columns)
-                <el-form-item label="${column.comments}：" prop="${column.attrname}">
+                <el-form-item  prop="${column.attrname}" label="${column.comments}:">
                     <el-input v-model="${classname}.${column.attrname}"></el-input>
                 </el-form-item>
             #end

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -16,6 +18,8 @@ import java.io.Serializable;
  * @author zscat
  * @since 2019-04-19
  */
+@Setter
+@Getter
 @TableName("ums_integration_consume_setting")
 public class UmsIntegrationConsumeSetting extends BaseEntity implements Serializable {
 
@@ -37,7 +41,7 @@ public class UmsIntegrationConsumeSetting extends BaseEntity implements Serializ
     private Integer maxPercentPerOrder;
 
     /**
-     * 每次使用积分最小单位100
+     * 充值的时候，1元兑换的积分
      */
     @TableField("use_unit")
     private Integer useUnit;
@@ -48,55 +52,24 @@ public class UmsIntegrationConsumeSetting extends BaseEntity implements Serializ
     @TableField("coupon_status")
     private Integer couponStatus;
 
+    /**
+     * 登录送积分
+     */
+    private Integer login ;
 
-    public Long getId() {
-        return id;
-    }
+    /**
+     * 注册送积分
+     */
+    private Integer register;
+    /**
+     * 签到送积分
+     */
+    private Integer sign;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    /**
+     * 下单 送积分比例
+     */
+    private Integer orders;
 
-    public Integer getDeductionPerAmount() {
-        return deductionPerAmount;
-    }
 
-    public void setDeductionPerAmount(Integer deductionPerAmount) {
-        this.deductionPerAmount = deductionPerAmount;
-    }
-
-    public Integer getMaxPercentPerOrder() {
-        return maxPercentPerOrder;
-    }
-
-    public void setMaxPercentPerOrder(Integer maxPercentPerOrder) {
-        this.maxPercentPerOrder = maxPercentPerOrder;
-    }
-
-    public Integer getUseUnit() {
-        return useUnit;
-    }
-
-    public void setUseUnit(Integer useUnit) {
-        this.useUnit = useUnit;
-    }
-
-    public Integer getCouponStatus() {
-        return couponStatus;
-    }
-
-    public void setCouponStatus(Integer couponStatus) {
-        this.couponStatus = couponStatus;
-    }
-
-    @Override
-    public String toString() {
-        return "UmsIntegrationConsumeSetting{" +
-                ", id=" + id +
-                ", deductionPerAmount=" + deductionPerAmount +
-                ", maxPercentPerOrder=" + maxPercentPerOrder +
-                ", useUnit=" + useUnit +
-                ", couponStatus=" + couponStatus +
-                "}";
-    }
 }
