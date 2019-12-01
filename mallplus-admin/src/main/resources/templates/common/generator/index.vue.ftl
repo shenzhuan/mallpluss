@@ -40,7 +40,7 @@
                 <el-table-column type="selection" width="60" align="center"></el-table-column>
 
                 #foreach($column in $columns)
-                    <el-table-column label="${column.comments}" align="center">
+                    <el-table-column  align="center" label="${column.comments}">
                         <template slot-scope="scope">{{scope.row.${column.attrname}}}</template>
                     </el-table-column>
                 #end
@@ -87,14 +87,7 @@
         data() {
             return {
                 operates: [
-                    {
-                        label: "显示类型",
-                        value: "show${className}"
-                    },
-                    {
-                        label: "隐藏类型",
-                        value: "hide${className}"
-                    }
+
                 ],
                 operateType: null,
                 listQuery: {

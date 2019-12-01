@@ -1,5 +1,6 @@
 package com.zscat.mallplus.build.entity;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -31,37 +32,45 @@ public class BuildingFloor implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    @Excel(name = "社区编号",  orderNum = "1", width=30)
     @TableField("community_id")
     private Long communityId;
     /**
      * 楼编号
      */
+    @Excel(name = "楼编号",  orderNum = "2", width=30)
     @TableField("floor_num")
     private String floorNum;
 
     /**
      * 小区楼名称
      */
+    @Excel(name = "名称",  orderNum = "3", width=30)
     private String name;
 
-    /**
-     * 备注
-     */
-    private String remark;
-
-    /**
-     * 创建时间
-     */
-    @TableField("create_time")
-    private Date createTime;
-
+    @Excel(name = "楼层",  orderNum = "4", width=30)
     @TableField("layer_count")
     private Integer layerCount;
 
     /**
      * 1 有电梯
      */
+    @Excel(name = "电梯",  orderNum = "5", width=30)
     private Integer lift;
+    /**
+     * 备注
+     */
+    @Excel(name = "备注",  orderNum = "6", width=30)
+    private String remark;
+
+    /**
+     * 创建时间
+     */
+    @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd",  orderNum = "7", width=30)
+    @TableField("create_time")
+    private Date createTime;
+
+
 
 
 

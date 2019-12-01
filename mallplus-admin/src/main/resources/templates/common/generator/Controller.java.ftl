@@ -1,6 +1,9 @@
-package ${package}import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+package ${package}
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -13,11 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-.${module }.controller;
-    ${package}
-        .${module}.entity.${Module}${className};
-    ${package}
-        .${module}.service.{Module}${className}Service;
+import ${package}.${module }.controller;
+import ${package}.${module}.entity.${Module}${className};
+import ${package}.${module}.service.{Module}${className}Service;
 /**
  * <p>
  * $!{table.comment}

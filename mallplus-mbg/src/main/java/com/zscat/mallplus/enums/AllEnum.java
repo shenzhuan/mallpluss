@@ -70,6 +70,11 @@ public class AllEnum {
          * 注册
          */
         register(3, "register"),
+
+        /**
+         * 后台添加
+         */
+        admin(4, "admin"),
         ;
 
         private int code;
@@ -99,12 +104,12 @@ public class AllEnum {
     public enum ConsultType implements BaseEnum<Integer> {
 
         /**
-         * 限价交易
+         *
          */
         GOODS(1, "goods"),
 
         /**
-         * 市价交易
+         *
          */
         ORDER(2, "order"),
         ;
@@ -179,7 +184,7 @@ public class AllEnum {
     }
 
     /**
-     *
+     * 支付类型
      */
     public enum OrderPayType implements BaseEnum<Integer> {
 
@@ -241,6 +246,52 @@ public class AllEnum {
         private String value;
 
         OrderItemType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
+
+    /**
+     * 余额类型：'全部', '消费', '退款', '充值', '提现', '佣金', '平台调整'
+     *
+     * @author dp
+     */
+    public enum BlanceType implements BaseEnum<Integer> {
+
+        ALL(0, "ALL"),
+        /**
+         *
+         */
+        CONSUMER(1, "CONSUMER"),
+
+        /**
+         *
+         */
+        REFUND(2, "REFUND"),
+        ADD(3, "ADD"),
+
+        DRAW(4, "DRAW"),
+
+        COMMISSION(5, "COMMISSION"),
+
+        MODIFY(6, "MODIFY"),
+
+        ;
+
+        private int code;
+        private String value;
+
+        BlanceType(int code, String value) {
             this.code = code;
             this.value = value;
         }

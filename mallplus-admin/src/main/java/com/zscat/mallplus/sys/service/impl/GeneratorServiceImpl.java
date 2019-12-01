@@ -3,7 +3,7 @@ package com.zscat.mallplus.sys.service.impl;
 
 import com.zscat.mallplus.sys.mapper.GeneratorMapper;
 import com.zscat.mallplus.sys.service.GeneratorService;
-import com.zscat.mallplus.util.GenUtils;
+import com.zscat.mallplus.util.GenUtils1;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             //查询列信息
             List<Map<String, String>> columns = generatorMapper.listColumns(tableName);
             //生成代码
-            GenUtils.generatorCode(table, columns, zip);
+            GenUtils1.generatorCode(table, columns, zip);
         }
         IOUtils.closeQuietly(zip);
         return outputStream.toByteArray();

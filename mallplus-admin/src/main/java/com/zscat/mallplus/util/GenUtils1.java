@@ -1,50 +1,45 @@
 package com.zscat.mallplus.util;
 
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.extra.template.*;
 import com.zscat.mallplus.bo.ColumnDO;
 import com.zscat.mallplus.bo.TableDO;
 import com.zscat.mallplus.config.Constant;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
  * 代码生成器   工具类
  */
-public class GenUtils {
+public class GenUtils1 {
 
 
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<String>();
-        templates.add("templates/common/generator/domain.java.vm");
-        templates.add("templates/common/generator/Dao.java.vm");
-        //templates.add("templates/common/generator/Mapper.java.vm");
-        templates.add("templates/common/generator/Mapper.xml.vm");
-        templates.add("templates/common/generator/Service.java.vm");
-        templates.add("templates/common/generator/ServiceImpl.java.vm");
-        templates.add("templates/common/generator/Controller.java.vm");
-        templates.add("templates/common/generator/add.vue.vm");
-        templates.add("templates/common/generator/index.vue.vm");
-        templates.add("templates/common/generator/api.js.vm");
-        templates.add("templates/common/generator/path.js.vm");
-        templates.add("templates/common/generator/update.vue.vm");
+        templates.add("common/generator/domain.java.ftl");
+        templates.add("common/generator/Dao.java.ftl");
+        //templates.add("common/generator/Mapper.java.vm");
+      //  templates.add("common/generator/Mapper.xml.vm");
+        templates.add("common/generator/Service.java.ftl");
+        templates.add("common/generator/ServiceImpl.java.ftl");
+        templates.add("common/generator/Controller.java.ftl");
+        templates.add("common/generator/add.vue.ftl");
+        templates.add("common/generator/index.vue.ftl");
+        templates.add("common/generator/api.js.ftl");
+        templates.add("common/generator/path.js.ftl");
+        templates.add("common/generator/update.vue.ftl");
 
-        templates.add("templates/common/generator/BrandDetail.vue.vm");
-        templates.add("templates/common/generator/menu.sql.vm");
+        templates.add("common/generator/BrandDetail.vue.ftl");
+        templates.add("common/generator/menu.sql.ftl");
         return templates;
     }
 
@@ -120,33 +115,47 @@ public class GenUtils {
         map.put("author", config.getString("author"));
         map.put("email", config.getString("email"));
         map.put("datetime", DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
-        VelocityContext context = new VelocityContext(map);
-        VelocityEngine velocityEngine = new VelocityEngine();
-        Properties properties = new Properties();
-        properties.setProperty("resource.loader","class");
-        properties.setProperty("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        velocityEngine.init(properties);
+        map.put("date", DateUtils.format(new Date(), DateUtils.DATE_TIME_PATTERN));
+
+        System.out.println(map.toString());
         //获取模板列表
         List<String> templates = getTemplates();
-        for (String template : templates) {
+        TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
+
+        for (String templateName : templates) {
             //渲染模板
-            StringWriter sw = new StringWriter();
-            Template tpl = velocityEngine.getTemplate(template, "UTF-8");
-            tpl.merge(context, sw);
+
+            Template template = engine.getTemplate(templateName);
 
             try {
-                //添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(
-                        tableDO.getTableName().split("_")[0], template, tableDO.getClassname(), tableDO.getClassName(), packages.substring(packages.lastIndexOf(".") + 1), Module)));
-                IOUtils.write(sw.toString(), zip, "UTF-8");
-                IOUtils.closeQuietly(sw);
-                zip.closeEntry();
+                String filePath = getFileName(
+                        tableDO.getTableName().split("_")[0], templateName, tableDO.getClassname(), tableDO.getClassName(), packages.substring(packages.lastIndexOf(".")+ 1), Module);
+                                //添加到zip
+                assert filePath != null;
+                File file = new File(filePath);
+
+
+                // 生成代码
+                genFile(file, template, map);
             } catch (IOException e) {
                 throw new ApiMallPlusException("渲染模板失败，表名：" + tableDO.getTableName(), e);
             }
         }
     }
-
+    private static void genFile(File file, Template template, Map<String, Object> map) throws IOException {
+        // 生成目标文件
+        Writer writer = null;
+        try {
+            FileUtil.touch(file);
+            writer = new FileWriter(file);
+            template.render(map, writer);
+        } catch (TemplateException | IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            assert writer != null;
+            writer.close();
+        }
+    }
 
     /**
      * 列名转换成Java属性名
@@ -190,53 +199,53 @@ public class GenUtils {
             packagePath += packageName.replace(".", File.separator) + File.separator;
         }
 
-        if (template.contains("domain.java.vm")) {
+        if (template.contains("domain.java.ftl")) {
             return Module + className + ".java";
         }
 
-        if (template.contains("Dao.java.vm")) {
+        if (template.contains("Dao.java.ftl")) {
             return Module + className + "Mapper.java";
         }
 
 //		if(template.contains("Mapper.java.vm")){
 //			return packagePath + "dao" + File.separator + className + "Mapper.java";
 //		}
-        // templates.add("templates/common/generator/menu.sql.vm");
-        if (template.contains("menu.sql.vm")) {
+        // templates.add("common/generator/menu.sql.ftl");
+        if (template.contains("menu.sql.ftl")) {
             return Module + className + "menu.sql";
         }
-        if (template.contains("Service.java.vm")) {
+        if (template.contains("Service.java.ftl")) {
             return "I" + Module + className + "Service.java";
         }
 
-        if (template.contains("ServiceImpl.java.vm")) {
+        if (template.contains("ServiceImpl.java.ftl")) {
             return Module + className + "ServiceImpl.java";
         }
 
-        if (template.contains("Controller.java.vm")) {
+        if (template.contains("Controller.java.ftl")) {
             return Module + className + "Controller.java";
         }
 
         if (template.contains("Mapper.xml.vm")) {
             return Module + className + "Mapper.xml";
         }
-        if (template.contains("api.js.vm")) {
+        if (template.contains("api.js.ftl")) {
             return classname + ".js";
         }
-        if (template.contains("path.js.vm")) {
+        if (template.contains("path.js.ftl")) {
             return classname + "path" + ".js";
         }
-        if (template.contains("add.vue.vm")) {
+        if (template.contains("add.vue.ftl")) {
             return classname + File.separator + "add.vue";
         }
 
-        if (template.contains("index.vue.vm")) {
+        if (template.contains("index.vue.ftl")) {
             return classname + File.separator + "index.vue";
         }
-        if (template.contains("update.vue.vm")) {
+        if (template.contains("update.vue.ftl")) {
             return classname + File.separator + "update.vue";
         }
-        if (template.contains("BrandDetail.vue.vm")) {
+        if (template.contains("BrandDetail.vue.ftl")) {
             return classname + File.separator + "components" + File.separator + className + "Detail.vue";
         }
 

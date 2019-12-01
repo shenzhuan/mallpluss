@@ -970,7 +970,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         blog.setCreateTime(new Date());
         blog.setNote("支付订单：" + order.getId());
         blog.setPrice(order.getPayAmount());
-        blog.setType(1);
+        blog.setType(AllEnum.BlanceType.CONSUMER.code());
         memberBlanceLogService.save(blog);
         OmsOrderOperateHistory history = new OmsOrderOperateHistory();
         history.setOrderId(order.getId());

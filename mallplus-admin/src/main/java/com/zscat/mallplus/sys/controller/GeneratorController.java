@@ -3,7 +3,7 @@ package com.zscat.mallplus.sys.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.zscat.mallplus.sys.service.GeneratorService;
-import com.zscat.mallplus.util.GenUtils;
+import com.zscat.mallplus.util.GenUtils1;
 import com.zscat.mallplus.utils.CommonResult;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -95,7 +95,7 @@ public class GeneratorController {
 
     @GetMapping("/edit")
     public String edit(Model model) {
-        Configuration conf = GenUtils.getConfig();
+        Configuration conf = GenUtils1.getConfig();
         Map<String, Object> property = new HashMap<>(16);
         property.put("author", conf.getProperty("author"));
         property.put("email", conf.getProperty("email"));

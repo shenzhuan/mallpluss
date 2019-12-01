@@ -63,8 +63,8 @@ public class BuildingOwnerController {
                 return new CommonResult().failed("请选择房屋");
             }
             entity.setCreateTime(new Date());
-            if (entity.getType()==2){
-                List<BuildingOwner> list = IBuildingOwnerService.list(new QueryWrapper<BuildingOwner>().eq("room_id",entity.getRoomId()).orderByAsc("id"));
+            if (entity.getType()==2 || entity.getType()==3){
+                List<BuildingOwner> list = IBuildingOwnerService.list(new QueryWrapper<BuildingOwner>().eq("room_id",entity.getRoomId()).eq("type",1).orderByAsc("id"));
                 if (list!=null && list.size()>0){
                     entity.setOwnerId(list.get(0).getId());
                 }else {

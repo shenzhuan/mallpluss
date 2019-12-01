@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -320,11 +321,15 @@ public class SysUserController extends ApiController {
     @ResponseBody
     public Object communityUser(@PathVariable Long userId) {
         List<UserCommunityRelate> permissionList = userCommunityRelateMapper.selectList(new QueryWrapper<UserCommunityRelate>().eq("user_id",userId));
+        List<UserCommunityRelate> newList = new ArrayList<>();
         for (UserCommunityRelate relate: permissionList){
             BuildingCommunity community = buildingCommunityMapper.selectById(relate.getCommunityId());
-            relate.setName(community.getName());
+            if (community!=null){
+                relate.setName(community.getName());
+                newList.add(relate);
+            }
         }
-        return new CommonResult().success(permissionList);
+        return new CommonResult().success(newList);
     }
 }
 
