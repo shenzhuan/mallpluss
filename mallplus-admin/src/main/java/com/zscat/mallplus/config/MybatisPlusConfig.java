@@ -52,9 +52,9 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
-                Long currentProviderId = apiContext.getCurrentProviderId();
+                Integer currentProviderId = apiContext.getCurrentProviderId();
                 if (null == currentProviderId) {
-                    currentProviderId = 5l;
+                    currentProviderId = 5;
                     System.out.println("#1129 getCurrentProviderId error.");
                     throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }

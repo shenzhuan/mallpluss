@@ -102,9 +102,9 @@ public class SysUserController extends ApiController {
     @PostMapping(value = "/update/{id}")
     public Object updateUser(@RequestBody SysUser entity) {
         try {
-            /*if (sysUserService.updates(entity.getId(), entity)) {
+            if (sysUserService.updates(entity.getId(), entity)) {
                 return new CommonResult().success();
-            }*/
+            }
         } catch (Exception e) {
             log.error("更新用户：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -248,8 +248,10 @@ public class SysUserController extends ApiController {
         if (roleList!=null && roleList.size()>0){
             for (SysRole a : allroleList) {
                 for (SysRole u : roleList) {
-                    if (a.getId().equals(u.getId())) {
-                        a.setChecked(true);
+                    if (u!=null && u.getId()!=null){
+                        if (a.getId().equals(u.getId())) {
+                            a.setChecked(true);
+                        }
                     }
                 }
             }
@@ -280,10 +282,11 @@ public class SysUserController extends ApiController {
         return new CommonResult().success(permissionList);
     }
 
+
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/update/updateShowStatus")
     @ResponseBody
-    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    @SysLog(MODULE = "sys", REMARK = "修改展示状态")
     public Object updateShowStatus(@RequestParam("ids") Long ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         SysUser role = new SysUser();
@@ -291,6 +294,35 @@ public class SysUserController extends ApiController {
         role.setStatus(showStatus);
         sysUserService.updateById(role);
 
+        return new CommonResult().success();
+
+    }
+
+
+    @ApiOperation("修改密码")
+    @RequestMapping(value = "/updatePassword")
+    @ResponseBody
+    @SysLog(MODULE = "sys", REMARK = "修改密码")
+    public Object updatePassword(@RequestParam("password") String password,
+                                   @RequestParam("renewPassword") String renewPassword,
+                                   @RequestParam("newPassword") String newPassword) {
+        if (ValidatorUtils.empty(password)){
+            return new CommonResult().failed("参数为空");
+        }
+        if (ValidatorUtils.empty(renewPassword)){
+            return new CommonResult().failed("参数为空");
+        }
+        if (ValidatorUtils.empty(newPassword)){
+            return new CommonResult().failed("参数为空");
+        }
+        if (!renewPassword.equals(newPassword)){
+            return new CommonResult().failed("新密码不一致!");
+        }
+        try {
+            sysUserService.updatePassword(password,newPassword);
+        }catch (Exception e){
+            return new CommonResult().failed(e.getMessage());
+        }
         return new CommonResult().success();
 
     }

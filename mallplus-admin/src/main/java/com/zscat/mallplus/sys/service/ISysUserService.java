@@ -48,4 +48,6 @@ public interface ISysUserService extends IService<SysUser> {
     int updateShowStatus(List<Long> ids, Integer showStatus);
 
     Object userCommunityRelate(UserCommunityRelate entity);
+
+    void updatePassword(String password, String newPassword);
 }

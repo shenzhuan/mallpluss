@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.build.entity.UserCommunityRelate;
 import com.zscat.mallplus.build.mapper.UserCommunityRelateMapper;
+import com.zscat.mallplus.exception.BusinessMallException;
 import com.zscat.mallplus.sys.entity.*;
 import com.zscat.mallplus.sys.mapper.*;
 import com.zscat.mallplus.sys.service.ISysRolePermissionService;
@@ -364,6 +365,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         }
       return 1;
+    }
+
+    @Override
+    public void updatePassword(String password, String newPassword) {
+        SysUser oldUser = UserUtils.getCurrentMember();
+        if (!oldUser.getPassword().equals(passwordEncoder.encode(password))){
+            throw  new BusinessMallException("旧密码错误");
+        }
+        SysUser role = new SysUser();
+        role.setId(oldUser.getId());
+        role.setPassword(passwordEncoder.encode(newPassword));
+        adminMapper.updateById(role);
     }
 
     /**

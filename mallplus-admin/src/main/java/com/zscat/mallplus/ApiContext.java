@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 public class ApiContext {
 
 
-    private static ThreadLocal<Long> requestIdThreadLocal = new ThreadLocal<>();
+    private static ThreadLocal<Integer> requestIdThreadLocal = new ThreadLocal<>();
 
     private static final String KEY_CURRENT_PROVIDER_ID = "KEY_CURRENT_PROVIDER_ID";
    // private static final Map<String, Object> mContext = Maps.newConcurrentMap();
 
-    public Long getCurrentProviderId() {
-        return (Long) requestIdThreadLocal.get();
+    public Integer getCurrentProviderId() {
+        return (Integer) requestIdThreadLocal.get();
     }
 
-    public void setCurrentProviderId(Long providerId) {
+    public void setCurrentProviderId(Integer providerId) {
         requestIdThreadLocal.set(providerId);
     }
 }
