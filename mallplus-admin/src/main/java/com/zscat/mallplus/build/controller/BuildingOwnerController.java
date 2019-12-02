@@ -37,7 +37,7 @@ public class BuildingOwnerController {
     @Resource
     private com.zscat.mallplus.build.service.IBuildingOwnerService IBuildingOwnerService;
 
-    @SysLog(MODULE = "cms", REMARK = "根据条件查询所有业主表列表")
+    @SysLog(MODULE = "build", REMARK = "根据条件查询所有业主表列表")
     @ApiOperation("根据条件查询所有业主表列表")
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('building:owner:read')")
@@ -53,7 +53,7 @@ public class BuildingOwnerController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "保存业主表")
+    @SysLog(MODULE = "build", REMARK = "保存业主表")
     @ApiOperation("保存业主表")
     @PostMapping(value = "/create")
 
@@ -81,7 +81,7 @@ public class BuildingOwnerController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "更新业主表")
+    @SysLog(MODULE = "build", REMARK = "更新业主表")
     @ApiOperation("更新业主表")
     @PostMapping(value = "/update/{id}")
 
@@ -97,7 +97,7 @@ public class BuildingOwnerController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "删除业主表")
+    @SysLog(MODULE = "build", REMARK = "删除业主表")
     @ApiOperation("删除业主表")
     @GetMapping(value = "/delete/{id}")
 
@@ -116,7 +116,7 @@ public class BuildingOwnerController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "给业主表分配业主表")
+    @SysLog(MODULE = "build", REMARK = "给业主表分配业主表")
     @ApiOperation("查询业主表明细")
     @GetMapping(value = "/{id}")
 
@@ -137,7 +137,7 @@ public class BuildingOwnerController {
     @ApiOperation(value = "批量删除业主表")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
-    @SysLog(MODULE = "pms", REMARK = "批量删除业主表")
+    @SysLog(MODULE = "build", REMARK = "批量删除业主表")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IBuildingOwnerService.removeByIds(ids);
         if (count) {

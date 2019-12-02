@@ -40,6 +40,8 @@ public class BuildingRoom implements Serializable {
     @TableField("room_num")
     private String roomNum;
 
+    @TableField("room_desc")
+    private String roomDesc;
 
 
     @Excel(name = "小区编号",  orderNum = "2", width=30)

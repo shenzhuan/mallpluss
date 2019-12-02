@@ -36,7 +36,7 @@ public class BuildingCommunityController {
     @Resource
     private com.zscat.mallplus.build.service.IBuildingCommunityService IBuildingCommunityService;
 
-    @SysLog(MODULE = "cms", REMARK = "根据条件查询所有小区表列表")
+    @SysLog(MODULE = "build", REMARK = "根据条件查询所有小区表列表")
     @ApiOperation("根据条件查询所有小区表列表")
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('building:community:read')")
@@ -52,7 +52,7 @@ public class BuildingCommunityController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "保存小区表")
+    @SysLog(MODULE = "build", REMARK = "保存小区表")
     @ApiOperation("保存小区表")
     @PostMapping(value = "/create")
 
@@ -70,7 +70,7 @@ public class BuildingCommunityController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "更新小区表")
+    @SysLog(MODULE = "build", REMARK = "更新小区表")
     @ApiOperation("更新小区表")
     @PostMapping(value = "/update/{id}")
 
@@ -86,7 +86,7 @@ public class BuildingCommunityController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "删除小区表")
+    @SysLog(MODULE = "build", REMARK = "删除小区表")
     @ApiOperation("删除小区表")
     @GetMapping(value = "/delete/{id}")
 
@@ -105,7 +105,7 @@ public class BuildingCommunityController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "给小区表分配小区表")
+    @SysLog(MODULE = "build", REMARK = "给小区表分配小区表")
     @ApiOperation("查询小区表明细")
     @GetMapping(value = "/{id}")
 
@@ -126,7 +126,7 @@ public class BuildingCommunityController {
     @ApiOperation(value = "批量删除小区表")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
-    @SysLog(MODULE = "pms", REMARK = "批量删除小区表")
+    @SysLog(MODULE = "build", REMARK = "批量删除小区表")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IBuildingCommunityService.removeByIds(ids);
         if (count) {

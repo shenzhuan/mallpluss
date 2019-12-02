@@ -44,7 +44,7 @@ public class BuildingRoomController {
     private IBuildingUnitService unitService;
     @Resource
     private IBuildingFloorService floorService;
-    @SysLog(MODULE = "cms", REMARK = "根据条件查询所有房间表列表")
+    @SysLog(MODULE = "build", REMARK = "根据条件查询所有房间表列表")
     @ApiOperation("根据条件查询所有房间表列表")
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('building:room:read')")
@@ -60,7 +60,7 @@ public class BuildingRoomController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "保存房间表")
+    @SysLog(MODULE = "build", REMARK = "保存房间表")
     @ApiOperation("保存房间表")
     @PostMapping(value = "/create")
 
@@ -83,7 +83,7 @@ public class BuildingRoomController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "更新房间表")
+    @SysLog(MODULE = "build", REMARK = "更新房间表")
     @ApiOperation("更新房间表")
     @PostMapping(value = "/update/{id}")
 
@@ -99,7 +99,7 @@ public class BuildingRoomController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "删除房间表")
+    @SysLog(MODULE = "build", REMARK = "删除房间表")
     @ApiOperation("删除房间表")
     @GetMapping(value = "/delete/{id}")
 
@@ -118,7 +118,7 @@ public class BuildingRoomController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "给房间表分配房间表")
+    @SysLog(MODULE = "build", REMARK = "给房间表分配房间表")
     @ApiOperation("查询房间表明细")
     @GetMapping(value = "/{id}")
 
@@ -139,7 +139,7 @@ public class BuildingRoomController {
     @ApiOperation(value = "批量删除房间表")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
-    @SysLog(MODULE = "pms", REMARK = "批量删除房间表")
+    @SysLog(MODULE = "build", REMARK = "批量删除房间表")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IBuildingRoomService.removeByIds(ids);
         if (count) {

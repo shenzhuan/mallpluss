@@ -96,6 +96,7 @@ public class BuildingCommunity implements Serializable {
     @Excel(name = "电话",  orderNum = "7", width=30)
     private String phone;
 
-
+    @TableField("status_desc")
+    private String statusDesc;
 
 }

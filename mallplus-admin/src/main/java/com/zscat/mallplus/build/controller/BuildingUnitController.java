@@ -37,7 +37,7 @@ public class BuildingUnitController {
     @Resource
     private com.zscat.mallplus.build.service.IBuildingUnitService IBuildingUnitService;
 
-    @SysLog(MODULE = "cms", REMARK = "根据条件查询所有房屋单元列表")
+    @SysLog(MODULE = "build", REMARK = "根据条件查询所有房屋单元列表")
     @ApiOperation("根据条件查询所有房屋单元列表")
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('building:unit:read')")
@@ -53,7 +53,7 @@ public class BuildingUnitController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "保存房屋单元")
+    @SysLog(MODULE = "build", REMARK = "保存房屋单元")
     @ApiOperation("保存房屋单元")
     @PostMapping(value = "/create")
 
@@ -73,7 +73,7 @@ public class BuildingUnitController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "更新房屋单元")
+    @SysLog(MODULE = "build", REMARK = "更新房屋单元")
     @ApiOperation("更新房屋单元")
     @PostMapping(value = "/update/{id}")
 
@@ -89,7 +89,7 @@ public class BuildingUnitController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "删除房屋单元")
+    @SysLog(MODULE = "build", REMARK = "删除房屋单元")
     @ApiOperation("删除房屋单元")
     @GetMapping(value = "/delete/{id}")
 
@@ -108,7 +108,7 @@ public class BuildingUnitController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "cms", REMARK = "给房屋单元分配房屋单元")
+    @SysLog(MODULE = "build", REMARK = "给房屋单元分配房屋单元")
     @ApiOperation("查询房屋单元明细")
     @GetMapping(value = "/{id}")
 
@@ -129,7 +129,7 @@ public class BuildingUnitController {
     @ApiOperation(value = "批量删除房屋单元")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
-    @SysLog(MODULE = "pms", REMARK = "批量删除房屋单元")
+    @SysLog(MODULE = "build", REMARK = "批量删除房屋单元")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IBuildingUnitService.removeByIds(ids);
         if (count) {

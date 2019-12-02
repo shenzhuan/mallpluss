@@ -68,7 +68,7 @@ public class BuildingOwner implements Serializable {
     /**
      * 备注
      */
-    @Excel(name = "北京",  orderNum = "7", width=30)
+    @Excel(name = "备注",  orderNum = "7", width=30)
     private String remark;
 
     /**
@@ -89,6 +89,14 @@ public class BuildingOwner implements Serializable {
     @Excel(name = "名称",  orderNum = "3", width=30)
     private Integer type;
 
+    @TableField("status_desc")
+    private String statusDesc;
 
+    private String roomDesc;
 
+    private String username;
+
+    private String password;
+
+    private String openid;
 }

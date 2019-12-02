@@ -1,3 +1,4 @@
+/*
 package com.zscat.mallplus.util;
 
 
@@ -17,9 +18,11 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
+*/
 /**
  * 代码生成器   工具类
- */
+ *//*
+
 public class GenUtils1 {
 
 
@@ -28,7 +31,7 @@ public class GenUtils1 {
         templates.add("common/generator/domain.java.ftl");
         templates.add("common/generator/Dao.java.ftl");
         //templates.add("common/generator/Mapper.java.vm");
-      //  templates.add("common/generator/Mapper.xml.vm");
+        //  templates.add("common/generator/Mapper.xml.vm");
         templates.add("common/generator/Service.java.ftl");
         templates.add("common/generator/ServiceImpl.java.ftl");
         templates.add("common/generator/Controller.java.ftl");
@@ -43,9 +46,11 @@ public class GenUtils1 {
         return templates;
     }
 
-    /**
+    */
+/**
      * 生成代码
-     */
+     *//*
+
 
 
     public static void generatorCode(Map<String, String> table,
@@ -130,7 +135,7 @@ public class GenUtils1 {
             try {
                 String filePath = getFileName(
                         tableDO.getTableName().split("_")[0], templateName, tableDO.getClassname(), tableDO.getClassName(), packages.substring(packages.lastIndexOf(".")+ 1), Module);
-                                //添加到zip
+                //添加到zip
                 assert filePath != null;
                 File file = new File(filePath);
 
@@ -157,16 +162,20 @@ public class GenUtils1 {
         }
     }
 
-    /**
+    */
+/**
      * 列名转换成Java属性名
-     */
+     *//*
+
     public static String columnToJava(String columnName) {
         return WordUtils.capitalizeFully(columnName, new char[]{'_'}).replace("_", "");
     }
 
-    /**
+    */
+/**
      * 表名转换成Java类名
-     */
+     *//*
+
     public static String tableToJava(String tableName, String tablePrefix, String autoRemovePre) {
         if (Constant.AUTO_REOMVE_PRE.equals(autoRemovePre)) {
             tableName = tableName.substring(tableName.indexOf("_") + 1);
@@ -178,9 +187,11 @@ public class GenUtils1 {
         return columnToJava(tableName);
     }
 
-    /**
+    */
+/**
      * 获取配置信息
-     */
+     *//*
+
     public static Configuration getConfig() {
         try {
             return new PropertiesConfiguration("generator.properties");
@@ -189,9 +200,11 @@ public class GenUtils1 {
         }
     }
 
-    /**
+    */
+/**
      * 获取文件名
-     */
+     *//*
+
     public static String getFileName(String module, String template, String classname, String className, String packageName, String Module) {
         String packagePath = "main" + File.separator + "java" + File.separator;
         //String modulesname=config.getString("packageName");
@@ -252,3 +265,4 @@ public class GenUtils1 {
         return null;
     }
 }
+*/
