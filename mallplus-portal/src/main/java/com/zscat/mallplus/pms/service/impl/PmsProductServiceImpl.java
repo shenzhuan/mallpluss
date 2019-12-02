@@ -27,7 +27,7 @@ import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -108,8 +108,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private RedisUtil redisUtil;
     @Autowired
     private IPmsFavoriteService favoriteService;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private SmsPaimaiLogMapper paimaiLogMapper;
     @Autowired
@@ -213,7 +212,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             param.setProductLadderList(productLadderList);
             param.setSkuStockList(skuStockList);
             param.setSubjectProductRelationList(subjectProductRelationList);
-            redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+            redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
         }
         return 1;
     }
@@ -250,10 +249,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         param.setSkuStockList(skuStockList);
         param.setSubjectProductRelationList(subjectProductRelationList);
-        param.setStoreInfo(storeMapper.selectById(apiContext.getCurrentProviderId()));
+
         List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
         param.setTypeGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size()));
-        redisService.set(apiContext.getCurrentProviderId()+":"+apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
+        redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
     }

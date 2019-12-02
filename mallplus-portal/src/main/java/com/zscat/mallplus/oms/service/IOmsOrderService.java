@@ -2,10 +2,7 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
-import com.zscat.mallplus.oms.vo.GroupAndOrderVo;
-import com.zscat.mallplus.oms.vo.OrderParam;
-import com.zscat.mallplus.oms.vo.TbThanks;
+import com.zscat.mallplus.oms.vo.*;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.CartParam;
@@ -20,15 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 2019-04-17
  */
 public interface IOmsOrderService extends IService<OmsOrder> {
-
-    Object preSingelOrder(GroupAndOrderVo orderParam);
-
-    Object generateSingleOrder(GroupAndOrderVo orderParam, UmsMember member);
-
-    /**
-     * 根据用户购物车信息生成确认单信息
-     */
-    ConfirmOrderResult generateConfirmOrder();
 
     /**
      * 根据提交信息生成订单
@@ -65,6 +53,13 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return
      */
     ConfirmOrderResult submitPreview(OrderParam orderParam);
+
+    /**
+     * 多店铺预览订单
+     * @param orderParam
+     * @return
+     */
+    ConfirmListOrderResult submitStorePreview(OrderParam orderParam);
 
     /**
      * pc 支付

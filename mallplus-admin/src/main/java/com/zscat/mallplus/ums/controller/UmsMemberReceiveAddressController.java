@@ -39,7 +39,7 @@ public class UmsMemberReceiveAddressController {
     @PreAuthorize("hasAuthority('ums:UmsMemberReceiveAddress:read')")
     public Object getUmsMemberReceiveAddressByPage(UmsMemberReceiveAddress entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsMemberReceiveAddressService.page(new Page<UmsMemberReceiveAddress>(pageNum, pageSize), new QueryWrapper<>(entity)));

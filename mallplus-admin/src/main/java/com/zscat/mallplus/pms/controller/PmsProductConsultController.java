@@ -39,7 +39,7 @@ public class PmsProductConsultController {
     @PreAuthorize("hasAuthority('pms:PmsProductConsult:read')")
     public Object getPmsProductConsultByPage(PmsProductConsult entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductConsultService.page(new Page<PmsProductConsult>(pageNum, pageSize), new QueryWrapper<>(entity)));

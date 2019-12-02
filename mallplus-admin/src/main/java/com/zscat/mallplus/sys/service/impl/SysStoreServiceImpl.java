@@ -22,7 +22,7 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+import com.zscat.mallplus.ApiContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -152,7 +152,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         }
         return userMapper.insert(user) > 0;
     }
-    void createG(BakGoods gg,Long storeId){
+    void createG(BakGoods gg,Integer storeId){
         PmsProduct g = new PmsProduct();
 
         g.setName(gg.getName());

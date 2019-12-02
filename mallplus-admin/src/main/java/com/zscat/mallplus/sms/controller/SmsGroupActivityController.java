@@ -39,7 +39,7 @@ public class SmsGroupActivityController {
     @GetMapping(value = "/list")
     public Object getSmsGroupActivityByPage(SmsGroupActivity entity,
                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                           @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -39,7 +39,7 @@ public class SmsRedPacketController {
     @PreAuthorize("hasAuthority('sms:SmsRedPacket:read')")
     public Object getSmsRedPacketByPage(SmsRedPacket entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsRedPacketService.page(new Page<SmsRedPacket>(pageNum, pageSize), new QueryWrapper<>(entity)));

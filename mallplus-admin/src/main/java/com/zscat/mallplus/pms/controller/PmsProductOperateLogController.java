@@ -39,7 +39,7 @@ public class PmsProductOperateLogController {
     @PreAuthorize("hasAuthority('pms:PmsProductOperateLog:read')")
     public Object getPmsProductOperateLogByPage(PmsProductOperateLog entity,
                                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductOperateLogService.page(new Page<PmsProductOperateLog>(pageNum, pageSize), new QueryWrapper<>(entity)));

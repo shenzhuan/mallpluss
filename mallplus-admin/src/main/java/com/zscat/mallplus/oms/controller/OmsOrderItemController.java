@@ -39,7 +39,7 @@ public class OmsOrderItemController {
     @PreAuthorize("hasAuthority('oms:OmsOrderItem:read')")
     public Object getOmsOrderItemByPage(OmsOrderItem entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderItemService.page(new Page<OmsOrderItem>(pageNum, pageSize), new QueryWrapper<>(entity)));

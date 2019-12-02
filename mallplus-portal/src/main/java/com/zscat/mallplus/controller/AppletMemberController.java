@@ -120,20 +120,9 @@ public class AppletMemberController extends ApiBaseAction {
         return memberService.loginByWeixin(param);
 
     }
-    @Autowired
-    private ApiContext apiContext;
 
-    @SysLog(MODULE = "applet", REMARK = "切换店铺")
-    @ApiOperation("切换店铺")
-    @GetMapping(value = "/bindStoreId/{id}")
-    public Object bindStoreId(@ApiParam("id") @PathVariable Long id) {
-        try {
-            apiContext.setCurrentProviderId(id);
-            return new CommonResult().success();
-        } catch (Exception e) {
-            return new CommonResult().failed(e.getMessage());
-        }
-    }
+
+
     /**
      * 小程序主页
      *

@@ -8,7 +8,7 @@ import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysUserVo;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
-import com.zscat.mallplus.vo.ApiContext;
+import com.zscat.mallplus.ApiContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

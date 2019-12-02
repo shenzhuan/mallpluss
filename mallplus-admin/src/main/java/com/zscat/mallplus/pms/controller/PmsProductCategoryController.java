@@ -39,7 +39,7 @@ public class PmsProductCategoryController {
     @GetMapping(value = "/list")
     public Object getPmsProductCategoryByPage(PmsProductCategory entity,
                                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductCategoryService.page(new Page<PmsProductCategory>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -53,7 +53,7 @@ public class PmsProductCategoryController {
     @RequestMapping(value = "/list/{parentId}", method = RequestMethod.GET)
     @ResponseBody
     public Object getList(@PathVariable Long parentId,
-                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         PmsProductCategory entity = new PmsProductCategory();
         entity.setParentId(parentId);

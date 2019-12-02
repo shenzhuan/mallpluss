@@ -8,16 +8,19 @@ import com.zscat.mallplus.oms.mapper.OmsCartItemMapper;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.oms.vo.CartPromotionItem;
+import com.zscat.mallplus.oms.vo.StoreCart;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductFullReduction;
 import com.zscat.mallplus.pms.entity.PmsProductLadder;
 import com.zscat.mallplus.pms.entity.PmsSkuStock;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.pms.vo.PromotionProduct;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -25,6 +28,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -42,6 +46,8 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
     private IUmsMemberService memberService;
     @Resource
     private PmsProductMapper pmsProductMapper;
+    @Autowired
+    private IPmsSkuStockService pmsSkuStockService;
 
     @Override
     public OmsCartItem add(OmsCartItem cartItem) {
@@ -365,5 +371,29 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
     @Override
     public Integer countCart(Long id){
         return cartItemMapper.countCart(id);
+    }
+
+    @Override
+    public Map<String, List<OmsCartItem>> listStoreCart(Long id) {
+        List<OmsCartItem> list = cartItemMapper.selectList(new QueryWrapper<OmsCartItem>().eq("member_id",id));
+        for (OmsCartItem item : list){
+            if (ValidatorUtils.notEmpty(item.getProductSkuId())){
+                item.setSkuStock(pmsSkuStockService.getById(item.getProductSkuId()));
+            }else {
+                item.setProduct(pmsProductMapper.selectById(item.getProductId()));
+            }
+        }
+        Map<String, List<OmsCartItem>> map = list.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreName));
+
+        /*List<StoreCart> storeCartList = new ArrayList<>();
+        for (Map.Entry<String, List<OmsCartItem>> entry : map.entrySet()) {
+            StoreCart storeCart = new StoreCart();
+            storeCart.setStoreName(entry.getKey());
+            storeCart.setList(entry.getValue());
+            storeCartList.add(storeCart);
+        }*/
+
+        return  map;
+
     }
 }

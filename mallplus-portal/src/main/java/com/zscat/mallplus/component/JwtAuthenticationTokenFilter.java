@@ -7,7 +7,7 @@ import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
 import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +49,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     public SysWebLogMapper fopSystemOperationLogService;
 
@@ -137,15 +136,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
         long startTime, endTime;
-        String storeId = request.getParameter("storeid");
-        if (ValidatorUtils.notEmpty(storeId)) {
-            apiContext.setCurrentProviderId(Long.valueOf(storeId));
-        } else {
-            storeId = request.getHeader("storeid");
-            if (ValidatorUtils.notEmpty(storeId)) {
-                apiContext.setCurrentProviderId(Long.valueOf(storeId));
-            }
-        }
+
         String requestType = ((HttpServletRequest) request).getMethod();
         SysWebLog sysLog = new SysWebLog();
         StringBuffer sbParams = new StringBuffer();
@@ -171,7 +162,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
-        String tokenPre = this.tokenHeader+storeId ;
+        String tokenPre = this.tokenHeader ;
         String authHeader = request.getParameter(tokenPre);
         if (ValidatorUtils.empty(authHeader)){
             authHeader = request.getHeader(tokenPre);

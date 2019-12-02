@@ -28,7 +28,7 @@ import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -86,8 +86,7 @@ public class BHomeController {
     private ISysNoticeService noticeService;
     @Resource
     private ISysMessageService messageService;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Resource
     private TbUserFromIdMapper fromIdMapper;
@@ -100,7 +99,7 @@ public class BHomeController {
     @RequestMapping(value = "/pc.getpageconfig", method = RequestMethod.POST)
     public Object pc_home() {
         HomeContentResult contentResult = null;
-        String key = Rediskey.HOMEPAGEPC + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGEPC ;
         try {
             String json = redisService.get(key);
             if (ValidatorUtils.empty(json)){
@@ -125,15 +124,16 @@ public class BHomeController {
     public Object contentNew1() {
 
         HomeContentResult contentResult = null;
-        String key = Rediskey.HOMEPAGE2 + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGE2 ;
         try {
             String json = redisService.get(key);
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.notEmpty(json)){
                 contentResult = advertiseService.contentNew1();
                 redisService.set(key,JsonUtils.objectToJson(contentResult));
                 redisService.expire(key,2);
             }else{
                 contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
+                contentResult = advertiseService.contentNew1();
             }
         }catch (Exception e){
             contentResult = advertiseService.contentNew1();
@@ -148,7 +148,7 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/pages.getpageconfig", method = RequestMethod.POST)
     public Object contentNew() {
-        String key = Rediskey.HOMEPAGE + apiContext.getCurrentProviderId();
+        String key = Rediskey.HOMEPAGE ;
         String json = redisService.get(key);
         Pages contentResult = null;
         try {
@@ -383,9 +383,9 @@ public class BHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @PostMapping("/advert.getAdvertList")
-    public Object bannerList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
-        return new CommonResult().success(bannerList);
+    public Object bannerList( SmsHomeAdvertise advertise) {
+        advertise.setStatus(1);
+        return new CommonResult().success(advertiseService.list(new QueryWrapper<>(advertise)));
     }
 
     /**
@@ -519,7 +519,7 @@ public class BHomeController {
     @ApiOperation(value = "查询首页推荐品牌")
     @PostMapping(value = "/recommendBrand/list")
     public Object getRecommendBrandList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
@@ -530,7 +530,7 @@ public class BHomeController {
     @ApiOperation(value = "查询首页新品")
     @PostMapping(value = "/groom/list")
     public Object getNewProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
         List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);

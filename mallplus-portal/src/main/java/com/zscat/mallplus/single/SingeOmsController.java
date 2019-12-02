@@ -13,6 +13,7 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.service.IPmsProductConsultService;
@@ -65,10 +66,10 @@ public class SingeOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus()!=null && order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
         }else {
             order.setMemberId(memberService.getNewCurrentMember().getId());
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
 
         }
         for (OmsOrder omsOrder : page.getRecords()){
@@ -151,6 +152,20 @@ public class SingeOmsController extends ApiBaseAction {
     public Object submitPreview(OrderParam orderParam) {
         try {
             ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            return new CommonResult().success(result);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @ResponseBody
+    @GetMapping("/submitStorePreview")
+    public Object submitStorePreview(OrderParam orderParam) {
+        try {
+            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());

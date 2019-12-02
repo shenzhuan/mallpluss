@@ -26,6 +26,8 @@ public class HomeContentResult {
     private List<SmsHomeAdvertise> advertiseList;
     //推荐品牌
     private List<PmsBrand> brandList;
+    //推荐品牌
+    private List<SysStore> storeList;
     //当前秒杀场次
     //当前秒杀场次
     private HomeFlashPromotion homeFlashPromotion;
@@ -44,5 +46,5 @@ public class HomeContentResult {
     List<PmsSmallNaviconCategory> navList;
 
     List<ActivityVo> activityList;
-    SysStore store;
+
 }

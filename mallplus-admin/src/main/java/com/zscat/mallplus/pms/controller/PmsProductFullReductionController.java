@@ -39,7 +39,7 @@ public class PmsProductFullReductionController {
     @PreAuthorize("hasAuthority('pms:PmsProductFullReduction:read')")
     public Object getPmsProductFullReductionByPage(PmsProductFullReduction entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductFullReductionService.page(new Page<PmsProductFullReduction>(pageNum, pageSize), new QueryWrapper<>(entity)));

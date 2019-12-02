@@ -1,6 +1,7 @@
 package com.zscat.mallplus.sys.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.build.entity.UserCommunityRelate;
 import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysRole;
 import com.zscat.mallplus.sys.entity.SysUser;
@@ -45,4 +46,8 @@ public interface ISysUserService extends IService<SysUser> {
 //    SmsCode generateCode(String phone);
 
     int updateShowStatus(List<Long> ids, Integer showStatus);
+
+    Object userCommunityRelate(UserCommunityRelate entity);
+
+    void updatePassword(String password, String newPassword);
 }

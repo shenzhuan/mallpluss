@@ -41,6 +41,8 @@ public class OmsOrder extends BaseEntity implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    private Long pid;
+
     @TableField("member_id")
     private Long memberId;
 
@@ -318,5 +320,8 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private String  taxTitle;	//	发票抬头
     @TableField("is_comment")
     private Integer  isComment;	//是否评论，1未评论，2已评论
+
+    @TableField("store_name")
+    private String storeName;	//	税号
 
 }

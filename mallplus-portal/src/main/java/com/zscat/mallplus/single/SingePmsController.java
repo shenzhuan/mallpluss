@@ -511,7 +511,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询首页推荐品牌")
     @GetMapping(value = "/recommendBrand/list")
     public Object getRecommendBrandList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
@@ -522,7 +522,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询首页新品")
     @GetMapping(value = "/newProductList/list")
     public Object getNewProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getHotProductList(1,1));
@@ -533,7 +533,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询首页热销商品")
     @GetMapping(value = "/hotProductList/list")
     public Object getHotProductList(
-            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         return new CommonResult().success(pmsProductService.getHotProductList(1,1));
@@ -553,7 +553,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/typeGoodsList")
     public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId());
+        String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
         if (ValidatorUtils.notEmpty(json)){
             relList = JsonUtils.json2list(json,ProductTypeVo.class);
             return   new CommonResult().success(relList);
@@ -642,7 +642,7 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询用户浏览记录列表")
     @GetMapping(value = "/viewList")
     public Object viewList(
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 

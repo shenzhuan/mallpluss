@@ -39,7 +39,7 @@ public class PmsMemberPriceController {
     @PreAuthorize("hasAuthority('pms:PmsMemberPrice:read')")
     public Object getPmsMemberPriceByPage(PmsMemberPrice entity,
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsMemberPriceService.page(new Page<PmsMemberPrice>(pageNum, pageSize), new QueryWrapper<>(entity)));

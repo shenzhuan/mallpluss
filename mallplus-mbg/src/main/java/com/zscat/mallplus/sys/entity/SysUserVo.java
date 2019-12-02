@@ -15,5 +15,5 @@ import lombok.Data;
 public class SysUserVo extends SysUser  {
 
     @TableField("store_id")
-    private Long storeId;
+    private Integer storeId;
 }

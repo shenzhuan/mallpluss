@@ -17,9 +17,37 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mybatis-plus-boot-starter.version>3.0-RC3</mybatis-plus-boot-starter.version>
         <HikariCP.version>3.2.0</HikariCP.version>
+        <alipay.version>3.1.0</alipay.version>
+        <hutool.version>[4.1.12,)</hutool.version>
+        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <mail.version>1.4.7</mail.version>
     </properties>
     <dependencies>
+        <!--邮件依赖-->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${mail.version}</version>
+        </dependency>
 
+        <!--七牛云存储-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>${qiniu.version}</version>
+        </dependency>
+        <!--工具包-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+        <!--支付宝依赖-->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>${alipay.version}</version>
+        </dependency>
         <!-- MyBatis 生成器 -->
         <dependency>
             <groupId>org.mybatis.generator</groupId>
@@ -87,6 +115,18 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
             <version>3.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.afterturn</groupId>
+            <artifactId>easypoi-annotation</artifactId>
+            <version>4.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
             <scope>compile</scope>
         </dependency>
 

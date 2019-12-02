@@ -7,6 +7,7 @@ import com.zscat.mallplus.cms.mapper.CmsSubjectCategoryMapper;
 import com.zscat.mallplus.cms.mapper.CmsSubjectMapper;
 import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
+import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
@@ -80,6 +81,28 @@ public class TestController extends ApiBaseAction {
     @Resource
     CmsSubjectCategoryMapper categoryMapper;
 
+    @ApiOperation("获取会员详情")
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @ResponseBody
+    public Object test() {
+        PmsProduct product = new PmsProduct();
+        product.setStoreName("北京皮包专卖");
+        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",1));
+
+        product = new PmsProduct();
+        product.setStoreName("北京豪车专卖");
+        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",2));
+
+        product = new PmsProduct();
+        product.setStoreName("北京服装专卖");
+        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",3));
+
+        product = new PmsProduct();
+        product.setStoreName("北京手术专卖");
+        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",4));
+
+        return new CommonResult().success();
+    }
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody

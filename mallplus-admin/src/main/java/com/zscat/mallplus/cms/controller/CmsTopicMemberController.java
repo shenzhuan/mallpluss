@@ -39,7 +39,7 @@ public class CmsTopicMemberController {
     @PreAuthorize("hasAuthority('cms:CmsTopicMember:read')")
     public Object getCmsTopicMemberByPage(CmsTopicMember entity,
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ICmsTopicMemberService.page(new Page<CmsTopicMember>(pageNum, pageSize), new QueryWrapper<>(entity)));

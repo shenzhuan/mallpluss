@@ -39,7 +39,7 @@ public class UmsMemberProductCategoryRelationController {
     @PreAuthorize("hasAuthority('ums:UmsMemberProductCategoryRelation:read')")
     public Object getUmsMemberProductCategoryRelationByPage(UmsMemberProductCategoryRelation entity,
                                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsMemberProductCategoryRelationService.page(new Page<UmsMemberProductCategoryRelation>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -39,7 +39,7 @@ public class OmsOrderSettingController {
     @PreAuthorize("hasAuthority('oms:OmsOrderSetting:read')")
     public Object getOmsOrderSettingByPage(OmsOrderSetting entity,
                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                           @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderSettingService.page(new Page<OmsOrderSetting>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -105,7 +105,7 @@ public class OmsOrderSettingController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("订单设置表id");
             }
-            OmsOrderSetting coupon = IOmsOrderSettingService.getById(id);
+            OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询订单设置表明细：%s", e.getMessage(), e);

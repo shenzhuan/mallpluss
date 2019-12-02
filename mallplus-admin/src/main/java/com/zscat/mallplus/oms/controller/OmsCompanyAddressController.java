@@ -38,7 +38,7 @@ public class OmsCompanyAddressController {
     @GetMapping(value = "/list")
     public Object getOmsCompanyAddressByPage(OmsCompanyAddress entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<>(entity)));

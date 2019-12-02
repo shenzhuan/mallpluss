@@ -39,7 +39,7 @@ public class UmsIntegrationConsumeSettingController {
     @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:read')")
     public Object getUmsIntegrationConsumeSettingByPage(UmsIntegrationConsumeSetting entity,
                                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IUmsIntegrationConsumeSettingService.page(new Page<UmsIntegrationConsumeSetting>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -68,7 +68,7 @@ public class UmsIntegrationConsumeSettingController {
     @SysLog(MODULE = "ums", REMARK = "更新积分消费设置")
     @ApiOperation("更新积分消费设置")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
+  //  @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
     public Object updateUmsIntegrationConsumeSetting(@RequestBody UmsIntegrationConsumeSetting entity) {
         try {
             if (IUmsIntegrationConsumeSettingService.updateById(entity)) {
@@ -109,7 +109,7 @@ public class UmsIntegrationConsumeSettingController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("积分消费设置id");
             }
-            UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getById(id);
+            UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getOne(new QueryWrapper<>());
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询积分消费设置明细：%s", e.getMessage(), e);

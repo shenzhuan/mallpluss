@@ -39,7 +39,7 @@ public class CmsHelpCategoryController {
     @PreAuthorize("hasAuthority('cms:CmsHelpCategory:read')")
     public Object getCmsHelpCategoryByPage(CmsHelpCategory entity,
                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                           @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ICmsHelpCategoryService.page(new Page<CmsHelpCategory>(pageNum, pageSize), new QueryWrapper<>(entity)));

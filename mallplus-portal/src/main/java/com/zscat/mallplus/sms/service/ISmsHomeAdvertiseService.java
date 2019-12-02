@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.entity.PmsSmallNaviconCategory;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
+import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.vo.home.Pages;
 
 import java.util.List;
@@ -40,8 +41,9 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
     List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize);
     List<SmsHomeAdvertise> getHomeAdvertiseList(int type) ;
     List<SmsHomeAdvertise> getHomeAdvertiseList();
-    public List<PmsProductAttributeCategory> getPmsProductAttributeCategories();
+    List<PmsProductAttributeCategory> getPmsProductAttributeCategories();
 
+    List<SysStore> getStoreList(int pageNum, int pageSize);
     List<HomeFlashPromotion> homeFlashPromotionList();
 
     List<PmsSmallNaviconCategory> getNav();

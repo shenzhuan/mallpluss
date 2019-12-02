@@ -42,7 +42,7 @@ public class SmsHomeAdvertiseController {
     @GetMapping(value = "/list")
     public Object getSmsHomeAdvertiseByPage(SmsHomeAdvertise entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeAdvertiseService.page(new Page<SmsHomeAdvertise>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -89,7 +89,7 @@ public class SmsHomeAdvertiseController {
 
     @SysLog(MODULE = "sms", REMARK = "删除首页轮播广告表")
     @ApiOperation("删除首页轮播广告表")
-    @PostMapping(value = "/delete/{id}")
+    @GetMapping(value = "/delete/{id}")
     public Object deleteSmsHomeAdvertise(@ApiParam("首页轮播广告表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -123,7 +123,7 @@ public class SmsHomeAdvertiseController {
     }
 
     @ApiOperation(value = "批量删除首页轮播广告表")
-    @RequestMapping(value = "/delete/batch", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除首页轮播广告表")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {

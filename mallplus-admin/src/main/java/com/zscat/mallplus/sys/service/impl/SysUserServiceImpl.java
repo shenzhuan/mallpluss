@@ -2,6 +2,9 @@ package com.zscat.mallplus.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.build.entity.UserCommunityRelate;
+import com.zscat.mallplus.build.mapper.UserCommunityRelateMapper;
+import com.zscat.mallplus.exception.BusinessMallException;
 import com.zscat.mallplus.sys.entity.*;
 import com.zscat.mallplus.sys.mapper.*;
 import com.zscat.mallplus.sys.service.ISysRolePermissionService;
@@ -14,7 +17,7 @@ import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,6 +342,41 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         productCategory.setStatus(showStatus);
         return adminMapper.update(productCategory, new QueryWrapper<SysUser>().in("id", ids));
 
+    }
+    @Resource
+    private UserCommunityRelateMapper userCommunityRelateMapper;
+
+    @Transactional
+    @Override
+    public Object userCommunityRelate(UserCommunityRelate entity) {
+        //先删除原有关系
+        userCommunityRelateMapper.delete(new QueryWrapper<UserCommunityRelate>().eq("user_id", entity.getUserId()));
+        //批量插入新关系
+      //  List<UserCommunityRelate> relationList = new ArrayList<>();
+        if (!StringUtils.isEmpty(entity.getCommunityIds())) {
+            String[] mids = entity.getCommunityIds().split(",");
+            for (String permissionId : mids) {
+                UserCommunityRelate relation = new UserCommunityRelate();
+                relation.setUserId(entity.getUserId());
+                relation.setCommunityId(Long.valueOf(permissionId));
+              //  relationList.add(relation);
+                userCommunityRelateMapper.insert(relation);
+            }
+
+        }
+      return 1;
+    }
+
+    @Override
+    public void updatePassword(String password, String newPassword) {
+        SysUser oldUser = UserUtils.getCurrentMember();
+        if (!oldUser.getPassword().equals(passwordEncoder.encode(password))){
+            throw  new BusinessMallException("旧密码错误");
+        }
+        SysUser role = new SysUser();
+        role.setId(oldUser.getId());
+        role.setPassword(passwordEncoder.encode(newPassword));
+        adminMapper.updateById(role);
     }
 
     /**

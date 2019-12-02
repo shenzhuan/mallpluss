@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.vo.ApiContext;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -52,11 +52,11 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
-                Long currentProviderId = apiContext.getCurrentProviderId();
+                Integer currentProviderId = apiContext.getCurrentProviderId();
                 if (null == currentProviderId) {
-                    currentProviderId = 5L;
+                    currentProviderId = 1;
                     System.out.println("#1129 getCurrentProviderId error.");
-                    throw new RuntimeException("#1129 getCurrentProviderId error.");
+                    //  throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
                 return new LongValue(currentProviderId);
             }
@@ -80,12 +80,12 @@ public class MybatisPlusConfig {
         paginationInterceptor.setSqlParserList(sqlParserList);
         paginationInterceptor.setSqlParserFilter(new ISqlParserFilter() {
             @Override
-           public boolean doFilter(MetaObject metaObject) {
-               MappedStatement ms = SqlParserHelper.getMappedStatement(metaObject);
+            public boolean doFilter(MetaObject metaObject) {
+                MappedStatement ms = SqlParserHelper.getMappedStatement(metaObject);
                 // 过滤自定义查询此时无租户信息约束【 麻花藤 】出现
                 if ("com.zscat.mallplus.sys.mapper.SysUserMapper.selectByUserName".equals(ms.getId())) {
                     return true;
-               }
+                }
                 return false;
             }
         });

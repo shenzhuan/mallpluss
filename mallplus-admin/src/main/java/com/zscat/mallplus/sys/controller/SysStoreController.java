@@ -16,7 +16,7 @@ import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.sys.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,7 +59,7 @@ public class SysStoreController {
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/setStoreId/{id}")
-    public Object setStoreId(@ApiParam("id") @PathVariable Long id) {
+    public Object setStoreId(@ApiParam("id") @PathVariable Integer id) {
         try {
             apiContext.setCurrentProviderId(id);
             return new CommonResult().success();
