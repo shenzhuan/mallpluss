@@ -13,3 +13,21 @@ SELECT * FROM building_floor;
 SELECT * FROM building_unit;
 SELECT * FROM building_room;
 SELECT * FROM building_owner;
+
+
+
+DELETE FROM build_repair ;
+DELETE FROM build_type_price;
+DELETE FROM build_wuye_price;
+DELETE FROM build_wuye_company;
+DELETE FROM build_adv;
+DELETE FROM build_apply_room;
+DELETE FROM  build_notice;
+DELETE FROM build_group;
+DELETE FROM build_group_member;
+
+DELETE FROM building_community;
+DELETE FROM building_floor;
+DELETE FROM building_unit;
+DELETE FROM building_room;
+DELETE FROM building_owner;

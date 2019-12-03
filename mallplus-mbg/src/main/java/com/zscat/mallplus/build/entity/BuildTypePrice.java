@@ -37,6 +37,8 @@ public class BuildTypePrice implements Serializable {
      */
     private String name;
 
+    private String remark;
+
     /**
      * 单价
      */

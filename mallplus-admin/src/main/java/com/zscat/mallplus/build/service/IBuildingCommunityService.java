@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBuildingCommunityService extends IService<BuildingCommunity> {
 
+    boolean saveCommunity(BuildingCommunity entity);
 }

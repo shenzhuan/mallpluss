@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.entity.BuildWuyePrice;
+import com.zscat.mallplus.build.entity.BuildingRoom;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +36,8 @@ public class BuildWuyePriceController {
 
     @Resource
     private com.zscat.mallplus.build.service.IBuildWuyePriceService IBuildWuyePriceService;
+    @Resource
+    private com.zscat.mallplus.build.service.IBuildingRoomService IBuildingRoomService;
 
     @SysLog(MODULE = "build", REMARK = "根据条件查询所有费用表列表")
     @ApiOperation("根据条件查询所有费用表列表")
@@ -58,8 +62,13 @@ public class BuildWuyePriceController {
     public Object saveBuildWuyePrice(@RequestBody BuildWuyePrice entity) {
         try {
             if (ValidatorUtils.empty(entity.getAmount())||ValidatorUtils.empty(entity.getPrice())){
-
+                return new CommonResult().failed("请输入价格");
             }
+            BuildingRoom room =IBuildingRoomService.getById(entity.getRoomId());
+            if (room!=null && room.getRoomDesc()!=null){
+                entity.setRoomDesc(room.getRoomDesc());
+            }
+            entity.setCreateDate(new Date());
             entity.setMoneys(entity.getAmount().multiply(entity.getPrice()));
             if (IBuildWuyePriceService.save(entity)) {
                 return new CommonResult().success();

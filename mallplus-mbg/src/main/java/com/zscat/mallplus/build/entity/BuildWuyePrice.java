@@ -38,6 +38,9 @@ public class BuildWuyePrice implements Serializable {
     @TableField("room_id")
     private Long roomId;
 
+    @TableField("price_id")
+    private Long priceId;
+
     /**
      * 收费名称
      */

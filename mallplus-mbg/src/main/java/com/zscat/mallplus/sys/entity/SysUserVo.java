@@ -1,6 +1,5 @@
 package com.zscat.mallplus.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 /**
@@ -14,6 +13,5 @@ import lombok.Data;
 @Data
 public class SysUserVo extends SysUser  {
 
-    @TableField("store_id")
-    private Integer storeId;
+
 }

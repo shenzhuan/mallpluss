@@ -114,6 +114,24 @@ public class BuildingRoom implements Serializable {
      */
     private String state;
 
+    @TableField(exist = false)
+    private Long pid;
+    @TableField(exist = false)
+    private String label;
 
+    public String getLabel() {
+        return roomNum;
+    }
 
+    public void setLabel(String label) {
+        this.roomNum = roomNum;
+    }
+
+    public Long getPid() {
+        return floorId;
+    }
+
+    public void setPid(Long pid) {
+        this.floorId = floorId;
+    }
 }

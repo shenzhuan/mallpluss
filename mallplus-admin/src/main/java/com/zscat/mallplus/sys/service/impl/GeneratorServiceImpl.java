@@ -33,7 +33,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Map<String, Object> obj : list) {
 
-            tableInfos.add(new TableInfo(obj.get("tableName"),obj.get("createTime"),obj.get("engine"),obj.get("coding"), ObjectUtil.isNotEmpty(obj.get(4))? obj.get(4).toString() : "-"));
+            tableInfos.add(new TableInfo(obj.get("tableName"),obj.get("createTime"),obj.get("engine"),obj.get("coding"), ObjectUtil.isNotEmpty(obj.get("table_comment"))? obj.get("table_comment").toString() : "-"));
         }
         Object totalElements = generatorMapper.count(null);
         return PageUtil.toPage(tableInfos,totalElements);

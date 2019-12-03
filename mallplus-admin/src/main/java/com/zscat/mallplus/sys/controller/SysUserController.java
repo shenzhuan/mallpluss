@@ -87,6 +87,9 @@ public class SysUserController extends ApiController {
     @PostMapping(value = "/register")
     public Object saveUser(@RequestBody SysUser entity) {
         try {
+            if (ValidatorUtils.empty(entity.getStoreId())){
+                entity.setStoreId(UserUtils.getCurrentMember().getStoreId());
+            }
             if (sysUserService.saves(entity)) {
                 return new CommonResult().success();
             }

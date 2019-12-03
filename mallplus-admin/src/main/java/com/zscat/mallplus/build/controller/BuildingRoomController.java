@@ -4,13 +4,16 @@ package com.zscat.mallplus.build.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.build.entity.BuildingCommunity;
 import com.zscat.mallplus.build.entity.BuildingFloor;
 import com.zscat.mallplus.build.entity.BuildingRoom;
 import com.zscat.mallplus.build.entity.BuildingUnit;
+import com.zscat.mallplus.build.service.IBuildingCommunityService;
 import com.zscat.mallplus.build.service.IBuildingFloorService;
 import com.zscat.mallplus.build.service.IBuildingUnitService;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.IdWorker;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,6 +47,8 @@ public class BuildingRoomController {
     private IBuildingUnitService unitService;
     @Resource
     private IBuildingFloorService floorService;
+    @Resource
+    private IBuildingCommunityService communityService;
     @SysLog(MODULE = "build", REMARK = "根据条件查询所有房间表列表")
     @ApiOperation("根据条件查询所有房间表列表")
     @GetMapping(value = "/list")
@@ -60,6 +65,22 @@ public class BuildingRoomController {
         return new CommonResult().failed();
     }
 
+    @SysLog(MODULE = "build", REMARK = "根据条件查询楼层和房间")
+    @ApiOperation("根据条件查询所有房间表列表")
+    @GetMapping(value = "/withChilds")
+    public Object withChilds(BuildingFloor entity) {
+        try {
+            List<BuildingFloor> floors = floorService.list(new QueryWrapper<>(entity));
+            for (BuildingFloor floor : floors){
+               List<BuildingRoom> list = IBuildingRoomService.list(new QueryWrapper<BuildingRoom>().eq("floor_id",floor.getId()));
+                floor.setChildren(list);
+            }
+            return new CommonResult().success(floors);
+        } catch (Exception e) {
+            log.error("根据条件查询所有房间表列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
     @SysLog(MODULE = "build", REMARK = "保存房间表")
     @ApiOperation("保存房间表")
     @PostMapping(value = "/create")
@@ -73,6 +94,10 @@ public class BuildingRoomController {
             BuildingUnit unit = unitService.getById(entity.getUnitId());
             BuildingFloor floor = floorService.getById(unit.getFloorId());
             entity.setFloorId(floor.getId());entity.setCommunityId(floor.getCommunityId());
+            BuildingCommunity community = communityService.getById(floor.getCommunityId());
+            entity.setRoomDesc(community.getName()+"-"+floor.getName()+"-"+unit.getUnitNum()+"-"+entity.getRoomNum());
+            entity.setLayer(floor.getLayerCount());
+            entity.setId(IdWorker.getId());
             if (IBuildingRoomService.save(entity)) {
                 return new CommonResult().success();
             }

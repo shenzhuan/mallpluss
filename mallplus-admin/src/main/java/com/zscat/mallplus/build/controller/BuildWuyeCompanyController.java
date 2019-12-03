@@ -57,7 +57,8 @@ public class BuildWuyeCompanyController {
     @PreAuthorize("hasAuthority('build:wuyeCompany:create')")
     public Object saveBuildWuyeCompany(@RequestBody BuildWuyeCompany entity) {
         try {
-            if (IBuildWuyeCompanyService.save(entity)) {
+            entity.setStatus("3");
+            if (IBuildWuyeCompanyService.saveCompany(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {

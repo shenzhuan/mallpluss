@@ -1,7 +1,6 @@
 package com.zscat.mallplus.utils;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import io.swagger.models.auth.In;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,5 +15,5 @@ import java.io.Serializable;
 @Getter
 public class BaseEntity implements Serializable {
     @TableField("store_id")
-    private Integer storeId;
+    private Long storeId;
 }

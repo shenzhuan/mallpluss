@@ -180,4 +180,8 @@ public class SysPermissionController extends BaseController {
         List<SysPermissionNode> permissionNodeList = ISysPermissionService.treeList();
         return new CommonResult().success(permissionNodeList);
     }
+
+
+
+
 }

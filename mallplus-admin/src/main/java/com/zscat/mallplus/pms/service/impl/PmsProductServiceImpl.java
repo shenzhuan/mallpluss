@@ -161,7 +161,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         }
         handleSkuStockCode(productParam.getSkuStockList(), product);
         productMapper.updateById(product);
-        redisService.remove(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, product.getId()));
+        redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         //会员价格
       //  memberPriceMapper.delete(new QueryWrapper<>(new PmsMemberPrice()).eq("product_id", id));
       //  relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), id);
@@ -191,7 +191,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
         count = 1;
 
-        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
+        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
     }
 
@@ -210,7 +210,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         record.setStatus(verifyStatus);
         record.setVertifyMan(UserUtils.getCurrentMember().getUsername());
         productVertifyRecordMapper.insert(record);
-        redisService.remove(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, product.getId()));
+        redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         return count;
     }
 
@@ -223,7 +223,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     }
     public void clerGoodsRedis(List<Long> ids) {
         for (Long id : ids){
-            redisService.remove(apiContext.getCurrentProviderId()+String.format(Rediskey.GOODSDETAIL, id));
+            redisService.remove(String.format(Rediskey.GOODSDETAIL, id));
         }
     }
     @Override

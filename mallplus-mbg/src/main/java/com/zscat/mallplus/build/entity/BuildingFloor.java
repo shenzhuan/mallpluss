@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -71,7 +72,17 @@ public class BuildingFloor implements Serializable {
     private Date createTime;
 
 
+    @TableField(exist = false)
+    private List<BuildingRoom> children;
 
+    @TableField(exist = false)
+    private String label;
 
+    public String getLabel() {
+        return name;
+    }
 
+    public void setLabel(String label) {
+        this.name = name;
+    }
 }

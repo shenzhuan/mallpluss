@@ -106,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //获取登录用户信息
         return username -> {
             SysUserVo admin = userMapper.selectByUserName(username);
-            apiContext.setCurrentProviderId(admin.getStoreId());
+          //  apiContext.setCurrentProviderId(admin.getStoreId());
             if (admin != null) {
                 if (admin.getSupplyId()!=null && admin.getSupplyId() == 1L) {
                     List<SysPermission> permissionList = sysUserService.listPerms();

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.entity.BuildingCommunity;
 import com.zscat.mallplus.util.EasyPoiUtils;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
@@ -59,8 +60,14 @@ public class BuildingCommunityController {
     public Object saveBuildingCommunity(@RequestBody BuildingCommunity entity) {
         try {
             entity.setCreateTime(new Date());
-            entity.setStatus(1);
-            if (IBuildingCommunityService.save(entity)) {
+            entity.setStatus(3);
+            if (ValidatorUtils.empty(entity.getCompanyId())){
+                entity.setCompanyId(UserUtils.getCurrentMember().getStoreId());
+            }
+            if (ValidatorUtils.empty(entity.getCompanyId())){
+                return new CommonResult().failed("请选择物业攻啊");
+            }
+            if (IBuildingCommunityService.saveCommunity(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
