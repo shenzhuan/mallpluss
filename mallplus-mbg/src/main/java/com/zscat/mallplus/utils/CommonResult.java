@@ -75,7 +75,11 @@ public class CommonResult {
         this.data = msg;
         return this;
     }
-
+    public CommonResult failed(Integer code,String message) {
+        this.code = code;
+        this.msg = message;
+        return this;
+    }
     /**
      * 参数验证失败使用
      *

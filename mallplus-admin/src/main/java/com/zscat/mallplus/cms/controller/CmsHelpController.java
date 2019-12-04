@@ -132,4 +132,19 @@ public class CmsHelpController {
         }
     }
 
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        CmsHelp record = new CmsHelp();
+        record.setShowStatus(showStatus);
+        record.setId(ids);
+        if (ICmsHelpService.updateById(record)) {
+            return new CommonResult().success();
+        } else {
+            return new CommonResult().failed();
+        }
+    }
 }

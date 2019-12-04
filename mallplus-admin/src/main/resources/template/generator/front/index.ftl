@@ -24,7 +24,6 @@
       <i class="el-icon-tickets"></i>
       <span>数据列表</span>
       <el-button
-              v-permission="['admin','${changeClassName}:add']"
               class="btn-add"
               @click="add${className}()"
               size="mini">
