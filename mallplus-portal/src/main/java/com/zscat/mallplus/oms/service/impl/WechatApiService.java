@@ -1,6 +1,10 @@
 package com.zscat.mallplus.oms.service.impl;
 
-import com.zscat.mallplus.config.WxAppletProperties;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.ums.entity.SysAppletSet;
+import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.util.JedisLock;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.util.MyX509TrustManager;
@@ -44,8 +48,9 @@ public class WechatApiService {
     private static final String WECHAT_API_TOKEN = WECHAT_API + "/token";
     private static final String WECHAT_API_TICKET = WECHAT_API + "/ticket/getticket?type=jsapi&access_token=";
     private final HttpClient httpclient;
+
     @Resource
-    private WxAppletProperties wxAppletProperties;
+    private SysAppletSetMapper appletSetMapper;
     private Jedis jedis;
     @Resource
     private JedisPool jedisPool;
@@ -127,7 +132,11 @@ public class WechatApiService {
      * @throws Exception
      */
     public String getAccessToken() throws Exception {
-        return getAccessToken(wxAppletProperties.getAppId(), wxAppletProperties.getSecret());
+        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        if (null == appletSet) {
+            throw new ApiMallPlusException("没有设置支付配置");
+        }
+        return getAccessToken(appletSet.getAppid(), appletSet.getAppsecret());
     }
 
     /**
@@ -191,8 +200,11 @@ public class WechatApiService {
      */
 
     public String getJsTicket() throws Exception {
-
-        return getJsTicket(wxAppletProperties.getAppId(), wxAppletProperties.getSecret());
+        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        if (null == appletSet) {
+            throw new ApiMallPlusException("没有设置支付配置");
+        }
+        return getJsTicket(appletSet.getAppid(), appletSet.getAppsecret());
     }
 
 

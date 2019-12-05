@@ -3,7 +3,6 @@ package com.zscat.mallplus.b2c;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.config.WxAppletProperties;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
@@ -14,7 +13,6 @@ import com.zscat.mallplus.oms.service.IOmsOrderOperateHistoryService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.single.ApiBaseAction;
-import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -27,7 +25,6 @@ import com.zscat.mallplus.util.XmlUtil;
 import com.zscat.mallplus.util.applet.WechatRefundApiResult;
 import com.zscat.mallplus.util.applet.WechatUtil;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.BalancePayParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,7 +68,7 @@ public class BPayController extends ApiBaseAction {
     private SmsGroupMapper groupMapper;
 
     @Resource
-    private WxAppletProperties wxAppletProperties;
+    private SysAppletSetMapper appletSetMapper;
     @Autowired
     private IOmsOrderOperateHistoryService orderOperateHistoryService;
 
@@ -161,7 +158,10 @@ public class BPayController extends ApiBaseAction {
         UmsMember user = memberService.getNewCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
-
+        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        if (null == appletSet) {
+            return ApiBaseAction.toResponsFail("没有设置支付配置");
+        }
 
         if (null == orderInfo) {
             return toResponsObject(400, "订单已取消", "");
@@ -181,9 +181,9 @@ public class BPayController extends ApiBaseAction {
 
         try {
             Map<Object, Object> parame = new TreeMap<Object, Object>();
-            parame.put("appid", wxAppletProperties.getAppId());
+            parame.put("appid", appletSet.getAppid());
             // 商家账号。
-            parame.put("mch_id", wxAppletProperties.getMchId());
+            parame.put("mch_id", appletSet.getMchid());
             String randomStr = CharUtil.getRandomNum(18).toUpperCase();
             // 随机字符串
             parame.put("nonce_str", randomStr);
@@ -208,12 +208,12 @@ public class BPayController extends ApiBaseAction {
             //支付金额
             parame.put("total_fee", orderInfo.getPayAmount().multiply(new BigDecimal(100)).intValue());
             // 回调地址
-            parame.put("notify_url", wxAppletProperties.getNotifyUrl());
+            parame.put("notify_url", appletSet.getNotifyurl());
             // 交易类型APP
             parame.put("trade_type", tradeType);
             parame.put("spbill_create_ip", getClientIp());
             parame.put("openid", user.getWeixinOpenid());
-            String sign = WechatUtil.arraySign(parame, wxAppletProperties.getPaySignKey());
+            String sign = WechatUtil.arraySign(parame, appletSet.getPaySignKey());
             // 数字签证
             parame.put("sign", sign);
 
@@ -235,12 +235,12 @@ public class BPayController extends ApiBaseAction {
                 } else if (result_code.equalsIgnoreCase("SUCCESS")) {
                     String prepay_id = MapUtils.getString("prepay_id", resultUn);
                     // 先生成paySign 参考https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_7&index=5
-                    resultObj.put("appId", wxAppletProperties.getAppId());
+                    resultObj.put("appId", appletSet.getAppid());
                     resultObj.put("timeStamp", DateUtils.timeToStr(System.currentTimeMillis() / 1000, DateUtils.DATE_TIME_PATTERN));
                     resultObj.put("nonceStr", nonceStr);
                     resultObj.put("package", "prepay_id=" + prepay_id);
                     resultObj.put("signType", "MD5");
-                    String paySign = WechatUtil.arraySign(resultObj, wxAppletProperties.getPaySignKey());
+                    String paySign = WechatUtil.arraySign(resultObj, appletSet.getPaySignKey());
                     resultObj.put("paySign", paySign);
                     // 业务处理
                     orderInfo.setPrepayId(prepay_id);
@@ -281,22 +281,25 @@ public class BPayController extends ApiBaseAction {
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         UmsMember user = memberService.getNewCurrentMember();
         //
-
+        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        if (null == appletSet) {
+            return ApiBaseAction.toResponsFail("没有设置支付配置");
+        }
         OmsOrder orderDetail = orderService.getById(id);
         if (id == null) {
             return toResponsFail("订单不存在");
         }
         Map<Object, Object> parame = new TreeMap<Object, Object>();
-        parame.put("appid", wxAppletProperties.getAppId());
+        parame.put("appid", appletSet.getAppid());
         // 商家账号。
-        parame.put("mch_id", wxAppletProperties.getMchId());
+        parame.put("mch_id", appletSet.getMchid());
         String randomStr = CharUtil.getRandomNum(18).toUpperCase();
         // 随机字符串
         parame.put("nonce_str", randomStr);
         // 商户订单编号
         parame.put("out_trade_no", orderDetail.getOrderSn());
 
-        String sign = WechatUtil.arraySign(parame, wxAppletProperties.getPaySignKey());
+        String sign = WechatUtil.arraySign(parame, appletSet.getPaySignKey());
         // 数字签证
         parame.put("sign", sign);
 
