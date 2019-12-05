@@ -271,7 +271,7 @@ public class SingeUmsController extends ApiBaseAction {
                     return new CommonResult().failed("保存失败");
                 }
                 user.setStatus(1);
-                user.setSupplyId(1L);
+
                 user.setPassword(umsMember.getPassword());
                 user.setCreateTime(new Date());
                 user.setIcon(entity.getLogo());

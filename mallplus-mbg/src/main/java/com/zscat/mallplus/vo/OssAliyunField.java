@@ -1,4 +1,4 @@
-package com.zscat.mallplus.config;
+package com.zscat.mallplus.vo;
 
 /**
  * 阿里云OSS上传配置类

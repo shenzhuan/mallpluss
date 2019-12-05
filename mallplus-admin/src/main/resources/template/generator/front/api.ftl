@@ -17,7 +17,7 @@ data: data
 export function delete${className}(id) {
 return request({
 url: '/${moduleName}/${changeClassName}/delete/' + id,
-method: 'delete',
+method: 'get',
 })
 }
 

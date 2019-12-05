@@ -370,7 +370,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void updatePassword(String password, String newPassword) {
         SysUser oldUser = UserUtils.getCurrentMember();
-        if (!oldUser.getPassword().equals(passwordEncoder.encode(password))){
+        log.info("旧密码="+passwordEncoder.encode(password));
+        if (!passwordEncoder.matches(password, oldUser.getPassword())) {
+     //   if (!oldUser.getPassword().equals(passwordEncoder.encode(password))){
             throw  new BusinessMallException("旧密码错误");
         }
         SysUser role = new SysUser();

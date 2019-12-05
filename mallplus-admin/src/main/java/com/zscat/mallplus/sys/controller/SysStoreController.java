@@ -61,7 +61,7 @@ public class SysStoreController {
     @GetMapping(value = "/setStoreId/{id}")
     public Object setStoreId(@ApiParam("id") @PathVariable Integer id) {
         try {
-            apiContext.setCurrentProviderId(id);
+         //   apiContext.setCurrentProviderId(id);
             return new CommonResult().success();
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
@@ -185,7 +185,7 @@ public class SysStoreController {
     @RequestMapping(value = "/storeDetail", method = RequestMethod.GET)
     @ResponseBody
     public Object storeDetail() {
-        SysStore store = ISysStoreService.getById(apiContext.getCurrentProviderId());
+        SysStore store = ISysStoreService.getById(1);
         List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id",store.getId()));
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();

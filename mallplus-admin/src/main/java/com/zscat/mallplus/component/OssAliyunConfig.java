@@ -1,4 +1,4 @@
-package com.zscat.mallplus.config;
+package com.zscat.mallplus.component;
 
 import com.zscat.mallplus.vo.OssAliyunField;
 import org.springframework.boot.context.properties.ConfigurationProperties;

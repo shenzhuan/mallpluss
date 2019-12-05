@@ -1,4 +1,4 @@
-package com.zscat.mallplus.util;
+package com.zscat.mallplus.component;
 
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSSClient;
@@ -6,6 +6,8 @@ import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.aliyun.oss.model.DeleteObjectsResult;
 import com.aliyun.oss.model.PutObjectRequest;
+import com.zscat.mallplus.util.DateUtils;
+import com.zscat.mallplus.util.FileUtils;
 import com.zscat.mallplus.vo.OssAliyunField;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

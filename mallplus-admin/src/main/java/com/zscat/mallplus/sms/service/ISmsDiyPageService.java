@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISmsDiyPageService extends IService<SmsDiyPage> {
 
+    Integer selDiyPageTypeId(Integer typeId, Long id);
+
+    Object selDiyPageDetail(SmsDiyPage entity);
+
+    Integer selectCounts(Long id, String name);
 }

@@ -427,7 +427,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             throw new ApiMallPlusException("订单已提交");
         }
         BigDecimal totalPayAmount=BigDecimal.ZERO;
-        Map<Integer, List<OmsCartItem>> map = list.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
+        Map<Integer, List<OmsCartItem>> map = null;
+                //list.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
         if (map.size() > 1) {
             for (Map.Entry<Integer, List<OmsCartItem>> entry : map.entrySet()) {
                 List<OmsCartItem> subList = entry.getValue();
@@ -560,7 +561,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 if (ValidatorUtils.empty(orderParam.getFormId())) {
                     push(currentMember, pidOrder, orderParam.getPage(), orderParam.getFormId(), name);
                 }
-                Map<Integer, List<OmsCartItem>> map = cartPromotionItemList.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
+                Map<Integer, List<OmsCartItem>> map = null;
+                        //cartPromotionItemList.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
                 if (map.size() > 1) {
                     for (Map.Entry<Integer, List<OmsCartItem>> entry : map.entrySet()) {
                         BookOrder bookOrder = new BookOrder(orderParam, currentMember,  entry.getValue(),pid,true).invoke();
@@ -1854,7 +1856,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     orderItem.setType(AllEnum.OrderItemType.GOODS.code());
                     orderItemList.add(orderItem);
                     if (isFirst == 1) {
-                        storeId = cartPromotionItem.getStoreId();
+                       // storeId = cartPromotionItem.getStoreId();
                         storeName = cartPromotionItem.getStoreName();
                         name = cartPromotionItem.getProductName();
                         order.setGoodsId(cartPromotionItem.getProductId());
@@ -1943,14 +1945,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 order.setPid(pid);
             }
             if (flagStore){
-                order.setStoreId(storeId);
+               // order.setStoreId(storeId);
                 order.setStoreName(storeName);
             }
             //插入order表和order_item表
             orderService.save(order);
             for (OmsOrderItem orderItem : orderItemList) {
                 if (flagStore){
-                    orderItem.setStoreId(storeId);
+              //      orderItem.setStoreId(storeId);
                 }
                 orderItem.setOrderId(order.getId());
                 orderItem.setOrderSn(order.getOrderSn());

@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBuildWuyeCompanyService extends IService<BuildWuyeCompany> {
 
+    boolean saveCompany(BuildWuyeCompany entity);
 }

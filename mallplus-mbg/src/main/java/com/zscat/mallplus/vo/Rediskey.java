@@ -71,6 +71,13 @@ public class Rediskey {
 
 
     /**
+     * diypage.setStatus(1);
+     diypage.setType(2);
+     */
+    public static String EsShopDiypage = "EsShopDiypage12:%s";
+
+
+    /**
      * 会员
      */
     public static String MEMBER = "MEMBER:%s";

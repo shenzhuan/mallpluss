@@ -11,7 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,7 +36,7 @@ public class PmsAlbumController {
     @SysLog(MODULE = "pms", REMARK = "查询pms_album表")
     @ApiOperation("查询pms_album表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:read')")
+
     public Object getPmsAlbumByPage(PmsAlbum entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
@@ -53,7 +52,7 @@ public class PmsAlbumController {
     @SysLog(MODULE = "pms", REMARK = "保存pms_album表")
     @ApiOperation("保存pms_album表")
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:create')")
+
     public Object saveAlbum(@RequestBody PmsAlbum entity) {
         try {
             if (IPmsAlbumService.save(entity)) {
@@ -69,7 +68,7 @@ public class PmsAlbumController {
     @SysLog(MODULE = "pms", REMARK = "更新pms_album")
     @ApiOperation("更新pms_album")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:update')")
+
     public Object updateAlbum(@RequestBody PmsAlbum entity) {
         try {
             if (IPmsAlbumService.updateById(entity)) {
@@ -85,7 +84,7 @@ public class PmsAlbumController {
     @SysLog(MODULE = "pms", REMARK = "删除pms_album数据")
     @ApiOperation("删除相册表数据")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:delete')")
+
     public Object deleteRole(@ApiParam("相册表_id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -104,7 +103,7 @@ public class PmsAlbumController {
     @SysLog(MODULE = "pms", REMARK = "根据ID查询pms_album")
     @ApiOperation("根据ID查询pms_album")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:read')")
+
     public Object getRoleById(@ApiParam("相册表_id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -123,7 +122,7 @@ public class PmsAlbumController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除PmsAlbum表")
-    @PreAuthorize("hasAuthority('pms:PmsAlbum:delete')")
+
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IPmsAlbumService.removeByIds(ids);
         if (count) {

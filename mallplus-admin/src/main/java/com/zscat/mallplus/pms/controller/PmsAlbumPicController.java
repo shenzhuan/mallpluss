@@ -11,7 +11,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,7 +35,7 @@ public class PmsAlbumPicController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有画册图片表列表")
     @ApiOperation("根据条件查询所有画册图片表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:read')")
+
     public Object getPmsAlbumPicByPage(PmsAlbumPic entity,
                                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
@@ -52,7 +51,7 @@ public class PmsAlbumPicController {
     @SysLog(MODULE = "pms", REMARK = "保存画册图片表")
     @ApiOperation("保存画册图片表")
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:create')")
+
     public Object savePmsAlbumPic(@RequestBody PmsAlbumPic entity) {
         try {
             if (IPmsAlbumPicService.save(entity)) {
@@ -68,7 +67,7 @@ public class PmsAlbumPicController {
     @SysLog(MODULE = "pms", REMARK = "更新画册图片表")
     @ApiOperation("更新画册图片表")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:update')")
+
     public Object updatePmsAlbumPic(@RequestBody PmsAlbumPic entity) {
         try {
             if (IPmsAlbumPicService.updateById(entity)) {
@@ -84,7 +83,7 @@ public class PmsAlbumPicController {
     @SysLog(MODULE = "pms", REMARK = "删除画册图片表")
     @ApiOperation("删除画册图片表")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:delete')")
+
     public Object deletePmsAlbumPic(@ApiParam("画册图片表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -103,7 +102,7 @@ public class PmsAlbumPicController {
     @SysLog(MODULE = "pms", REMARK = "给画册图片表分配画册图片表")
     @ApiOperation("查询画册图片表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:read')")
+
     public Object getPmsAlbumPicById(@ApiParam("画册图片表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -122,7 +121,6 @@ public class PmsAlbumPicController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除画册图片表")
-    @PreAuthorize("hasAuthority('pms:PmsAlbumPic:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IPmsAlbumPicService.removeByIds(ids);
         if (count) {

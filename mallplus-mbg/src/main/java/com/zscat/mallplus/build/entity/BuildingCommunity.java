@@ -44,6 +44,10 @@ public class BuildingCommunity implements Serializable {
     @Excel(name = "名称",  orderNum = "1", width=30)
     private String name;
 
+    @Excel(name = "物业编号",  orderNum = "1", width=30)
+    @TableField("company_id")
+    private Long companyId;
+
     /**
      * 小区栋数
      */
