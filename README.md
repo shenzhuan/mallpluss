@@ -10,7 +10,7 @@
 - 文档详情blog http://yjlive.cn:8084/
 - 后台端 http://yjlive.cn:8086/index
 - 商户端演示  http://yjlive.cn:8090/
-- uniapp h5演示商户1  http://yjlive.cn:8082/
+- uniapp h5演示商户1  http://yjlive.cn
 - uniapp h5演示商户2  http://yjlive.cn:8086/
 - pc演示  http://yjlive.cn:8088/
 - 商户端 h5演示  http://yjlive.cn:8084/
