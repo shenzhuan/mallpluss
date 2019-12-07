@@ -91,5 +91,4 @@ public class BuildGroup implements Serializable {
     private Long communityId;
 
 
-
 }

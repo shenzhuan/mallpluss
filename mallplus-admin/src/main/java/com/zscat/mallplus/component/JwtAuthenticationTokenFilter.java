@@ -36,6 +36,8 @@ import java.util.Map;
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+    @Resource
+    public ISysAdminLogService fopSystemOperationLogService;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -44,9 +46,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
-    @Resource
-    public ISysAdminLogService fopSystemOperationLogService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -83,9 +82,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
-            if (fullUrl.contains("logout") || fullUrl.contains("login")){
+            if (fullUrl.contains("logout") || fullUrl.contains("login")) {
 
-            }else{
+            } else {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
@@ -107,7 +106,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), authHeader)
                 + ",\"cost\":\"" + (endTime - startTime) + "ms\"");
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 1;
-        String interfaceName = fullUrl.substring(startIntercept,fullUrl.length());
+        String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         sysLog.setCreateTime(new Date());
         sysLog.setIp(IpAddressUtil.getIpAddr(request));
         sysLog.setMethod(interfaceName);
@@ -118,7 +117,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-        //    fopSystemOperationLogService.save(sysLog);
+            //    fopSystemOperationLogService.save(sysLog);
         }
     }
 

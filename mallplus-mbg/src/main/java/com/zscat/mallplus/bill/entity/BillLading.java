@@ -168,17 +168,17 @@ public class BillLading implements Serializable {
     @Override
     public String toString() {
         return "BillLading{" +
-        ", id=" + id +
-        ", orderId=" + orderId +
-        ", storeId=" + storeId +
-        ", name=" + name +
-        ", mobile=" + mobile +
-        ", clerkId=" + clerkId +
-        ", ptime=" + ptime +
-        ", status=" + status +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        ", isdel=" + isdel +
-        "}";
+                ", id=" + id +
+                ", orderId=" + orderId +
+                ", storeId=" + storeId +
+                ", name=" + name +
+                ", mobile=" + mobile +
+                ", clerkId=" + clerkId +
+                ", ptime=" + ptime +
+                ", status=" + status +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                ", isdel=" + isdel +
+                "}";
     }
 }

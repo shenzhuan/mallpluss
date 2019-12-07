@@ -36,7 +36,7 @@ public class BuildingRoom implements Serializable {
     /**
      * 房屋编号
      */
-    @Excel(name = "房屋编号",  orderNum = "1", width=30)
+    @Excel(name = "房屋编号", orderNum = "1", width = 30)
     @TableField("room_num")
     private String roomNum;
 
@@ -44,62 +44,62 @@ public class BuildingRoom implements Serializable {
     private String roomDesc;
 
 
-    @Excel(name = "小区编号",  orderNum = "2", width=30)
+    @Excel(name = "小区编号", orderNum = "2", width = 30)
     @TableField("community_id")
     private Long communityId;
 
-    @Excel(name = "楼编号",  orderNum = "3", width=30)
+    @Excel(name = "楼编号", orderNum = "3", width = 30)
     @TableField("floor_id")
     private Long floorId;
     /**
      * 单元ID
      */
-    @Excel(name = "单元编号",  orderNum = "4", width=30)
+    @Excel(name = "单元编号", orderNum = "4", width = 30)
     @TableField("unit_id")
     private String unitId;
 
     /**
      * 层数
      */
-    @Excel(name = "层数",  orderNum = "5", width=30)
+    @Excel(name = "层数", orderNum = "5", width = 30)
     private Integer layer;
 
     /**
      * 室
      */
-    @Excel(name = "室",  orderNum = "6", width=30)
+    @Excel(name = "室", orderNum = "6", width = 30)
     private String section;
 
     /**
      * 户型
      */
-    @Excel(name = "户型",  orderNum = "7", width=30)
+    @Excel(name = "户型", orderNum = "7", width = 30)
     private String apartment;
 
     /**
      * 建筑面积
      */
-    @Excel(name = "建筑面积",  orderNum = "8", width=30)
+    @Excel(name = "建筑面积", orderNum = "8", width = 30)
     @TableField("built_up_area")
     private BigDecimal builtUpArea;
 
     /**
      * 每平米单价
      */
-    @Excel(name = "每平米单价",  orderNum = "9", width=30)
+    @Excel(name = "每平米单价", orderNum = "9", width = 30)
     @TableField("unit_price")
     private BigDecimal unitPrice;
 
     /**
      * 备注
      */
-    @Excel(name = "备注",  orderNum = "10", width=30)
+    @Excel(name = "备注", orderNum = "10", width = 30)
     private String remark;
 
     /**
      * 创建时间
      */
-    @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd",  orderNum = "11", width=30)
+    @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd", orderNum = "11", width = 30)
     @TableField("create_time")
     private Date createTime;
 

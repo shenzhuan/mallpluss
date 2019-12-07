@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -20,6 +20,7 @@ public interface ISmsBasicGiftsService extends IService<SmsBasicGifts> {
 
     /**
      * 满足商品的所有赠品优惠
+     *
      * @param id
      * @return
      */
@@ -27,6 +28,7 @@ public interface ISmsBasicGiftsService extends IService<SmsBasicGifts> {
 
     /**
      * 满足订单的所有赠品优惠
+     *
      * @param vo
      * @return
      */

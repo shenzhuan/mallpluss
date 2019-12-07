@@ -124,7 +124,6 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
     }
 
 
-
     @Override
     public List<SmsBasicGifts> matchOrderBasicGifts(CartMarkingVo vo) {
         List<SmsBasicGifts> list = giftsMapper.selectList(new QueryWrapper<SmsBasicGifts>().eq("status", 0));
@@ -135,7 +134,7 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
                 newBasicGift.setName(m.getName());
                 newBasicGift.setId(m.getId());
                 // BeanUtils.copyProperties(m, newBasicGift);
-               if (m.getBigType() == 2) { // 1 首购礼 2 满 购礼 3 单品礼赠
+                if (m.getBigType() == 2) { // 1 首购礼 2 满 购礼 3 单品礼赠
                     BigDecimal totalAmount = new BigDecimal("0");//实付金额
                     int totalCount = 0;
                     for (OmsCartItem cart : vo.getCartList()) {
@@ -184,7 +183,7 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
 
     private void getList(SmsBasicGifts m, SmsBasicGifts newBasicGift, BigDecimal totalAmount, int totalCount, List<BasicRuls> actrule) {
         if (m.getBigType() == 1) {
-            if ( m.getSmallType() == 2) {
+            if (m.getSmallType() == 2) {
                 for (BasicRuls rule : actrule) {
                     if (totalCount >= rule.getFullPrice().intValue()) {
                         newBasicGift.setGiftsList(JsonUtils.jsonToList(m.getGiftIds(), BeanKv.class));
@@ -274,6 +273,7 @@ public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, S
         }
         return singleAmount;
     }
+
     private void getByRule(CartMarkingVo vo, SmsBasicGifts m, SmsBasicGifts newBasicGift, BigDecimal singleAmount, int singleCount, List<BasicRuls> actrule) {
         if (m.getBigType() == 1) {
             if (vo.getType() == 1 && m.getSmallType() == 1) {

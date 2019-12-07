@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
  * Created by mallplus on 2019/4/8.
  */
 @Configuration
-@MapperScan({"com.zscat.mallplus.search.mapper","com.zscat.mallplus.search.dao"})
+@MapperScan({"com.zscat.mallplus.search.mapper", "com.zscat.mallplus.search.dao"})
 public class MyBatisConfig {
 }

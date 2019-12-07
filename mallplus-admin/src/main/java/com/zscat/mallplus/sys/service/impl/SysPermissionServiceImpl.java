@@ -48,7 +48,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         List<SysPermission> menuDOs;
         if (!redisService.exists(String.format(Rediskey.allTreesList, "admin"))) {
             List<Long> types = Lists.newArrayList(1L, 0L);
-            menuDOs = permissionMapper.selectList(new QueryWrapper<SysPermission>().eq("status",1).in("type", types).orderByAsc("sort"));
+            menuDOs = permissionMapper.selectList(new QueryWrapper<SysPermission>().eq("status", 1).in("type", types).orderByAsc("sort"));
             redisService.set(String.format(Rediskey.allTreesList, "admin"), JsonUtil.objectToJson(menuDOs));
         } else {
             menuDOs = JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allTreesList, "admin")), SysPermission.class);

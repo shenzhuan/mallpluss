@@ -127,14 +127,14 @@ public class SysMessage implements Serializable {
     @Override
     public String toString() {
         return "SysMessage{" +
-        ", id=" + id +
-        ", userId=" + userId +
-        ", code=" + code +
-        ", params=" + params +
-        ", content=" + content +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        ", status=" + status +
-        "}";
+                ", id=" + id +
+                ", userId=" + userId +
+                ", code=" + code +
+                ", params=" + params +
+                ", content=" + content +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                ", status=" + status +
+                "}";
     }
 }

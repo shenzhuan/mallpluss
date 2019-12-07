@@ -84,5 +84,5 @@ public class SysSchool extends BaseEntity implements Serializable {
     private List<PmsProduct> goodsList;
 
     @TableField(exist = false)
-    private Integer  goodsCount;
+    private Integer goodsCount;
 }

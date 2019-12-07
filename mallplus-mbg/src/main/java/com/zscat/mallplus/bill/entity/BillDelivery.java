@@ -240,22 +240,22 @@ public class BillDelivery implements Serializable {
     @Override
     public String toString() {
         return "BillDelivery{" +
-        ", deliveryId=" + deliveryId +
-        ", orderId=" + orderId +
-        ", userId=" + userId +
-        ", logiCode=" + logiCode +
-        ", logiNo=" + logiNo +
-        ", logiInformation=" + logiInformation +
-        ", logiStatus=" + logiStatus +
-        ", shipAreaId=" + shipAreaId +
-        ", shipAddress=" + shipAddress +
-        ", shipName=" + shipName +
-        ", shipMobile=" + shipMobile +
-        ", confirmTime=" + confirmTime +
-        ", status=" + status +
-        ", memo=" + memo +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
+                ", deliveryId=" + deliveryId +
+                ", orderId=" + orderId +
+                ", userId=" + userId +
+                ", logiCode=" + logiCode +
+                ", logiNo=" + logiNo +
+                ", logiInformation=" + logiInformation +
+                ", logiStatus=" + logiStatus +
+                ", shipAreaId=" + shipAreaId +
+                ", shipAddress=" + shipAddress +
+                ", shipName=" + shipName +
+                ", shipMobile=" + shipMobile +
+                ", confirmTime=" + confirmTime +
+                ", status=" + status +
+                ", memo=" + memo +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                "}";
     }
 }

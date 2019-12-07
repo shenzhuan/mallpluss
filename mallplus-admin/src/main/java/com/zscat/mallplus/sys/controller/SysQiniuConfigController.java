@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -40,16 +40,16 @@ public class SysQiniuConfigController {
     private ISysQiniuContentService qiniuContentService;
 
     @GetMapping(value = "/config")
-    public Object get(){
+    public Object get() {
         return new CommonResult().success(qiNiuService.getOne(new QueryWrapper<>()));
     }
 
 
     @ApiOperation("配置七牛云存储")
     @PutMapping(value = "/config")
-    public Object emailConfig(@Validated @RequestBody SysQiniuConfig qiniuConfig){
+    public Object emailConfig(@Validated @RequestBody SysQiniuConfig qiniuConfig) {
         qiNiuService.updateById(qiniuConfig);
-       // qiNiuService.update(qiniuConfig.getType());
+        // qiNiuService.update(qiniuConfig.getType());
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -65,7 +65,7 @@ public class SysQiniuConfigController {
     @GetMapping
     public Object getRoles(SysQiniuConfig entity,
                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
+                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
             return new CommonResult().success(qiNiuService.page(new Page<SysQiniuConfig>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
@@ -77,19 +77,19 @@ public class SysQiniuConfigController {
 
     @ApiOperation("上传文件")
     @PostMapping
-    public Object upload(@RequestParam MultipartFile file){
-        SysQiniuContent qiniuContent = qiNiuService.upload(file,qiNiuService.getOne(new QueryWrapper<>()));
-        Map<String,Object> map = new HashMap<>(3);
-        map.put("id",qiniuContent.getId());
-        map.put("errno",0);
-        map.put("data",new String[]{qiniuContent.getUrl()});
-        return new ResponseEntity<>(map,HttpStatus.OK);
+    public Object upload(@RequestParam MultipartFile file) {
+        SysQiniuContent qiniuContent = qiNiuService.upload(file, qiNiuService.getOne(new QueryWrapper<>()));
+        Map<String, Object> map = new HashMap<>(3);
+        map.put("id", qiniuContent.getId());
+        map.put("errno", 0);
+        map.put("data", new String[]{qiniuContent.getUrl()});
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 
     @ApiOperation("同步七牛云数据")
     @PostMapping(value = "/synchronize")
-    public Object synchronize(){
+    public Object synchronize() {
         qiNiuService.synchronize(qiNiuService.getOne(new QueryWrapper<>()));
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -97,17 +97,17 @@ public class SysQiniuConfigController {
 
     @ApiOperation("下载文件")
     @GetMapping(value = "/download/{id}")
-    public Object download(@PathVariable Long id){
-        Map<String,Object> map = new HashMap<>(1);
-        map.put("url", qiNiuService.download(qiNiuService.findByContentId(id),qiNiuService.getOne(new QueryWrapper<>())));
-        return new ResponseEntity<>(map,HttpStatus.OK);
+    public Object download(@PathVariable Long id) {
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("url", qiNiuService.download(qiNiuService.findByContentId(id), qiNiuService.getOne(new QueryWrapper<>())));
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 
     @ApiOperation("删除文件")
     @DeleteMapping(value = "/{id}")
-    public Object delete(@PathVariable Long id){
-        qiNiuService.delete(qiNiuService.findByContentId(id),qiNiuService.getOne(new QueryWrapper<>()));
+    public Object delete(@PathVariable Long id) {
+        qiNiuService.delete(qiNiuService.findByContentId(id), qiNiuService.getOne(new QueryWrapper<>()));
         return new ResponseEntity(HttpStatus.OK);
     }
 

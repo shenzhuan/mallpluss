@@ -59,15 +59,15 @@ public class BuildingOwnerController {
 
     public Object saveBuildingOwner(@RequestBody BuildingOwner entity) {
         try {
-            if (ValidatorUtils.empty(entity.getRoomId())){
+            if (ValidatorUtils.empty(entity.getRoomId())) {
                 return new CommonResult().failed("请选择房屋");
             }
             entity.setCreateTime(new Date());
-            if (entity.getType()==2 || entity.getType()==3){
-                List<BuildingOwner> list = IBuildingOwnerService.list(new QueryWrapper<BuildingOwner>().eq("room_id",entity.getRoomId()).eq("type",1).orderByAsc("id"));
-                if (list!=null && list.size()>0){
+            if (entity.getType() == 2 || entity.getType() == 3) {
+                List<BuildingOwner> list = IBuildingOwnerService.list(new QueryWrapper<BuildingOwner>().eq("room_id", entity.getRoomId()).eq("type", 1).orderByAsc("id"));
+                if (list != null && list.size() > 0) {
                     entity.setOwnerId(list.get(0).getId());
-                }else {
+                } else {
                     return new CommonResult().failed("请先添加一个业主");
                 }
             }
@@ -146,6 +146,7 @@ public class BuildingOwnerController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildingOwner entity) {
         // 模拟从数据库获取需要导出的数据

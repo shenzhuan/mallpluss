@@ -11,17 +11,17 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 <#if hasTimestamp>
-import java.sql.Timestamp;
+    import java.sql.Timestamp;
 </#if>
 <#if hasBigDecimal>
-import java.math.BigDecimal;
+    import java.math.BigDecimal;
 </#if>
 import java.io.Serializable;
 
 /**
 * @author ${author}
 * @date ${date}
-        ${prefix}
+${prefix}
 */
 @Data
 @TableName("${tableName}")
@@ -29,13 +29,14 @@ public class ${className} implements Serializable {
 <#if columns??>
     <#list columns as column>
 
-<#if column.columnKey??>
-    <#if column.columnKey = 'PRI'>
-        @TableId(value = "id", type = IdType.AUTO)
-    </#if>
-</#if>
-    @TableField( "${column.columnName}")
-    private ${column.columnType} ${column.changeColumnName};
+
+        <#if column.changeColumnName = 'id'>
+            @TableId(value = "id", type = IdType.AUTO)
+        </#if>
+        <#if column.changeColumnName != 'id'>
+            @TableField( "${column.columnName}")
+        </#if>
+        private ${column.columnType} ${column.changeColumnName};
     </#list>
 </#if>
 

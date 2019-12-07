@@ -27,7 +27,6 @@ import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -113,6 +112,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private SmsPaimaiLogMapper paimaiLogMapper;
     @Autowired
     private IUmsMemberService memberService;
+
     @Override
     public PmsProductAndGroup getProductAndGroup(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -181,7 +181,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
     @Override
     public PmsProduct getUpdateInfo(Long id) {
-        return  productMapper.selectById(id);
+        return productMapper.selectById(id);
     }
 
     @Override
@@ -235,13 +235,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 */
         List<PmsSkuStock> skuStockList = skuStockMapper.selectList(new QueryWrapper<PmsSkuStock>().eq("product_id", goods.getId()));
 
-        List<PmsProductAttributeValue> productAttributeValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type",1));
+        List<PmsProductAttributeValue> productAttributeValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 1));
 
         List<CmsSubjectProductRelation> subjectProductRelationList = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("product_id", goods.getId()));
 
         List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList = prefrenceAreaProductRelationMapper.selectList(new QueryWrapper<CmsPrefrenceAreaProductRelation>().eq("product_id", goods.getId()));
 
-        List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type",2));
+        List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
         param.setProductCanShuValueList(productCanShuValueList);
 
         param.setPrefrenceAreaProductRelationList(prefrenceAreaProductRelationList);
@@ -250,57 +250,60 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setSkuStockList(skuStockList);
         param.setSubjectProductRelationList(subjectProductRelationList);
 
-        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id",goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
-        param.setTypeGoodsList(typeGoodsList.subList(0,typeGoodsList.size()>8?8:typeGoodsList.size()));
+        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
+        param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
         redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
     }
+
     @Override
     public List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) {
 
         List<SmsHomeBrand> brands = homeBrandService.list(new QueryWrapper<>());
-        if (brands!=null && brands.size()>0){
+        if (brands != null && brands.size() > 0) {
             List<Long> ids = brands.stream()
                     .map(SmsHomeBrand::getBrandId)
                     .collect(Collectors.toList());
-            if (ids!=null && ids.size()>0) {
+            if (ids != null && ids.size() > 0) {
                 return (List<PmsBrand>) brandService.listByIds(ids);
             }
         }
-        return  new ArrayList<>();
+        return new ArrayList<>();
 
     }
+
     @Override
     public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
 
         List<SmsHomeNewProduct> brands = homeNewProductService.list(new QueryWrapper<>());
-        if (brands!=null && brands.size()>0){
+        if (brands != null && brands.size() > 0) {
             List<Long> ids = brands.stream()
                     .map(SmsHomeNewProduct::getProductId)
                     .collect(Collectors.toList());
-            if (ids!=null && ids.size()>0) {
-                return  productMapper.selectList(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
+            if (ids != null && ids.size() > 0) {
+                return productMapper.selectList(new QueryWrapper<PmsProduct>().in("id", ids).select(ConstansValue.sampleGoodsList));
             }
         }
-        return  new ArrayList<>();
-    }
-    @Override
-    public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
-        List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
-        if (brands!=null && brands.size()>0){
-            List<Long> ids = brands.stream()
-                    .map(SmsHomeRecommendProduct::getProductId)
-                    .collect(Collectors.toList());
-            if (ids!=null && ids.size()>0) {
-                return  productMapper.selectList(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
-            }
-        }
-       return  new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @Override
-    public  Integer countGoodsByToday(Long id){
+    public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
+        List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
+        if (brands != null && brands.size() > 0) {
+            List<Long> ids = brands.stream()
+                    .map(SmsHomeRecommendProduct::getProductId)
+                    .collect(Collectors.toList());
+            if (ids != null && ids.size() > 0) {
+                return productMapper.selectList(new QueryWrapper<PmsProduct>().in("id", ids).select(ConstansValue.sampleGoodsList));
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Integer countGoodsByToday(Long id) {
         return productMapper.countGoodsByToday(id);
     }
 
@@ -308,7 +311,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     public Map<String, Object> queryPaiMaigoodsDetail(Long id) {
         Map<String, Object> map = new HashMap<>();
         PmsProduct goods = productMapper.selectById(id);
-        List<SmsPaimaiLog> paimaiLogList = paimaiLogMapper.selectList(new QueryWrapper<SmsPaimaiLog>().eq("goods_id",id).orderByDesc("create_time"));
+        List<SmsPaimaiLog> paimaiLogList = paimaiLogMapper.selectList(new QueryWrapper<SmsPaimaiLog>().eq("goods_id", id).orderByDesc("create_time"));
         map.put("paimaiLogList", paimaiLogList);
         UmsMember umsMember = memberService.getNewCurrentMember();
         map.put("favorite", false);
@@ -318,24 +321,24 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             query.setMemberId(umsMember.getId());
             query.setType(1);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
             }
         }
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         goods.setTimeSecound(ValidatorUtils.getTimeSecound(goods.getExpireTime()));
         map.put("goods", goods);
@@ -345,7 +348,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Transactional
     @Override
     public Object updatePaiMai(PmsProduct goods) {
-        goods.setExpireTime(DateUtils.strToDate(DateUtils.addMins(goods.getExpireTime(),5)));
+        goods.setExpireTime(DateUtils.strToDate(DateUtils.addMins(goods.getExpireTime(), 5)));
         productMapper.updateById(goods);
         SmsPaimaiLog log = new SmsPaimaiLog();
         log.setCreateTime(new Date());

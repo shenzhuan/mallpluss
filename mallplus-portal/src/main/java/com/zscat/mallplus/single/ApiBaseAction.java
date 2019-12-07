@@ -41,12 +41,30 @@ public class ApiBaseAction {
      */
     @Resource
     protected HttpServletResponse response;
+    /**
+     * 获取请求的用户Id
+     *
+     * @return 客户端Ip
+     */
+    /*public String getUserId() {
+        String token = request.getHeader(AuthorizationInterceptor.LOGIN_TOKEN_KEY);
+        //查询token信息
+        TokenEntity tokenEntity = tokenService.queryByToken(token);
+        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
+            return null;
+        }
+        return tokenEntity.getUserId();
+    }*/
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
+    @Resource
+    private RedisService redisService;
 
     /**
      * @param requestCode
      * @param msg
      * @param data
-     * @return Map<String               ,               Object>
+     * @return Map<String, Object>
      * @throws
      * @Description:构建统一格式返回对象
      * @date 2016年9月2日
@@ -61,23 +79,10 @@ public class ApiBaseAction {
         return obj;
     }
 
-    public static Map<String, Object> toResponsSuccess(Object data) {
-        Map<String, Object> rp = toResponsObject(200, "执行成功", data);
-        return rp;
-    }
-
-    public static Map<String, Object> toResponsMsgSuccess(String msg) {
-        return toResponsObject(200, msg, "");
-    }
-
     public static Map<String, Object> toResponsSuccessForSelect(Object data) {
         Map<String, Object> result = new HashMap<>(2);
         result.put("list", data);
         return toResponsObject(200, "执行成功", result);
-    }
-
-    public static Map<String, Object> toResponsFail(String msg) {
-        return toResponsObject(1, msg, msg);
     }
 
     /**
@@ -122,28 +127,6 @@ public class ApiBaseAction {
         }
         return xff;
     }
-
-
-
-    /**
-     * 获取请求的用户Id
-     *
-     * @return 客户端Ip
-     */
-    /*public String getUserId() {
-        String token = request.getHeader(AuthorizationInterceptor.LOGIN_TOKEN_KEY);
-        //查询token信息
-        TokenEntity tokenEntity = tokenService.queryByToken(token);
-        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
-            return null;
-        }
-        return tokenEntity.getUserId();
-    }*/
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
-    @Resource
-    private RedisService redisService;
-
 
 
 }

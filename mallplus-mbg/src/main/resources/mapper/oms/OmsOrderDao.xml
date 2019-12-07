@@ -206,12 +206,12 @@ WHERE MONTH(create_time) = MONTH(#{date})
         </foreach>
     </update>
 
-    <select id="listOrderGroupByMemberId"  resultType="com.zscat.mallplus.oms.vo.OrderStstic">
+    <select id="listOrderGroupByMemberId" resultType="com.zscat.mallplus.oms.vo.OrderStstic">
         select count(id) totalCount ,sum(pay_amount) totalPayAmount,member_id memberId from oms_order
         where  9>status group by member_id
     </select>
 
-    <select id="listByDate"  resultMap="BaseResultMap">
+    <select id="listByDate" resultMap="BaseResultMap">
         select pay_amount,status from oms_order where
         <if test="type==1">
             date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')

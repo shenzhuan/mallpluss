@@ -66,5 +66,4 @@ public class BuildWuyeCompany implements Serializable {
     private String phone;
 
 
-
 }

@@ -5,7 +5,7 @@ import com.zscat.mallplus.ums.entity.SysAppletSet;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

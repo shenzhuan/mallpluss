@@ -5,7 +5,7 @@ import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -13,5 +13,5 @@ import com.zscat.mallplus.sms.entity.SmsBasicMarking;
  */
 public interface ISmsBasicMarkingService extends IService<SmsBasicMarking> {
 
-    int updateStatus(Long id, Integer status,Integer bigType);
+    int updateStatus(Long id, Integer status, Integer bigType);
 }

@@ -11,17 +11,15 @@ import java.math.BigDecimal;
 @Data
 public class PayParam {
 
-    private BigDecimal payAmount;
-    private BigDecimal balance;
     //"balancepay"
     String payment_code;
-
-    private Integer payment_type;
-//
-    private Long orderId;
-//
+    //
     PaymentParam params;
-
+    private BigDecimal payAmount;
+    private BigDecimal balance;
+    private Integer payment_type;
+    //
+    private Long orderId;
 
 
 }

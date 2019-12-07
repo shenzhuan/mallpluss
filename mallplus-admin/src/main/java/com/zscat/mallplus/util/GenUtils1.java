@@ -21,6 +21,16 @@ import java.util.zip.ZipOutputStream;
 */
 /**
  * 代码生成器   工具类
+ * <p>
+ * 生成代码
+ * <p>
+ * 列名转换成Java属性名
+ * <p>
+ * 表名转换成Java类名
+ * <p>
+ * 获取配置信息
+ * <p>
+ * 获取文件名
  *//*
 
 public class GenUtils1 {
@@ -48,8 +58,8 @@ public class GenUtils1 {
 
     */
 /**
-     * 生成代码
-     *//*
+ * 生成代码
+ *//*
 
 
 
@@ -164,8 +174,8 @@ public class GenUtils1 {
 
     */
 /**
-     * 列名转换成Java属性名
-     *//*
+ * 列名转换成Java属性名
+ *//*
 
     public static String columnToJava(String columnName) {
         return WordUtils.capitalizeFully(columnName, new char[]{'_'}).replace("_", "");
@@ -173,8 +183,8 @@ public class GenUtils1 {
 
     */
 /**
-     * 表名转换成Java类名
-     *//*
+ * 表名转换成Java类名
+ *//*
 
     public static String tableToJava(String tableName, String tablePrefix, String autoRemovePre) {
         if (Constant.AUTO_REOMVE_PRE.equals(autoRemovePre)) {
@@ -189,8 +199,8 @@ public class GenUtils1 {
 
     */
 /**
-     * 获取配置信息
-     *//*
+ * 获取配置信息
+ *//*
 
     public static Configuration getConfig() {
         try {
@@ -202,8 +212,8 @@ public class GenUtils1 {
 
     */
 /**
-     * 获取文件名
-     *//*
+ * 获取文件名
+ *//*
 
     public static String getFileName(String module, String template, String classname, String className, String packageName, String Module) {
         String packagePath = "main" + File.separator + "java" + File.separator;

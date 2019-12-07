@@ -12,7 +12,7 @@ import java.util.List;
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
 @Data
-public class PmsProductParam  extends PmsProduct {
+public class PmsProductParam extends PmsProduct {
     @ApiModelProperty("商品阶梯价格设置")
     private List<PmsProductLadder> productLadderList;
     @ApiModelProperty("商品满减价格设置")
@@ -28,8 +28,8 @@ public class PmsProductParam  extends PmsProduct {
     @ApiModelProperty("优选专区和商品的关系")
     private List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList;
 
-    private List<PmsProductAttributeValue>  productCanShuValueList ;
+    private List<PmsProductAttributeValue> productCanShuValueList;
     private List<PmsProduct> typeGoodsList;
 
-    private  PmsProduct goods;
+    private PmsProduct goods;
 }

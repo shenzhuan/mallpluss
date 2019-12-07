@@ -46,7 +46,8 @@ public class OmsOrderController {
     private IOmsOrderItemService orderItemService;
 
     @Resource
-    private  OmsOrderOperateHistoryMapper omsOrderOperateHistoryMapper;
+    private OmsOrderOperateHistoryMapper omsOrderOperateHistoryMapper;
+
     @SysLog(MODULE = "oms", REMARK = "根据条件查询所有订单表列表")
     @ApiOperation("根据条件查询所有订单表列表")
     @GetMapping(value = "/list")
@@ -62,7 +63,6 @@ public class OmsOrderController {
         }
         return new CommonResult().failed();
     }
-
 
 
     @SysLog(MODULE = "oms", REMARK = "删除订单表")
@@ -93,8 +93,8 @@ public class OmsOrderController {
                 return new CommonResult().paramFailed("订单表id");
             }
             OmsOrder coupon = IOmsOrderService.getById(id);
-            coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",coupon.getId())));
-            coupon.setHistoryList(omsOrderOperateHistoryMapper.selectList(new QueryWrapper<OmsOrderOperateHistory>().eq("order_id",coupon.getId())));
+            coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", coupon.getId())));
+            coupon.setHistoryList(omsOrderOperateHistoryMapper.selectList(new QueryWrapper<OmsOrderOperateHistory>().eq("order_id", coupon.getId())));
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询订单表明细：%s", e.getMessage(), e);
@@ -128,6 +128,7 @@ public class OmsOrderController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "oms", REMARK = "批量发货")
     @ApiOperation("批量发货")
     @RequestMapping(value = "/delivery", method = RequestMethod.POST)
@@ -197,14 +198,14 @@ public class OmsOrderController {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
-        if (order.getStatus()!=null && order.getStatus()==0){
-            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
-        }else {
-            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+        if (order.getStatus() != null && order.getStatus() == 0) {
+            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+        } else {
+            page = IOmsOrderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList));
 
         }
-        for (OmsOrder omsOrder : page.getRecords()){
-            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+        for (OmsOrder omsOrder : page.getRecords()) {
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
             omsOrder.setOrderItemList(itemList);
         }
         return new CommonResult().success(page);

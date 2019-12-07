@@ -311,17 +311,17 @@ public class OmsOrder extends BaseEntity implements Serializable {
     @TableField("group_id")
     private Long groupId;
     @TableField("tax_type")
-    private Integer taxType;	//	是否开发票 1=不发票 2=个人发票 3=公司发票
+    private Integer taxType;    //	是否开发票 1=不发票 2=个人发票 3=公司发票
     @TableField("tax_content")
-    private String taxContent;	//	0	发票内容
+    private String taxContent;    //	0	发票内容
     @TableField("tax_code")
-    private String taxCode;	//	税号
+    private String taxCode;    //	税号
     @TableField("tax_title")
-    private String  taxTitle;	//	发票抬头
+    private String taxTitle;    //	发票抬头
     @TableField("is_comment")
-    private Integer  isComment;	//是否评论，1未评论，2已评论
+    private Integer isComment;    //是否评论，1未评论，2已评论
 
     @TableField("store_name")
-    private String storeName;	//	税号
+    private String storeName;    //	税号
 
 }

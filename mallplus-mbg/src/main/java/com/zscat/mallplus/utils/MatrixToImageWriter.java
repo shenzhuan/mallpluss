@@ -48,9 +48,9 @@ public class MatrixToImageWriter {
         //文字长度
         int strWidth = outg.getFontMetrics().stringWidth(words);
         //总长度减去文字长度的一半  （居中显示）
-        int wordStartX=(width - strWidth) / 2;
+        int wordStartX = (width - strWidth) / 2;
         //height + (outImage.getHeight() - height) / 2 + 12
-        int wordStartY=height-20;
+        int wordStartY = height - 20;
         // 画文字
         outg.drawString(words, wordStartX, wordStartY);
         outg.dispose();
@@ -58,21 +58,21 @@ public class MatrixToImageWriter {
         return image;
     }
 
-    private static void setGraphics2D(Graphics2D graphics2D){
+    private static void setGraphics2D(Graphics2D graphics2D) {
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
         Stroke s = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
         graphics2D.setStroke(s);
     }
 
-    static void writeToFile(BitMatrix matrix, String format, File file,String words) throws IOException {
+    static void writeToFile(BitMatrix matrix, String format, File file, String words) throws IOException {
         BufferedImage image = toBufferedImage(matrix, words);
         if (!ImageIO.write(image, format, file)) {
             throw new IOException("Could not write an image of format " + format + " to " + file);
         }
     }
 
-    static void writeToStream(BitMatrix matrix, String format, OutputStream stream,String words) throws IOException {
+    static void writeToStream(BitMatrix matrix, String format, OutputStream stream, String words) throws IOException {
         BufferedImage image = toBufferedImage(matrix, words);
         if (!ImageIO.write(image, format, stream)) {
             throw new IOException("Could not write an image of format " + format);
@@ -80,7 +80,7 @@ public class MatrixToImageWriter {
     }
 
 
-    public static ByteArrayResource createQrCode(String url,String words) {
+    public static ByteArrayResource createQrCode(String url, String words) {
         try {
             Map<EncodeHintType, String> hints = new HashMap<>();
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -93,13 +93,13 @@ public class MatrixToImageWriter {
             //}
             //=============此处生成流因为后面要上传到文件系统中，所以直接通过流上传===========
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            writeToStream(bitMatrix, "jpg", outputStream,words);
+            writeToStream(bitMatrix, "jpg", outputStream, words);
             //==============生成输入流========================
             //ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-            ByteArrayResource arrayResource = new ByteArrayResource(outputStream.toByteArray()){
+            ByteArrayResource arrayResource = new ByteArrayResource(outputStream.toByteArray()) {
                 @Override
                 public String getFilename() throws IllegalStateException {
-                    return System.currentTimeMillis()+"";
+                    return System.currentTimeMillis() + "";
                 }
             };
             return arrayResource;
@@ -122,6 +122,6 @@ public class MatrixToImageWriter {
                 BarcodeFormat.QR_CODE, width, height, hints);
         // 生成二维码
         File outputFile = new File("d:" + File.separator + "new.jpg");
-        MatrixToImageWriter.writeToFile(bitMatrix, format, outputFile,"123");
+        MatrixToImageWriter.writeToFile(bitMatrix, format, outputFile, "123");
     }
 }

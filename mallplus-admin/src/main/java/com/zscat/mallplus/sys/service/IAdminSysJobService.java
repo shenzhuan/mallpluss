@@ -25,6 +25,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param jobLog 调度日志信息
      */
     public void addJobLog(AdminSysJob jobLog);
+
     /**
      * 暂停任务
      *
@@ -39,7 +40,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param job 调度信息
      * @return 结果
      */
-    public int resumeJob(AdminSysJob job) ;
+    public int resumeJob(AdminSysJob job);
 
     /**
      * 删除任务后，所对应的trigger也将被删除
@@ -47,8 +48,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param job 调度信息
      * @return 结果
      */
-    public int deleteJob(AdminSysJob job) ;
-
+    public int deleteJob(AdminSysJob job);
 
 
     /**
@@ -57,7 +57,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param job 调度信息
      * @return 结果
      */
-    public int changeStatus(AdminSysJob job) ;
+    public int changeStatus(AdminSysJob job);
 
     /**
      * 立即运行任务
@@ -65,7 +65,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param job 调度信息
      * @return 结果
      */
-    public void run(AdminSysJob job) ;
+    public void run(AdminSysJob job);
 
     /**
      * 新增任务
@@ -81,7 +81,7 @@ public interface IAdminSysJobService extends IService<AdminSysJob> {
      * @param job 调度信息
      * @return 结果
      */
-    public int updateJob(AdminSysJob job) ;
+    public int updateJob(AdminSysJob job);
 
     /**
      * 校验cron表达式是否有效

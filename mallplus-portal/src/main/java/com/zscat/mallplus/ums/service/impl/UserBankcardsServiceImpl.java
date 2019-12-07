@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -28,13 +28,14 @@ public class UserBankcardsServiceImpl extends ServiceImpl<UserBankcardsMapper, U
     UserBankcardsMapper bankcardsMapper;
     @Autowired
     private IUmsMemberService memberService;
+
     @Transactional
     @Override
     public int setDefault(Long id) {
         UmsMember currentMember = memberService.getNewCurrentMember();
-        UserBankcards query =new UserBankcards();
+        UserBankcards query = new UserBankcards();
         query.setIsDefault(2);
-        bankcardsMapper.update(query,new QueryWrapper<UserBankcards>().eq("user_id",currentMember.getId()));
+        bankcardsMapper.update(query, new QueryWrapper<UserBankcards>().eq("user_id", currentMember.getId()));
 
         UserBankcards def = new UserBankcards();
         def.setId(id);

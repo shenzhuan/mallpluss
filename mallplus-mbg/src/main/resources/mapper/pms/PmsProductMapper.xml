@@ -131,7 +131,7 @@
         select * from cms_prefrence_area_product_relation where product_id=#{productId}
     </select>
 
-    <select id="listByDate"  resultMap="BaseResultMap">
+    <select id="listByDate" resultMap="BaseResultMap">
         select publish_status,stock from pms_product where
         <if test="type==1">
             date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
@@ -209,7 +209,7 @@
         product_category_name, supply_id, create_time, school_id
     </sql>
 
-    <select id="countGoodsByToday"  resultType="java.lang.Integer">
+    <select id="countGoodsByToday" resultType="java.lang.Integer">
         select count(*) from pms_product where member_id = #{id}
         and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
 

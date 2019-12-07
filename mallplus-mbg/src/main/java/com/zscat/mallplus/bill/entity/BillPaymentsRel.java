@@ -64,9 +64,9 @@ public class BillPaymentsRel implements Serializable {
     @Override
     public String toString() {
         return "BillPaymentsRel{" +
-        ", paymentId=" + paymentId +
-        ", sourceId=" + sourceId +
-        ", money=" + money +
-        "}";
+                ", paymentId=" + paymentId +
+                ", sourceId=" + sourceId +
+                ", money=" + money +
+                "}";
     }
 }

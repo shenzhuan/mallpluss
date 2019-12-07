@@ -23,41 +23,41 @@ public class GeneratorController {
 
 
     @Resource
-    private  GeneratorConfigMapper generatorConfigMapper;
+    private GeneratorConfigMapper generatorConfigMapper;
 
 
     @ApiOperation("查询数据库元数据")
     @GetMapping(value = "/tables")
     public Object getTables(@RequestParam(defaultValue = "") String name,
-                                    @RequestParam(defaultValue = "0")Integer page,
-                                    @RequestParam(defaultValue = "10")Integer size){
-        int[] startEnd = PageUtil.transToStartEnd(page+1, size);
-        return new CommonResult().success(generatorService.getTables(name,startEnd));
+                            @RequestParam(defaultValue = "0") Integer page,
+                            @RequestParam(defaultValue = "10") Integer size) {
+        int[] startEnd = PageUtil.transToStartEnd(page + 1, size);
+        return new CommonResult().success(generatorService.getTables(name, startEnd));
     }
 
     @ApiOperation("查询表内元数据")
     @GetMapping(value = "/columns")
-    public Object getTables(@RequestParam String tableName){
+    public Object getTables(@RequestParam String tableName) {
         return new CommonResult().success(generatorService.getColumns(tableName));
     }
 
     @ApiOperation("生成代码")
     @PostMapping
-    public Object generator(@RequestBody List<ColumnInfo> columnInfos, @RequestParam String tableName){
+    public Object generator(@RequestBody List<ColumnInfo> columnInfos, @RequestParam String tableName) {
 
-        generatorService.generator(columnInfos,generatorConfigMapper.selectById(1),tableName);
+        generatorService.generator(columnInfos, generatorConfigMapper.selectById(1), tableName);
         return new CommonResult().success();
     }
 
     @ApiOperation("查询")
     @GetMapping(value = "/get")
-    public Object get(){
+    public Object get() {
         return new CommonResult().success(generatorConfigMapper.selectById(1));
     }
 
     @ApiOperation("修改")
     @PostMapping(value = "/update")
-    public Object emailConfig(@Validated @RequestBody GenConfig genConfig){
+    public Object emailConfig(@Validated @RequestBody GenConfig genConfig) {
         genConfig.setId(1L);
         return new CommonResult().success(generatorConfigMapper.updateById(genConfig));
     }

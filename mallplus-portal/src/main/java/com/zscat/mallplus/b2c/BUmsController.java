@@ -59,6 +59,30 @@ public class BUmsController {
     @Resource
     private IUserBankcardsService bankcardsService;
 
+    public static Object getObject(UmsMember member, IUmsMemberService memberService) {
+        if (member == null) {
+            return new CommonResult().paramFailed();
+        }
+        UmsMember member1 = memberService.getNewCurrentMember();
+        if (member1 != null && member1.getId() != null) {
+            member.setId(member1.getId());
+            return new CommonResult().success(memberService.updateById(member));
+        }
+        return new CommonResult().failed();
+    }
+
+    public static Object getObject(boolean b, Long id, boolean b2, boolean save, UserBankcards address) {
+        boolean count;
+        if (b && id != null) {
+            count = b2;
+        } else {
+            count = save;
+        }
+        if (count) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().failed();
+    }
 
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
@@ -74,31 +98,20 @@ public class BUmsController {
         return getObject(member, memberService);
     }
 
-    public static Object getObject(UmsMember member, IUmsMemberService memberService) {
-        if (member==null){
-            return new CommonResult().paramFailed();
-        }
-        UmsMember member1 = memberService.getNewCurrentMember();
-        if(member1!=null&& member1.getId()!=null){
-            member.setId(member1.getId());
-            return new CommonResult().success(memberService.updateById(member));
-        }
-        return new CommonResult().failed();
-    }
-
     @IgnoreAuth
     @ApiOperation(value = "查询余额列表")
     @PostMapping(value = "/user.balancelist")
     @SysLog(MODULE = "ums", REMARK = "查询余额列表")
     public Object balancelist(UmsMemberBlanceLog entity,
-                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setMemberId(memberService.getNewCurrentMember().getId());
-        if (entity==null || entity.getType()==0){
+        if (entity == null || entity.getType() == 0) {
             return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>()));
         }
         return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>(entity)));
     }
+
     @IgnoreAuth
     @ApiOperation(value = "查询会员等级列表")
     @PostMapping(value = "/user.levellist")
@@ -120,12 +133,12 @@ public class BUmsController {
     @PostMapping(value = "/user.userpointlog")
     @SysLog(MODULE = "ums", REMARK = "查询会员和积分消费记录")
     public Object userpointlog(UmsIntegrationChangeHistory entity,
-                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        Map<String,Object> map = new HashedMap();
-        map.put("member",memberService.getById(memberService.getNewCurrentMember().getId()));
+                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        Map<String, Object> map = new HashedMap();
+        map.put("member", memberService.getById(memberService.getNewCurrentMember().getId()));
         entity.setMemberId(memberService.getNewCurrentMember().getId());
-        map.put("intList",integrationChangeHistoryService.page(new Page<UmsIntegrationChangeHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));
+        map.put("intList", integrationChangeHistoryService.page(new Page<UmsIntegrationChangeHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));
         return new CommonResult().success(map);
     }
 
@@ -136,7 +149,6 @@ public class BUmsController {
     public Object getareaid(SysArea entity) {
         return new CommonResult().success(areaMapper.selectOne(new QueryWrapper<>(entity)));
     }
-
 
     @SysLog(MODULE = "cms", REMARK = "判断是否签到")
     @ApiOperation(value = "判断是否签到")
@@ -157,34 +169,19 @@ public class BUmsController {
         return new CommonResult().success();
     }
 
-
-
     @ApiOperation("添加银行卡")
     @RequestMapping(value = "/user.addbankcard")
     @ResponseBody
     public Object saveusership(UserBankcards address) {
         boolean count = false;
-        UmsMember umsMember =  memberService.getNewCurrentMember();
-        if (ValidatorUtils.notEmpty(address.getIsDefault()) && address.getIsDefault()==1){
-            UserBankcards query =new UserBankcards();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (ValidatorUtils.notEmpty(address.getIsDefault()) && address.getIsDefault() == 1) {
+            UserBankcards query = new UserBankcards();
             query.setIsDefault(2);
-            bankcardsService.update(query,new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
+            bankcardsService.update(query, new QueryWrapper<UserBankcards>().eq("user_id", umsMember.getId()));
         }
         address.setUserId(umsMember.getId());
         return getObject(address != null, address.getId(), bankcardsService.updateById(address), bankcardsService.save(address), address);
-    }
-
-    public static Object getObject(boolean b, Long id, boolean b2, boolean save, UserBankcards address) {
-        boolean count;
-        if (b && id != null) {
-            count = b2;
-        } else {
-            count = save;
-        }
-        if (count) {
-            return new CommonResult().success(count);
-        }
-        return new CommonResult().failed();
     }
 
     @IgnoreAuth
@@ -194,12 +191,11 @@ public class BUmsController {
     public Object getbankcardlist() {
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
-            List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id",umsMember.getId()));
+            List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id", umsMember.getId()));
             return new CommonResult().success(addressList);
         }
         return new ArrayList<UmsMemberReceiveAddress>();
     }
-
 
 
     @IgnoreAuth
@@ -209,12 +205,13 @@ public class BUmsController {
     public Object getbankcardinfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         return new CommonResult().success(bankcardsService.getById(id));
     }
+
     @IgnoreAuth
     @ApiOperation("获取默认的银行卡")
     @RequestMapping(value = "/user.getdefaultbankcard", method = RequestMethod.POST)
     @ResponseBody
     public Object getItemDefautl() {
-        UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id",memberService.getNewCurrentMember().getId()).eq("is_default",1));
+        UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id", memberService.getNewCurrentMember().getId()).eq("is_default", 1));
         return new CommonResult().success(address);
     }
 
@@ -233,7 +230,6 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
-
 
 
     @ApiOperation("用户推荐列表")
@@ -279,6 +275,7 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("店铺设置")
     @PostMapping(value = "/distribution_center-api-setstore")
     @ResponseBody
@@ -300,6 +297,7 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("我的分销订单")
     @PostMapping(value = "/distribution_center-api-myorder")
     @ResponseBody
@@ -310,6 +308,7 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("判断是否是店员")
     @PostMapping(value = "/store.isclerk")
     @ResponseBody

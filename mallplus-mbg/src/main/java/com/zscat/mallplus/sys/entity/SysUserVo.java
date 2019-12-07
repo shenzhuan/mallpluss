@@ -11,7 +11,7 @@ import lombok.Data;
  * @since 2019-04-14
  */
 @Data
-public class SysUserVo extends SysUser  {
+public class SysUserVo extends SysUser {
 
 
 }

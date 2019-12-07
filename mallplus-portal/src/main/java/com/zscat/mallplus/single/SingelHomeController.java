@@ -24,7 +24,6 @@ import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -58,11 +57,12 @@ import java.util.Map;
 @RequestMapping("/api/single/home")
 public class SingelHomeController {
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
     @Resource
     private IPmsProductService pmsProductService;
     @Autowired
@@ -77,7 +77,7 @@ public class SingelHomeController {
     private IOmsOrderService orderService;
     @Resource
     private ISmsCouponService couponService;
-
+    @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
 
     @IgnoreAuth
@@ -86,36 +86,36 @@ public class SingelHomeController {
     @RequestMapping(value = "/userInfo", method = RequestMethod.GET)
     public Object userInfo() {
         UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
-       UmsMember umsMember = memberService.getNewCurrentMember();
-       if (umsMember!=null && umsMember.getId()!=null){
-           umsMember = memberService.getById(umsMember.getId());
-           List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));
-           detail.setHistories(histories);
-           detail.setMember(umsMember);
-           return new CommonResult().success(detail);
-       }
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", umsMember.getId()));
+            detail.setHistories(histories);
+            detail.setMember(umsMember);
+            return new CommonResult().success(detail);
+        }
         return new CommonResult().failed();
     }
+
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
     public Object home_mobile() {
-        String key = Rediskey.HOMEPAGEMOBILE ;
+        String key = Rediskey.HOMEPAGEMOBILE;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelmobileContent();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.singelmobileContent();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
         return new CommonResult().success(contentResult);
     }
@@ -125,21 +125,21 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
-        String key = Rediskey.HOMEPAGEmallplus1 ;
+        String key = Rediskey.HOMEPAGEmallplus1;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelContent();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.singelContent();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
         return new CommonResult().success(contentResult);
     }
@@ -149,21 +149,21 @@ public class SingelHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content1", method = RequestMethod.GET)
     public Object content1() {
-        String key = Rediskey.HOMEPAGEmallplus2 ;
+        String key = Rediskey.HOMEPAGEmallplus2;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelContent1();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.singelContent1();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
         return new CommonResult().success(contentResult);
     }
@@ -243,25 +243,6 @@ public class SingelHomeController {
         return new CommonResult().success(advertiseService.getRecommendSubjectList(1, 1));
     }
 
-    @IgnoreAuth
-    @ApiOperation(value = "登录以后返回token")
-    @GetMapping(value = "/login")
-    public Object login(UmsMember umsMember) {
-        if (umsMember == null) {
-            return new CommonResult().validateFailed("用户名或密码错误");
-        }
-        try {
-            Map<String, Object> token = memberService.login(umsMember.getUsername(), umsMember.getPassword());
-            if (token.get("token") == null) {
-                return new CommonResult().validateFailed("用户名或密码错误");
-            }
-            return new CommonResult().success(token);
-        } catch (AuthenticationException e) {
-            return new CommonResult().validateFailed("用户名或密码错误");
-        }
-
-    }
-
     /* @IgnoreAuth
      @ApiOperation("获取验证码")
      @RequestMapping(value = "/getAuthCode", method = RequestMethod.GET)
@@ -285,8 +266,8 @@ public class SingelHomeController {
                            @RequestParam Integer sex,
                            @RequestParam String headimgurl,
                            @RequestParam String unionid,
-                           @RequestParam boolean status,
-                          @RequestParam String nickname,
+
+                           @RequestParam String nickname,
                            @RequestParam String city,
                            @RequestParam Integer source) {
 
@@ -295,7 +276,7 @@ public class SingelHomeController {
         }
         try {
 
-            Map<String, Object> token = memberService.appLogin(openid, sex,headimgurl,unionid,nickname,city,source);
+            Map<String, Object> token = memberService.appLogin(openid, sex, headimgurl, unionid, nickname, city, source);
             if (token.get("token") == null) {
                 return new CommonResult().validateFailed("用户名或密码错误");
             }
@@ -307,6 +288,7 @@ public class SingelHomeController {
         }
 
     }
+
     @IgnoreAuth
     @ApiOperation(value = "手机号 密码登录")
     @PostMapping(value = "/login")
@@ -322,12 +304,15 @@ public class SingelHomeController {
 
             Map<String, Object> token = memberService.login(phone, password);
             if (token.get("token") == null) {
+                log.info("用户名或密码错误");
                 return new CommonResult().validateFailed("用户名或密码错误");
             }
             return new CommonResult().success(token);
         } catch (AuthenticationException e) {
+            log.info("用户名或密码错误");
             return new CommonResult().validateFailed("用户名或密码错误");
         } catch (Exception e) {
+            log.info(e.getMessage());
             return new CommonResult().validateFailed(e.getMessage());
         }
 
@@ -380,7 +365,7 @@ public class SingelHomeController {
             return new CommonResult().validateFailed("手机验证码为空");
         }
 
-        return memberService.register(phone, password, confimpassword, authCode,invitecode);
+        return memberService.register(phone, password, confimpassword, authCode, invitecode);
     }
 
     @IgnoreAuth
@@ -388,7 +373,7 @@ public class SingelHomeController {
     @PostMapping(value = "/simpleReg")
     public Object simpleReg(@RequestParam String phone,
                             @RequestParam String password,
-                            @RequestParam String confimpassword,@RequestParam(required = false)  String invitecode) {
+                            @RequestParam String confimpassword, @RequestParam(required = false) String invitecode) {
         if (phone == null || "".equals(phone)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
@@ -400,7 +385,7 @@ public class SingelHomeController {
         }
 
 
-        return memberService.simpleReg(phone, password, confimpassword,invitecode);
+        return memberService.simpleReg(phone, password, confimpassword, invitecode);
     }
 
     /**
@@ -425,9 +410,6 @@ public class SingelHomeController {
             return new CommonResult().failed(e.getMessage());
         }
     }
-
-    @Autowired
-    OssAliyunUtil aliyunOSSUtil;
 
     @IgnoreAuth
     @PostMapping("/upload")
@@ -455,7 +437,7 @@ public class SingelHomeController {
     public Object test() throws Exception {
         try { // 防止文件建立或读取失败，用catch捕捉错误并打印，也可以throw
 
-                /* 读入TXT文件 */
+            /* 读入TXT文件 */
             String pathname = "E:\\test\\test.txt"; // 绝对路径或相对路径都可以，这里是绝对路径，写入文件时演示相对路径
             File filename = new File(pathname); // 要读取以上路径的input。txt文件
             InputStreamReader reader = new InputStreamReader(
@@ -496,7 +478,6 @@ public class SingelHomeController {
     }
 
 
-
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询首页推荐商品")
@@ -506,6 +487,7 @@ public class SingelHomeController {
         return pmsProductService.initGoodsRedis();
 
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询首页推荐商品")

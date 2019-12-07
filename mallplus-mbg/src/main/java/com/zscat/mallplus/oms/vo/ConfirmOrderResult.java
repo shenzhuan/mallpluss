@@ -20,6 +20,9 @@ import java.util.List;
 @Data
 public class ConfirmOrderResult {
 
+    // 赠品营销
+    List<SmsBasicGifts> basicGiftsList;
+    SmsGroupActivity groupActivity;
     private UmsMemberReceiveAddress address;
     //包含优惠信息的购物车信息
     private List<OmsCartItem> cartPromotionItemList;
@@ -31,7 +34,7 @@ public class ConfirmOrderResult {
     private UmsIntegrationConsumeSetting integrationConsumeSetting;
     //会员此次订单可以使用的积分
     private Integer memberIntegration;
-    private BigDecimal integrationAmount ;
+    private BigDecimal integrationAmount;
     /**
      * 余额
      */
@@ -40,11 +43,6 @@ public class ConfirmOrderResult {
     private CalcAmount calcAmount;
     private PmsProduct goods;
     private GroupAndOrderVo groupAndOrderVo;
-    // 赠品营销
-    List<SmsBasicGifts> basicGiftsList;
-
-    SmsGroupActivity groupActivity;
-
     private String storeName;
 
     public static class CalcAmount {

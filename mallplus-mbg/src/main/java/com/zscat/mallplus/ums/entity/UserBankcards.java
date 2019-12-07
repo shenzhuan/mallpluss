@@ -93,5 +93,4 @@ public class UserBankcards implements Serializable {
     private Long utime;
 
 
-
 }

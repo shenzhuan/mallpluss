@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 public class BlobUpload {
 
-     String fileName;
+    String fileName;
     String fileUrl;
     String thumbnailUrl;
 }

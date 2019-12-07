@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class BeanKv {
     private Long id;
-            private String  name;
-    private String  name1;
-            private String price;
+    private String name;
+    private String name1;
+    private String price;
     private String pic;
 }

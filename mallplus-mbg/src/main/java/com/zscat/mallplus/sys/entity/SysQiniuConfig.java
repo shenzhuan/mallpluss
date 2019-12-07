@@ -1,14 +1,15 @@
 package com.zscat.mallplus.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zscat
@@ -117,13 +118,13 @@ public class SysQiniuConfig implements Serializable {
     @Override
     public String toString() {
         return "SysQiniuConfig{" +
-        ", id=" + id +
-        ", accessKey=" + accessKey +
-        ", bucket=" + bucket +
-        ", host=" + host +
-        ", secretKey=" + secretKey +
-        ", type=" + type +
-        ", zone=" + zone +
-        "}";
+                ", id=" + id +
+                ", accessKey=" + accessKey +
+                ", bucket=" + bucket +
+                ", host=" + host +
+                ", secretKey=" + secretKey +
+                ", type=" + type +
+                ", zone=" + zone +
+                "}";
     }
 }

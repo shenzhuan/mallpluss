@@ -48,8 +48,8 @@ public class SmsDiyPageController {
     @ApiOperation("根据条件查询所有页面配置列表")
     @GetMapping(value = "/list")
     public Object getSmsDiyPageByPage(SmsDiyPage entity,
-                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsDiyPageService.page(new Page<SmsDiyPage>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -58,6 +58,7 @@ public class SmsDiyPageController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "自定义页面配置", REMARK = "添加自定义页面配置")
     @ApiOperation("添加自定义页面配置")
     @PostMapping(value = "/create")
@@ -77,7 +78,7 @@ public class SmsDiyPageController {
             entity.setCreateTime(sdf.parse(da));
             ISmsDiyPageService.save(entity);
             if (entity.getType() == 2 && entity.getStatus() == 1) {
-                redisRepository.set(String.format(Rediskey.EsShopDiypage, 12),  JsonUtil.objectToJson(entity));
+                redisRepository.set(String.format(Rediskey.EsShopDiypage, 12), JsonUtil.objectToJson(entity));
             }
             return new CommonResult().success("success");
         } catch (Exception e) {
@@ -121,6 +122,7 @@ public class SmsDiyPageController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "sms", REMARK = "给优惠卷表分配优惠卷表")
     @ApiOperation("查询优惠卷表明细")
     @GetMapping(value = "/{id}")
@@ -137,6 +139,7 @@ public class SmsDiyPageController {
         }
 
     }
+
     @SysLog(MODULE = "自定义页面配置", REMARK = "更改自定义页面配置信息")
     @ApiOperation("更改自定义页面配置信息")
     @PostMapping(value = "/update")
@@ -174,8 +177,8 @@ public class SmsDiyPageController {
     @ApiOperation("查询页面")
     @GetMapping("/selDiyPage")
     public Object selDiyPage(SmsDiyPage entity,
-                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsDiyPageService.page(new Page<SmsDiyPage>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -192,7 +195,7 @@ public class SmsDiyPageController {
                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
-            return new CommonResult().success(ISmsDiyPageService.page(new Page<SmsDiyPage>(pageNum, pageSize), new QueryWrapper<>(entity).like("name",entity.getName())));
+            return new CommonResult().success(ISmsDiyPageService.page(new Page<SmsDiyPage>(pageNum, pageSize), new QueryWrapper<>(entity).like("name", entity.getName())));
         } catch (Exception e) {
             return new CommonResult().failed();
         }
@@ -272,6 +275,7 @@ public class SmsDiyPageController {
         }
 
     }
+
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/update/updateShowStatus")
     @ResponseBody

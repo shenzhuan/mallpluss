@@ -19,6 +19,7 @@ import java.util.List;
  *
  * </p>
  * 基本营销
+ *
  * @author zscat
  * @since 2019-07-07
  */
@@ -113,8 +114,6 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private BasicRuls selectRule;
-
-
 
 
 }

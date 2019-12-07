@@ -18,7 +18,7 @@ import java.util.Date;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -35,33 +35,35 @@ public class BuildWuyeCompanyServiceImpl extends ServiceImpl<BuildWuyeCompanyMap
     private PasswordEncoder passwordEncoder;
     @Resource
     private SysUserRoleMapper userRoleMapper;
+
     @Transactional
     @Override
     public boolean saveCompany(BuildWuyeCompany entity) {
-       //1 创建物业公司
+        //1 创建物业公司
         entity.setCreateTime(new Date());
         wuyeCompanyMapper.insert(entity);
         // 2 创建物业公司账号
         SysUser user = new SysUser();
         user.setUsername(entity.getName());
         SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-        if (umsAdminList!=null) {
+        if (umsAdminList != null) {
             throw new ApiMallPlusException("此物业公司已存在");
         }
         user.setStatus(1);
-        user.setStoreId(entity.getId());
+        // user.setStoreId(entity.getId());
         user.setSupplyId(0L);
         user.setPassword(passwordEncoder.encode("123456"));
         user.setCreateTime(new Date());
         user.setSupplyId(0L);
-        user.setNote("物业公司账户：物业公司ID="+entity.getName()+","+entity.getId());
+        user.setNote("物业公司账户：物业公司ID=" + entity.getName() + "," + entity.getId());
         user.setIcon(entity.getPic());
         user.setNickName(entity.getName());
         userMapper.insert(user);
 
         // 3 分配物业公司角色
         SysUserRole userRole = new SysUserRole();
-        userRole.setAdminId(user.getId());userRole.setRoleId(2L);
+        userRole.setAdminId(user.getId());
+        userRole.setRoleId(2L);
         userRoleMapper.insert(userRole);
         return true;
     }

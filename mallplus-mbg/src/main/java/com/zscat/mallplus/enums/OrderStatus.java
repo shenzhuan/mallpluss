@@ -27,7 +27,6 @@ public enum OrderStatus {
     DELETED(17);//已删除
 
 
-
     private int value;
 
     private OrderStatus(int value) {

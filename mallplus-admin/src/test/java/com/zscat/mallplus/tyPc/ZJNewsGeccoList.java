@@ -12,14 +12,14 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Gecco(matchUrl = "http://zj.zjol.com.cn/home.html?pageIndex={pageIndex}&pageSize={pageSize}",pipelines = "zJNewsListPipelines")
+@Gecco(matchUrl = "http://zj.zjol.com.cn/home.html?pageIndex={pageIndex}&pageSize={pageSize}", pipelines = "zJNewsListPipelines")
 public class ZJNewsGeccoList implements HtmlBean {
-  @Request
-  private HttpRequest request;
-  @RequestParameter
-  private int pageIndex;
-  @RequestParameter
-  private int pageSize;
-  @HtmlField(cssPath = "#content > div > div > div.con_index > div.r.main_mod > div > ul > li > dl > dt > a")
-  private List<HrefBean> newList;
+    @Request
+    private HttpRequest request;
+    @RequestParameter
+    private int pageIndex;
+    @RequestParameter
+    private int pageSize;
+    @HtmlField(cssPath = "#content > div > div > div.con_index > div.r.main_mod > div > ul > li > dl > dt > a")
+    private List<HrefBean> newList;
 }

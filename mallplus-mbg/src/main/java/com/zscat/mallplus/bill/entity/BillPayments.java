@@ -185,18 +185,18 @@ public class BillPayments implements Serializable {
     @Override
     public String toString() {
         return "BillPayments{" +
-        ", paymentId=" + paymentId +
-        ", money=" + money +
-        ", userId=" + userId +
-        ", type=" + type +
-        ", status=" + status +
-        ", paymentCode=" + paymentCode +
-        ", ip=" + ip +
-        ", params=" + params +
-        ", payedMsg=" + payedMsg +
-        ", tradeNo=" + tradeNo +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
+                ", paymentId=" + paymentId +
+                ", money=" + money +
+                ", userId=" + userId +
+                ", type=" + type +
+                ", status=" + status +
+                ", paymentCode=" + paymentCode +
+                ", ip=" + ip +
+                ", params=" + params +
+                ", payedMsg=" + payedMsg +
+                ", tradeNo=" + tradeNo +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                "}";
     }
 }

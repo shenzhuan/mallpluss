@@ -30,24 +30,25 @@ public class MallPortalApplicationTests {
     SysSchoolMapper schoolMapper;
     @Resource
     SysAreaMapper sysAreaMapper;
+
+    public static void main(String[] args) {
+        String a = "102087102114";
+        String b = "101829";
+        System.out.println(a.replaceAll("[^" + b + "]", "").length());
+    }
+
     @Test
     public void contextLoads() {
         List<CmsSubject> list = subjectMapper.selectList(new QueryWrapper<>());
-        for (CmsSubject subject : list){
+        for (CmsSubject subject : list) {
             Random r = new Random();
             Long a = r.nextLong();
             System.out.println(a);
             Long b = r.nextLong();
             subject.setAreaId(a);
             subject.setSchoolId(b);
-          //  subjectMapper.updateById(subject);
+            //  subjectMapper.updateById(subject);
         }
-      // List<UmsMember> log =  sysAdminLogMapper.selectList(new QueryWrapper<UmsMember>().between("create_time","2018-03-03","2018-09-03"));
-    }
-
-    public static void main(String[] args) {
-        String a= "102087102114";
-        String b="101829";
-        System.out.println( a.replaceAll("[^" + b + "]", "").length());
+        // List<UmsMember> log =  sysAdminLogMapper.selectList(new QueryWrapper<UmsMember>().between("create_time","2018-03-03","2018-09-03"));
     }
 }

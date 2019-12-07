@@ -1,11 +1,11 @@
 package com.zscat.mallplus.build.service;
 
-import com.zscat.mallplus.build.entity.BuildWuyePrice;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.build.entity.BuildWuyePrice;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

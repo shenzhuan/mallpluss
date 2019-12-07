@@ -34,14 +34,14 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     @Override
     public void updataMemberOrderInfo() {
-        List<OrderStstic> orders =  omsOrderMapper.listOrderGroupByMemberId();
+        List<OrderStstic> orders = omsOrderMapper.listOrderGroupByMemberId();
         List<UmsMemberLevel> levelList = memberLevelService.list(new QueryWrapper<UmsMemberLevel>().orderByDesc("price"));
-        for (OrderStstic o : orders){
+        for (OrderStstic o : orders) {
             UmsMember member = new UmsMember();
             member.setId(o.getMemberId());
             member.setBuyMoney(o.getTotalPayAmount());
-            for (UmsMemberLevel level: levelList){
-                if (member.getBuyMoney().compareTo(level.getPrice())>=0){
+            for (UmsMemberLevel level : levelList) {
+                if (member.getBuyMoney().compareTo(level.getPrice()) >= 0) {
                     member.setMemberLevelId(level.getId());
                     member.setMemberLevelName(level.getName());
                     break;

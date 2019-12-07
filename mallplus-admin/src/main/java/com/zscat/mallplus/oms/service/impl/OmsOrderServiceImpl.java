@@ -109,10 +109,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     }
 
     @Override
-    public Object dayStatic(String date,Integer type) {
-        List<OmsOrder> orders = orderMapper.listByDate(date,type);
-        List<UmsMember> members = memberMapper.listByDate(date,type);
-        List<PmsProduct> products = productMapper.listByDate(date,type);
+    public Object dayStatic(String date, Integer type) {
+        List<OmsOrder> orders = orderMapper.listByDate(date, type);
+        List<UmsMember> members = memberMapper.listByDate(date, type);
+        List<PmsProduct> products = productMapper.listByDate(date, type);
         int nowOrderCount = 0; // 今日订单
         BigDecimal nowOrderPay = new BigDecimal(0); //今日销售总额
         for (OmsOrder order : orders) {

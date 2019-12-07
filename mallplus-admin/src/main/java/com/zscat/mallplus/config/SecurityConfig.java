@@ -1,5 +1,6 @@
 package com.zscat.mallplus.config;
 
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.bo.AdminUserDetails;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
@@ -8,7 +9,6 @@ import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysUserVo;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
-import com.zscat.mallplus.ApiContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private ApiContext apiContext;
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf()// 由于使用的是JWT，我们这里不需要csrf
@@ -106,9 +107,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //获取登录用户信息
         return username -> {
             SysUserVo admin = userMapper.selectByUserName(username);
-          //  apiContext.setCurrentProviderId(admin.getStoreId());
+            //  apiContext.setCurrentProviderId(admin.getStoreId());
             if (admin != null) {
-                if (admin.getSupplyId()!=null && admin.getSupplyId() == 1L) {
+                if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {
                     List<SysPermission> permissionList = sysUserService.listPerms();
                     return new AdminUserDetails(admin, permissionList);
                 }

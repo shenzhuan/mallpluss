@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 /**
-* @author mallplus
-* @date 2019-12-02
-*/
+ * @author mallplus
+ * @date 2019-12-02
+ */
 @Service
 public class SysTestServiceImpl extends ServiceImpl<SysTestMapper, SysTest> implements ISysTestService {
 
 
     @Resource
-    private  SysTestMapper sysTestMapper;
+    private SysTestMapper sysTestMapper;
 
 
 }

@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -29,14 +29,14 @@ public class SysEmailConfigController {
 
 
     @GetMapping(value = "/{id}")
-    public Object get(){
+    public Object get() {
         return new CommonResult().success(emailService.getOne(new QueryWrapper<>()));
     }
 
 
     @PostMapping(value = "/update")
     @ApiOperation("配置邮件")
-    public Object emailConfig(@Validated @RequestBody SysEmailConfig emailConfig){
+    public Object emailConfig(@Validated @RequestBody SysEmailConfig emailConfig) {
         emailService.updateById(emailConfig);
         return new CommonResult().success();
     }
@@ -45,7 +45,7 @@ public class SysEmailConfigController {
     @PostMapping(value = "/send")
     @ApiOperation("发送邮件")
     public Object send(@Validated @RequestBody EmailVo emailVo) throws Exception {
-        emailService.send(emailVo,emailService.getOne(new QueryWrapper<>()));
+        emailService.send(emailVo, emailService.getOne(new QueryWrapper<>()));
         return new CommonResult().success();
     }
 }

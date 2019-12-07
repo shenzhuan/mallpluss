@@ -8,18 +8,15 @@ import org.quartz.*;
  * 定时任务工具类
  *
  * @author ruoyi
- *
  */
-public class ScheduleUtils
-{
+public class ScheduleUtils {
     /**
      * 得到quartz任务类
      *
      * @param job 执行计划
      * @return 具体执行任务类
      */
-    private static Class<? extends org.quartz.Job> getQuartzJobClass(AdminSysJob job)
-    {
+    private static Class<? extends org.quartz.Job> getQuartzJobClass(AdminSysJob job) {
         boolean isConcurrent = "0".equals(job.getConcurrent());
         return isConcurrent ? QuartzJobExecution.class : QuartzDisallowConcurrentExecution.class;
     }
@@ -27,24 +24,21 @@ public class ScheduleUtils
     /**
      * 构建任务触发对象
      */
-    public static TriggerKey getTriggerKey(Long jobId, String jobGroup)
-    {
+    public static TriggerKey getTriggerKey(Long jobId, String jobGroup) {
         return TriggerKey.triggerKey(ScheduleConstants.TASK_CLASS_NAME + jobId, jobGroup);
     }
 
     /**
      * 构建任务键对象
      */
-    public static JobKey getJobKey(Long jobId, String jobGroup)
-    {
+    public static JobKey getJobKey(Long jobId, String jobGroup) {
         return JobKey.jobKey(ScheduleConstants.TASK_CLASS_NAME + jobId, jobGroup);
     }
 
     /**
      * 创建定时任务
      */
-    public static void createScheduleJob(Scheduler scheduler, AdminSysJob job)
-    {
+    public static void createScheduleJob(Scheduler scheduler, AdminSysJob job) {
         Class<? extends org.quartz.Job> jobClass = getQuartzJobClass(job);
         // 构建job信息
         Long jobId = job.getJobId();
@@ -64,16 +58,14 @@ public class ScheduleUtils
 
         // 判断是否存在
         try {
-            if (scheduler.checkExists(getJobKey(jobId, jobGroup)))
-            {
+            if (scheduler.checkExists(getJobKey(jobId, jobGroup))) {
                 // 防止创建时存在数据问题 先移除，然后在执行创建操作
                 scheduler.deleteJob(getJobKey(jobId, jobGroup));
             }
             scheduler.scheduleJob(jobDetail, trigger);
 
             // 暂停任务
-            if (job.getStatus().equals(ScheduleConstants.Status.PAUSE.getValue()))
-            {
+            if (job.getStatus().equals(ScheduleConstants.Status.PAUSE.getValue())) {
                 scheduler.pauseJob(ScheduleUtils.getJobKey(jobId, jobGroup));
             }
         } catch (SchedulerException e) {
@@ -86,11 +78,8 @@ public class ScheduleUtils
     /**
      * 设置定时任务策略
      */
-    public static CronScheduleBuilder handleCronScheduleMisfirePolicy(AdminSysJob job, CronScheduleBuilder cb)
-
-    {
-        switch (job.getMisfirePolicy())
-        {
+    public static CronScheduleBuilder handleCronScheduleMisfirePolicy(AdminSysJob job, CronScheduleBuilder cb) {
+        switch (job.getMisfirePolicy()) {
             case ScheduleConstants.MISFIRE_DEFAULT:
                 return cb;
             case ScheduleConstants.MISFIRE_IGNORE_MISFIRES:

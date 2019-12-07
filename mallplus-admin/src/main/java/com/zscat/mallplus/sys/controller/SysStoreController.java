@@ -3,6 +3,7 @@ package com.zscat.mallplus.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
@@ -16,7 +17,6 @@ import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.sys.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,20 +55,21 @@ public class SysStoreController {
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
     @Autowired
     private ApiContext apiContext;
+    @Resource
+    private BakCategoryMapper bakCategoryMapper;
 
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/setStoreId/{id}")
     public Object setStoreId(@ApiParam("id") @PathVariable Integer id) {
         try {
-         //   apiContext.setCurrentProviderId(id);
+            //   apiContext.setCurrentProviderId(id);
             return new CommonResult().success();
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
     }
-
 
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
@@ -163,18 +164,15 @@ public class SysStoreController {
         }
     }
 
-    @Resource
-    private BakCategoryMapper bakCategoryMapper;
-
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/listBakCate")
     public Object listCate(BakCategory entity,
-                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "30") Integer pageSize
+                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                           @RequestParam(value = "pageSize", defaultValue = "30") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(bakCategoryMapper.selectList(new QueryWrapper<BakCategory>().eq("pid",0)));
+            return new CommonResult().success(bakCategoryMapper.selectList(new QueryWrapper<BakCategory>().eq("pid", 0)));
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
         }
@@ -186,36 +184,36 @@ public class SysStoreController {
     @ResponseBody
     public Object storeDetail() {
         SysStore store = ISysStoreService.getById(1);
-        List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id",store.getId()));
+        List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", store.getId()));
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8),new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
-            if (goodsList!=null&& goodsList.getRecords()!=null && goodsList.getRecords().size()>0){
+            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
+            if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(goodsList.getRecords());
-            }else{
+            } else {
                 gt.setGoodsList(new ArrayList<>());
             }
         }
         store.setList(list);
-        store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id",store.getId())));
+        store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id", store.getId())));
         //记录浏览量到redis,然后定时更新到数据库
-        String key= Rediskey.STORE_VIEWCOUNT_CODE+store.getId();
+        String key = Rediskey.STORE_VIEWCOUNT_CODE + store.getId();
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.STORE_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                viewCount=1;
-                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.STORE_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                viewCount = 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
         }
         Map<String, Object> map = new HashMap<>();
         store.setHit(viewCount);

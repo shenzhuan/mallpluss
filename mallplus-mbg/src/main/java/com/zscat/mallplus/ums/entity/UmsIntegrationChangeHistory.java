@@ -62,7 +62,9 @@ public class UmsIntegrationChangeHistory extends BaseEntity implements Serializa
      */
     @TableField("source_type")
     private Integer sourceType;
-    public UmsIntegrationChangeHistory(){}
+
+    public UmsIntegrationChangeHistory() {
+    }
 
     public UmsIntegrationChangeHistory(Long memberId, Date createTime, Integer changeType, Integer changeCount, String operateMan, String operateNote, Integer sourceType) {
         this.memberId = memberId;

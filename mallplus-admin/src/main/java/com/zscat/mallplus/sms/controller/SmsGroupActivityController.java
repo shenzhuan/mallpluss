@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -38,8 +38,8 @@ public class SmsGroupActivityController {
     @ApiOperation("根据条件查询所有团购活动表列表")
     @GetMapping(value = "/list")
     public Object getSmsGroupActivityByPage(SmsGroupActivity entity,
-                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -56,13 +56,13 @@ public class SmsGroupActivityController {
         try {
             List<PmsProduct> list = entity.getProductList();
             String goodsIs = "";
-            BigDecimal originPrice= BigDecimal.ZERO;
-            for (PmsProduct p: list){
-                originPrice=originPrice.add(p.getPrice());
-                goodsIs=goodsIs+p.getId()+",";
+            BigDecimal originPrice = BigDecimal.ZERO;
+            for (PmsProduct p : list) {
+                originPrice = originPrice.add(p.getPrice());
+                goodsIs = goodsIs + p.getId() + ",";
             }
             entity.setOriginprice(originPrice);
-            entity.setGoodsIds(goodsIs.substring(0,goodsIs.length()-1));
+            entity.setGoodsIds(goodsIs.substring(0, goodsIs.length() - 1));
             if (smsGroupActivityService.save(entity)) {
                 return new CommonResult().success();
             }
@@ -80,13 +80,13 @@ public class SmsGroupActivityController {
         try {
             List<PmsProduct> list = entity.getProductList();
             String goodsIs = "";
-            BigDecimal originPrice= BigDecimal.ZERO;
-            for (PmsProduct p: list){
-                originPrice=originPrice.add(p.getPrice());
-                goodsIs=goodsIs+p.getId()+",";
+            BigDecimal originPrice = BigDecimal.ZERO;
+            for (PmsProduct p : list) {
+                originPrice = originPrice.add(p.getPrice());
+                goodsIs = goodsIs + p.getId() + ",";
             }
             entity.setOriginprice(originPrice);
-            entity.setGoodsIds(goodsIs.substring(0,goodsIs.length()-1));
+            entity.setGoodsIds(goodsIs.substring(0, goodsIs.length() - 1));
             if (smsGroupActivityService.updateById(entity)) {
                 return new CommonResult().success();
             }
@@ -144,6 +144,7 @@ public class SmsGroupActivityController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/update/updateShowStatus")
     @ResponseBody

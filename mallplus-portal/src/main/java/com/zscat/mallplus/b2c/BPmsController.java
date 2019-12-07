@@ -106,7 +106,7 @@ public class BPmsController extends ApiBaseAction {
     @Resource
     private SmsGroupMemberMapper groupMemberMapper;
     @Resource
-    private  PmsProductCategoryMapper categoryMapper;
+    private PmsProductCategoryMapper categoryMapper;
     @Resource
     private IPmsGiftsService giftsService;
     @Resource
@@ -118,6 +118,10 @@ public class BPmsController extends ApiBaseAction {
 
     @Autowired
     private ApiContext apiContext;
+    @Autowired
+    private IPmsFavoriteService memberCollectionService;
+    @Autowired
+    private ICmsFavoriteService cmsFavoriteService;
 
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
@@ -126,13 +130,13 @@ public class BPmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
-                log.info("redis缓存失效："+id);
+            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
+                log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效："+id);
+            log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
@@ -144,9 +148,9 @@ public class BPmsController extends ApiBaseAction {
             query.setMemberId(umsMember.getId());
             query.setType(1);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
-            }else{
+            } else {
                 map.put("favorite", false);
             }
         }
@@ -168,9 +172,9 @@ public class BPmsController extends ApiBaseAction {
         product.setVerifyStatus(1);
         product.setMemberId(null);
         IPage<PmsProduct> list;
-        if (ValidatorUtils.notEmpty(product.getKeyword())){
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name",product.getKeyword()));
-        }else{
+        if (ValidatorUtils.notEmpty(product.getKeyword())) {
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", product.getKeyword()));
+        } else {
             list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product));
         }
         return new CommonResult().success(list);
@@ -185,6 +189,7 @@ public class BPmsController extends ApiBaseAction {
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(productCategoryService.page(new Page<PmsProductCategory>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品分类列表和子分类")
@@ -193,25 +198,25 @@ public class BPmsController extends ApiBaseAction {
         String json = redisService.get(Rediskey.categoryAndChilds);
         List<PmsProductCategory> list = new ArrayList<>();
         try {
-            if (ValidatorUtils.empty(json)){
-                list = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",0).eq("show_status",1));
-                for (PmsProductCategory category : list){
-                    List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",category.getId()).eq("show_status",1));
+            if (ValidatorUtils.empty(json)) {
+                list = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id", 0).eq("show_status", 1));
+                for (PmsProductCategory category : list) {
+                    List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id", category.getId()).eq("show_status", 1));
                     category.setChildList(childlist);
                 }
-                redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-                redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),2);
-            }else{
+                redisService.set(Rediskey.categoryAndChilds + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(list));
+                redisService.expire(Rediskey.categoryAndChilds + apiContext.getCurrentProviderId(), 2);
+            } else {
                 list = JsonUtils.json2list(json, PmsProductCategory.class);
             }
-        }catch (Exception e){
-            list = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",0).eq("show_status",1));
-            for (PmsProductCategory category : list){
-                List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",category.getId()).eq("show_status",1));
+        } catch (Exception e) {
+            list = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id", 0).eq("show_status", 1));
+            for (PmsProductCategory category : list) {
+                List<PmsProductCategory> childlist = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id", category.getId()).eq("show_status", 1));
                 category.setChildList(childlist);
             }
-            redisService.set(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(list));
-            redisService.expire(Rediskey.categoryAndChilds+apiContext.getCurrentProviderId(),2);
+            redisService.set(Rediskey.categoryAndChilds + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(list));
+            redisService.expire(Rediskey.categoryAndChilds + apiContext.getCurrentProviderId(), 2);
         }
 
         return new CommonResult().success(list);
@@ -241,16 +246,16 @@ public class BPmsController extends ApiBaseAction {
                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         Map<String, Object> objectMap = new HashMap<>();
-        String json = redisService.get(Rediskey.goodsConsult+"goods"+goodsId);
-        if (ValidatorUtils.notEmpty(json)){
+        String json = redisService.get(Rediskey.goodsConsult + "goods" + goodsId);
+        if (ValidatorUtils.notEmpty(json)) {
             objectMap = JsonUtils.readJsonToMap1(json);
-            return   new CommonResult().success(objectMap);
+            return new CommonResult().success(objectMap);
         }
 
         PmsProductConsult productConsult = new PmsProductConsult();
         productConsult.setGoodsId(goodsId);
         productConsult.setType(AllEnum.ConsultType.GOODS.code());
-        List<PmsProductConsult> list =  pmsProductConsultService.list(new QueryWrapper<>(productConsult));
+        List<PmsProductConsult> list = pmsProductConsultService.list(new QueryWrapper<>(productConsult));
 
         int goods = 0;
         int general = 0;
@@ -258,13 +263,13 @@ public class BPmsController extends ApiBaseAction {
         ConsultTypeCount count = new ConsultTypeCount();
         for (PmsProductConsult consult : list) {
             if (consult.getStars() != null) {
-                if (consult.getStars()==1){
+                if (consult.getStars() == 1) {
                     bad++;
                 }
-                if (consult.getStars()==2){
+                if (consult.getStars() == 2) {
                     general++;
                 }
-                if (consult.getStars()==3){
+                if (consult.getStars() == 3) {
                     goods++;
                 }
             }
@@ -273,16 +278,16 @@ public class BPmsController extends ApiBaseAction {
         count.setBad(bad);
         count.setGeneral(general);
         count.setGoods(goods);
-        if (count.getAll()>0){
+        if (count.getAll() > 0) {
             count.setPersent(new BigDecimal(goods).divide(new BigDecimal(count.getAll())).multiply(new BigDecimal(100)));
-        }else {
+        } else {
             count.setPersent(new BigDecimal(200));
         }
 
         objectMap.put("list", list);
         objectMap.put("count", count);
-        redisService.set(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,JsonUtils.objectToJson(objectMap));
-        redisService.expire(Rediskey.goodsConsult+apiContext.getCurrentProviderId()+"goods"+goodsId,2);
+        redisService.set(Rediskey.goodsConsult + apiContext.getCurrentProviderId() + "goods" + goodsId, JsonUtils.objectToJson(objectMap));
+        redisService.expire(Rediskey.goodsConsult + apiContext.getCurrentProviderId() + "goods" + goodsId, 2);
         return new CommonResult().success(objectMap);
     }
 
@@ -291,19 +296,19 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询拼团列表")
     @PostMapping(value = "/groupHotGoods/list")
     public Object groupHotGoods(PmsProduct product,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        List<SmsGroup> groupList =  groupService.list(new QueryWrapper<>());
+                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        List<SmsGroup> groupList = groupService.list(new QueryWrapper<>());
         List<SmsGroup> result = new ArrayList<>();
-        for (SmsGroup group :groupList){
-            if (ValidatorUtils.empty(group.getHours())){
+        for (SmsGroup group : groupList) {
+            if (ValidatorUtils.empty(group.getHours())) {
                 continue;
             }
             Long nowT = System.currentTimeMillis();
             Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
             if (nowT > group.getStartTime().getTime() && nowT < endTime.getTime()) {
-                PmsProduct g =pmsProductService.getById(group.getGoodsId());
-                if(g!=null){
+                PmsProduct g = pmsProductService.getById(group.getGoodsId());
+                if (g != null) {
                     group.setGoods(g);
                     result.add(group);
                 }
@@ -318,19 +323,19 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询拼团商品列表")
     @PostMapping(value = "/pintuan.list")
     public Object pintuanList(PmsProduct product,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-       List<SmsGroup> groupList =  groupService.list(new QueryWrapper<>());
-       if (groupList!=null && groupList.size()>0){
-           List<Long> ids = groupList.stream()
-                   .map(SmsGroup::getGoodsId)
-                   .collect(Collectors.toList());
-           product.setPublishStatus(1);
-           product.setVerifyStatus(1);
-           product.setMemberId(null);
-           IPage<PmsProduct> list  = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id",ids));
-           return new CommonResult().success(list);
-       }
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        List<SmsGroup> groupList = groupService.list(new QueryWrapper<>());
+        if (groupList != null && groupList.size() > 0) {
+            List<Long> ids = groupList.stream()
+                    .map(SmsGroup::getGoodsId)
+                    .collect(Collectors.toList());
+            product.setPublishStatus(1);
+            product.setVerifyStatus(1);
+            product.setMemberId(null);
+            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
+            return new CommonResult().success(list);
+        }
         return null;
     }
 
@@ -340,31 +345,31 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "拼团商品详情")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                viewCount=1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                viewCount = 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            viewCount=1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            viewCount = 1;
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         GoodsDetailResult goods = null;
         try {
-              goods =JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)){
-                log.info("redis缓存失效："+id);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods)) {
+                log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效："+id);
+            log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
             e.printStackTrace();
         }
@@ -379,38 +384,38 @@ public class BPmsController extends ApiBaseAction {
             query.setMemberId(umsMember.getId());
             query.setType(1);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
-            }else{
+            } else {
                 map.put("favorite", false);
             }
         }
-        if (group!=null){
+        if (group != null) {
             group.setPintuan_start_status(1);
             group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
             Long nowT = System.currentTimeMillis();
             Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
-            if (nowT < group.getStartTime().getTime() ) {
+            if (nowT < group.getStartTime().getTime()) {
                 group.setPintuan_start_status(2);
             }
-            if ( nowT > endTime.getTime()) {
+            if (nowT > endTime.getTime()) {
                 group.setPintuan_start_status(3);
             }
             List<SmsGroupMember> list = new ArrayList<>();
-            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id",group.getId()));
-            for (SmsGroupMember groupMember : groupMembers){
-                if (ValidatorUtils.notEmpty(groupMember.getMemberId()) ){
+            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", group.getId()));
+            for (SmsGroupMember groupMember : groupMembers) {
+                if (ValidatorUtils.notEmpty(groupMember.getMemberId())) {
                     List<String> ids = Arrays.asList(groupMember.getMemberId().split(","));
-                    if (group.getMaxPeople()>ids.size()){
+                    if (group.getMaxPeople() > ids.size()) {
                         groupMember.setList((List<UmsMember>) memberService.listByIds(ids));
-                    }else {
+                    } else {
                         continue;
                     }
                     list.add(groupMember);
 
                 }
             }
-            map.put("memberGroupList",list);
+            map.put("memberGroupList", list);
             map.put("group", group);
         }
 
@@ -419,17 +424,16 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
-
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询礼物商品列表")
     @PostMapping(value = "/gift/list")
     public Object giftList(PmsGifts product,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                           @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-            IPage<PmsGifts> list  = giftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<>(product));
-            return new CommonResult().success(list);
+        IPage<PmsGifts> list = giftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<>(product));
+        return new CommonResult().success(list);
 
     }
 
@@ -438,7 +442,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/gift/detail")
     @ApiOperation(value = "查询礼物商品详情信息")
     public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        PmsGifts  goods = giftsService.getById(id);
+        PmsGifts goods = giftsService.getById(id);
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
@@ -447,9 +451,9 @@ public class BPmsController extends ApiBaseAction {
             query.setMemberId(umsMember.getId());
             query.setType(4);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
-            }else{
+            } else {
                 map.put("favorite", false);
             }
         }
@@ -473,9 +477,9 @@ public class BPmsController extends ApiBaseAction {
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) throws Exception {
         List<PmsProductAttributeCategory> productAttributeCategoryList = new ArrayList<>();
         String json = redisService.get(Rediskey.categoryAndGoodsList);
-        if (ValidatorUtils.notEmpty(json)){
-            productAttributeCategoryList = JsonUtils.json2list(json,PmsProductAttributeCategory.class);
-            return   new CommonResult().success(productAttributeCategoryList);
+        if (ValidatorUtils.notEmpty(json)) {
+            productAttributeCategoryList = JsonUtils.json2list(json, PmsProductAttributeCategory.class);
+            return new CommonResult().success(productAttributeCategoryList);
         }
         productAttributeCategoryList = productAttributeCategoryService.list(new QueryWrapper<>());
         for (PmsProductAttributeCategory gt : productAttributeCategoryList) {
@@ -485,13 +489,10 @@ public class BPmsController extends ApiBaseAction {
             productQueryParam.setVerifyStatus(1);
             gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
-        redisService.set(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(productAttributeCategoryList));
-        redisService.expire(Rediskey.categoryAndGoodsList+apiContext.getCurrentProviderId(),2);
+        redisService.set(Rediskey.categoryAndGoodsList + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(productAttributeCategoryList));
+        redisService.expire(Rediskey.categoryAndGoodsList + apiContext.getCurrentProviderId(), 2);
         return new CommonResult().success(productAttributeCategoryList);
     }
-
-
-
 
     @SysLog(MODULE = "pms", REMARK = "查询首页热销商品")
     @IgnoreAuth
@@ -501,9 +502,8 @@ public class BPmsController extends ApiBaseAction {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        return new CommonResult().success(pmsProductService.getHotProductList(pageNum,pageSize));
+        return new CommonResult().success(pmsProductService.getHotProductList(pageNum, pageSize));
     }
-
 
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
@@ -512,16 +512,16 @@ public class BPmsController extends ApiBaseAction {
     public Object typeGoodsList() throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
         String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
-        if (ValidatorUtils.notEmpty(json)){
-            relList = JsonUtils.json2list(json,ProductTypeVo.class);
-            return   new CommonResult().success(relList);
+        if (ValidatorUtils.notEmpty(json)) {
+            relList = JsonUtils.json2list(json, ProductTypeVo.class);
+            return new CommonResult().success(relList);
         }
 
         PmsProduct productQueryParam = new PmsProduct();
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
-        List<PmsProduct>  list = pmsProductService.page(new Page<PmsProduct>(1, 8), new QueryWrapper<>(productQueryParam)).getRecords();
-        for (PmsProduct l : list){
+        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 8), new QueryWrapper<>(productQueryParam)).getRecords();
+        for (PmsProduct l : list) {
             ProductTypeVo vo = new ProductTypeVo();
             vo.setGoodsId(l.getId());
             vo.setId(l.getId());
@@ -532,13 +532,13 @@ public class BPmsController extends ApiBaseAction {
             relList.add(vo);
         }
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
-        for (PmsProductCategory v : categories){
-            if (v.getParentId()==0){
+        for (PmsProductCategory v : categories) {
+            if (v.getParentId() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
                 relList.add(vo);
-            }else{
+            } else {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
@@ -546,8 +546,8 @@ public class BPmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList+apiContext.getCurrentProviderId(),2);
+        redisService.set(Rediskey.specialcategoryAndGoodsList + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList + apiContext.getCurrentProviderId(), 2);
         return new CommonResult().success(relList);
     }
 
@@ -558,13 +558,13 @@ public class BPmsController extends ApiBaseAction {
     public Object typeList(PmsProductCategory productCategory) {
         List<ProductTypeVo> relList = new ArrayList<>();
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
-        for (PmsProductCategory v : categories){
-            if (v.getParentId()==0){
+        for (PmsProductCategory v : categories) {
+            if (v.getParentId() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
                 relList.add(vo);
-            }else{
+            } else {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
@@ -575,17 +575,18 @@ public class BPmsController extends ApiBaseAction {
 
         return new CommonResult().success(relList);
     }
+
     @SysLog(MODULE = "cms", REMARK = "添加商品评论")
     @ApiOperation(value = "添加商品评论")
     @PostMapping(value = "/addGoodsConsult")
     public Object addGoodsConsult(PmsProductConsult subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member!=null){
+        if (member != null) {
             subject.setPic(member.getIcon());
             subject.setMemberName(member.getNickname());
             subject.setMemberId(member.getId());
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
         subject.setConsultAddtime(new Date());
@@ -598,11 +599,12 @@ public class BPmsController extends ApiBaseAction {
         }
         return commonResult;
     }
+
     @IgnoreAuth
     @ApiOperation("添加商品浏览记录")
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/user.addgoodsbrowsing")
-    public Object addView(@RequestParam  Long goodsId) {
+    public Object addView(@RequestParam Long goodsId) {
 
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
@@ -610,11 +612,11 @@ public class BPmsController extends ApiBaseAction {
 
         redisUtil.lRemove(key, 1, goodsId.toString());
         //将value push 到该key下的list中
-        redisUtil.lLeftPush(key,goodsId.toString());
+        redisUtil.lLeftPush(key, goodsId.toString());
         //使用ltrim将60个数据之后的数据剪切掉
-        redisUtil.lTrim(key,0,59);
+        redisUtil.lTrim(key, 0, 59);
         //设置缓存时间为一个月
-        redisUtil.expire(key,60*60*24*30, TimeUnit.SECONDS);
+        redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
         return new CommonResult().success();
     }
 
@@ -623,36 +625,31 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "查询用户浏览记录列表")
     @PostMapping(value = "/user.goodsbrowsing")
     public Object viewList(
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
         //拼装返回
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //根据用户的ID分頁获取该用户最近浏览的50个商品信息
-        List<String> result = redisUtil.lRange(key,(pageNum-1)*pageSize,pageNum*pageSize-1);
-        if (result!=null && result.size()>0){
+        List<String> result = redisUtil.lRange(key, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
+        if (result != null && result.size() > 0) {
             List<PmsProduct> list = (List<PmsProduct>) pmsProductService.listByIds(result);
 
-            map.put("result",list);
-            map.put("total",pageCount);
-            map.put("pageCount",(pageCount%pageSize == 0 ? pageCount/pageSize : pageCount/pageSize+1));
+            map.put("result", list);
+            map.put("total", pageCount);
+            map.put("pageCount", (pageCount % pageSize == 0 ? pageCount / pageSize : pageCount / pageSize + 1));
         }
 
         return new CommonResult().success(map);
     }
 
-    @Autowired
-    private IPmsFavoriteService memberCollectionService;
-    @Autowired
-    private ICmsFavoriteService cmsFavoriteService;
-
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (memberService.getNewCurrentMember().getId()==null){
+        if (memberService.getNewCurrentMember().getId() == null) {
             return new CommonResult().fail(100);
         }
         int count = memberCollectionService.addProduct(productCollection);
@@ -662,6 +659,7 @@ public class BPmsController extends ApiBaseAction {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("删除收藏中的某个商品")
     @PostMapping(value = "/batchcollect.delete")
     public Object batchcollectDel(String ids) {
@@ -677,6 +675,7 @@ public class BPmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("删除收藏中的某个商品")
     @PostMapping(value = "/collect.delete")
     public Object delete(Long id) {
@@ -691,13 +690,12 @@ public class BPmsController extends ApiBaseAction {
 
     @ApiOperation("显示收藏列表")
     @PostMapping(value = "/user.goodscollectionlist")
-    public Object listCollectByType( PmsFavorite productCollection,
-                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                     @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+    public Object listCollectByType(PmsFavorite productCollection,
+                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                    @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         productCollection.setMemberId(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
     }
-
 
 
     @ApiOperation("添加和取消点赞 type 1 商品 2 文章")
@@ -730,13 +728,14 @@ public class BPmsController extends ApiBaseAction {
 
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLikeByType")
-    public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
+    public Object listLikeByType(CmsFavorite productCollection) {
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(), productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
+
     @ApiOperation("显示点赞列表")
     @PostMapping(value = "/listLike")
-    public Object listLike( CmsFavorite productCollection) {
+    public Object listLike(CmsFavorite productCollection) {
         List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }
@@ -744,11 +743,10 @@ public class BPmsController extends ApiBaseAction {
 
     @ApiOperation("生成海报")
     @PostMapping(value = "/user.getposter")
-    public Object getposter( @RequestParam Long id) {
+    public Object getposter(@RequestParam Long id) {
         PmsProduct product = pmsProductService.getById(id);
         return new CommonResult().success(product.getPic());
     }
-
 
 
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
@@ -772,11 +770,11 @@ public class BPmsController extends ApiBaseAction {
 
         IPage<SmsGroupActivity> page = null;
         groupActivity.setStatus(1);
-        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
+        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time"));
 
         for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
-                List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id",Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
+                List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id", Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
                 if (productList != null && productList.size() > 0) {
                     smsGroupActivity.setProductList(productList);
                 }
@@ -809,7 +807,7 @@ public class BPmsController extends ApiBaseAction {
                     recordGoodsFoot(id);
                     List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
                     if (newGoodIds != null && newGoodIds.size() > 0) {
-                        List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id",newGoodIds).select(ConstansValue.sampleGoodsList));
+                        List<PmsProduct> productList = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().eq("id", newGoodIds).select(ConstansValue.sampleGoodsList));
                         if (productList != null && productList.size() > 0) {
                             groupActivity.setProductList(productList);
                         }
@@ -832,21 +830,21 @@ public class BPmsController extends ApiBaseAction {
         UmsMember member = memberService.getNewCurrentMember();
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
-            Integer countGoodsByToday  = pmsProductService.countGoodsByToday(member.getId());
-            if (ValidatorUtils.empty(countGoodsByToday)){
-                countGoodsByToday=0;
+            Integer countGoodsByToday = pmsProductService.countGoodsByToday(member.getId());
+            if (ValidatorUtils.empty(countGoodsByToday)) {
+                countGoodsByToday = 0;
             }
             if (countGoodsByToday > memberLevel.getGoodscount()) {
                 commonResult = new CommonResult().failed("你今天已经有发" + countGoodsByToday + "个商品");
                 return commonResult;
             }
-        }else {
+        } else {
             return new CommonResult().success("没有设置会员等级");
         }
-        if (productParam.getQsType()==1){
+        if (productParam.getQsType() == 1) {
             productParam.setSchoolName(member.getSchoolName());
             productParam.setSchoolId(member.getSchoolId());
-        }else {
+        } else {
             productParam.setAreaName(member.getAreaName());
             productParam.setAreaId(member.getAreaId());
         }
@@ -862,26 +860,27 @@ public class BPmsController extends ApiBaseAction {
 
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            viewCount=1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            viewCount = 1;
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         return viewCount;
     }
 
     /**
      * 判断是否收藏商品
+     *
      * @param map
      * @param goods
      * @param umsMember

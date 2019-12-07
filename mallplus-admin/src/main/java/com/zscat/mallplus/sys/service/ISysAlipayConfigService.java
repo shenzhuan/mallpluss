@@ -6,7 +6,7 @@ import com.zscat.mallplus.sys.vo.TradeVo;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -17,8 +17,9 @@ public interface ISysAlipayConfigService extends IService<SysAlipayConfig> {
 
     /**
      * 处理来自PC的交易请求
+     *
      * @param alipay 支付宝配置
-     * @param trade 交易详情
+     * @param trade  交易详情
      * @return String
      * @throws Exception 异常
      */
@@ -26,8 +27,9 @@ public interface ISysAlipayConfigService extends IService<SysAlipayConfig> {
 
     /**
      * 处理来自手机网页的交易请求
+     *
      * @param alipay 支付宝配置
-     * @param trade 交易详情
+     * @param trade  交易详情
      * @return String
      * @throws Exception 异常
      */

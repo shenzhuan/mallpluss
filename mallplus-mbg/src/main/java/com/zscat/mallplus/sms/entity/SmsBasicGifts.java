@@ -59,7 +59,6 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
      * 首购礼 1第一单获取 2所有订单获取 ；
      * 满购礼1选赠礼 获取规则 2满赠礼；
      * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
-     *
      */
     @TableField("small_type")
     private Integer smallType;

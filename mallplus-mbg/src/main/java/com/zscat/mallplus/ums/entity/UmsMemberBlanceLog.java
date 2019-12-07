@@ -31,7 +31,7 @@ public class UmsMemberBlanceLog extends BaseEntity implements Serializable {
 
     private BigDecimal price;
     //0, 1, 2, 3, 4, 5, 7
- // '全部', '消费', '退款', '充值', '提现', '佣金', '平台调整'
+    // '全部', '消费', '退款', '充值', '提现', '佣金', '平台调整'
     private Integer type;
 
     private String note;

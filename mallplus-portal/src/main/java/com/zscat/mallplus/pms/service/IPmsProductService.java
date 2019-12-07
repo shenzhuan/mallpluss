@@ -21,6 +21,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
 
     /**
      * 查询拼团商品详情
+     *
      * @param id
      * @return
      */
@@ -28,6 +29,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
 
     /**
      * 查询商品详情
+     *
      * @param id
      * @return
      */
@@ -35,43 +37,49 @@ public interface IPmsProductService extends IService<PmsProduct> {
 
     /**
      * 初始化商品到redis
+     *
      * @return
      */
     Object initGoodsRedis();
 
     /**
      * 获取商品详情 优先取redis
+     *
      * @param id
      * @return
      */
-    GoodsDetailResult getGoodsRedisById(Long id) ;
+    GoodsDetailResult getGoodsRedisById(Long id);
 
     /**
      * 获取推荐品牌
+     *
      * @param pageNum
      * @param pageSize
      * @return
      */
-    List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) ;
+    List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize);
 
     /**
      * 获取最新商品
+     *
      * @param pageNum
      * @param pageSize
      * @return
      */
-    List<PmsProduct> getNewProductList(int pageNum, int pageSize) ;
+    List<PmsProduct> getNewProductList(int pageNum, int pageSize);
 
     /**
      * 获取最热商品列表 按销量倒序
+     *
      * @param pageNum
      * @param pageSize
      * @return
      */
-    List<PmsProduct> getHotProductList(int pageNum, int pageSize) ;
+    List<PmsProduct> getHotProductList(int pageNum, int pageSize);
 
     /**
      * 今日添加的商品
+     *
      * @param id
      * @return
      */
@@ -79,6 +87,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
 
     /**
      * 拍卖商品详情
+     *
      * @param id
      * @return
      */
@@ -86,6 +95,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
 
     /**
      * 参与竞价
+     *
      * @param goods
      * @return
      */

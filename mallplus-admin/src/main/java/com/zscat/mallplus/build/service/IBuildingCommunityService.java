@@ -1,7 +1,7 @@
 package com.zscat.mallplus.build.service;
 
-import com.zscat.mallplus.build.entity.BuildingCommunity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.build.entity.BuildingCommunity;
 
 /**
  * <p>

@@ -49,21 +49,25 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     @Transactional
     int close(List<Long> ids, String note);
+
     @Transactional
     int singleDelivery(OmsOrderDeliveryParam deliveryParamList);
 
     /**
      * 订单日统计
+     *
      * @param date
      * @return
      */
     Map orderDayStatic(String date);
+
     /**
      * 订单月统计
+     *
      * @param date
      * @return
      */
     Map orderMonthStatic(String date);
 
-    Object dayStatic(String date,Integer type);
+    Object dayStatic(String date, Integer type);
 }

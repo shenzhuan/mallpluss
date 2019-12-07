@@ -39,8 +39,8 @@ public class PmsProductAttributeServiceImpl extends ServiceImpl<PmsProductAttrib
     @Transactional
     @Override
     public boolean saveAndUpdate(PmsProductAttribute entity) {
-        int count = productAttributeMapper.selectCount(new QueryWrapper<PmsProductAttribute>().eq("product_attribute_category_id",entity.getProductAttributeCategoryId()).eq("type",entity.getType()));
-        if (count>=3){
+        int count = productAttributeMapper.selectCount(new QueryWrapper<PmsProductAttribute>().eq("product_attribute_category_id", entity.getProductAttributeCategoryId()).eq("type", entity.getType()));
+        if (count >= 3) {
             throw new BusinessMallException("规格或者属性数量不能超过3个");
         }
         productAttributeMapper.insert(entity);

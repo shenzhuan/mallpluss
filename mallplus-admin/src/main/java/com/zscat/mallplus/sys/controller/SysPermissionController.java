@@ -166,7 +166,7 @@ public class SysPermissionController extends BaseController {
     @ResponseBody
     public Object findPermissions() {
         Long userId = getCurrentUser().getId();
-        if (getCurrentUser().getSupplyId()!=null && getCurrentUser().getSupplyId() == 1L) {
+        if (getCurrentUser().getSupplyId() != null && getCurrentUser().getSupplyId() == 1L) {
             return new CommonResult().success(ISysPermissionService.getAllPermission());
         }
         return new CommonResult().success(ISysPermissionService.getPermissionsByUserId(userId));
@@ -180,8 +180,6 @@ public class SysPermissionController extends BaseController {
         List<SysPermissionNode> permissionNodeList = ISysPermissionService.treeList();
         return new CommonResult().success(permissionNodeList);
     }
-
-
 
 
 }

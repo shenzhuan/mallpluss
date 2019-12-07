@@ -27,8 +27,9 @@ import java.util.UUID;
 @Component
 public class OssAliyunUtil {
 
-    @Resource(name="defaultOssAliyunField")
+    @Resource(name = "defaultOssAliyunField")
     private OssAliyunField defaultOssAliyunField;
+
     /**
      * 上传文件（选择默认的OSS配置）
      *
@@ -48,6 +49,7 @@ public class OssAliyunUtil {
 
     /**
      * 上传文件
+     *
      * @param suffix
      * @param inputStream
      * @return
@@ -55,6 +57,7 @@ public class OssAliyunUtil {
     public String upload(String suffix, InputStream inputStream) {
         return upload(defaultOssAliyunField, getKey(defaultOssAliyunField.getPrefix(), suffix), inputStream);
     }
+
     /**
      * 上传文件
      *
@@ -142,7 +145,7 @@ public class OssAliyunUtil {
      * @param key             文件名
      */
     public void delete(final String accessKeyId, final String accessKeySecret, final String bucketName,
-                              final String endpoint, final String key) {
+                       final String endpoint, final String key) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 删除Object
@@ -172,7 +175,7 @@ public class OssAliyunUtil {
      * @param keys            多个文件名的集合
      */
     public void delete(final String accessKeyId, final String accessKeySecret, final String bucketName,
-                              final String endpoint, final List<String> keys) {
+                       final String endpoint, final List<String> keys) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 删除Objects

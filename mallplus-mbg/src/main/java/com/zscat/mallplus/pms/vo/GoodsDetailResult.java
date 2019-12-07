@@ -30,9 +30,9 @@ public class GoodsDetailResult implements Serializable {
     @ApiModelProperty("优选专区和商品的关系")
     private List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList;
 
-    private List<PmsProductAttributeValue>  productCanShuValueList ;
+    private List<PmsProductAttributeValue> productCanShuValueList;
     private List<PmsProduct> typeGoodsList;
 
-    private  PmsProduct goods;
+    private PmsProduct goods;
     private SysStore storeInfo;
 }

@@ -168,20 +168,20 @@ public class UmsEmployInfo implements Serializable {
     @Override
     public String toString() {
         return "UmsEmployInfo{" +
-        ", id=" + id +
-        ", name=" + name +
-        ", age=" + age +
-        ", gender=" + gender +
-        ", hobby=" + hobby +
-        ", peoplenote=" + peoplenote +
-        ", phone=" + phone +
-        ", address=" + address +
-        ", guide1=" + guide1 +
-        ", guide=" + guide +
-        ", suggestion=" + suggestion +
-        ", guide2=" + guide2 +
-        ", createTime=" + createTime +
-        ", storeId=" + storeId +
-        "}";
+                ", id=" + id +
+                ", name=" + name +
+                ", age=" + age +
+                ", gender=" + gender +
+                ", hobby=" + hobby +
+                ", peoplenote=" + peoplenote +
+                ", phone=" + phone +
+                ", address=" + address +
+                ", guide1=" + guide1 +
+                ", guide=" + guide +
+                ", suggestion=" + suggestion +
+                ", guide2=" + guide2 +
+                ", createTime=" + createTime +
+                ", storeId=" + storeId +
+                "}";
     }
 }

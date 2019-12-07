@@ -78,11 +78,13 @@ public class BSmsController extends ApiBaseAction {
     public Object add(@RequestParam(value = "couponId", required = true) Long couponId) {
         return couponService.add(couponId);
     }
+
     @ApiOperation("批量领取指定优惠券")
     @PostMapping(value = "/batch.getcoupon")
     public Object addbatch(@RequestParam(value = "couponIds", required = true) String couponIds) {
         return couponService.addbatch(couponIds);
     }
+
     @ApiOperation("获取用户优惠券列表")
     @ApiImplicitParam(name = "useStatus", value = "优惠券筛选类型:0->未使用；1->已使用；2->已过期",
             allowableValues = "0,1,2", paramType = "query", dataType = "integer")
@@ -106,9 +108,9 @@ public class BSmsController extends ApiBaseAction {
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         List<SmsBasicMarking> basicMarkingList = basicMarkingService.matchGoodsBasicMarking(id);
         List<SmsBasicGifts> basicGiftsList = basicGiftsService.matchGoodsBasicGifts(id);
-        Map<String,Object> map = new HashMap<>();
-        map.put("basicMarkingList",basicMarkingList);
-        map.put("basicGiftsList",basicGiftsList);
+        Map<String, Object> map = new HashMap<>();
+        map.put("basicMarkingList", basicMarkingList);
+        map.put("basicGiftsList", basicGiftsList);
         return new CommonResult().success(map);
     }
 
@@ -134,7 +136,7 @@ public class BSmsController extends ApiBaseAction {
             Date endtime = DateUtil.strToDate(session.getEndTime(), "HH:mm:ss");
 
             Date starttime = DateUtil.strToDate(session.getStartTime(), "HH:mm:ss");
-            session.setStop(endtime.getTime()+nowT1+8*3600);
+            session.setStop(endtime.getTime() + nowT1 + 8 * 3600);
 
             if (nowT > endtime.getTime()) {
                 session.setState("已结束");
@@ -197,7 +199,7 @@ public class BSmsController extends ApiBaseAction {
                 product.setProductPrice(tempproduct.getPrice() != null ? tempproduct.getPrice() : BigDecimal.ZERO);
                 product.setFlashPromotionPrice(item.getFlashPromotionPrice());
                 product.setFlashPromotionCount(item.getFlashPromotionCount());
-                product.setPercent((double) (item.getFlashPromotionCount()*100/tempproduct.getStock()));
+                product.setPercent((double) (item.getFlashPromotionCount() * 100 / tempproduct.getStock()));
                 if (item.getFlashPromotionLimit() < 1) {
                     product.setFlashPromotionLimit(1);
                 } else {
@@ -206,7 +208,7 @@ public class BSmsController extends ApiBaseAction {
                 if (product.getProductPrice().compareTo(BigDecimal.ZERO) > 0 && item.getFlashPromotionCount() > 0) {
                     productAttrs.add(product);
                 }
-            }else {
+            } else {
                 smsFlashPromotionProductRelationService.removeById(item.getId());
             }
         }
@@ -224,13 +226,13 @@ public class BSmsController extends ApiBaseAction {
 
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, relation.getProductId()+"")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)){
-                log.info("redis缓存失效："+relation.getProductId());
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, relation.getProductId() + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods)) {
+                log.info("redis缓存失效：" + relation.getProductId());
                 goods = pmsProductService.getGoodsRedisById(relation.getProductId());
             }
         } catch (Exception e) {
-            log.info("redis缓存失效："+relation.getProductId());
+            log.info("redis缓存失效：" + relation.getProductId());
             goods = pmsProductService.getGoodsRedisById(relation.getProductId());
             e.printStackTrace();
         }
@@ -244,9 +246,9 @@ public class BSmsController extends ApiBaseAction {
             query.setMemberId(umsMember.getId());
             query.setType(1);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
-            }else{
+            } else {
                 map.put("favorite", false);
             }
         }
@@ -256,23 +258,22 @@ public class BSmsController extends ApiBaseAction {
     }
 
 
-
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
-        String key=Rediskey.GOODS_VIEWCOUNT_CODE+id;
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            viewCount=1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            viewCount = 1;
+            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         return viewCount;
     }

@@ -12,15 +12,12 @@ import java.math.BigDecimal;
 public class PaymentParam {
     //"balancepay"
     String trade_type;
-
-    private BigDecimal money;
-//
-    private Long orderId;
-//
+    //
     String return_url;
-
     String url;
-
+    private BigDecimal money;
+    //
+    private Long orderId;
 
 
 }

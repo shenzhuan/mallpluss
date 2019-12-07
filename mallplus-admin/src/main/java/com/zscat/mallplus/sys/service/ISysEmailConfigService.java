@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -17,7 +17,8 @@ public interface ISysEmailConfigService extends IService<SysEmailConfig> {
 
     /**
      * 发送邮件
-     * @param emailVo 邮件发送的内容
+     *
+     * @param emailVo     邮件发送的内容
      * @param emailConfig 邮件配置
      * @throws Exception /
      */

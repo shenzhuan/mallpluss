@@ -8,22 +8,22 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2019-12-02
-        测试
-*/
+ * @author mallplus
+ * @date 2019-12-02
+ * 测试
+ */
 
 @Data
 @TableName("sys_test")
 public class SysTest implements Serializable {
 
-    @TableField( "id")
+    @TableField("id")
     private Long id;
 
-    @TableField( "name")
+    @TableField("name")
     private String name;
 
-    @TableField( "create_time")
+    @TableField("create_time")
     private Date createTime;
 
 

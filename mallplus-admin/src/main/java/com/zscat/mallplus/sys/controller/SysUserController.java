@@ -18,7 +18,6 @@ import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -66,6 +65,10 @@ public class SysUserController extends ApiController {
     private SysPermissionMapper permissionMapper;
     @Resource
     private RedisService redisService;
+    @Resource
+    private UserCommunityRelateMapper userCommunityRelateMapper;
+    @Resource
+    private BuildingCommunityMapper buildingCommunityMapper;
 
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有用户列表")
     @ApiOperation("根据条件查询所有用户列表")
@@ -87,9 +90,9 @@ public class SysUserController extends ApiController {
     @PostMapping(value = "/register")
     public Object saveUser(@RequestBody SysUser entity) {
         try {
-            if (ValidatorUtils.empty(entity.getStoreId())){
+           /* if (ValidatorUtils.empty(entity.getStoreId())){
                 entity.setStoreId(UserUtils.getCurrentMember().getStoreId());
-            }
+            }*/
             if (sysUserService.saves(entity)) {
                 return new CommonResult().success();
             }
@@ -123,8 +126,8 @@ public class SysUserController extends ApiController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("用户id");
             }
-            SysUser user= sysUserService.getById(id);
-            if (user.getSupplyId()!=null && user.getSupplyId()==1){
+            SysUser user = sysUserService.getById(id);
+            if (user.getSupplyId() != null && user.getSupplyId() == 1) {
                 return new CommonResult().paramFailed("管理员账号不能删除");
             }
             if (sysUserService.removeById(id)) {
@@ -176,15 +179,20 @@ public class SysUserController extends ApiController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Object login(@RequestBody SysUser umsAdminLoginParam, BindingResult result) {
-        String token = sysUserService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
-        if (token == null) {
-            return new CommonResult().paramFailed("用户名或密码错误");
+        try {
+            String token = sysUserService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
+            if (token == null) {
+                return new CommonResult().paramFailed("用户名或密码错误");
+            }
+            Map<String, Object> tokenMap = new HashMap<>();
+            tokenMap.put("token", token);
+            tokenMap.put("tokenHead", tokenHead);
+            // tokenMap.put("userId", UserUtils.getCurrentMember().getId());
+            return new CommonResult().success(tokenMap);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
         }
-        Map<String, Object> tokenMap = new HashMap<>();
-        tokenMap.put("token", token);
-        tokenMap.put("tokenHead", tokenHead);
-        tokenMap.put("userId", UserUtils.getCurrentMember().getId());
-        return new CommonResult().success(tokenMap);
+
     }
 
     @SysLog(MODULE = "sys", REMARK = "获取当前登录用户信息")
@@ -210,7 +218,6 @@ public class SysUserController extends ApiController {
     public Object logout() {
         return new CommonResult().success(null);
     }
-
 
     @SysLog(MODULE = "sys", REMARK = "给用户分配角色")
     @ApiOperation("给用户分配角色")
@@ -248,10 +255,10 @@ public class SysUserController extends ApiController {
     public Object userRoleCheck(@RequestParam("adminId") Long adminId) {
         List<SysRole> roleList = sysUserService.getRoleListByUserId(adminId);
         List<SysRole> allroleList = roleService.list(new QueryWrapper<>());
-        if (roleList!=null && roleList.size()>0){
+        if (roleList != null && roleList.size() > 0) {
             for (SysRole a : allroleList) {
                 for (SysRole u : roleList) {
-                    if (u!=null && u.getId()!=null){
+                    if (u != null && u.getId() != null) {
                         if (a.getId().equals(u.getId())) {
                             a.setChecked(true);
                         }
@@ -285,7 +292,6 @@ public class SysUserController extends ApiController {
         return new CommonResult().success(permissionList);
     }
 
-
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/update/updateShowStatus")
     @ResponseBody
@@ -301,47 +307,43 @@ public class SysUserController extends ApiController {
 
     }
 
-
     @ApiOperation("修改密码")
     @RequestMapping(value = "/updatePassword")
     @ResponseBody
     @SysLog(MODULE = "sys", REMARK = "修改密码")
     public Object updatePassword(@RequestParam("password") String password,
-                                   @RequestParam("renewPassword") String renewPassword,
-                                   @RequestParam("newPassword") String newPassword) {
-        if (ValidatorUtils.empty(password)){
+                                 @RequestParam("renewPassword") String renewPassword,
+                                 @RequestParam("newPassword") String newPassword) {
+        if (ValidatorUtils.empty(password)) {
             return new CommonResult().failed("参数为空");
         }
-        if (ValidatorUtils.empty(renewPassword)){
+        if (ValidatorUtils.empty(renewPassword)) {
             return new CommonResult().failed("参数为空");
         }
-        if (ValidatorUtils.empty(newPassword)){
+        if (ValidatorUtils.empty(newPassword)) {
             return new CommonResult().failed("参数为空");
         }
-        if (!renewPassword.equals(newPassword)){
+        if (!renewPassword.equals(newPassword)) {
             return new CommonResult().failed("新密码不一致!");
         }
         try {
-            sysUserService.updatePassword(password,newPassword);
-        }catch (Exception e){
+            sysUserService.updatePassword(password, newPassword);
+        } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().success();
 
     }
 
-    @Resource
-    private UserCommunityRelateMapper userCommunityRelateMapper;
-    @Resource
-    private BuildingCommunityMapper buildingCommunityMapper;
     @SysLog(MODULE = "sys", REMARK = "获取用户的小区")
     @ApiOperation("获取相应角色权限")
     @RequestMapping(value = "/community/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public Object communityList(@PathVariable Long userId) {
-        List<UserCommunityRelate> permissionList = userCommunityRelateMapper.selectList(new QueryWrapper<UserCommunityRelate>().eq("user_id",userId));
+        List<UserCommunityRelate> permissionList = userCommunityRelateMapper.selectList(new QueryWrapper<UserCommunityRelate>().eq("user_id", userId));
         return new CommonResult().success(permissionList);
     }
+
     @SysLog(MODULE = "sys", REMARK = "获取用户的小区")
     @ApiOperation("获取相应角色权限")
     @RequestMapping(value = "/userCommunityRelate", method = RequestMethod.POST)
@@ -355,11 +357,11 @@ public class SysUserController extends ApiController {
     @RequestMapping(value = "/communityUser/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public Object communityUser(@PathVariable Long userId) {
-        List<UserCommunityRelate> permissionList = userCommunityRelateMapper.selectList(new QueryWrapper<UserCommunityRelate>().eq("user_id",userId));
+        List<UserCommunityRelate> permissionList = userCommunityRelateMapper.selectList(new QueryWrapper<UserCommunityRelate>().eq("user_id", userId));
         List<UserCommunityRelate> newList = new ArrayList<>();
-        for (UserCommunityRelate relate: permissionList){
+        for (UserCommunityRelate relate : permissionList) {
             BuildingCommunity community = buildingCommunityMapper.selectById(relate.getCommunityId());
-            if (community!=null){
+            if (community != null) {
                 relate.setName(community.getName());
                 newList.add(relate);
             }

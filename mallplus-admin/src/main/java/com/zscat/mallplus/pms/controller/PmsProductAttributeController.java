@@ -73,7 +73,7 @@ public class PmsProductAttributeController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttribute:create')")
     public Object savePmsProductAttribute(@RequestBody PmsProductAttribute entity) {
         try {
-            if (entity.getType().equals(null)){
+            if (entity.getType().equals(null)) {
                 entity.setType(0);
             }
             if (IPmsProductAttributeService.saveAndUpdate(entity)) {

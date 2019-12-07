@@ -5,7 +5,7 @@ import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zscat

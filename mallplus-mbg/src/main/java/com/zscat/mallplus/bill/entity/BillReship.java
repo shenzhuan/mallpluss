@@ -156,16 +156,16 @@ public class BillReship implements Serializable {
     @Override
     public String toString() {
         return "BillReship{" +
-        ", reshipId=" + reshipId +
-        ", orderId=" + orderId +
-        ", aftersalesId=" + aftersalesId +
-        ", userId=" + userId +
-        ", logiCode=" + logiCode +
-        ", logiNo=" + logiNo +
-        ", status=" + status +
-        ", memo=" + memo +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
+                ", reshipId=" + reshipId +
+                ", orderId=" + orderId +
+                ", aftersalesId=" + aftersalesId +
+                ", userId=" + userId +
+                ", logiCode=" + logiCode +
+                ", logiNo=" + logiNo +
+                ", status=" + status +
+                ", memo=" + memo +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                "}";
     }
 }

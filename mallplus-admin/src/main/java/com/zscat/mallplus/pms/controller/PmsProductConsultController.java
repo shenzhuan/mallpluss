@@ -50,7 +50,6 @@ public class PmsProductConsultController {
     }
 
 
-
     @SysLog(MODULE = "pms", REMARK = "删除产品咨询表")
     @ApiOperation("删除产品咨询表")
     @GetMapping(value = "/delete/{id}")

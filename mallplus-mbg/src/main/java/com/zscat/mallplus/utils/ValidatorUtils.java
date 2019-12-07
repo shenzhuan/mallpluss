@@ -177,8 +177,10 @@ public class ValidatorUtils {
         }
         return String.valueOf(d);
     }
+
     /**
      * 获取结束时间与当前的时间差
+     *
      * @param endTime
      * @return
      */
@@ -190,10 +192,10 @@ public class ValidatorUtils {
 
         long hours = (diff - days * (1000 * 60 * 60 * 24))
                 / (1000 * 60 * 60);    //小时
-        long mins = (diff - days * (1000 * 60 * 60 * 24)-hours * (1000 * 60 * 60))/(1000 * 60 );    //小时
+        long mins = (diff - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60);    //小时
         long sc = (diff - days * (1000 * 60 * 60 * 24) - hours
-                * (1000 * 60 * 60)-mins*(1000*60)) / (1000); // 秒
+                * (1000 * 60 * 60) - mins * (1000 * 60)) / (1000); // 秒
 
-        return new TimeSecound(days,  hours,  mins,  sc);
+        return new TimeSecound(days, hours, mins, sc);
     }
 }

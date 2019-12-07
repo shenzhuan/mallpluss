@@ -57,8 +57,8 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     private IUmsMemberService memberService;
 
 
-
-    /**timelineMapper
+    /**
+     * timelineMapper
      * 获取timeLine数据
      *
      * @return
@@ -71,11 +71,11 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     }
 
     private List<Timeline> genTimelineMonth(List<Timeline> timelineList) {
-        for(Timeline timeline : timelineList) {
+        for (Timeline timeline : timelineList) {
             List<TimelineMonth> timelineMonthList = new ArrayList<>();
             for (int i = Calendar.DECEMBER + 1; i > 0; i--) {
                 List<TimelinePost> postList = subjectMapper.listTimelinePost(timeline.getYear(), i);
-                if(CollectionUtils.isEmpty(postList)) {
+                if (CollectionUtils.isEmpty(postList)) {
                     continue;
                 }
                 TimelineMonth month = new TimelineMonth();
@@ -100,8 +100,8 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     }
 
     @Override
-    public int countByToday(Long id){
-       return subjectMapper.countByToday(id);
+    public int countByToday(Long id) {
+        return subjectMapper.countByToday(id);
     }
 
     @Transactional
@@ -109,23 +109,25 @@ public class CmsSubjectServiceImpl extends ServiceImpl<CmsSubjectMapper, CmsSubj
     public Object reward(Long aid, int coin) {
         try {
             UmsMember member = memberService.getNewCurrentMember();
-            if (member!=null && member.getBlance().compareTo(new BigDecimal(coin))<0){
+            if (member != null && member.getBlance().compareTo(new BigDecimal(coin)) < 0) {
                 return new CommonResult().failed("余额不够");
             }
             member.setBlance(member.getBlance().subtract(new BigDecimal(coin)));
             memberMapper.updateById(member);
             CmsSubject subject = subjectMapper.selectById(aid);
             UmsMember remember = memberMapper.selectById(subject.getMemberId());
-            if (remember!=null){
-                subject.setReward(subject.getReward()+coin);
+            if (remember != null) {
+                subject.setReward(subject.getReward() + coin);
                 subjectMapper.updateById(subject);
                 remember.setBlance(remember.getBlance().add(new BigDecimal(coin)));
                 memberMapper.updateById(remember);
                 UmsRewardLog log = new UmsRewardLog();
-                log.setCoin(coin);log.setSendMemberId(member.getId());
+                log.setCoin(coin);
+                log.setSendMemberId(member.getId());
                 log.setMemberIcon(member.getIcon());
                 log.setMemberNickName(member.getNickname());
-                log.setRecMemberId(remember.getId());log.setCreateTime(new Date());
+                log.setRecMemberId(remember.getId());
+                log.setCreateTime(new Date());
                 log.setObjid(aid);
                 rewardLogMapper.insert(log);
             }

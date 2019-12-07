@@ -57,7 +57,7 @@ class Sequence {
             mpid.append(name.split("@")[0]);
         }
 
-        return (long)(mpid.toString().hashCode() & '\uffff') % (maxWorkerId + 1L);
+        return (long) (mpid.toString().hashCode() & '\uffff') % (maxWorkerId + 1L);
     }
 
     protected static long getDatacenterId(long maxDatacenterId) {
@@ -71,7 +71,7 @@ class Sequence {
             } else {
                 byte[] mac = network.getHardwareAddress();
                 if (null != mac) {
-                    id = (255L & (long)mac[mac.length - 1] | 65280L & (long)mac[mac.length - 2] << 8) >> 6;
+                    id = (255L & (long) mac[mac.length - 1] | 65280L & (long) mac[mac.length - 2] << 8) >> 6;
                     id %= maxDatacenterId + 1L;
                 }
             }
@@ -116,7 +116,7 @@ class Sequence {
 
     protected long tilNextMillis(long lastTimestamp) {
         long timestamp;
-        for(timestamp = this.timeGen(); timestamp <= lastTimestamp; timestamp = this.timeGen()) {
+        for (timestamp = this.timeGen(); timestamp <= lastTimestamp; timestamp = this.timeGen()) {
         }
 
         return timestamp;

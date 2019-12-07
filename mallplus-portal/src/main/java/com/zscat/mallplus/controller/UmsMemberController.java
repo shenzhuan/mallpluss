@@ -116,5 +116,4 @@ public class UmsMemberController extends ApiBaseAction {
     }
 
 
-
 }

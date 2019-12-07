@@ -52,7 +52,7 @@ public class UmsMemberReceiveAddressController {
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
         address.setMemberId(memberService.getNewCurrentMember().getId());
-        if (address.getDefaultStatus()==1){
+        if (address.getDefaultStatus() == 1) {
             addressMapper.updateStatusByMember(address.getMemberId());
         }
         if (address != null && address.getId() != null) {
@@ -63,7 +63,8 @@ public class UmsMemberReceiveAddressController {
         if (count) {
             return new CommonResult().success(count);
         }
-        return new CommonResult().failed();    }
+        return new CommonResult().failed();
+    }
 
     @IgnoreAuth
     @ApiOperation("显示所有收货地址")
@@ -72,7 +73,7 @@ public class UmsMemberReceiveAddressController {
     public Object list() {
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
-            List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id",umsMember.getId()));
+            List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id", umsMember.getId()));
             return new CommonResult().success(addressList);
         }
         return new ArrayList<UmsMemberReceiveAddress>();

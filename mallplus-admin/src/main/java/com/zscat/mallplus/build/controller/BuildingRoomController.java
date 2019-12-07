@@ -49,6 +49,7 @@ public class BuildingRoomController {
     private IBuildingFloorService floorService;
     @Resource
     private IBuildingCommunityService communityService;
+
     @SysLog(MODULE = "build", REMARK = "根据条件查询所有房间表列表")
     @ApiOperation("根据条件查询所有房间表列表")
     @GetMapping(value = "/list")
@@ -71,8 +72,8 @@ public class BuildingRoomController {
     public Object withChilds(BuildingFloor entity) {
         try {
             List<BuildingFloor> floors = floorService.list(new QueryWrapper<>(entity));
-            for (BuildingFloor floor : floors){
-               List<BuildingRoom> list = IBuildingRoomService.list(new QueryWrapper<BuildingRoom>().eq("floor_id",floor.getId()));
+            for (BuildingFloor floor : floors) {
+                List<BuildingRoom> list = IBuildingRoomService.list(new QueryWrapper<BuildingRoom>().eq("floor_id", floor.getId()));
                 floor.setChildren(list);
             }
             return new CommonResult().success(floors);
@@ -81,21 +82,23 @@ public class BuildingRoomController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "build", REMARK = "保存房间表")
     @ApiOperation("保存房间表")
     @PostMapping(value = "/create")
 
     public Object saveBuildingRoom(@RequestBody BuildingRoom entity) {
         try {
-            if (ValidatorUtils.empty(entity.getUnitId())){
+            if (ValidatorUtils.empty(entity.getUnitId())) {
                 return new CommonResult().failed("请选择单元");
             }
             entity.setCreateTime(new Date());
             BuildingUnit unit = unitService.getById(entity.getUnitId());
             BuildingFloor floor = floorService.getById(unit.getFloorId());
-            entity.setFloorId(floor.getId());entity.setCommunityId(floor.getCommunityId());
+            entity.setFloorId(floor.getId());
+            entity.setCommunityId(floor.getCommunityId());
             BuildingCommunity community = communityService.getById(floor.getCommunityId());
-            entity.setRoomDesc(community.getName()+"-"+floor.getName()+"-"+unit.getUnitNum()+"-"+entity.getRoomNum());
+            entity.setRoomDesc(community.getName() + "-" + floor.getName() + "-" + unit.getUnitNum() + "-" + entity.getRoomNum());
             entity.setLayer(floor.getLayerCount());
             entity.setId(IdWorker.getId());
             if (IBuildingRoomService.save(entity)) {
@@ -173,6 +176,7 @@ public class BuildingRoomController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildingRoom entity) {
         // 模拟从数据库获取需要导出的数据

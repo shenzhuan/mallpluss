@@ -28,7 +28,6 @@ import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.PhoneUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
@@ -61,11 +60,12 @@ import java.util.Map;
 @Api(tags = "HomeController", description = "首页内容管理")
 public class BHomeController {
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
     @Autowired
     private IUmsMemberLocationService memberLocationService;
     @Autowired
@@ -78,20 +78,18 @@ public class BHomeController {
     private IOmsOrderService orderService;
     @Resource
     private ISmsCouponService couponService;
-
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
-
     @Resource
     private ISysNoticeService noticeService;
     @Resource
     private ISysMessageService messageService;
-
-
     @Resource
     private TbUserFromIdMapper fromIdMapper;
     @Resource
     private IPmsProductService pmsProductService;
+    @Resource
+    private IPmsSmallNaviconCategoryService IPmsSmallNaviconCategoryService;
 
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
@@ -99,20 +97,20 @@ public class BHomeController {
     @RequestMapping(value = "/pc.getpageconfig", method = RequestMethod.POST)
     public Object pc_home() {
         HomeContentResult contentResult = null;
-        String key = Rediskey.HOMEPAGEPC ;
+        String key = Rediskey.HOMEPAGEPC;
         try {
             String json = redisService.get(key);
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.contentPc();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.contentNew1();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
         return new CommonResult().success(contentResult);
     }
@@ -124,21 +122,21 @@ public class BHomeController {
     public Object contentNew1() {
 
         HomeContentResult contentResult = null;
-        String key = Rediskey.HOMEPAGE2 ;
+        String key = Rediskey.HOMEPAGE2;
         try {
             String json = redisService.get(key);
-            if (ValidatorUtils.notEmpty(json)){
+            if (ValidatorUtils.notEmpty(json)) {
                 contentResult = advertiseService.contentNew1();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
                 contentResult = advertiseService.contentNew1();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.contentNew1();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
         return new CommonResult().success(contentResult);
     }
@@ -148,21 +146,21 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/pages.getpageconfig", method = RequestMethod.POST)
     public Object contentNew() {
-        String key = Rediskey.HOMEPAGE ;
+        String key = Rediskey.HOMEPAGE;
         String json = redisService.get(key);
         Pages contentResult = null;
         try {
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.contentNew();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,2);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 2);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(json, Pages.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.contentNew();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,2);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 2);
         }
 
         return new CommonResult().success(contentResult);
@@ -173,10 +171,10 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/share", method = RequestMethod.POST)
     public Object share() {
-        Map<String,String> data = new HashedMap();
-        data.put("img","http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
-        data.put("title","mallplus");
-        data.put("synopsis","mallplus");
+        Map<String, String> data = new HashedMap();
+        data.put("img", "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
+        data.put("title", "mallplus");
+        data.put("synopsis", "mallplus");
         return new CommonResult().success(data);
     }
 
@@ -188,6 +186,7 @@ public class BHomeController {
 
         return new Configs();
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @PostMapping(value = "/user.reg")
@@ -209,8 +208,9 @@ public class BHomeController {
             return new CommonResult().validateFailed("手机验证码为空");
         }
 
-        return memberService.register(phone, password, confimpassword, authCode,invitecode);
+        return memberService.register(phone, password, confimpassword, authCode, invitecode);
     }
+
     @IgnoreAuth
     @ApiOperation(value = "登录以后返回token")
     @PostMapping(value = "/userLogin")
@@ -229,7 +229,6 @@ public class BHomeController {
         }
 
     }
-
 
     @ApiOperation("修改密码")
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
@@ -256,7 +255,7 @@ public class BHomeController {
         }
         try {
 
-            Map<String, Object> token = memberService.appLogin(openid, sex,headimgurl,unionid,nickname,city,source);
+            Map<String, Object> token = memberService.appLogin(openid, sex, headimgurl, unionid, nickname, city, source);
             if (token.get("token") == null) {
                 return new CommonResult().validateFailed("用户名或密码错误");
             }
@@ -268,6 +267,7 @@ public class BHomeController {
         }
 
     }
+
     @IgnoreAuth
     @ApiOperation(value = "手机号 密码登录")
     @PostMapping(value = "/user.login")
@@ -293,6 +293,7 @@ public class BHomeController {
         }
 
     }
+
     @IgnoreAuth
     @ApiOperation(value = "手机号 密码登录")
     @PostMapping(value = "/user.logout")
@@ -341,9 +342,9 @@ public class BHomeController {
     public Object userInfo() {
         UmsMemberInfoDetail detail = new UmsMemberInfoDetail();
         UmsMember umsMember = memberService.getNewCurrentMember();
-        if (umsMember!=null && umsMember.getId()!=null){
+        if (umsMember != null && umsMember.getId() != null) {
             umsMember = memberService.getById(umsMember.getId());
-            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",umsMember.getId()));
+            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", umsMember.getId()));
             detail.setHistories(histories);
             detail.setMember(umsMember);
             return new CommonResult().success(detail);
@@ -374,7 +375,6 @@ public class BHomeController {
         }
     }
 
-
     /**
      * banner
      *
@@ -383,7 +383,7 @@ public class BHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @PostMapping("/advert.getAdvertList")
-    public Object bannerList( SmsHomeAdvertise advertise) {
+    public Object bannerList(SmsHomeAdvertise advertise) {
         advertise.setStatus(1);
         return new CommonResult().success(advertiseService.list(new QueryWrapper<>(advertise)));
     }
@@ -400,6 +400,7 @@ public class BHomeController {
         List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
         return new CommonResult().success(bannerList);
     }
+
     /**
      * 获取广告
      *
@@ -424,9 +425,6 @@ public class BHomeController {
         return new CommonResult().success(productResult);
     }
 
-    @Autowired
-    OssAliyunUtil aliyunOSSUtil;
-
     @IgnoreAuth
     @PostMapping("/upload")
     @ApiOperation("上传文件")
@@ -447,7 +445,6 @@ public class BHomeController {
         return new CommonResult().success(stringBuffer);
     }
 
-
     @IgnoreAuth
     @ApiOperation("首页秒杀活动")
     @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
@@ -457,15 +454,13 @@ public class BHomeController {
         return new CommonResult().success(contentResult);
 
     }
-    @Resource
-    private IPmsSmallNaviconCategoryService IPmsSmallNaviconCategoryService;
 
     @SysLog(MODULE = "pms", REMARK = "查询pms_small_navicon_category表")
     @ApiOperation("查询pms_small_navicon_category表")
     @PostMapping(value = "/home.navlist")
     public Object navlist() {
         try {
-            return new CommonResult().success(IPmsSmallNaviconCategoryService.list( new QueryWrapper<>()));
+            return new CommonResult().success(IPmsSmallNaviconCategoryService.list(new QueryWrapper<>()));
         } catch (Exception e) {
             log.error("分页获取pms_small_navicon_category列表：%s", e.getMessage(), e);
         }
@@ -482,6 +477,7 @@ public class BHomeController {
         List<CmsSubject> subjectList = advertiseService.getRecommendSubjectList(pageSize, pageNum);
         return new CommonResult().success(subjectList);
     }
+
     /**
      * 提交小程序推送formid
      *
@@ -500,13 +496,13 @@ public class BHomeController {
         if (ValidatorUtils.empty(formId)) {
             return new CommonResult().validateFailed("前置参数错误，formId不能为空");
         }
-        if ("the formId is a mock one".equals(formId)){
+        if ("the formId is a mock one".equals(formId)) {
             return new CommonResult().success("添加成功");
         }
         entity.setFormId(formId);
         entity.setUserId(memberService.getNewCurrentMember().getId());
         //校验formId是否已经存在
-        if(fromIdMapper.selectCount(new QueryWrapper<>(entity))>0) {
+        if (fromIdMapper.selectCount(new QueryWrapper<>(entity)) > 0) {
             return new CommonResult().validateFailed("前置参数错误，formId已经存在 formId：" + formId);
         }
         entity.setStatus(1);
@@ -522,7 +518,7 @@ public class BHomeController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        return new CommonResult().success(pmsProductService.getRecommendBrandList(1,1));
+        return new CommonResult().success(pmsProductService.getRecommendBrandList(1, 1));
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询首页新品精品、热门、首发列表")
@@ -535,16 +531,16 @@ public class BHomeController {
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
         List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
         List<PmsProduct> list = new ArrayList<>();
-        if (type==1){
-            list = pmsProductService.getHotProductList(1,100);
-        }else  if (type==2){
-            list = advertiseService.getSaleProductList(1,100);
-        }else  if (type==1){
-            list = pmsProductService.getNewProductList(1,100);
+        if (type == 1) {
+            list = pmsProductService.getHotProductList(1, 100);
+        } else if (type == 2) {
+            list = advertiseService.getSaleProductList(1, 100);
+        } else if (type == 1) {
+            list = pmsProductService.getNewProductList(1, 100);
         }
-        Map<String,Object> map = new HashedMap();
-        map.put("banner",banner);
-        map.put("list",list);
+        Map<String, Object> map = new HashedMap();
+        map.put("banner", banner);
+        map.put("list", list);
         return new CommonResult().success(map);
     }
 

@@ -62,5 +62,4 @@ public class OmsOrderOperateHistory extends BaseEntity implements Serializable {
     private String note;
 
 
-
 }

@@ -39,6 +39,10 @@ import java.util.List;
 public class SmsGroupController {
     @Resource
     private ISmsGroupService ISmsGroupService;
+    @Resource
+    private IUmsMemberService memberService;
+    @Resource
+    private SmsGroupMemberMapper groupMemberMapper;
 
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
@@ -56,22 +60,19 @@ public class SmsGroupController {
         }
         return new CommonResult().failed();
     }
-    @Resource
-    private IUmsMemberService memberService;
-    @Resource
-    private SmsGroupMemberMapper groupMemberMapper;
+
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/listGroupMember")
     public Object listGroupMember(SmsGroupMember entity,
-                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                  @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             List<SmsGroupMember> list = new ArrayList<>();
-            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id",entity.getGroupId()));
-            for (SmsGroupMember groupMember : groupMembers){
-                if (ValidatorUtils.notEmpty(groupMember.getMemberId()) ){
+            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", entity.getGroupId()));
+            for (SmsGroupMember groupMember : groupMembers) {
+                if (ValidatorUtils.notEmpty(groupMember.getMemberId())) {
                     List<String> ids = Arrays.asList(groupMember.getMemberId().split(","));
                     groupMember.setList((List<UmsMember>) memberService.listByIds(ids));
                     list.add(groupMember);

@@ -14,6 +14,9 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Autowired
     GeneratorMapper generatorMapper;
 
+    public static void main(String[] args) {
+        System.out.println("http://localhost:8080/cms/CmsSubjectCategory/list".replace("//", "a").indexOf("/") + 1);
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -29,9 +32,5 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             }
         }*/
 
-    }
-
-    public static void main(String[] args) {
-        System.out.println( "http://localhost:8080/cms/CmsSubjectCategory/list".replace("//","a").indexOf("/") + 1);
     }
 }

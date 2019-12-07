@@ -154,16 +154,16 @@ public class SmsDetailedCommission implements Serializable {
     @Override
     public String toString() {
         return "SmsDetailedCommission{" +
-        ", id=" + id +
-        ", userid=" + userid +
-        ", sNo=" + sNo +
-        ", money=" + money +
-        ", sMoney=" + sMoney +
-        ", status=" + status +
-        ", addtime=" + addtime +
-        ", type=" + type +
-        ", Referee=" + Referee +
-        ", recycle=" + recycle +
-        "}";
+                ", id=" + id +
+                ", userid=" + userid +
+                ", sNo=" + sNo +
+                ", money=" + money +
+                ", sMoney=" + sMoney +
+                ", status=" + status +
+                ", addtime=" + addtime +
+                ", type=" + type +
+                ", Referee=" + Referee +
+                ", recycle=" + recycle +
+                "}";
     }
 }

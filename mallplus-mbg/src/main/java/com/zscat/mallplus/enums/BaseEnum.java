@@ -1,4 +1,3 @@
-
 package com.zscat.mallplus.enums;
 
 public interface BaseEnum<K> {

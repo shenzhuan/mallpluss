@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -44,8 +44,8 @@ public class BuildWuyePriceController {
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('build:wuyePrice:read')")
     public Object getBuildWuyePriceByPage(BuildWuyePrice entity,
-                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IBuildWuyePriceService.page(new Page<BuildWuyePrice>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -61,11 +61,11 @@ public class BuildWuyePriceController {
     @PreAuthorize("hasAuthority('build:wuyePrice:create')")
     public Object saveBuildWuyePrice(@RequestBody BuildWuyePrice entity) {
         try {
-            if (ValidatorUtils.empty(entity.getAmount())||ValidatorUtils.empty(entity.getPrice())){
+            if (ValidatorUtils.empty(entity.getAmount()) || ValidatorUtils.empty(entity.getPrice())) {
                 return new CommonResult().failed("请输入价格");
             }
-            BuildingRoom room =IBuildingRoomService.getById(entity.getRoomId());
-            if (room!=null && room.getRoomDesc()!=null){
+            BuildingRoom room = IBuildingRoomService.getById(entity.getRoomId());
+            if (room != null && room.getRoomDesc() != null) {
                 entity.setRoomDesc(room.getRoomDesc());
             }
             entity.setCreateDate(new Date());
@@ -145,6 +145,7 @@ public class BuildWuyePriceController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildWuyePrice entity) {
         // 模拟从数据库获取需要导出的数据

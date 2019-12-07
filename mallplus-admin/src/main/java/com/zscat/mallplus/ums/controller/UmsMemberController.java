@@ -111,7 +111,8 @@ public class UmsMemberController {
                                    @RequestParam("blance") BigDecimal blance) {
         try {
             UmsMember entity = new UmsMember();
-            entity.setId(id);entity.setBlance(blance);
+            entity.setId(id);
+            entity.setBlance(blance);
             UmsMember member = IUmsMemberService.getById(entity.getId());
             entity.setBlance(entity.getBlance().add(member.getBlance()));
             UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
@@ -142,7 +143,8 @@ public class UmsMemberController {
         try {
 
             UmsMember entity = new UmsMember();
-            entity.setId(id);entity.setIntegration(integration);
+            entity.setId(id);
+            entity.setIntegration(integration);
             UmsMember member = IUmsMemberService.getById(entity.getId());
 
             entity.setIntegration(entity.getIntegration() + member.getIntegration());
@@ -151,7 +153,7 @@ public class UmsMemberController {
             history.setChangeCount(entity.getIntegration());
             history.setCreateTime(new Date());
             history.setChangeType(AllEnum.ChangeType.Add.code());
-            history.setOperateNote("后台积分充值:"+integration);
+            history.setOperateNote("后台积分充值:" + integration);
             history.setSourceType(AllEnum.ChangeSource.admin.code());
             history.setOperateMan(UserUtils.getCurrentMember().getId() + "");
             umsIntegrationChangeHistoryService.insert(history);

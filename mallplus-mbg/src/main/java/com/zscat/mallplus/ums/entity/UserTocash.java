@@ -202,19 +202,19 @@ public class UserTocash implements Serializable {
     @Override
     public String toString() {
         return "UserTocash{" +
-        ", id=" + id +
-        ", userId=" + userId +
-        ", money=" + money +
-        ", bankName=" + bankName +
-        ", bankCode=" + bankCode +
-        ", bankAreaId=" + bankAreaId +
-        ", accountBank=" + accountBank +
-        ", accountName=" + accountName +
-        ", cardNumber=" + cardNumber +
-        ", withdrawals=" + withdrawals +
-        ", type=" + type +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
+                ", id=" + id +
+                ", userId=" + userId +
+                ", money=" + money +
+                ", bankName=" + bankName +
+                ", bankCode=" + bankCode +
+                ", bankAreaId=" + bankAreaId +
+                ", accountBank=" + accountBank +
+                ", accountName=" + accountName +
+                ", cardNumber=" + cardNumber +
+                ", withdrawals=" + withdrawals +
+                ", type=" + type +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                "}";
     }
 }

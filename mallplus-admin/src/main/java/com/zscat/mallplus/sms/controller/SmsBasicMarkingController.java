@@ -75,39 +75,39 @@ public class SmsBasicMarkingController {
 
     private void validateParam(@RequestBody SmsBasicMarking entity) {
         // 活动商品  1 按类别  2 部分商品
-        if (ValidatorUtils.empty(entity.getActiviGoods())){
+        if (ValidatorUtils.empty(entity.getActiviGoods())) {
             entity.setActiviGoods(3);
         }
-        if (ValidatorUtils.empty(entity.getActiviUser())){
+        if (ValidatorUtils.empty(entity.getActiviUser())) {
             entity.setActiviUser(1);
         }
-        if (ValidatorUtils.empty(entity.getSmallType())){
+        if (ValidatorUtils.empty(entity.getSmallType())) {
             entity.setSmallType(1);
         }
-        if (entity.getActiviGoods()==1){
-            if (ValidatorUtils.notEmpty(entity.getProductCategoryRelationList())){
+        if (entity.getActiviGoods() == 1) {
+            if (ValidatorUtils.notEmpty(entity.getProductCategoryRelationList())) {
                 entity.setGoodsDs(JsonUtil.objectToJson(entity.getProductCategoryRelationList()));
             }
-        }else if (entity.getActiviGoods()==2){
-            if (ValidatorUtils.notEmpty(entity.getProductRelationList())){
+        } else if (entity.getActiviGoods() == 2) {
+            if (ValidatorUtils.notEmpty(entity.getProductRelationList())) {
                 entity.setGoodsDs(JsonUtil.objectToJson(entity.getProductRelationList()));
             }
-        }else {
+        } else {
             entity.setGoodsDs(null);
         }
 
-        if (entity.getActiviUser()==2){
-            if (ValidatorUtils.notEmpty(entity.getMemberLevelList())){
+        if (entity.getActiviUser() == 2) {
+            if (ValidatorUtils.notEmpty(entity.getMemberLevelList())) {
                 entity.setUserLevel(JsonUtil.objectToJson(entity.getMemberLevelList()));
             }
-        }else {
+        } else {
             entity.setUserLevel(null);
         }
-        if (entity.getSmallType()==1) {
+        if (entity.getSmallType() == 1) {
             if (ValidatorUtils.notEmpty(entity.getActrule())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule()));
             }
-        }else  {
+        } else {
             if (ValidatorUtils.notEmpty(entity.getActrule1())) {
                 entity.setRules(JsonUtil.objectToJson(entity.getActrule1()));
             }
@@ -161,30 +161,30 @@ public class SmsBasicMarkingController {
             }
             SmsBasicMarking entity = ISmsBasicMarkingService.getById(id);
             // 活动商品  1 按类别  2 部分商品
-            if (entity.getActiviGoods()==1){
-                if (ValidatorUtils.notEmpty(entity.getGoodsDs())){
+            if (entity.getActiviGoods() == 1) {
+                if (ValidatorUtils.notEmpty(entity.getGoodsDs())) {
                     entity.setProductCategoryRelationList(JsonUtil.jsonToList(entity.getGoodsDs(), BeanKv.class));
                 }
             }
-            if (entity.getActiviGoods()==2){
-                if (ValidatorUtils.notEmpty(entity.getGoodsDs())){
+            if (entity.getActiviGoods() == 2) {
+                if (ValidatorUtils.notEmpty(entity.getGoodsDs())) {
                     entity.setProductRelationList(JsonUtil.jsonToList(entity.getGoodsDs(), BeanKv.class));
 
                 }
             }
-            if (entity.getActiviUser()==2){
-                if (ValidatorUtils.notEmpty(entity.getUserLevel())){
+            if (entity.getActiviUser() == 2) {
+                if (ValidatorUtils.notEmpty(entity.getUserLevel())) {
                     entity.setMemberLevelList(JsonUtil.jsonToList(entity.getUserLevel(), BeanKv.class));
                 }
             }
-            if (entity.getSmallType()==1) {
+            if (entity.getSmallType() == 1) {
                 if (ValidatorUtils.notEmpty(entity.getRules())) {
-                    entity.setActrule(JsonUtil.jsonToList(entity.getRules(),BasicRuls.class));
+                    entity.setActrule(JsonUtil.jsonToList(entity.getRules(), BasicRuls.class));
                 }
             }
-            if (entity.getSmallType()==2) {
+            if (entity.getSmallType() == 2) {
                 if (ValidatorUtils.notEmpty(entity.getRules())) {
-                    entity.setActrule1(JsonUtil.jsonToList(entity.getRules(),BasicRuls.class));
+                    entity.setActrule1(JsonUtil.jsonToList(entity.getRules(), BasicRuls.class));
                 }
             }
             return new CommonResult().success(entity);
@@ -208,14 +208,15 @@ public class SmsBasicMarkingController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("批量上下架")
     @RequestMapping(value = "/publishStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量上下架")
-    public Object updatePublishStatus(@RequestParam("id") Long  id,
+    public Object updatePublishStatus(@RequestParam("id") Long id,
                                       @RequestParam("status") Integer status,
                                       @RequestParam("bigType") Integer bigType) {
-        int count = ISmsBasicMarkingService.updateStatus(id, status,bigType);
+        int count = ISmsBasicMarkingService.updateStatus(id, status, bigType);
         return new CommonResult().success(count);
     }
 }

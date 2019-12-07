@@ -236,22 +236,22 @@ public class SmsConfigure implements Serializable {
     @Override
     public String toString() {
         return "SmsConfigure{" +
-        ", id=" + id +
-        ", name=" + name +
-        ", color=" + color +
-        ", size=" + size +
-        ", costprice=" + costprice +
-        ", price=" + price +
-        ", yprice=" + yprice +
-        ", img=" + img +
-        ", pid=" + pid +
-        ", num=" + num +
-        ", unit=" + unit +
-        ", bargainPrice=" + bargainPrice +
-        ", status=" + status +
-        ", attribute=" + attribute +
-        ", recycle=" + recycle +
-        ", totalNum=" + totalNum +
-        "}";
+                ", id=" + id +
+                ", name=" + name +
+                ", color=" + color +
+                ", size=" + size +
+                ", costprice=" + costprice +
+                ", price=" + price +
+                ", yprice=" + yprice +
+                ", img=" + img +
+                ", pid=" + pid +
+                ", num=" + num +
+                ", unit=" + unit +
+                ", bargainPrice=" + bargainPrice +
+                ", status=" + status +
+                ", attribute=" + attribute +
+                ", recycle=" + recycle +
+                ", totalNum=" + totalNum +
+                "}";
     }
 }

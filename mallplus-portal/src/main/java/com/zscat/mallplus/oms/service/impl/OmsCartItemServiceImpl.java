@@ -8,7 +8,6 @@ import com.zscat.mallplus.oms.mapper.OmsCartItemMapper;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.oms.vo.CartPromotionItem;
-import com.zscat.mallplus.oms.vo.StoreCart;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductFullReduction;
 import com.zscat.mallplus.pms.entity.PmsProductLadder;
@@ -123,7 +122,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
         List<OmsCartItem> cartItemList = list(memberId, ids);
         List<CartPromotionItem> cartPromotionItemList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(cartItemList)) {
-         //   cartPromotionItemList = this.calcCartPromotion(cartItemList);
+            //   cartPromotionItemList = this.calcCartPromotion(cartItemList);
         }
         return cartItemList;
     }
@@ -162,7 +161,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public int clear(Long memberId) {
-        return cartItemMapper.delete(new QueryWrapper<OmsCartItem>().eq("member_id",memberId));
+        return cartItemMapper.delete(new QueryWrapper<OmsCartItem>().eq("member_id", memberId));
     }
 
     @Override
@@ -195,7 +194,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
 
     @Override
     public List<OmsCartItem> calcCartPromotion(List<OmsCartItem> cartItemList) {
-        if (cartItemList==null && cartItemList.size()<1){
+        if (cartItemList == null && cartItemList.size() < 1) {
             throw new ApiMallPlusException("订单已提交");
         }
 
@@ -257,9 +256,9 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
             cartPromotionItem.setPromotionMessage("无优惠");
             cartPromotionItem.setReduceAmount(new BigDecimal(0));
             PmsSkuStock skuStock = getOriginalPrice(promotionProduct, item.getProductSkuId());
-            if (ValidatorUtils.notEmpty(skuStock)){
+            if (ValidatorUtils.notEmpty(skuStock)) {
                 cartPromotionItem.setRealStock(skuStock.getStock() - skuStock.getLockStock());
-            }else{
+            } else {
                 PmsProduct pmsProduct = pmsProductMapper.selectById(item.getProductId());
                 cartPromotionItem.setRealStock(pmsProduct.getStock());
             }
@@ -369,17 +368,17 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
     }
 
     @Override
-    public Integer countCart(Long id){
+    public Integer countCart(Long id) {
         return cartItemMapper.countCart(id);
     }
 
     @Override
     public Map<String, List<OmsCartItem>> listStoreCart(Long id) {
-        List<OmsCartItem> list = cartItemMapper.selectList(new QueryWrapper<OmsCartItem>().eq("member_id",id));
-        for (OmsCartItem item : list){
-            if (ValidatorUtils.notEmpty(item.getProductSkuId())){
+        List<OmsCartItem> list = cartItemMapper.selectList(new QueryWrapper<OmsCartItem>().eq("member_id", id));
+        for (OmsCartItem item : list) {
+            if (ValidatorUtils.notEmpty(item.getProductSkuId())) {
                 item.setSkuStock(pmsSkuStockService.getById(item.getProductSkuId()));
-            }else {
+            } else {
                 item.setProduct(pmsProductMapper.selectById(item.getProductId()));
             }
         }
@@ -393,7 +392,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
             storeCartList.add(storeCart);
         }*/
 
-        return  map;
+        return map;
 
     }
 }

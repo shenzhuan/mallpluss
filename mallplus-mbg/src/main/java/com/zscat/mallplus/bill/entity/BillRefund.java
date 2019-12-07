@@ -183,18 +183,18 @@ public class BillRefund implements Serializable {
     @Override
     public String toString() {
         return "BillRefund{" +
-        ", refundId=" + refundId +
-        ", aftersalesId=" + aftersalesId +
-        ", money=" + money +
-        ", userId=" + userId +
-        ", sourceId=" + sourceId +
-        ", type=" + type +
-        ", paymentCode=" + paymentCode +
-        ", tradeNo=" + tradeNo +
-        ", status=" + status +
-        ", memo=" + memo +
-        ", ctime=" + ctime +
-        ", utime=" + utime +
-        "}";
+                ", refundId=" + refundId +
+                ", aftersalesId=" + aftersalesId +
+                ", money=" + money +
+                ", userId=" + userId +
+                ", sourceId=" + sourceId +
+                ", type=" + type +
+                ", paymentCode=" + paymentCode +
+                ", tradeNo=" + tradeNo +
+                ", status=" + status +
+                ", memo=" + memo +
+                ", ctime=" + ctime +
+                ", utime=" + utime +
+                "}";
     }
 }

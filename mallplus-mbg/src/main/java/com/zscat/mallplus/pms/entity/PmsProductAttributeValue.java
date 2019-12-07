@@ -41,19 +41,19 @@ public class PmsProductAttributeValue extends BaseEntity implements Serializable
     private String value;
     private String name;
     // 1 规格 2 参数
-    private Integer type ;
+    private Integer type;
     @TableField(exist = false)
     private List pics;
 
     public List getPics() {
-        if (ValidatorUtils.notEmpty(value)){
+        if (ValidatorUtils.notEmpty(value)) {
             this.pics = Arrays.asList(value.split(","));
         }
         return pics;
     }
 
     public void setPics(List pics) {
-        if (ValidatorUtils.notEmpty(value)){
+        if (ValidatorUtils.notEmpty(value)) {
             this.pics = Arrays.asList(value.split(","));
         }
     }

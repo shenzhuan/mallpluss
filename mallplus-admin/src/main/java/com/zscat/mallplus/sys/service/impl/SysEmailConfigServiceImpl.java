@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -25,8 +25,8 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void send(EmailVo emailVo, SysEmailConfig emailConfig){
-        if(emailConfig == null){
+    public void send(EmailVo emailVo, SysEmailConfig emailConfig) {
+        if (emailConfig == null) {
             throw new BusinessMallException("请先配置，再操作");
         }
         // 封装
@@ -40,7 +40,7 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
         } catch (Exception e) {
             throw new BusinessMallException(e.getMessage());
         }
-        account.setFrom(emailConfig.getUser()+"<"+emailConfig.getFromUser()+">");
+        account.setFrom(emailConfig.getUser() + "<" + emailConfig.getFromUser() + ">");
         // ssl方式发送
         account.setSslEnable(true);
         String content = emailVo.getContent();
@@ -55,7 +55,7 @@ public class SysEmailConfigServiceImpl extends ServiceImpl<SysEmailConfigMapper,
                     //关闭session
                     .setUseGlobalSession(false)
                     .send();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BusinessMallException(e.getMessage());
         }
     }

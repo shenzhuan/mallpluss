@@ -5,7 +5,7 @@ import com.zscat.mallplus.ums.entity.UmsRewardLog;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

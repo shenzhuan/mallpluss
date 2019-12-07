@@ -1,9 +1,9 @@
 package com.zscat.mallplus.build.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.build.entity.BuildAdv;
 import com.zscat.mallplus.build.mapper.BuildAdvMapper;
 import com.zscat.mallplus.build.service.IBuildAdvService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

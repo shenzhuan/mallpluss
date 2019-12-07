@@ -28,6 +28,7 @@ public class UmsMemberReceiveAddressServiceImpl extends ServiceImpl<UmsMemberRec
     private UmsMemberReceiveAddressMapper addressMapper;
     @Autowired
     private IUmsMemberService memberService;
+
     @Override
     public UmsMemberReceiveAddress getDefaultItem() {
 

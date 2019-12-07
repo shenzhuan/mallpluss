@@ -2,10 +2,11 @@ package com.zscat.mallplus.sys.util;
 
 /**
  * 支付状态
+ *
  * @author zhengjie
  * @date 2018/08/01 16:45:43
  */
-public enum  AliPayStatusEnum {
+public enum AliPayStatusEnum {
 
     FINISHED("交易成功", "TRADE_FINISHED"),
 

@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -41,8 +41,8 @@ public class BuildTypePriceController {
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('build:typePrice:read')")
     public Object getBuildTypePriceByPage(BuildTypePrice entity,
-                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IBuildTypePriceService.page(new Page<BuildTypePrice>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -134,6 +134,7 @@ public class BuildTypePriceController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildTypePrice entity) {
         // 模拟从数据库获取需要导出的数据

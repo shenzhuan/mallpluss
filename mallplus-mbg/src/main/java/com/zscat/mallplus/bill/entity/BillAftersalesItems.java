@@ -183,18 +183,18 @@ public class BillAftersalesItems implements Serializable {
     @Override
     public String toString() {
         return "BillAftersalesItems{" +
-        ", id=" + id +
-        ", aftersalesId=" + aftersalesId +
-        ", orderItemsId=" + orderItemsId +
-        ", goodsId=" + goodsId +
-        ", productId=" + productId +
-        ", sn=" + sn +
-        ", bn=" + bn +
-        ", name=" + name +
-        ", imageUrl=" + imageUrl +
-        ", nums=" + nums +
-        ", addon=" + addon +
-        ", utime=" + utime +
-        "}";
+                ", id=" + id +
+                ", aftersalesId=" + aftersalesId +
+                ", orderItemsId=" + orderItemsId +
+                ", goodsId=" + goodsId +
+                ", productId=" + productId +
+                ", sn=" + sn +
+                ", bn=" + bn +
+                ", name=" + name +
+                ", imageUrl=" + imageUrl +
+                ", nums=" + nums +
+                ", addon=" + addon +
+                ", utime=" + utime +
+                "}";
     }
 }

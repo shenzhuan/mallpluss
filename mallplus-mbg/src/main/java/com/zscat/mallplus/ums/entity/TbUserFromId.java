@@ -132,14 +132,14 @@ public class TbUserFromId implements Serializable {
     @Override
     public String toString() {
         return "TbUserFromId{" +
-        ", id=" + id +
-        ", userId=" + userId +
-        ", formId=" + formId +
-        ", source=" + source +
-        ", status=" + status +
-        ", createTime=" + createTime +
-        ", updateTime=" + updateTime +
-        ", storeId=" + storeId +
-        "}";
+                ", id=" + id +
+                ", userId=" + userId +
+                ", formId=" + formId +
+                ", source=" + source +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", storeId=" + storeId +
+                "}";
     }
 }

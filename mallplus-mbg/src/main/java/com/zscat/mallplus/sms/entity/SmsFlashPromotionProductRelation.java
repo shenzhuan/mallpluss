@@ -73,5 +73,5 @@ public class SmsFlashPromotionProductRelation extends BaseEntity implements Seri
     @TableField(exist = false)
     private BigDecimal productPrice;
     @TableField(exist = false)
-    private Double percent ;
+    private Double percent;
 }

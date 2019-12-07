@@ -35,7 +35,6 @@ import com.zscat.mallplus.vo.*;
 import com.zscat.mallplus.vo.pms.CateProduct;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,21 +105,27 @@ public class AppletMemberController extends ApiBaseAction {
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin1")
     public Object loginByWeixinNew(AppletLoginParam param) {
-       /* AppletLoginParam appletLoginParam = new AppletLoginParam();
-        BeanUtils.copyProperties(param,appletLoginParam);
-        appletLoginParam.setUserInfo(JSONObject.toJSONString(param.getUserInfo()));*/
-        return memberService.loginByWeixin(param);
+        try {
+            return memberService.loginByWeixin(param);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+
 
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin")
-    public Object loginByWeixin(@RequestBody  AppletLoginParam param) {
-        return memberService.loginByWeixin(param);
+    public Object loginByWeixin(@RequestBody AppletLoginParam param) {
+        try {
+            return memberService.loginByWeixin(param);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
 
     }
-
 
 
     /**
@@ -237,7 +242,7 @@ public class AppletMemberController extends ApiBaseAction {
                         List<HomeProductAttr> temphomeProductattr = new ArrayList<>();
 
                         for (PmsProduct pmsProduct : pmsProductList
-                                ) {
+                        ) {
                             HomeProductAttr productAttr = new HomeProductAttr();
                             productAttr.setId(pmsProduct.getId());
                             productAttr.setProductName(pmsProduct.getName());
@@ -345,7 +350,7 @@ public class AppletMemberController extends ApiBaseAction {
             return new CommonResult().success(data);
         } catch (Exception e) {
             e.printStackTrace();
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
 
     }

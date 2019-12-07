@@ -46,6 +46,7 @@ public class OmsCartItemController {
     private IOmsOrderService orderService;
     @Resource
     private ISmsBasicMarkingService smsBasicMarkingService;
+
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/addCart")
     @ResponseBody
@@ -67,24 +68,23 @@ public class OmsCartItemController {
     @ResponseBody
     public Object list() {
         UmsMember umsMember = memberService.getNewCurrentMember();
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
-            map.put("cartItemList",cartItemList);
+            map.put("cartItemList", cartItemList);
             CartMarkingVo vo = new CartMarkingVo();
             vo.setCartList(cartItemList);
-            SmsBasicMarking marking =smsBasicMarkingService.matchOrderBasicMarking(vo) ;
-            if (marking!=null){
-                map.put("promoteAmount",marking.getMinAmount());
-            }else {
-                map.put("promoteAmount",0);
+            SmsBasicMarking marking = smsBasicMarkingService.matchOrderBasicMarking(vo);
+            if (marking != null) {
+                map.put("promoteAmount", marking.getMinAmount());
+            } else {
+                map.put("promoteAmount", 0);
             }
 
             return new CommonResult().success(map);
         }
         return new CommonResult().success(map);
     }
-
 
 
     @ApiOperation("修改购物车中某个商品的数量")

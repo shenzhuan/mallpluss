@@ -9,10 +9,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
-* @author mallplus
-* @date 2019-12-04
-        页面模版
-*/
+ * @author mallplus
+ * @date 2019-12-04
+ * 页面模版
+ */
 @Data
 @TableName("sms_diypage_template_category")
 public class SmsDiypageTemplateCategory implements Serializable {
@@ -20,10 +20,10 @@ public class SmsDiypageTemplateCategory implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField( "name")
+    @TableField("name")
     private String name;
 
-    @TableField( "store_id")
+    @TableField("store_id")
     private Integer storeId;
 
 

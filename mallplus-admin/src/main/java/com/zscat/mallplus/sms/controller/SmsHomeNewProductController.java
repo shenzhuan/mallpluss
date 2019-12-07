@@ -144,7 +144,6 @@ public class SmsHomeNewProductController {
     }
 
 
-
     @ApiOperation("批量修改推荐状态")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody

@@ -26,6 +26,7 @@ import java.util.List;
 public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
 
     HomeContentResult singelContent();
+
     HomeContentResult singelContent1();
 
     List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize);
@@ -39,11 +40,15 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
     List<PmsProduct> getHotProductList(int pageNum, int pageSize);
 
     List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize);
-    List<SmsHomeAdvertise> getHomeAdvertiseList(int type) ;
+
+    List<SmsHomeAdvertise> getHomeAdvertiseList(int type);
+
     List<SmsHomeAdvertise> getHomeAdvertiseList();
+
     List<PmsProductAttributeCategory> getPmsProductAttributeCategories();
 
     List<SysStore> getStoreList(int pageNum, int pageSize);
+
     List<HomeFlashPromotion> homeFlashPromotionList();
 
     List<PmsSmallNaviconCategory> getNav();

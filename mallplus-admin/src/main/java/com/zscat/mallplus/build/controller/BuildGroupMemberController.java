@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -41,8 +41,8 @@ public class BuildGroupMemberController {
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('build:groupMember:read')")
     public Object getBuildGroupMemberByPage(BuildGroupMember entity,
-                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IBuildGroupMemberService.page(new Page<BuildGroupMember>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -134,6 +134,7 @@ public class BuildGroupMemberController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildGroupMember entity) {
         // 模拟从数据库获取需要导出的数据

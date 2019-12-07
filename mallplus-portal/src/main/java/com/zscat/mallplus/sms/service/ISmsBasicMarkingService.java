@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -20,6 +20,7 @@ public interface ISmsBasicMarkingService extends IService<SmsBasicMarking> {
 
     /**
      * 满足所有符合商品的优惠
+     *
      * @param id
      * @return
      */
@@ -27,6 +28,7 @@ public interface ISmsBasicMarkingService extends IService<SmsBasicMarking> {
 
     /**
      * 满足订单商品的满减和折扣 取优惠最大的那个
+     *
      * @param vo
      * @return
      */

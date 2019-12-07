@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class OrderStstic {
     private Long memberId;
     private int totalCount;
-    private BigDecimal totalPayAmount ;
+    private BigDecimal totalPayAmount;
     private int memberCount;
     private Long objId;
 }

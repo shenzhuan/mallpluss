@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zscat
@@ -48,7 +48,6 @@ public class CmsFavorite extends BaseEntity implements Serializable {
     private String meno2;
 
     private String meno3;
-
 
 
 }

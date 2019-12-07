@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author zscat
@@ -59,7 +59,7 @@ public class BuildingFloorController {
 
     public Object saveBuildingFloor(@RequestBody BuildingFloor entity) {
         try {
-            if (ValidatorUtils.empty(entity.getCommunityId())){
+            if (ValidatorUtils.empty(entity.getCommunityId())) {
                 return new CommonResult().failed("请选择小区");
             }
             entity.setCreateTime(new Date());
@@ -138,6 +138,7 @@ public class BuildingFloorController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildingFloor entity) {
         // 模拟从数据库获取需要导出的数据

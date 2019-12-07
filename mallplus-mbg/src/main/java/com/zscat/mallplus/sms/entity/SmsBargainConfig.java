@@ -119,13 +119,13 @@ public class SmsBargainConfig implements Serializable {
     @Override
     public String toString() {
         return "SmsBargainConfig{" +
-        ", id=" + id +
-        ", plugInsId=" + plugInsId +
-        ", canNum=" + canNum +
-        ", helpNum=" + helpNum +
-        ", parameter=" + parameter +
-        ", invalidTime=" + invalidTime +
-        ", addTime=" + addTime +
-        "}";
+                ", id=" + id +
+                ", plugInsId=" + plugInsId +
+                ", canNum=" + canNum +
+                ", helpNum=" + helpNum +
+                ", parameter=" + parameter +
+                ", invalidTime=" + invalidTime +
+                ", addTime=" + addTime +
+                "}";
     }
 }

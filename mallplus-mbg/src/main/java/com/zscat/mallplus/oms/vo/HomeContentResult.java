@@ -22,6 +22,8 @@ import java.util.List;
 @Getter
 @Setter
 public class HomeContentResult {
+    List<PmsSmallNaviconCategory> navList;
+    List<ActivityVo> activityList;
     //轮播广告
     private List<SmsHomeAdvertise> advertiseList;
     //推荐品牌
@@ -38,13 +40,7 @@ public class HomeContentResult {
     private List<PmsProduct> saleProductList;
     //推荐专题
     private List<CmsSubject> subjectList;
-
     private List<PmsProductAttributeCategory> cat_list;
-
     private List<SmsCoupon> couponList;
-
-    List<PmsSmallNaviconCategory> navList;
-
-    List<ActivityVo> activityList;
 
 }

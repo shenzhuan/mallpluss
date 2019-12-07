@@ -73,11 +73,15 @@ public class AdminSysJobLog implements Serializable {
     private Date createTime;
 
 
-    /** 开始时间 */
+    /**
+     * 开始时间
+     */
     @TableField(exist = false)
     private Date startTime;
 
-    /** 结束时间 */
+    /**
+     * 结束时间
+     */
     @TableField(exist = false)
     private Date endTime;
 

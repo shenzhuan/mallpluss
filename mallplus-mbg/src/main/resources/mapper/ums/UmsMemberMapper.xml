@@ -37,7 +37,7 @@
         weixin_openid, invitecode, blance, school_id
     </sql>
 
-    <select id="listByDate"  resultMap="BaseResultMap">
+    <select id="listByDate" resultMap="BaseResultMap">
         select * from ums_member where
         <if test="type==1">
             date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')

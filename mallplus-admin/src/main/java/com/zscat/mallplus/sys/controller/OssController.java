@@ -36,7 +36,22 @@ import java.util.Random;
 @RequestMapping("/aliyun/oss")
 public class OssController {
     @Autowired
+    OssAliyunUtil aliyunOSSUtil;
+    @Autowired
     private OssServiceImpl ossService;
+    @Resource
+    private PmsAlbumPicMapper albumPicMapper;
+
+    private static ByteArrayInputStream getRandomDataStream(int length) {
+        return new ByteArrayInputStream(getRandomBuffer(length));
+    }
+
+    private static byte[] getRandomBuffer(int length) {
+        final Random randGenerator = new Random();
+        final byte[] buff = new byte[length];
+        randGenerator.nextBytes(buff);
+        return buff;
+    }
 
     @ApiOperation(value = "oss上传签名生成")
     @RequestMapping(value = "/policy", method = RequestMethod.GET)
@@ -54,13 +69,6 @@ public class OssController {
         return new CommonResult().success(ossCallbackResult);
     }
 
-
-    @Autowired
-    OssAliyunUtil aliyunOSSUtil;
-    @Resource
-    private PmsAlbumPicMapper albumPicMapper;
-
-
     @SysLog(MODULE = "图片上传管理", REMARK = "上传")
     @ApiOperation("上传")
     @RequestMapping(value = "upload", method = RequestMethod.POST)
@@ -68,7 +76,7 @@ public class OssController {
         List<BlobUpload> list = new ArrayList<>();
 
         String name = aliyunOSSUtil.upload(multipartFile);
-        insertPic(groupId, multipartFile, name,"image");
+        insertPic(groupId, multipartFile, name, "image");
         BlobUpload blobUploadEntity = new BlobUpload();
         blobUploadEntity.setFileName(multipartFile.getOriginalFilename());
         blobUploadEntity.setFileUrl(name);
@@ -87,7 +95,7 @@ public class OssController {
         if (multipartFile != null && multipartFile.length > 0) {
             for (int i = 0; i < multipartFile.length; i++) {
                 String name = aliyunOSSUtil.upload(multipartFile[i]);
-                insertPic(groupId, multipartFile[i], name,"image");
+                insertPic(groupId, multipartFile[i], name, "image");
                 BlobUpload blobUploadEntity = new BlobUpload();
                 blobUploadEntity.setFileName(multipartFile[i].getOriginalFilename());
                 blobUploadEntity.setFileUrl(name);
@@ -120,13 +128,13 @@ public class OssController {
             }
             String name = aliyunOSSUtil.upload(multipartFile);
 
-            return new CommonResult().success(insertPic(groupId, multipartFile, name,fileType));
+            return new CommonResult().success(insertPic(groupId, multipartFile, name, fileType));
 
         }
         return new CommonResult().success(list);
     }
 
-    private PmsAlbumPic insertPic(Long groupId, @RequestPart("file") MultipartFile multipartFile, String name,String type) {
+    private PmsAlbumPic insertPic(Long groupId, @RequestPart("file") MultipartFile multipartFile, String name, String type) {
         PmsAlbumPic attachment = new PmsAlbumPic();
         if (ValidatorUtils.notEmpty(UserUtils.getCurrentMember())) {
             attachment.setUserId(UserUtils.getCurrentMember().getId());
@@ -134,13 +142,12 @@ public class OssController {
         attachment.setAlbumId(groupId);
         attachment.setCreateTime(new Date());
         attachment.setName(multipartFile.getOriginalFilename());
-        attachment.setStoreId(Long.parseLong("1"));
+        //  attachment.setStoreId(Long.parseLong("1"));
         attachment.setType(type);
         attachment.setPic(name);
         albumPicMapper.insert(attachment);
         return attachment;
     }
-
 
     @IgnoreAuth
     @PostMapping("/upload1")
@@ -160,17 +167,6 @@ public class OssController {
             }
         }
         return new CommonResult().success(stringBuffer);
-    }
-
-    private static ByteArrayInputStream getRandomDataStream(int length) {
-        return new ByteArrayInputStream(getRandomBuffer(length));
-    }
-
-    private static byte[] getRandomBuffer(int length) {
-        final Random randGenerator = new Random();
-        final byte[] buff = new byte[length];
-        randGenerator.nextBytes(buff);
-        return buff;
     }
 
     private String getFileExtension(String fileName) {

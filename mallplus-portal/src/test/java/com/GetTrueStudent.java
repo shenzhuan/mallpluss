@@ -39,9 +39,8 @@ public class GetTrueStudent {
         Map<Long, List<Student>> groupBy = allList.stream().collect(Collectors.groupingBy(Student::getIwantStudent));
 
 
-
         // 遍历获取对象信息
-        for (Map.Entry<Long,List<Student>> entry: groupBy.entrySet()) {
+        for (Map.Entry<Long, List<Student>> entry : groupBy.entrySet()) {
             List<Student> student = entry.getValue();
             System.out.println(student.toString());
         }

@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zscat
@@ -51,7 +51,6 @@ public class SysAppletSet extends BaseEntity implements Serializable {
     private String templateid5;
 
     private String templateid6;
-
 
 
 }

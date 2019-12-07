@@ -105,9 +105,6 @@ public class SysStore implements Serializable {
     private Integer isTry;
 
 
-
-
-
     @TableField("plan_id")
     private Long planId;
     /**
@@ -115,7 +112,6 @@ public class SysStore implements Serializable {
      */
     @TableField("support_name")
     private String supportName;
-
 
 
     @TableField("last_login_time")
@@ -141,12 +137,12 @@ public class SysStore implements Serializable {
     private Long industryOne;
 
     @TableField(exist = false)
-    private List<PmsProductAttributeCategory> list ;
+    private List<PmsProductAttributeCategory> list;
 
     private Integer hit;
 
     private Integer collect;
     @TableField(exist = false)
-    private Integer  goodsCount;
+    private Integer goodsCount;
 
 }

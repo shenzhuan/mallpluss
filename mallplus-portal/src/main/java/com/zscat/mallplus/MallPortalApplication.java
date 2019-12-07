@@ -1,9 +1,11 @@
 package com.zscat.mallplus;
 
+import com.zscat.mallplus.pay.config.StartupRunner;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -17,10 +19,15 @@ public class MallPortalApplication {
 
     @Resource
     PmsProductMapper mapper;
+
     public static void main(String[] args) {
         System.out.println("start-------------");
         SpringApplication.run(MallPortalApplication.class, args);
         System.out.println("end-------------");
     }
 
+    @Bean
+    public StartupRunner startupRunner() {
+        return new StartupRunner();
+    }
 }

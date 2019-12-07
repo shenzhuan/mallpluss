@@ -24,19 +24,18 @@ public class GeneratorServiceImpl implements GeneratorService {
     GeneratorMapper generatorMapper;
 
 
-
     @Override
     @SuppressWarnings("all")
     public Object getTables(String name, int[] startEnd) {
 
-        List<Map<String, Object>> list = generatorMapper.list(name,startEnd[0],startEnd[1]);
+        List<Map<String, Object>> list = generatorMapper.list(name, startEnd[0], startEnd[1]);
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Map<String, Object> obj : list) {
 
-            tableInfos.add(new TableInfo(obj.get("tableName"),obj.get("createTime"),obj.get("engine"),obj.get("coding"), ObjectUtil.isNotEmpty(obj.get("table_comment"))? obj.get("table_comment").toString() : "-"));
+            tableInfos.add(new TableInfo(obj.get("tableName"), obj.get("createTime"), obj.get("engine"), obj.get("coding"), ObjectUtil.isNotEmpty(obj.get("table_comment")) ? obj.get("table_comment").toString() : "-"));
         }
         Object totalElements = generatorMapper.count(null);
-        return PageUtil.toPage(tableInfos,totalElements);
+        return PageUtil.toPage(tableInfos, totalElements);
     }
 
     @Override
@@ -47,16 +46,16 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<ColumnInfo> columnInfos = new ArrayList<>();
         for (Map<String, String> obj : result) {
 
-            columnInfos.add(new ColumnInfo(obj.get("column_name"),obj.get("is_nullable"),obj.get("data_type"),obj.get("column_comment"),obj.get("columnkey"),obj.get("extra"),null,"true"));
+            columnInfos.add(new ColumnInfo(obj.get("column_name"), obj.get("is_nullable"), obj.get("data_type"), obj.get("column_comment"), obj.get("columnkey"), obj.get("extra"), null, "true"));
         }
-        return PageUtil.toPage(columnInfos,columnInfos.size());
+        return PageUtil.toPage(columnInfos, columnInfos.size());
     }
 
     @Override
     public void generator(List<ColumnInfo> columnInfos, GenConfig genConfig, String tableName) {
 
         try {
-            GenUtil.generatorCode(columnInfos,genConfig,tableName);
+            GenUtil.generatorCode(columnInfos, genConfig, tableName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -26,16 +26,15 @@ import java.util.List;
 public class SmsGroupActivity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @TableField(exist = false)
+    List<PmsProduct> productList;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
     /**
      * 活动名称
      */
     private String name;
     private String pic;
-
     /**
      * 活动价格
      */
@@ -44,36 +43,25 @@ public class SmsGroupActivity implements Serializable {
      * 原格
      */
     private BigDecimal originprice;
-
     /**
      * 运费
      */
     private BigDecimal transfee;
-
     /**
      * 活动状态 1 开启 2 关闭
      */
     private Integer status;
-
     /**
      * 1 买家承担 2 卖家承担
      */
     private Integer feestatus;
-
     /**
      * 创建时间
      */
     @TableField("create_time")
     private LocalDateTime createTime;
-
-
-
     @TableField("goods_ids")
     private String goodsIds;
-
-
-    @TableField(exist = false)
-    List<PmsProduct> productList;
 
 
 }

@@ -50,12 +50,13 @@ public class SmsPaimaiController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有竞拍表列表")
     @ApiOperation("根据条件查询所有竞拍表列表")
     @GetMapping(value = "/fetchPaiMaiLog")
     public Object fetchPaiMaiLog(SmsPaimaiLog entity,
-                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(smsPaimaiLogService.page(new Page<SmsPaimaiLog>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
@@ -64,6 +65,7 @@ public class SmsPaimaiController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "sms", REMARK = "保存竞拍表")
     @ApiOperation("保存竞拍表")
     @PostMapping(value = "/create")
@@ -130,6 +132,7 @@ public class SmsPaimaiController {
         }
 
     }
+
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/update/updateShowStatus")
     @ResponseBody

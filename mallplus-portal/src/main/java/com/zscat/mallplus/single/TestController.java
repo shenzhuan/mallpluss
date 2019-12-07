@@ -47,6 +47,14 @@ import java.util.Random;
 public class TestController extends ApiBaseAction {
 
     @Resource
+    CmsSubjectMapper subjectMapper;
+    @Resource
+    SysSchoolMapper schoolMapper;
+    @Resource
+    SysAreaMapper sysAreaMapper;
+    @Resource
+    CmsSubjectCategoryMapper categoryMapper;
+    @Resource
     private ISysSchoolService schoolService;
     @Resource
     private IUmsMemberService memberService;
@@ -72,14 +80,6 @@ public class TestController extends ApiBaseAction {
     private IPmsFavoriteService favoriteService;
     @Resource
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
-    @Resource
-    CmsSubjectMapper subjectMapper;
-    @Resource
-    SysSchoolMapper schoolMapper;
-    @Resource
-    SysAreaMapper sysAreaMapper;
-    @Resource
-    CmsSubjectCategoryMapper categoryMapper;
 
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -87,22 +87,23 @@ public class TestController extends ApiBaseAction {
     public Object test() {
         PmsProduct product = new PmsProduct();
         product.setStoreName("北京皮包专卖");
-        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",1));
+        productMapper.update(product, new QueryWrapper<PmsProduct>().eq("store_id", 1));
 
         product = new PmsProduct();
         product.setStoreName("北京豪车专卖");
-        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",2));
+        productMapper.update(product, new QueryWrapper<PmsProduct>().eq("store_id", 2));
 
         product = new PmsProduct();
         product.setStoreName("北京服装专卖");
-        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",3));
+        productMapper.update(product, new QueryWrapper<PmsProduct>().eq("store_id", 3));
 
         product = new PmsProduct();
         product.setStoreName("北京手术专卖");
-        productMapper.update(product,new QueryWrapper<PmsProduct>().eq("store_id",4));
+        productMapper.update(product, new QueryWrapper<PmsProduct>().eq("store_id", 4));
 
         return new CommonResult().success();
     }
+
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -110,43 +111,44 @@ public class TestController extends ApiBaseAction {
         List<SysArea> areas = sysAreaMapper.selectList(new QueryWrapper<>());
         List<SysSchool> schools = schoolMapper.selectList(new QueryWrapper<>());
         List<CmsSubject> list = subjectMapper.selectList(new QueryWrapper<>());
-        for (CmsSubject subject : list){
-            Random r = new Random();  Integer a = r.nextInt(100);
+        for (CmsSubject subject : list) {
+            Random r = new Random();
+            Integer a = r.nextInt(100);
             Integer c = r.nextInt(3);
             Integer d = r.nextInt(5);
             CmsSubjectCategory cate = categoryMapper.selectById(d);
 
-            if(cate!=null){
+            if (cate != null) {
                 subject.setCategoryName(cate.getName());
                 subject.setCategoryId(Long.valueOf(d));
             }
 
             subject.setType(c);
             Integer b = r.nextInt(100);
-           SysSchool school =  schools.get(a);
-           if (school!=null){
-               subject.setSchoolId(school.getId());
-               subject.setSchoolName(school.getName());
-           }else{
-               SysSchool school1 =   schools.get(b);
-               if (school1!=null){
-                   subject.setSchoolId(school1.getId());
-                   subject.setSchoolName(school1.getName());
-               }
-           }
+            SysSchool school = schools.get(a);
+            if (school != null) {
+                subject.setSchoolId(school.getId());
+                subject.setSchoolName(school.getName());
+            } else {
+                SysSchool school1 = schools.get(b);
+                if (school1 != null) {
+                    subject.setSchoolId(school1.getId());
+                    subject.setSchoolName(school1.getName());
+                }
+            }
 
-            SysArea area =  areas.get(b);
-            if (area!=null){
+            SysArea area = areas.get(b);
+            if (area != null) {
                 subject.setAreaId(area.getId());
                 subject.setAreaName(area.getName());
-            }else{
-                SysArea area1 =    areas.get(a);
-                if (area1!=null){
+            } else {
+                SysArea area1 = areas.get(a);
+                if (area1 != null) {
                     subject.setAreaId(area1.getId());
                     subject.setAreaName(area1.getName());
                 }
             }
-              subjectMapper.updateById(subject);
+            subjectMapper.updateById(subject);
         }
         return new CommonResult().success();
     }

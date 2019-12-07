@@ -11,10 +11,11 @@ import javax.annotation.Resource;
 * @date ${date}
 */
 @Service
-public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements I${className}Service {
+public class ${className}ServiceImpl extends ServiceImpl
+<${className}Mapper, ${className}> implements I${className}Service {
 
-    @Resource
-    private  ${className}Mapper ${changeClassName}Mapper;
+@Resource
+private  ${className}Mapper ${changeClassName}Mapper;
 
 
 }

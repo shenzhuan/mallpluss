@@ -5,7 +5,7 @@ import com.zscat.mallplus.sms.entity.SmsBasicGifts;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

@@ -2,9 +2,6 @@ package com.zscat.mallplus.oms.vo;
 
 
 import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttribute;
-import com.zscat.mallplus.pms.entity.PmsSkuStock;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +13,7 @@ import java.util.List;
  */
 @Setter
 @Getter
-public class StoreCart  {
+public class StoreCart {
     private List<OmsCartItem> list;
     private String storeName;
 }

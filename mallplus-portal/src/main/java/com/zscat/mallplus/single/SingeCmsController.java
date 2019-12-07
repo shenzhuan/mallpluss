@@ -82,15 +82,15 @@ public class SingeCmsController extends ApiBaseAction {
     private IUmsMemberService memberService;
 
     @Resource
-    private  CmsSubjectProductRelationMapper subjectProductRelationMapper;
+    private CmsSubjectProductRelationMapper subjectProductRelationMapper;
 
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
     @ApiOperation(value = "查询打赏列表")
     @GetMapping(value = "/reward/list")
     public Object rewardList(UmsRewardLog subject,
-                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(rewardLogService.page(new Page<UmsRewardLog>(pageNum, pageSize), new QueryWrapper<>(subject).orderByDesc("create_time")));
     }
 
@@ -132,8 +132,9 @@ public class SingeCmsController extends ApiBaseAction {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        return new CommonResult().success(subjectService.getRecommendSubjectList(1,1));
+        return new CommonResult().success(subjectService.getRecommendSubjectList(1, 1));
     }
+
     @SysLog(MODULE = "cms", REMARK = "查询专题列表")
     @IgnoreAuth
     @ApiOperation(value = "查询公益列表")
@@ -143,6 +144,7 @@ public class SingeCmsController extends ApiBaseAction {
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(topicService.page(new Page<CmsTopic>(pageNum, pageSize), new QueryWrapper<>(topic).orderByDesc("create_time")));
     }
+
     @SysLog(MODULE = "cms", REMARK = "查询专题列表")
     @IgnoreAuth
     @ApiOperation(value = "查询公益评论列表")
@@ -159,10 +161,11 @@ public class SingeCmsController extends ApiBaseAction {
     @ApiOperation(value = "查询公益详情信息")
     public Object topicDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsTopic productResult = topicService.getById(id);
-        productResult.setReadCount(productResult.getReadCount()+1);
+        productResult.setReadCount(productResult.getReadCount() + 1);
         topicService.updateById(productResult);
         return new CommonResult().success(productResult);
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询文章详情信息")
     @IgnoreAuth
     @GetMapping(value = "/subject/detail")
@@ -171,62 +174,63 @@ public class SingeCmsController extends ApiBaseAction {
         CmsSubject productResult = subjectService.getById(id);
         List<CmsSubjectProductRelation> list = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("subject_id", id));
 
-        if(list!=null && list.size()>0){
+        if (list != null && list.size() > 0) {
             List<Long> ids = list.stream()
                     .map(CmsSubjectProductRelation::getProductId)
                     .collect(Collectors.toList());
-            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id",ids).select(ConstansValue.sampleGoodsList));
+            List<PmsProduct> products = (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id", ids).select(ConstansValue.sampleGoodsList));
             productResult.setProducts(products);
         }
 
         //记录浏览量到redis,然后定时更新到数据库
-        String key= Rediskey.ARTICLE_VIEWCOUNT_CODE+id;
+        String key = Rediskey.ARTICLE_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.ARTICLE_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                viewCount=1;
-                redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.ARTICLE_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                viewCount = 1;
+                redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            viewCount=1;
-            redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            viewCount = 1;
+            redisUtil.hPut(Rediskey.ARTICLE_VIEWCOUNT_KEY, key, 1 + "");
         }
         productResult.setReadCount(viewCount);
         return new CommonResult().success(productResult);
     }
+
     @SysLog(MODULE = "cms", REMARK = "创建文章")
     @ApiOperation(value = "创建文章")
     @PostMapping(value = "/createSubject")
     public Object createSubject(CmsSubject subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member!=null){
+        if (member != null) {
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
         if (member.getMemberLevelId() > 0) {
             UmsMemberLevel memberLevel = memberLevelService.getById(member.getMemberLevelId());
 
             int subjectCounts = subjectService.countByToday(member.getId());
-            if (ValidatorUtils.empty(subjectCounts)){
-                subjectCounts=0;
+            if (ValidatorUtils.empty(subjectCounts)) {
+                subjectCounts = 0;
             }
             if (subjectCounts > memberLevel.getArticlecount()) {
                 commonResult = new CommonResult().failed("你今天已经有发" + memberLevel.getArticlecount() + "篇文章");
                 return commonResult;
             }
         }
-        if (subject.getQsType()==1){
+        if (subject.getQsType() == 1) {
             subject.setSchoolName(member.getSchoolName());
             subject.setSchoolId(member.getSchoolId());
-        }else {
+        } else {
             subject.setAreaName(member.getAreaName());
             subject.setAreaId(member.getAreaId());
         }
@@ -251,17 +255,17 @@ public class SingeCmsController extends ApiBaseAction {
     public Object createTopic(CmsTopic subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member!=null){
+        if (member != null) {
             subject.setMemberId(member.getId());
             subject.setMemberName(member.getNickname());
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
 
-        if (subject.getQsType()==1){
+        if (subject.getQsType() == 1) {
             subject.setSchoolName(member.getSchoolName());
             subject.setSchoolId(member.getSchoolId());
-        }else {
+        } else {
             subject.setAreaName(member.getAreaName());
             subject.setAreaId(member.getAreaId());
         }
@@ -288,26 +292,26 @@ public class SingeCmsController extends ApiBaseAction {
 
         CmsTopic subject = topicService.getById(id);
         Date now = new Date();
-        if (now.getTime()>subject.getEndTime().getTime() || now.getTime()<subject.getStartTime().getTime()){
+        if (now.getTime() > subject.getEndTime().getTime() || now.getTime() < subject.getStartTime().getTime()) {
             return new CommonResult().failed("未开始或者已过期");
         }
-        if (member!=null){
-            if (ValidatorUtils.notEmpty(subject.getAtids())){
+        if (member != null) {
+            if (ValidatorUtils.notEmpty(subject.getAtids())) {
                 String[] values = subject.getAtids().split(",");
                 List<String> list = Arrays.asList(values);
-                if(list.contains(member.getId()+"")){
+                if (list.contains(member.getId() + "")) {
                     return new CommonResult().failed("你已参加该活动");
-                }else{
-                    list.add(member.getId()+"");
+                } else {
+                    list.add(member.getId() + "");
                     subject.setAtids(Arrays.toString(list.toArray()));
                 }
             }
 
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
-        subject.setReadCount(subject.getReadCount()+1);
-        subject.setAttendCount(subject.getAttendCount()+1);
+        subject.setReadCount(subject.getReadCount() + 1);
+        subject.setAttendCount(subject.getAttendCount() + 1);
 
         boolean count = topicService.updateById(subject);
         if (count) {
@@ -326,21 +330,21 @@ public class SingeCmsController extends ApiBaseAction {
         UmsMember member = memberService.getNewCurrentMember();
         CmsTopic subject = topicService.getById(id);
 
-        if (member!=null){
-            if (ValidatorUtils.notEmpty(subject.getAtids())){
+        if (member != null) {
+            if (ValidatorUtils.notEmpty(subject.getAtids())) {
                 String[] values = subject.getAtids().split(",");
                 List<String> list = Arrays.asList(values);
-                if(list.contains(member.getId()+"")){
-                    list.remove(member.getId()+"");
+                if (list.contains(member.getId() + "")) {
+                    list.remove(member.getId() + "");
                     subject.setAtids(Arrays.toString(list.toArray()));
                 }
             }
 
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
-        subject.setReadCount(subject.getReadCount()-1);
-        subject.setAttendCount(subject.getAttendCount()-1);
+        subject.setReadCount(subject.getReadCount() - 1);
+        subject.setAttendCount(subject.getAttendCount() - 1);
 
         boolean count = topicService.updateById(subject);
         if (count) {
@@ -357,7 +361,7 @@ public class SingeCmsController extends ApiBaseAction {
     public Object favoriteTopic(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CommonResult commonResult;
         CmsTopic subject = topicService.getById(id);
-        subject.setAttentionCount(subject.getAttentionCount()+1);
+        subject.setAttentionCount(subject.getAttentionCount() + 1);
         boolean count = topicService.updateById(subject);
         if (count) {
             commonResult = new CommonResult().success(count);
@@ -373,10 +377,10 @@ public class SingeCmsController extends ApiBaseAction {
     public Object addSubjectCom(CmsSubjectComment subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member!=null){
+        if (member != null) {
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
         subject.setCreateTime(new Date());
@@ -389,16 +393,17 @@ public class SingeCmsController extends ApiBaseAction {
         }
         return commonResult;
     }
+
     @SysLog(MODULE = "cms", REMARK = "创建文章")
     @ApiOperation(value = "添加公益评论")
     @PostMapping(value = "/addTopicCom")
     public Object addTopicCom(CmsTopicComment subject, BindingResult result) {
         CommonResult commonResult;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member!=null){
+        if (member != null) {
             subject.setMemberIcon(member.getIcon());
             subject.setMemberNickName(member.getNickname());
-        }else {
+        } else {
             return new CommonResult().failed("请先登录");
         }
         subject.setCreateTime(new Date());
@@ -417,7 +422,7 @@ public class SingeCmsController extends ApiBaseAction {
     @SysLog(MODULE = "ums", REMARK = "打赏文章")
     public Object reward(@RequestParam(value = "articlelId", required = true) Long articlelId,
                          @RequestParam(value = "coin", required = true) int coin) {
-        return subjectService.reward(articlelId,coin);
+        return subjectService.reward(articlelId, coin);
     }
 
     @GetMapping("/listTimeline")

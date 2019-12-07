@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -22,6 +22,7 @@ public class SmsGroupActivityServiceImpl extends ServiceImpl<SmsGroupActivityMap
 
     @Resource
     SmsGroupActivityMapper activityMapper;
+
     @Override
     public int updateShowStatus(Long ids, Integer status) {
         SmsGroupActivity record = new SmsGroupActivity();

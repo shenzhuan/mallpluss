@@ -39,14 +39,14 @@
         from sys_web_log
         where 1=1
         <include refid="query_order_where"/>
-        group by method  order by avgMin desc
+        group by method order by avgMin desc
         limit 100
     </select>
 
 
     <sql id="query_order_where">
         <if test="startTime != null and startTime !=''.toString()">
-            and  DATE_FORMAT(create_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
+            and DATE_FORMAT(create_time,'%Y-%m-%d') >= DATE_FORMAT(#{startTime},'%Y-%m-%d')
 
         </if>
         <if test="endTime != null and endTime !=''.toString()">

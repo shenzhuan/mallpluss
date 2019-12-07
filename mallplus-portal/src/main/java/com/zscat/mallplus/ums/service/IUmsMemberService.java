@@ -38,7 +38,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * 用户注册
      */
     @Transactional
-    CommonResult register(String phone, String password, String confim, String authCode,String invitecode);
+    CommonResult register(String phone, String password, String confim, String authCode, String invitecode);
 
     /**
      * 生成验证码
@@ -51,7 +51,6 @@ public interface IUmsMemberService extends IService<UmsMember> {
      */
     @Transactional
     CommonResult updatePassword(String telephone, String password, String authCode);
-
 
 
     /**
@@ -73,7 +72,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     Map<String, Object> loginByCode(String phone, String authCode);
 
-    Object simpleReg(String phone, String password, String confimpassword,String invitecode);
+    Object simpleReg(String phone, String password, String confimpassword, String invitecode);
 
     /**
      * 添加余额记录 并更新用户余额
@@ -81,21 +80,31 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @param id
      * @param integration
      */
-     void addBlance(Long id, Integer integration,int type,String note);
+    void addBlance(Long id, Integer integration, int type, String note);
 
     /**
      * 添加积分记录 并更新用户积分
+     *
      * @param id
      * @param integration
      */
-     void addIntegration(Long id, Integer integration,int changeType,String note,int sourceType,String operateMan) ;
+    void addIntegration(Long id, Integer integration, int changeType, String note, int sourceType, String operateMan);
 
-    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname,String city,Integer source);
+    Map<String, Object> appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname, String city, Integer source);
 
 
     Object initMemberRedis();
 
     Object getCurrentMember();
+
     UmsMember getNewCurrentMember();
+
+    /**
+     * openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
+     *
+     * @param map
+     * @return
+     */
+    Object webLogin(Map map);
 }
 

@@ -24,6 +24,7 @@ public class SysAdminLogServiceImpl extends ServiceImpl<SysAdminLogMapper, SysAd
 
     @Resource
     private SysAdminLogMapper logMapper;
+
     @Override
     public List<LogStatisc> selectPageExt(LogParam entity) {
         return logMapper.getLogStatisc(entity);

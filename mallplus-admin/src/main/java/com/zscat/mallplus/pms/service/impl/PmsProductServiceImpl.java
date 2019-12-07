@@ -2,6 +2,7 @@ package com.zscat.mallplus.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.pms.entity.*;
@@ -15,7 +16,6 @@ import com.zscat.mallplus.util.JsonUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.IdWorker;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -90,20 +90,20 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         product.setId(null);
         //处理sku的编码
         handleSkuStockCode(productParam.getSkuStockList(), product);
-        if (ValidatorUtils.isEmpty(product.getProductSn())){
-            product.setProductSn(IdWorker.getId()+"");
+        if (ValidatorUtils.isEmpty(product.getProductSn())) {
+            product.setProductSn(IdWorker.getId() + "");
         }
-        if (ValidatorUtils.empty(product.getExpireTime())){
-            product.setExpireTime(DateUtils.strToDate(DateUtils.addDay(new Date(),5)));
+        if (ValidatorUtils.empty(product.getExpireTime())) {
+            product.setExpireTime(DateUtils.strToDate(DateUtils.addDay(new Date(), 5)));
         }
-        if (ValidatorUtils.empty(product.getOriginalPrice())){
+        if (ValidatorUtils.empty(product.getOriginalPrice())) {
             product.setOriginalPrice(product.getPrice());
         }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();
         //会员价格
-     //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
+        //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
         //阶梯价格
         relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
         //满减价格
@@ -118,13 +118,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //关联优选
         relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
         count = 1;
-    //    redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
+        //    redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
     }
 
-    private void  handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
-        if (CollectionUtils.isEmpty(skuStockList)) return ;
-        int stock = 0 ;
+    private void handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
+        if (CollectionUtils.isEmpty(skuStockList)) return;
+        int stock = 0;
         for (int i = 0; i < skuStockList.size(); i++) {
             PmsSkuStock skuStock = skuStockList.get(i);
             skuStock.setProductName(product.getName());
@@ -139,7 +139,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
-            stock =stock + skuStock.getStock();
+            stock = stock + skuStock.getStock();
         }
         product.setStock(stock);
     }
@@ -156,15 +156,15 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //更新商品信息
         PmsProduct product = productParam;
         product.setId(id);
-        if (ValidatorUtils.isEmpty(product.getProductSn())){
-            product.setProductSn(IdWorker.getId()+"");
+        if (ValidatorUtils.isEmpty(product.getProductSn())) {
+            product.setProductSn(IdWorker.getId() + "");
         }
         handleSkuStockCode(productParam.getSkuStockList(), product);
         productMapper.updateById(product);
         redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         //会员价格
-      //  memberPriceMapper.delete(new QueryWrapper<>(new PmsMemberPrice()).eq("product_id", id));
-      //  relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), id);
+        //  memberPriceMapper.delete(new QueryWrapper<>(new PmsMemberPrice()).eq("product_id", id));
+        //  relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), id);
         //阶梯价格
 
         productLadderMapper.delete(new QueryWrapper<>(new PmsProductLadder()).eq("product_id", id));
@@ -221,11 +221,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         clerGoodsRedis(ids);
         return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
     }
+
     public void clerGoodsRedis(List<Long> ids) {
-        for (Long id : ids){
+        for (Long id : ids) {
             redisService.remove(String.format(Rediskey.GOODSDETAIL, id));
         }
     }
+
     @Override
     public int updateRecommendStatus(List<Long> ids, Integer recommendStatus) {
         PmsProduct record = new PmsProduct();

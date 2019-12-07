@@ -19,6 +19,7 @@ public class MyApplicationRunner implements ApplicationRunner {
     private RedisService redisService;
     @Resource
     private SysAreaMapper areaMapper;
+
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
         System.out.println("-------------->" + "项目启动，now=" + new Date());

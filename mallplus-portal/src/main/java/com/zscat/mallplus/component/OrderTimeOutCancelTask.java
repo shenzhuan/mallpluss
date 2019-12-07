@@ -9,7 +9,6 @@ import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +38,15 @@ public class OrderTimeOutCancelTask {
     private OmsOrderMapper orderMapper;
     @Resource
     private IUmsMemberService IUmsMemberService;
+
     /**
      * cron表达式：Seconds Minutes Hours DayofMonth Month DayofWeek [Year]
      * 每10分钟扫描一次，扫描设定超时时间之前下的订单，如果没支付则取消该订单
      */
     @Scheduled(cron = "0 0/10 * ? * ?")
     private void cancelTimeOutOrder() {
-        CommonResult result = portalOrderService.cancelTimeOutOrder();
-        logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
+//        CommonResult result = portalOrderService.cancelTimeOutOrder();
+        //      logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
     }
 
 
@@ -55,9 +55,10 @@ public class OrderTimeOutCancelTask {
      */
     @Scheduled(cron = "0 0/55 * ? * ?")
     private void memberlevelCalator() {
-        IUmsMemberService.updataMemberOrderInfo();
+        //   IUmsMemberService.updataMemberOrderInfo();
         logger.info("会员等级计算");
     }
+
     /**
      * 文章浏览量
      */
@@ -66,22 +67,23 @@ public class OrderTimeOutCancelTask {
         logger.info("开始保存点赞数 、浏览数SyncNodesAndShips");
         try {
             //先获取这段时间的浏览数
-            Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.ARTICLE_VIEWCOUNT_KEY);
+            Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.ARTICLE_VIEWCOUNT_KEY);
             //然后删除redis里这段时间的浏览数
             redisUtil.delete(Rediskey.ARTICLE_VIEWCOUNT_KEY);
-            if(!viewCountItem.isEmpty()){
-                for(Object item :viewCountItem.keySet()){
-                    String articleKey=item.toString();//viewcount_1
-                    String[]  kv=articleKey.split("_");
-                    Long articleId=Long.parseLong(kv[1]);
-                    Integer viewCount=Integer.parseInt(viewCountItem.get(articleKey).toString());
+            if (!viewCountItem.isEmpty()) {
+                for (Object item : viewCountItem.keySet()) {
+                    String articleKey = item.toString();//viewcount_1
+                    String[] kv = articleKey.split("_");
+                    Long articleId = Long.parseLong(kv[1]);
+                    Integer viewCount = Integer.parseInt(viewCountItem.get(articleKey).toString());
                     CmsSubject subject = subjectService.getById(articleId);
-                    if (subject!=null){
-                        subject.setId(articleId);
-                        subject.setReadCount(subject.getReadCount()+viewCount);
-                        logger.info("SyncNodesAndShips"+articleId+","+viewCount);
+                    if (subject != null) {
+                        CmsSubject cms = new CmsSubject();
+                        cms.setId(articleId);
+                        cms.setReadCount(subject.getReadCount() + viewCount);
+                        logger.info("SyncNodesAndShips" + articleId + "," + viewCount);
                         //更新到数据库
-                        subjectService.updateById(subject);
+                        subjectService.updateById(cms);
                     }
                 }
             }
@@ -100,23 +102,24 @@ public class OrderTimeOutCancelTask {
         logger.info("开始保存点赞数 、浏览数SyncGoodsView");
         try {
             //先获取这段时间的浏览数
-            Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
+            Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
             //然后删除redis里这段时间的浏览数
             redisUtil.delete(Rediskey.GOODS_VIEWCOUNT_KEY);
-            if(!viewCountItem.isEmpty()){
-                for(Object item :viewCountItem.keySet()){
-                    String articleKey=item.toString();//viewcount_1
-                    String[]  kv=articleKey.split("_");
-                    Long articleId=Long.parseLong(kv[1]);
-                    Integer viewCount=Integer.parseInt(viewCountItem.get(articleKey).toString());
+            if (!viewCountItem.isEmpty()) {
+                for (Object item : viewCountItem.keySet()) {
+                    String articleKey = item.toString();//viewcount_1
+                    String[] kv = articleKey.split("_");
+                    Long articleId = Long.parseLong(kv[1]);
+                    Integer viewCount = Integer.parseInt(viewCountItem.get(articleKey).toString());
                     PmsProduct subject = productMapper.selectById(articleId);
-                   if(subject!=null){
-                       subject.setId(articleId);
-                       subject.setHit(subject.getHit()+viewCount);
-                       logger.info("SyncGoodsView"+articleId+","+viewCount);
-                       //更新到数据库
-                       productMapper.updateById(subject);
-                   }
+                    if (subject != null) {
+                        PmsProduct p = new PmsProduct();
+                        p.setId(articleId);
+                        p.setHit(subject.getHit() + viewCount);
+                        logger.info("SyncGoodsView" + articleId + "," + viewCount);
+                        //更新到数据库
+                        productMapper.updateById(p);
+                    }
                 }
             }
         } catch (Exception e) {

@@ -35,7 +35,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -52,7 +52,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(SysQiniuConfig qiniuConfig) {
-        if (!(qiniuConfig.getHost().toLowerCase().startsWith("http://")||qiniuConfig.getHost().toLowerCase().startsWith("https://"))) {
+        if (!(qiniuConfig.getHost().toLowerCase().startsWith("http://") || qiniuConfig.getHost().toLowerCase().startsWith("https://"))) {
             throw new BusinessMallException("外链域名必须以http://或者https://开头");
         }
         qiniuConfig.setId(1L);
@@ -63,7 +63,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     @Transactional(rollbackFor = Exception.class)
     public SysQiniuContent upload(MultipartFile file, SysQiniuConfig qiniuConfig) {
         FileUtil.checkSize(maxSize, file.getSize());
-        if(qiniuConfig.getId() == null){
+        if (qiniuConfig.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }
         // 构造一个带指定Zone对象的配置类
@@ -73,7 +73,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
         String upToken = auth.uploadToken(qiniuConfig.getBucket());
         try {
             String key = file.getOriginalFilename();
-            if(qiniuContentMapper.selectOne(new QueryWrapper<SysQiniuContent>().eq("name",key)) != null) {
+            if (qiniuContentMapper.selectOne(new QueryWrapper<SysQiniuContent>().eq("name", key)) != null) {
                 key = QiNiuUtil.getKey(key);
             }
             Response response = uploadManager.put(file.getBytes(), key, upToken);
@@ -86,9 +86,9 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
             qiniuContent.setBucket(qiniuConfig.getBucket());
             qiniuContent.setType(qiniuConfig.getType());
             qiniuContent.setName(FileUtil.getFileNameNoEx(putRet.key));
-            qiniuContent.setUrl(qiniuConfig.getHost()+"/"+putRet.key);
-            qiniuContent.setSize(FileUtil.getSize(Integer.parseInt(file.getSize()+"")));
-             qiniuContentMapper.insert(qiniuContent);
+            qiniuContent.setUrl(qiniuConfig.getHost() + "/" + putRet.key);
+            qiniuContent.setSize(FileUtil.getSize(Integer.parseInt(file.getSize() + "")));
+            qiniuContentMapper.insert(qiniuContent);
             return qiniuContent;
         } catch (Exception e) {
             throw new BusinessMallException(e.getMessage());
@@ -102,11 +102,11 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     }
 
     @Override
-    public String download(SysQiniuContent content,SysQiniuConfig config){
+    public String download(SysQiniuContent content, SysQiniuConfig config) {
         String finalUrl;
         String TYPE = "公开";
-        if(TYPE.equals(content.getType())){
-            finalUrl  = content.getUrl();
+        if (TYPE.equals(content.getType())) {
+            finalUrl = content.getUrl();
         } else {
             Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
             // 1小时，可以自定义链接过期时间
@@ -134,7 +134,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void synchronize(SysQiniuConfig config) {
-        if(config.getId() == null){
+        if (config.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }
         //构造一个带指定Zone对象的配置类
@@ -154,14 +154,14 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
             SysQiniuContent qiniuContent;
             FileInfo[] items = fileListIterator.next();
             for (FileInfo item : items) {
-                if(qiniuContentMapper.selectOne(new QueryWrapper<SysQiniuContent>().eq("name",FileUtil.getFileNameNoEx(item.key))) == null){
+                if (qiniuContentMapper.selectOne(new QueryWrapper<SysQiniuContent>().eq("name", FileUtil.getFileNameNoEx(item.key))) == null) {
                     qiniuContent = new SysQiniuContent();
-                    qiniuContent.setSize(FileUtil.getSize(Integer.parseInt(item.fsize+"")));
+                    qiniuContent.setSize(FileUtil.getSize(Integer.parseInt(item.fsize + "")));
                     qiniuContent.setSuffix(FileUtil.getExtensionName(item.key));
                     qiniuContent.setName(FileUtil.getFileNameNoEx(item.key));
                     qiniuContent.setType(config.getType());
                     qiniuContent.setBucket(config.getBucket());
-                    qiniuContent.setUrl(config.getHost()+"/"+item.key);
+                    qiniuContent.setUrl(config.getHost() + "/" + item.key);
                     qiniuContentMapper.insert(qiniuContent);
                 }
             }
@@ -176,12 +176,11 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     }
 
 
-
     @Override
     public void downloadList(List<SysQiniuContent> queryAll, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (SysQiniuContent content : queryAll) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("文件名", content.getName());
             map.put("文件类型", content.getSuffix());
             map.put("空间名称", content.getBucket());

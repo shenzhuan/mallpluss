@@ -82,6 +82,7 @@ public class SingeUmsController extends ApiBaseAction {
     private IPmsFavoriteService favoriteService;
     @Resource
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
+
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -89,50 +90,52 @@ public class SingeUmsController extends ApiBaseAction {
         UmsMember member = memberService.getById(id);
         return new CommonResult().success(member);
     }
+
     @IgnoreAuth
     @ApiOperation(value = "查询商铺列表")
     @GetMapping(value = "/store/list")
     @SysLog(MODULE = "ums", REMARK = "查询学校列表")
     public Object storeList(SysStore entity,
-                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(storeMapper.selectList( new QueryWrapper<SysStore>(entity)));
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(storeMapper.selectList(new QueryWrapper<SysStore>(entity)));
     }
+
     @ApiOperation("获取商铺详情")
     @RequestMapping(value = "/storeDetail", method = RequestMethod.GET)
     @ResponseBody
     public Object storeDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         SysStore store = storeMapper.selectById(id);
-        List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id",id));
+        List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", id));
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8),new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
-            if (goodsList!=null&& goodsList.getRecords()!=null && goodsList.getRecords().size()>0){
+            IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
+            if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(goodsList.getRecords());
-            }else{
+            } else {
                 gt.setGoodsList(new ArrayList<>());
             }
         }
         store.setList(list);
-        store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id",id)));
+        store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id", id)));
         //记录浏览量到redis,然后定时更新到数据库
-        String key= Rediskey.STORE_VIEWCOUNT_CODE+id;
+        String key = Rediskey.STORE_VIEWCOUNT_CODE + id;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object,Object> viewCountItem=redisUtil.hGetAll(Rediskey.STORE_VIEWCOUNT_KEY);
-        Integer viewCount=0;
-        if(!viewCountItem.isEmpty()){
-            if(viewCountItem.containsKey(key)){
-                viewCount=Integer.parseInt(viewCountItem.get(key).toString())+1;
-                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,viewCount+"");
-            }else {
-                viewCount=1;
-                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.STORE_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                viewCount = 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
             }
-        }else{
-            redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY,key,1+"");
+        } else {
+            redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
         }
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
@@ -143,9 +146,9 @@ public class SingeUmsController extends ApiBaseAction {
             query.setMemberId(umsMember.getId());
             query.setType(3);
             PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
-            if(findCollection!=null){
+            if (findCollection != null) {
                 map.put("favorite", true);
-            }else{
+            } else {
                 map.put("favorite", false);
             }
         }
@@ -153,25 +156,28 @@ public class SingeUmsController extends ApiBaseAction {
         map.put("store", store);
         return new CommonResult().success(map);
     }
+
     @IgnoreAuth
     @ApiOperation(value = "查询学校列表")
     @GetMapping(value = "/school/list")
     @SysLog(MODULE = "ums", REMARK = "查询学校列表")
     public Object schoolList(SysSchool entity,
-                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(schoolService.page(new Page<SysSchool>(pageNum, pageSize), new QueryWrapper<>(entity)));
     }
+
     @ApiOperation("获取学校详情")
     @RequestMapping(value = "/schoolDetail", method = RequestMethod.GET)
     @ResponseBody
     public Object schoolDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         SysSchool school = schoolService.getById(id);
-       List<PmsProduct> list = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("school_id",id).select(ConstansValue.sampleGoodsList));
-       school.setGoodsList(list);
-       school.setGoodsCount(list.size());
-       return new CommonResult().success(school);
+        List<PmsProduct> list = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("school_id", id).select(ConstansValue.sampleGoodsList));
+        school.setGoodsList(list);
+        school.setGoodsCount(list.size());
+        return new CommonResult().success(school);
     }
+
     @IgnoreAuth
     @SysLog(MODULE = "ums", REMARK = "根据pid查询区域")
     @ApiOperation("根据pid查询区域")
@@ -190,6 +196,7 @@ public class SingeUmsController extends ApiBaseAction {
     public Object addJob(UmsEmployInfo member) {
         return employInfoMapper.insert(member);
     }
+
     @ApiOperation(value = "会员绑定学校")
     @PostMapping(value = "/bindSchool")
     @SysLog(MODULE = "ums", REMARK = "会员绑定学校")
@@ -206,7 +213,7 @@ public class SingeUmsController extends ApiBaseAction {
                 }
             }
             SysSchool area = schoolService.getById(schoolId);
-            if (area==null){
+            if (area == null) {
                 return new CommonResult().failed("学校不存在");
             }
             member.setSchoolName(area.getName());
@@ -214,7 +221,7 @@ public class SingeUmsController extends ApiBaseAction {
             memberService.updateById(member);
             // 当天发送验证码次数+1
             redisService.increment(countKey, 1L);
-            redisService.expire(countKey, 1 * 3600 * 24*365);
+            redisService.expire(countKey, 1 * 3600 * 24 * 365);
             return new CommonResult().success("绑定学校成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,16 +244,16 @@ public class SingeUmsController extends ApiBaseAction {
                 }
             }
 
-           SysArea area = areaService.getById(areaId);
-           if (area==null){
-               return new CommonResult().failed("区域不存在");
-           }
+            SysArea area = areaService.getById(areaId);
+            if (area == null) {
+                return new CommonResult().failed("区域不存在");
+            }
             member.setAreaId(areaId);
             member.setAreaName(area.getName());
             memberService.updateById(member);
             // 当天发送验证码次数+1
             redisService.increment(countKey, 1L);
-            redisService.expire(countKey, 1 * 3600 * 24*365);
+            redisService.expire(countKey, 1 * 3600 * 24 * 365);
             return new CommonResult().success(area);
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,11 +270,11 @@ public class SingeUmsController extends ApiBaseAction {
             entity.setTryTime(new Date());
             entity.setCreateTime(new Date());
             UmsMember umsMember = memberService.getNewCurrentMember();
-            if (storeMapper.insert(entity)>0) {
+            if (storeMapper.insert(entity) > 0) {
                 SysUser user = new SysUser();
                 user.setUsername(umsMember.getUsername());
                 SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-                if (umsAdminList!=null && umsAdminList.getId()!=null) {
+                if (umsAdminList != null && umsAdminList.getId() != null) {
                     return new CommonResult().failed("保存失败");
                 }
                 user.setStatus(1);

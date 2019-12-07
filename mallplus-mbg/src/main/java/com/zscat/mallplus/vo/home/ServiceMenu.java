@@ -12,7 +12,10 @@ public class ServiceMenu {
     private String pic;
     private String url;
     private String wapUrl;
-    public ServiceMenu(){}
+
+    public ServiceMenu() {
+    }
+
     public ServiceMenu(String name, String pic, String url, String wapUrl) {
         this.name = name;
         this.pic = pic;

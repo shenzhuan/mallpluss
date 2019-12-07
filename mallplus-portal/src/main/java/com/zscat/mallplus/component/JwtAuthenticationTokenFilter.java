@@ -2,12 +2,12 @@ package com.zscat.mallplus.component;
 
 
 import com.google.common.collect.Lists;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
 import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.utils.ValidatorUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,20 +39,6 @@ import java.util.Map;
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Value("${jwt.tokenHeader}")
-    private String tokenHeader;
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
-
-    @Resource
-    public SysWebLogMapper fopSystemOperationLogService;
-
     public static final List<String> IGNORE_TENANT_TABLES = Lists.newArrayList(
             "user.info",
             "user.editinfo",
@@ -131,6 +117,20 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             "lottery-api-getLotteryConfig",
             "lottery-api-lottery",
             "lottery-api-lotteryLog");
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+    @Resource
+    public SysWebLogMapper fopSystemOperationLogService;
+    @Autowired
+    private UserDetailsService userDetailsService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+    @Autowired
+    private ApiContext apiContext;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -162,38 +162,46 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
-        String tokenPre = this.tokenHeader ;
+        String storeId = request.getParameter("storeid");
+        if (ValidatorUtils.notEmpty(storeId)) {
+            apiContext.setCurrentProviderId(Long.valueOf(storeId));
+        } else {
+            storeId = request.getHeader("storeid");
+            if (ValidatorUtils.notEmpty(storeId)) {
+                apiContext.setCurrentProviderId(Long.valueOf(storeId));
+            }
+        }
+        String tokenPre = this.tokenHeader + storeId;
         String authHeader = request.getParameter(tokenPre);
-        if (ValidatorUtils.empty(authHeader)){
+        if (ValidatorUtils.empty(authHeader)) {
             authHeader = request.getHeader(tokenPre);
         }
-      //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
+        //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
-            if (authHeader != null && authHeader.startsWith("Bearer")) {
-                String authToken = authHeader.substring("Bearer".length());
-                username = jwtTokenUtil.getUserNameFromToken(authToken);
-                LOGGER.info("checking username:{}", username);
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                    if (userDetails!=null && jwtTokenUtil.validateToken(authToken, userDetails)) {
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        LOGGER.info("authenticated user:{}", username);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }else{
-                        throw new ClassCastException();
-                    }
-
-            }else {
-                logger.info("no token"+request.getRequestURI());
+        if (authHeader != null && authHeader.startsWith("Bearer")) {
+            String authToken = authHeader.substring("Bearer".length());
+            username = jwtTokenUtil.getUserNameFromToken(authToken);
+            LOGGER.info("checking username:{}", username);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (userDetails != null && userDetails.getUsername() != null) {
+                if (userDetails != null && jwtTokenUtil.validateToken(authToken, userDetails)) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    LOGGER.info("authenticated user:{}", username);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-       // }
+        } else {
+            logger.info("no token" + request.getRequestURI());
+        }
+        // }
 
         startTime = System.currentTimeMillis();
-            try {
-                chain.doFilter(request, response);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+        try {
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         endTime = System.currentTimeMillis();
         logger.info(formMapKey(11, fullUrl, requestType,
@@ -209,7 +217,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-        //    fopSystemOperationLogService.insert(sysLog);
+            //    fopSystemOperationLogService.insert(sysLog);
         }
     }
 

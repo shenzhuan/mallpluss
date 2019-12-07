@@ -146,15 +146,15 @@ public class SmsShare implements Serializable {
     @Override
     public String toString() {
         return "SmsShare{" +
-        ", id=" + id +
-        ", userId=" + userId +
-        ", wxId=" + wxId +
-        ", wxName=" + wxName +
-        ", sex=" + sex +
-        ", type=" + type +
-        ", articleId=" + articleId +
-        ", shareAdd=" + shareAdd +
-        ", coupon=" + coupon +
-        "}";
+                ", id=" + id +
+                ", userId=" + userId +
+                ", wxId=" + wxId +
+                ", wxName=" + wxName +
+                ", sex=" + sex +
+                ", type=" + type +
+                ", articleId=" + articleId +
+                ", shareAdd=" + shareAdd +
+                ", coupon=" + coupon +
+                "}";
     }
 }

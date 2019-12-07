@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
+import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
@@ -55,28 +56,23 @@ import java.util.TreeMap;
 @RestController
 public class BPayController extends ApiBaseAction {
     private static Logger LOGGER = LoggerFactory.getLogger(BPayController.class);
-
+    String tradeType = "JSAPI";
+    String uniformorder = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    String orderquery = "https://api.mch.weixin.qq.com/pay/orderquery";
+    String refundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+    String refundqueryUrl = "https://api.mch.weixin.qq.com/pay/refundquery";
     @Resource
     private IOmsOrderService orderService;
     @Resource
     private IUmsMemberService memberService;
-
-
     @Resource
     private IOmsOrderItemService orderItemService;
     @Resource
     private SmsGroupMapper groupMapper;
-
     @Resource
     private SysAppletSetMapper appletSetMapper;
     @Autowired
     private IOmsOrderOperateHistoryService orderOperateHistoryService;
-
-    String tradeType="JSAPI";
-    String uniformorder="https://api.mch.weixin.qq.com/pay/unifiedorder";
-    String orderquery="https://api.mch.weixin.qq.com/pay/orderquery";
-    String refundUrl="https://api.mch.weixin.qq.com/secapi/pay/refund";
-    String refundqueryUrl="https://api.mch.weixin.qq.com/pay/refundquery";
 
     /**
      * 订单退款请求
@@ -129,10 +125,10 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "余额支付")
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
-    public Object balancePay(BalancePayParam payParam){
-        if(payParam.getPayAmount().compareTo(payParam.getBalance())>0){
+    public Object balancePay(BalancePayParam payParam) {
+        if (payParam.getPayAmount().compareTo(payParam.getBalance()) > 0) {
             return new CommonResult().failed("余额不足！");
-        }else {
+        } else {
             OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
             return new CommonResult().success(order);
         }
@@ -144,7 +140,7 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "积分兑换")
     @ApiOperation(value = "积分兑换")
     @PostMapping("jifenPay")
-    public Object jifenPay(OrderParam payParam){
+    public Object jifenPay(OrderParam payParam) {
         return orderService.jifenPay(payParam);
     }
 
@@ -160,7 +156,7 @@ public class BPayController extends ApiBaseAction {
         OmsOrder orderInfo = orderService.getById(orderId);
         SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {
-            return ApiBaseAction.toResponsFail("没有设置支付配置");
+            throw new ApiMallPlusException("没有设置支付配置");
         }
 
         if (null == orderInfo) {
@@ -225,13 +221,13 @@ public class BPayController extends ApiBaseAction {
             String return_msg = MapUtils.getString("return_msg", resultUn);
             //
             if (return_code.equalsIgnoreCase("FAIL")) {
-                return toResponsFail("支付失败," + return_msg);
+                throw new ApiMallPlusException("支付失败," + return_msg);
             } else if (return_code.equalsIgnoreCase("SUCCESS")) {
                 // 返回数据
                 String result_code = MapUtils.getString("result_code", resultUn);
                 String err_code_des = MapUtils.getString("err_code_des", resultUn);
                 if (result_code.equalsIgnoreCase("FAIL")) {
-                    return toResponsFail("支付失败," + err_code_des);
+                    throw new ApiMallPlusException("支付失败," + err_code_des);
                 } else if (result_code.equalsIgnoreCase("SUCCESS")) {
                     String prepay_id = MapUtils.getString("prepay_id", resultUn);
                     // 先生成paySign 参考https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_7&index=5
@@ -247,12 +243,12 @@ public class BPayController extends ApiBaseAction {
                     // 付款中
                     orderInfo.setStatus(OrderStatus.PayNotNotice.getValue());
                     orderService.updateById(orderInfo);
-                    if (orderInfo.getPid()==null){
+                    if (orderInfo.getPid() == null) {
                         OmsOrder neworder = new OmsOrder();
                         neworder.setStatus(OrderStatus.TO_DELIVER.getValue());
                         neworder.setPayType(AllEnum.OrderPayType.weixinAppletPay.code());
                         neworder.setPaymentTime(new Date());
-                        orderService.update(neworder,new QueryWrapper<OmsOrder>().eq("pid",orderInfo.getId()));
+                        orderService.update(neworder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                     }
                     OmsOrderOperateHistory history = new OmsOrderOperateHistory();
                     history.setOrderId(orderInfo.getId());
@@ -267,9 +263,9 @@ public class BPayController extends ApiBaseAction {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return toResponsFail("下单失败,error=" + e.getMessage());
+            throw new ApiMallPlusException("下单失败,error=" + e.getMessage());
         }
-        return toResponsFail("下单失败");
+        throw new ApiMallPlusException("下单失败");
     }
 
     /**
@@ -283,11 +279,11 @@ public class BPayController extends ApiBaseAction {
         //
         SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
         if (null == appletSet) {
-            return ApiBaseAction.toResponsFail("没有设置支付配置");
+            throw new ApiMallPlusException("没有设置支付配置");
         }
         OmsOrder orderDetail = orderService.getById(id);
         if (id == null) {
-            return toResponsFail("订单不存在");
+            throw new ApiMallPlusException("订单不存在");
         }
         Map<Object, Object> parame = new TreeMap<Object, Object>();
         parame.put("appid", appletSet.getAppid());
@@ -310,14 +306,14 @@ public class BPayController extends ApiBaseAction {
             resultUn = XmlUtil.xmlStrToMap(WechatUtil.requestOnce(orderquery, xml));
         } catch (Exception e) {
             e.printStackTrace();
-            return toResponsFail("查询失败,error=" + e.getMessage());
+            throw new ApiMallPlusException("查询失败,error=" + e.getMessage());
         }
         // 响应报文
         String return_code = MapUtils.getString("return_code", resultUn);
         String return_msg = MapUtils.getString("return_msg", resultUn);
 
         if (!"SUCCESS".equals(return_code)) {
-            return toResponsFail("查询失败,error=" + return_msg);
+            throw new ApiMallPlusException("查询失败,error=" + return_msg);
         }
 
         String trade_state = MapUtils.getString("trade_state", resultUn);
@@ -330,7 +326,7 @@ public class BPayController extends ApiBaseAction {
             orderInfo.setConfirmStatus(1);
             orderInfo.setPaymentTime(new Date());
             orderService.updateById(orderInfo);
-            return toResponsMsgSuccess("支付成功");
+            return new CommonResult().success("支付成功");
         } else if ("USERPAYING".equals(trade_state)) {
             // 重新查询 正在支付中
            /* Integer num = (Integer) J2CacheUtils.get(J2CacheUtils.SHOP_CACHE_NAME, "queryRepeatNum" + id + "");
@@ -341,15 +337,15 @@ public class BPayController extends ApiBaseAction {
                 J2CacheUtils.remove(J2CacheUtils.SHOP_CACHE_NAME, "queryRepeatNum" + id);
                 this.orderQuery(id);
             } else {
-                return toResponsFail("查询失败,error=" + trade_state);
+                throw new ApiMallPlusException("查询失败,error=" + trade_state);
             }*/
 
         } else {
             // 失败
-            return toResponsFail("查询失败,error=" + trade_state);
+            throw new ApiMallPlusException("查询失败,error=" + trade_state);
         }
 
-        return toResponsFail("查询失败，未知错误");
+        throw new ApiMallPlusException("查询失败，未知错误");
     }
 
     /**

@@ -46,5 +46,4 @@ public class SmsPaimaiLog implements Serializable {
     private Long goodsId;
 
 
-
 }

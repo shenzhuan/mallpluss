@@ -31,9 +31,10 @@ import java.util.List;
 public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, AdminSysJob> implements IAdminSysJobService {
 
     @Resource
-    private Scheduler scheduler;
+    AdminSysJobMapper jobMapper;
     @Resource
-    AdminSysJobMapper  jobMapper;
+    private Scheduler scheduler;
+
     @Override
     public boolean delete(Long id) {
         return false;
@@ -42,8 +43,7 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
     @Override
     public boolean deleteByIds(List<Long> ids) {
 
-        for (Long jobId : ids)
-        {
+        for (Long jobId : ids) {
             AdminSysJob job = jobMapper.selectById(jobId);
             deleteJob(job);
         }
@@ -62,13 +62,11 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int deleteJob(AdminSysJob job)
-    {
+    public int deleteJob(AdminSysJob job) {
         Long jobId = job.getJobId();
         String jobGroup = job.getJobGroup();
         int rows = jobMapper.deleteById(jobId);
-        if (rows > 0)
-        {
+        if (rows > 0) {
             try {
                 scheduler.deleteJob(ScheduleUtils.getJobKey(jobId, jobGroup));
             } catch (SchedulerException e) {
@@ -77,19 +75,19 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
         }
         return rows;
     }
+
     /**
      * 项目启动时，初始化定时器
      * 主要是防止手动修改数据库导致未同步到定时任务处理（注：不能手动修改数据库ID和任务组名，否则会导致脏数据）
      */
     @PostConstruct
-    public void init() throws SchedulerException
-    {
+    public void init() throws SchedulerException {
         List<AdminSysJob> jobList = jobMapper.selectList(new QueryWrapper<>());
-        for (AdminSysJob job : jobList)
-        {
+        for (AdminSysJob job : jobList) {
             updateSchedulerJob(job, job.getJobGroup());
         }
     }
+
     /**
      * 暂停任务
      *
@@ -97,14 +95,12 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int pauseJob(AdminSysJob job)
-    {
+    public int pauseJob(AdminSysJob job) {
         Long jobId = job.getJobId();
         String jobGroup = job.getJobGroup();
         job.setStatus(ScheduleConstants.Status.PAUSE.getValue());
         int rows = jobMapper.updateById(job);
-        if (rows > 0)
-        {
+        if (rows > 0) {
             try {
                 scheduler.pauseJob(ScheduleUtils.getJobKey(jobId, jobGroup));
             } catch (SchedulerException e) {
@@ -121,14 +117,12 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int resumeJob(AdminSysJob job)
-    {
+    public int resumeJob(AdminSysJob job) {
         Long jobId = job.getJobId();
         String jobGroup = job.getJobGroup();
         job.setStatus(ScheduleConstants.Status.NORMAL.getValue());
         int rows = jobMapper.updateById(job);
-        if (rows > 0)
-        {
+        if (rows > 0) {
             try {
                 scheduler.resumeJob(ScheduleUtils.getJobKey(jobId, jobGroup));
             } catch (SchedulerException e) {
@@ -137,6 +131,7 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
         }
         return rows;
     }
+
     /**
      * 任务调度状态修改
      *
@@ -144,16 +139,12 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int changeStatus(AdminSysJob job)
-    {
+    public int changeStatus(AdminSysJob job) {
         int rows = 0;
         Integer status = job.getStatus();
-        if (ScheduleConstants.Status.NORMAL.getValue().equals(status))
-        {
+        if (ScheduleConstants.Status.NORMAL.getValue().equals(status)) {
             rows = resumeJob(job);
-        }
-        else if (ScheduleConstants.Status.PAUSE.getValue().equals(status))
-        {
+        } else if (ScheduleConstants.Status.PAUSE.getValue().equals(status)) {
             rows = pauseJob(job);
         }
         return rows;
@@ -166,8 +157,7 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public void run(AdminSysJob job)
-    {
+    public void run(AdminSysJob job) {
         Long jobId = job.getJobId();
         String jobGroup = job.getJobGroup();
         AdminSysJob properties = jobMapper.selectById(job.getJobId());
@@ -188,12 +178,10 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int insertJob(AdminSysJob job)
-    {
+    public int insertJob(AdminSysJob job) {
         job.setStatus(ScheduleConstants.Status.PAUSE.getValue());
         int rows = jobMapper.insert(job);
-        if (rows > 0)
-        {
+        if (rows > 0) {
             ScheduleUtils.createScheduleJob(scheduler, job);
         }
         return rows;
@@ -206,12 +194,10 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      */
     @Override
     @Transactional
-    public int updateJob(AdminSysJob job)
-    {
+    public int updateJob(AdminSysJob job) {
         AdminSysJob properties = jobMapper.selectById(job.getJobId());
         int rows = jobMapper.updateById(job);
-        if (rows > 0)
-        {
+        if (rows > 0) {
             updateSchedulerJob(job, properties.getJobGroup());
         }
         return rows;
@@ -220,22 +206,20 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
     /**
      * 更新任务
      *
-     * @param job 调度信息
+     * @param job      调度信息
      * @param jobGroup 任务组名
      */
-    public void updateSchedulerJob(AdminSysJob job, String jobGroup)
-    {
+    public void updateSchedulerJob(AdminSysJob job, String jobGroup) {
         try {
             Long jobId = job.getJobId();
             // 判断是否存在
             JobKey jobKey = ScheduleUtils.getJobKey(jobId, jobGroup);
-            if (scheduler.checkExists(jobKey))
-            {
+            if (scheduler.checkExists(jobKey)) {
                 // 防止创建时存在数据问题 先移除，然后在执行创建操作
                 scheduler.deleteJob(jobKey);
             }
             ScheduleUtils.createScheduleJob(scheduler, job);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -248,8 +232,7 @@ public class AdminSysJobServiceImpl extends ServiceImpl<AdminSysJobMapper, Admin
      * @return 结果
      */
     @Override
-    public boolean checkCronExpressionIsValid(String cronExpression)
-    {
+    public boolean checkCronExpressionIsValid(String cronExpression) {
         return CronUtils.isValid(cronExpression);
     }
 }

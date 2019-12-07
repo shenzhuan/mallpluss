@@ -50,6 +50,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/single/sms")
 public class SingeMarkingController extends ApiBaseAction {
 
+    @Autowired
+    ISmsCouponService couponService;
     @Resource
     private ISmsBasicGiftsService basicGiftsService;
     @Resource
@@ -60,8 +62,6 @@ public class SingeMarkingController extends ApiBaseAction {
     private ISmsGroupActivityService smsGroupActivityService;
     @Resource
     private IPmsProductService productService;
-    @Autowired
-    ISmsCouponService couponService;
     @Resource
     private RedisUtil redisUtil;
     @Autowired
@@ -92,9 +92,9 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         List<SmsBasicMarking> basicMarkingList = basicMarkingService.matchGoodsBasicMarking(id);
         List<SmsBasicGifts> basicGiftsList = basicGiftsService.matchGoodsBasicGifts(id);
-        Map<String,Object> map = new HashMap<>();
-        map.put("basicMarkingList",basicMarkingList);
-        map.put("basicGiftsList",basicGiftsList);
+        Map<String, Object> map = new HashMap<>();
+        map.put("basicMarkingList", basicMarkingList);
+        map.put("basicGiftsList", basicGiftsList);
         return new CommonResult().success(map);
     }
 
@@ -109,11 +109,11 @@ public class SingeMarkingController extends ApiBaseAction {
 
         IPage<SmsGroupActivity> page = null;
         groupActivity.setStatus(1);
-        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time")) ;
+        page = smsGroupActivityService.page(new Page<SmsGroupActivity>(pageNum, pageSize), new QueryWrapper<>(groupActivity).orderByDesc("create_time"));
 
         for (SmsGroupActivity smsGroupActivity : page.getRecords()) {
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
-                List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id",Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
+                List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id", Arrays.asList(smsGroupActivity.getGoodsIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList())).select(ConstansValue.sampleGoodsList));
                 if (productList != null && productList.size() > 0) {
                     smsGroupActivity.setProductList(productList);
                 }
@@ -138,25 +138,25 @@ public class SingeMarkingController extends ApiBaseAction {
                 if (goods == null || goods.getGoods() == null) {
                     goods = productService.getGoodsRedisById(goodIds.get(0));
                 }
-                    if (goods != null && goods.getGoods() != null) {
-                        UmsMember umsMember = memberService.getNewCurrentMember();
-                        if (umsMember != null && umsMember.getId() != null) {
-                            isCollectGoods(map, goods, umsMember);
-                        }
-                        recordGoodsFoot(id);
-
-                        List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
-                        if (newGoodIds != null && newGoodIds.size() > 0) {
-                            List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id",goodIds).select(ConstansValue.sampleGoodsList));
-                            if (productList != null && productList.size() > 0) {
-                                groupActivity.setProductList(productList);
-                            }
-                        }
-                        map.put("groupActivity", groupActivity);
-                        map.put("goods", goods);
-                        return new CommonResult().success(map);
+                if (goods != null && goods.getGoods() != null) {
+                    UmsMember umsMember = memberService.getNewCurrentMember();
+                    if (umsMember != null && umsMember.getId() != null) {
+                        isCollectGoods(map, goods, umsMember);
                     }
+                    recordGoodsFoot(id);
+
+                    List<Long> newGoodIds = goodIds.subList(1, goodIds.size());
+                    if (newGoodIds != null && newGoodIds.size() > 0) {
+                        List<PmsProduct> productList = (List<PmsProduct>) productService.list(new QueryWrapper<PmsProduct>().in("id", goodIds).select(ConstansValue.sampleGoodsList));
+                        if (productList != null && productList.size() > 0) {
+                            groupActivity.setProductList(productList);
+                        }
+                    }
+                    map.put("groupActivity", groupActivity);
+                    map.put("goods", goods);
+                    return new CommonResult().success(map);
                 }
+            }
 
         }
         return new CommonResult().failed();
@@ -164,6 +164,7 @@ public class SingeMarkingController extends ApiBaseAction {
 
     /**
      * 判断是否收藏商品
+     *
      * @param map
      * @param goods
      * @param umsMember
@@ -184,6 +185,7 @@ public class SingeMarkingController extends ApiBaseAction {
 
     /**
      * 记录商品浏览记录
+     *
      * @param id
      */
     private void recordGoodsFoot(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {

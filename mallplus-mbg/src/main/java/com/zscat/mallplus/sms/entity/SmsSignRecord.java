@@ -107,12 +107,12 @@ public class SmsSignRecord implements Serializable {
     @Override
     public String toString() {
         return "SmsSignRecord{" +
-        ", id=" + id +
-        ", userId=" + userId +
-        ", signScore=" + signScore +
-        ", record=" + record +
-        ", signTime=" + signTime +
-        ", type=" + type +
-        "}";
+                ", id=" + id +
+                ", userId=" + userId +
+                ", signScore=" + signScore +
+                ", record=" + record +
+                ", signTime=" + signTime +
+                ", type=" + type +
+                "}";
     }
 }

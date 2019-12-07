@@ -18,7 +18,8 @@ import java.util.Map;
 
 public final class EasyPoiUtils {
 
-    private EasyPoiUtils() {}
+    private EasyPoiUtils() {
+    }
 
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) {
         try {
@@ -27,24 +28,24 @@ public final class EasyPoiUtils {
             response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
             workbook.write(response.getOutputStream());
         } catch (IOException e) {
-            throw new  RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
-    private static<T> void defaultExport(List<T> dataList, Class<?> clz, String fileName, HttpServletResponse response, ExportParams exportParams) {
+    private static <T> void defaultExport(List<T> dataList, Class<?> clz, String fileName, HttpServletResponse response, ExportParams exportParams) {
         Workbook workbook = ExcelExportUtil.exportExcel(exportParams, clz, dataList);
         if (workbook != null) {
             downLoadExcel(fileName, response, workbook);
         }
     }
 
-    public static<T> void exportExcel(List<T> dataList, String title, String sheetName, Class<?> clz, String fileName, boolean isCreateHeader, HttpServletResponse response) {
+    public static <T> void exportExcel(List<T> dataList, String title, String sheetName, Class<?> clz, String fileName, boolean isCreateHeader, HttpServletResponse response) {
         ExportParams exportParams = new ExportParams(title, sheetName);
         exportParams.setCreateHeadRows(isCreateHeader);
         defaultExport(dataList, clz, fileName, response, exportParams);
     }
 
-    public static<T> void exportExcel(List<T> dataList, String title, String sheetName, Class<?> clz, String fileName, HttpServletResponse response) {
+    public static <T> void exportExcel(List<T> dataList, String title, String sheetName, Class<?> clz, String fileName, HttpServletResponse response) {
         defaultExport(dataList, clz, fileName, response, new ExportParams(title, sheetName));
     }
 

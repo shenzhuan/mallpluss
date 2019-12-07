@@ -144,7 +144,6 @@ public class SmsHomeRecommendSubjectController {
     }
 
 
-
     @ApiOperation("修改推荐排序")
     @RequestMapping(value = "/update/sort/{id}", method = RequestMethod.POST)
     @ResponseBody

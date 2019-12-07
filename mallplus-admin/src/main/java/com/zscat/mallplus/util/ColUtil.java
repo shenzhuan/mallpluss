@@ -14,13 +14,14 @@ public class ColUtil {
 
     /**
      * 转换mysql数据类型为java数据类型
+     *
      * @param type 数据库字段类型
      * @return String
      */
-    static String cloToJava(String type){
+    static String cloToJava(String type) {
         Configuration config = getConfig();
         assert config != null;
-        return config.getString(type,"unknowType");
+        return config.getString(type, "unknowType");
     }
 
     /**
@@ -28,7 +29,7 @@ public class ColUtil {
      */
     public static PropertiesConfiguration getConfig() {
         try {
-            return new PropertiesConfiguration("generator.properties" );
+            return new PropertiesConfiguration("generator.properties");
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }

@@ -118,13 +118,13 @@ public class SmsSignActivity implements Serializable {
     @Override
     public String toString() {
         return "SmsSignActivity{" +
-        ", id=" + id +
-        ", image=" + image +
-        ", starttime=" + starttime +
-        ", endtime=" + endtime +
-        ", detail=" + detail +
-        ", addTime=" + addTime +
-        ", status=" + status +
-        "}";
+                ", id=" + id +
+                ", image=" + image +
+                ", starttime=" + starttime +
+                ", endtime=" + endtime +
+                ", detail=" + detail +
+                ", addTime=" + addTime +
+                ", status=" + status +
+                "}";
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat
@@ -20,9 +20,11 @@ import java.util.List;
 public interface ISysQiniuConfigService extends IService<SysQiniuConfig> {
 
     int update(SysQiniuConfig qiniuConfig);
+
     /**
      * 上传文件
-     * @param file 文件
+     *
+     * @param file        文件
      * @param qiniuConfig 配置
      * @return QiniuContent
      */
@@ -30,6 +32,7 @@ public interface ISysQiniuConfigService extends IService<SysQiniuConfig> {
 
     /**
      * 查询文件
+     *
      * @param id 文件ID
      * @return QiniuContent
      */
@@ -37,36 +40,40 @@ public interface ISysQiniuConfigService extends IService<SysQiniuConfig> {
 
     /**
      * 下载文件
+     *
      * @param content 文件信息
-     * @param config 配置
+     * @param config  配置
      * @return String
      */
     String download(SysQiniuContent content, SysQiniuConfig config);
 
     /**
      * 删除文件
+     *
      * @param content 文件
-     * @param config 配置
+     * @param config  配置
      */
     void delete(SysQiniuContent content, SysQiniuConfig config);
 
     /**
      * 同步数据
+     *
      * @param config 配置
      */
     void synchronize(SysQiniuConfig config);
 
     /**
      * 删除文件
-     * @param ids 文件ID数组
+     *
+     * @param ids    文件ID数组
      * @param config 配置
      */
     void deleteAll(Long[] ids, SysQiniuConfig config);
 
 
-
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      */

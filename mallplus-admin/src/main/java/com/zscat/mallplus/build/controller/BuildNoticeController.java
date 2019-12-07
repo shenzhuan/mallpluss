@@ -42,8 +42,8 @@ public class BuildNoticeController {
     @GetMapping(value = "/list")
     @PreAuthorize("hasAuthority('build:notice:read')")
     public Object getBuildNoticeByPage(BuildNotice entity,
-                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IBuildNoticeService.page(new Page<BuildNotice>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -135,6 +135,7 @@ public class BuildNoticeController {
             return new CommonResult().failed();
         }
     }
+
     @GetMapping("/exportExcel")
     public void export(HttpServletResponse response, BuildNotice entity) {
         // 模拟从数据库获取需要导出的数据

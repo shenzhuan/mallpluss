@@ -13,6 +13,7 @@ import java.util.Map;
 
 /**
  * 支付宝工具类
+ *
  * @author zhengjie
  * @date 2018/09/30 14:04:35
  */
@@ -21,11 +22,12 @@ public class AlipayUtils {
 
     /**
      * 生成订单号
+     *
      * @return String
      */
     public String getOrderCode() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        int a = (int)(Math.random() * 9000.0D) + 1000;
+        int a = (int) (Math.random() * 9000.0D) + 1000;
         System.out.println(a);
         Date date = new Date();
         String str = sdf.format(date);
@@ -39,14 +41,15 @@ public class AlipayUtils {
 
     /**
      * 校验签名
+     *
      * @param request HttpServletRequest
-     * @param alipay 阿里云配置
+     * @param alipay  阿里云配置
      * @return boolean
      */
-    public boolean rsaCheck(HttpServletRequest request, SysAlipayConfig alipay){
+    public boolean rsaCheck(HttpServletRequest request, SysAlipayConfig alipay) {
 
         // 获取支付宝POST过来反馈信息
-        Map<String,String> params = new HashMap<>(1);
+        Map<String, String> params = new HashMap<>(1);
         Map requestParams = request.getParameterMap();
         for (Object o : requestParams.keySet()) {
             String name = (String) o;

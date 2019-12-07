@@ -70,7 +70,7 @@ public class SysAppletSetController {
     @PostMapping(value = "/update/{id}")
     public Object updateSysAppletSet(@RequestBody SysAppletSet entity) {
         try {
-            if (ISysAppletSetService.update(entity,new QueryWrapper<>())) {
+            if (ISysAppletSetService.update(entity, new QueryWrapper<>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {

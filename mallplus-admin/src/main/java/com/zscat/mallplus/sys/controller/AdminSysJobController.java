@@ -54,11 +54,11 @@ public class AdminSysJobController {
 
     public Object saveAdminSysJob(@RequestBody AdminSysJob entity) {
         try {
-            if (!adminSysJobService.checkCronExpressionIsValid(entity.getCronExpression())){
+            if (!adminSysJobService.checkCronExpressionIsValid(entity.getCronExpression())) {
                 return new CommonResult().failed("表达式错误");
             }
             adminSysJobService.insertJob(entity);
-                return new CommonResult().success();
+            return new CommonResult().success();
 
         } catch (Exception e) {
             log.error("保存定时器日志表：%s", e.getMessage(), e);
@@ -73,11 +73,11 @@ public class AdminSysJobController {
 
     public Object updateAdminSysJob(@RequestBody AdminSysJob entity) {
         try {
-            if (!adminSysJobService.checkCronExpressionIsValid(entity.getCronExpression())){
+            if (!adminSysJobService.checkCronExpressionIsValid(entity.getCronExpression())) {
                 return new CommonResult().failed("表达式错误");
             }
-           adminSysJobService.updateJob(entity) ;
-                return new CommonResult().success();
+            adminSysJobService.updateJob(entity);
+            return new CommonResult().success();
 
         } catch (Exception e) {
             log.error("更新定时器日志表：%s", e.getMessage(), e);
@@ -149,12 +149,13 @@ public class AdminSysJobController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("修改展示状态")
     @RequestMapping(value = "/run")
     @ResponseBody
     @SysLog(MODULE = "cms", REMARK = "修改展示状态")
     public Object run(@RequestBody AdminSysJob entity) {
-         adminSysJobService.run(entity);
+        adminSysJobService.run(entity);
         return new CommonResult().success();
 
     }
@@ -164,8 +165,7 @@ public class AdminSysJobController {
      */
     @PostMapping("/checkCronExpressionIsValid")
     @ResponseBody
-    public Object checkCronExpressionIsValid(@RequestBody AdminSysJob job)
-    {
+    public Object checkCronExpressionIsValid(@RequestBody AdminSysJob job) {
         adminSysJobService.checkCronExpressionIsValid(job.getCronExpression());
         return new CommonResult().success();
     }

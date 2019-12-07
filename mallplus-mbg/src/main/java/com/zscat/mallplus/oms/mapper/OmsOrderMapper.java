@@ -50,12 +50,14 @@ public interface OmsOrderMapper extends BaseMapper<OmsOrder> {
 
     /**
      * 根据会员分组订单
+     *
      * @return
      */
     List<OrderStstic> listOrderGroupByMemberId();
 
     /**
      * 订单日统计
+     *
      * @param date
      * @return
      */
@@ -63,10 +65,11 @@ public interface OmsOrderMapper extends BaseMapper<OmsOrder> {
 
     /**
      * 订单 月统计
+     *
      * @param date
      * @return
      */
     Map orderMonthStatic(String date);
 
-    List<OmsOrder> listByDate(@Param("date") String date,@Param("type") Integer type);
+    List<OmsOrder> listByDate(@Param("date") String date, @Param("type") Integer type);
 }

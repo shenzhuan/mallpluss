@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -20,7 +20,8 @@ import javax.annotation.Resource;
 public class SmsBasicGiftsServiceImpl extends ServiceImpl<SmsBasicGiftsMapper, SmsBasicGifts> implements ISmsBasicGiftsService {
 
     @Resource
-    private  SmsBasicGiftsMapper giftsMapper;
+    private SmsBasicGiftsMapper giftsMapper;
+
     @Override
     public int updateStatus(Long id, Integer status) {
         SmsBasicGifts gifts = new SmsBasicGifts();

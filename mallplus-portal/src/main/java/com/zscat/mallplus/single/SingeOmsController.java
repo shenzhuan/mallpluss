@@ -65,33 +65,34 @@ public class SingeOmsController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
-        if (order.getStatus()!=null && order.getStatus()==0){
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id",memberService.getNewCurrentMember().getId()).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
-        }else {
+        if (order.getStatus() != null && order.getStatus() == 0) {
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id", memberService.getNewCurrentMember().getId()).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+        } else {
             order.setMemberId(memberService.getNewCurrentMember().getId());
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList)) ;
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
 
         }
-        for (OmsOrder omsOrder : page.getRecords()){
-            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id",omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+        for (OmsOrder omsOrder : page.getRecords()) {
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
             omsOrder.setOrderItemList(itemList);
         }
         return new CommonResult().success(page);
     }
+
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         OmsOrder orderDetailResult = null;
-            orderDetailResult = orderService.getById(id);
-            OmsOrderItem query = new OmsOrderItem();
-            query.setOrderId(id);
-            List<OmsOrderItem> orderItemList = orderItemService.list(new QueryWrapper<>(query));
-            orderDetailResult.setOrderItemList(orderItemList);
-            UmsMember member = memberMapper.selectById(orderDetailResult.getMemberId());
-            if(member!=null){
-                orderDetailResult.setBlance(member.getBlance());
-            }
+        orderDetailResult = orderService.getById(id);
+        OmsOrderItem query = new OmsOrderItem();
+        query.setOrderId(id);
+        List<OmsOrderItem> orderItemList = orderItemService.list(new QueryWrapper<>(query));
+        orderDetailResult.setOrderItemList(orderItemList);
+        UmsMember member = memberMapper.selectById(orderDetailResult.getMemberId());
+        if (member != null) {
+            orderDetailResult.setBlance(member.getBlance());
+        }
         return new CommonResult().success(orderDetailResult);
     }
 
@@ -115,6 +116,7 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "订单管理", REMARK = "订单确认收货")
     @ApiOperation("订单确认收货")
     @RequestMapping(value = "/confimDelivery", method = RequestMethod.POST)
@@ -126,6 +128,7 @@ public class SingeOmsController extends ApiBaseAction {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "订单管理", REMARK = "订单申请退款")
     @ApiOperation("申请退款")
     @RequestMapping(value = "/applyRefund", method = RequestMethod.POST)
@@ -142,11 +145,12 @@ public class SingeOmsController extends ApiBaseAction {
     @SysLog(MODULE = "oms", REMARK = "添加订单评论")
     @ApiOperation(value = "添加订单评论")
     @PostMapping(value = "/orderevaluate")
-    public Object addGoodsConsult( @RequestParam(value = "orderId", defaultValue = "1") Long orderId,
-                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
+    public Object addGoodsConsult(@RequestParam(value = "orderId", defaultValue = "1") Long orderId,
+                                  @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
 
-        return orderService.orderComment(orderId,items);
+        return orderService.orderComment(orderId, items);
     }
+
     @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
@@ -177,6 +181,7 @@ public class SingeOmsController extends ApiBaseAction {
 
     /**
      * 团购商品订单预览
+     *
      * @param orderParam
      * @return
      */
@@ -192,6 +197,7 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     /**
      * 提交订单
      *

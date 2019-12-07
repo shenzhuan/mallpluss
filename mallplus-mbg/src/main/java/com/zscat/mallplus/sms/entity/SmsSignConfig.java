@@ -164,16 +164,16 @@ public class SmsSignConfig implements Serializable {
     @Override
     public String toString() {
         return "SmsSignConfig{" +
-        ", id=" + id +
-        ", plugInsId=" + plugInsId +
-        ", imgurl=" + imgurl +
-        ", minScore=" + minScore +
-        ", maxScore=" + maxScore +
-        ", continuityThree=" + continuityThree +
-        ", continuityTwenty=" + continuityTwenty +
-        ", continuityThirty=" + continuityThirty +
-        ", activityOverdue=" + activityOverdue +
-        ", modifyDate=" + modifyDate +
-        "}";
+                ", id=" + id +
+                ", plugInsId=" + plugInsId +
+                ", imgurl=" + imgurl +
+                ", minScore=" + minScore +
+                ", maxScore=" + maxScore +
+                ", continuityThree=" + continuityThree +
+                ", continuityTwenty=" + continuityTwenty +
+                ", continuityThirty=" + continuityThirty +
+                ", activityOverdue=" + activityOverdue +
+                ", modifyDate=" + modifyDate +
+                "}";
     }
 }

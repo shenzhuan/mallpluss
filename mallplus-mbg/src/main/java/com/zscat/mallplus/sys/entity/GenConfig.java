@@ -6,11 +6,12 @@ import lombok.Data;
 
 /**
  * 代码生成配置
+ *
  * @author mallplus
  * @date 2019-01-03
  */
 @Data
-@TableName( "gen_config")
+@TableName("gen_config")
 public class GenConfig {
 
 

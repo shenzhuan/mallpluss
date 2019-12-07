@@ -13,12 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 public class HomeFlashPromotion {
+    //属于该秒杀活动的商品
+    List<SmsFlashSessionInfo> flashSessionInfoList;
     private Long id;
     private String startTime;
     private String endTime;
     private Date nextStartTime;
     private Date nextEndTime;
     private String flashName;
-    //属于该秒杀活动的商品
-    List<SmsFlashSessionInfo> flashSessionInfoList;
 }

@@ -10,7 +10,9 @@ public class TimeSecound implements Serializable {
     long hours;  //小时
     long mins;  //分钟
     long sc;  //秒
-    public TimeSecound(){}
+
+    public TimeSecound() {
+    }
 
     public TimeSecound(long days, long hours, long mins, long sc) {
         this.days = days;

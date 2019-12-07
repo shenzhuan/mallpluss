@@ -4,7 +4,6 @@ package com.zscat.mallplus.single;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.cms.entity.CmsFavorite;
-import com.zscat.mallplus.cms.entity.CmsTopic;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
@@ -63,16 +62,17 @@ public class MemberCollectionController {
 
     @ApiOperation("显示收藏列表")
     @GetMapping(value = "/listCollectByType")
-    public Object listCollectByType( PmsFavorite productCollection) {
-        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
+    public Object listCollectByType(PmsFavorite productCollection) {
+        List<PmsFavorite> memberProductCollectionList = memberCollectionService.listProduct(memberService.getNewCurrentMember().getId(), productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
+
     @ApiOperation("显示收藏列表")
     @GetMapping(value = "/listCollect")
-    public Object listCollect( PmsFavorite productCollection,
-                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-       productCollection.setMemberId(memberService.getNewCurrentMember().getId());
+    public Object listCollect(PmsFavorite productCollection,
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        productCollection.setMemberId(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberCollectionService.page(new Page<PmsFavorite>(pageNum, pageSize), new QueryWrapper<>(productCollection).orderByDesc("add_time")));
 
     }
@@ -108,13 +108,14 @@ public class MemberCollectionController {
 
     @ApiOperation("显示点赞列表")
     @GetMapping(value = "/listLikeByType")
-    public Object listLikeByType( CmsFavorite productCollection) {
-        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(),productCollection.getType());
+    public Object listLikeByType(CmsFavorite productCollection) {
+        List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listProduct(memberService.getNewCurrentMember().getId(), productCollection.getType());
         return new CommonResult().success(memberProductCollectionList);
     }
+
     @ApiOperation("显示点赞列表")
     @GetMapping(value = "/listLike")
-    public Object listLike( CmsFavorite productCollection) {
+    public Object listLike(CmsFavorite productCollection) {
         List<CmsFavorite> memberProductCollectionList = cmsFavoriteService.listCollect(memberService.getNewCurrentMember().getId());
         return new CommonResult().success(memberProductCollectionList);
     }

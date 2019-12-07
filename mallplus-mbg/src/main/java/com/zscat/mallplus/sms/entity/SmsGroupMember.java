@@ -143,14 +143,14 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     }
 
     public List getPics() {
-        if (ValidatorUtils.notEmpty(name)){
+        if (ValidatorUtils.notEmpty(name)) {
             this.pics = Arrays.asList(name.split(","));
         }
         return pics;
     }
 
     public void setPics(List pics) {
-        if (ValidatorUtils.notEmpty(name)){
+        if (ValidatorUtils.notEmpty(name)) {
             this.pics = Arrays.asList(name.split(","));
         }
     }

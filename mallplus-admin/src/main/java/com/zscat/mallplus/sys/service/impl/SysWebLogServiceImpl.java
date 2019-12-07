@@ -24,6 +24,7 @@ public class SysWebLogServiceImpl extends ServiceImpl<SysWebLogMapper, SysWebLog
 
     @Resource
     private SysWebLogMapper logMapper;
+
     @Override
     public List<LogStatisc> selectPageExt(LogParam entity) {
         return logMapper.getLogStatisc(entity);

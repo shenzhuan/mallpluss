@@ -16,11 +16,11 @@ import java.util.List;
  */
 public interface ICmsSubjectService extends IService<CmsSubject> {
 
-    List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize) ;
+    List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize);
 
     int countByToday(Long id);
 
-    Object reward(Long aid,int coin);
+    Object reward(Long aid, int coin);
 
     List<Timeline> listTimeLine();
 }

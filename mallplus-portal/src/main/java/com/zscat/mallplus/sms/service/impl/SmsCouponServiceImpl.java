@@ -60,16 +60,16 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         SmsCoupon coupon = new SmsCoupon();
         coupon.setType(0);
         List<SmsCoupon> list = new ArrayList<>();
-        if (currentMember != null && currentMember.getId()!=null) {
-            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()));
+        if (currentMember != null && currentMember.getId() != null) {
+            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", currentMember.getId()));
             if (histories != null && histories.size() > 0) {
                 List<Long> ids = histories.stream()
                         .map(SmsCouponHistory::getCouponId)
                         .collect(Collectors.toList());
-                list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()).notIn("id",ids));
+                list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()).notIn("id", ids));
             }
 
-        }else {
+        } else {
             list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
         }
         return list;
@@ -77,31 +77,30 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     }
 
 
-
     @Override
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
         UmsMember currentMember = memberService.getNewCurrentMember();
         if (currentMember == null) {
-            return  new ArrayList<>();
+            return new ArrayList<>();
         }
-        if (ValidatorUtils.empty(useStatus)){
-            return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()));
+        if (ValidatorUtils.empty(useStatus)) {
+            return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", currentMember.getId()));
         }
-        return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id",currentMember.getId()).eq("use_status",useStatus));
+        return couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", currentMember.getId()).eq("use_status", useStatus));
     }
 
     @Transactional
     @Override
-    public CommonResult addbatch(String couponIds){
+    public CommonResult addbatch(String couponIds) {
         UmsMember currentMember = memberService.getNewCurrentMember();
         if (currentMember == null) {
             return new CommonResult().failed("优惠券不存在");
         }
-        if (ValidatorUtils.empty(couponIds)){
+        if (ValidatorUtils.empty(couponIds)) {
             return new CommonResult().failed("优惠券不存在");
         }
-        String []ids= couponIds.split(",");
-        for (String couponId : ids){
+        String[] ids = couponIds.split(",");
+        for (String couponId : ids) {
             //获取优惠券信息，判断数量
             SmsCoupon coupon = couponMapper.selectById(Long.valueOf(couponId));
             if (coupon == null) {
@@ -146,6 +145,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         }
         return new CommonResult().success("领取成功", null);
     }
+
     @Transactional
     @Override
     public CommonResult add(Long couponId) {
@@ -291,7 +291,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     private BigDecimal calcTotalAmount(List<OmsCartItem> cartItemList) {
         BigDecimal total = new BigDecimal("0");
         for (OmsCartItem item : cartItemList) {
-          //  BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
+            //  BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
             total = total.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
         }
         return total;
@@ -301,7 +301,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         BigDecimal total = new BigDecimal("0");
         for (OmsCartItem item : cartItemList) {
             if (productCategoryIds.contains(item.getProductCategoryId())) {
-             //   BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
+                //   BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
                 total = total.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
             }
         }
@@ -312,7 +312,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         BigDecimal total = new BigDecimal("0");
         for (OmsCartItem item : cartItemList) {
             if (productIds.contains(item.getProductId())) {
-              //  BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
+                //  BigDecimal realPrice = item.getPrice().subtract(item.getReduceAmount());
                 total = total.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
             }
         }

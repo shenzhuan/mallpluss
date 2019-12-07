@@ -7,8 +7,6 @@ import com.zscat.mallplus.sys.service.ISysDictService;
 import org.springframework.stereotype.Service;
 
 
-
-
 /**
  * <p>
  * 系统配置信息表 服务实现类

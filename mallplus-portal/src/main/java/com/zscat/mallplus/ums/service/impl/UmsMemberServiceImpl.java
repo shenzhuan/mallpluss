@@ -7,7 +7,6 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.vo.OrderStstic;
-import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
@@ -19,8 +18,10 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.AppletLoginParam;
+import com.zscat.mallplus.vo.MemberDetails;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
+import com.zscat.mallplus.wxpay.WxPayApi;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -67,10 +68,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
-
+    Integer regJifen = 100;
+    Integer logginJifen = 5;
     @Resource
     private SysAppletSetMapper appletSetMapper;
-
     @Resource
     private UmsMemberMapper memberMapper;
     @Resource
@@ -99,9 +100,6 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     private Integer dayCount;
     @Resource
     private UmsMemberMemberTagRelationMapper umsMemberMemberTagRelationMapper;
-
-
-
     @Resource
     private IUmsMemberLevelService memberLevelService;
     @Resource
@@ -113,39 +111,86 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Autowired
     private ApiContext apiContext;
 
-
-    Integer regJifen = 100;
-    Integer logginJifen = 5;
-
     @Override
-    public UmsMember getNewCurrentMember(){
-      return (UmsMember) this.getCurrentMember();
+    public UmsMember getNewCurrentMember() {
+        return (UmsMember) this.getCurrentMember();
     }
+
     @Override
-    public  Object getCurrentMember() {
+    public Object webLogin(Map map) {
+        String openid = WxPayApi.authCodeToOpenid(map);
+        try {
+            Map<String, Object> resultObj = new HashMap<String, Object>();
+            UmsMember userVo = this.queryByOpenId(openid);
+            String token = null;
+            if (null == userVo) {
+                UmsMember umsMember = new UmsMember();
+                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
+                umsMember.setSourceType(2);
+                umsMember.setPassword(passwordEncoder.encode("123456"));
+                umsMember.setCreateTime(new Date());
+                umsMember.setStatus(1);
+                umsMember.setBlance(new BigDecimal(10000));
+                umsMember.setIntegration(0);
+                umsMember.setMemberLevelId(4L);
+                umsMember.setWeixinOpenid(openid);
+                memberMapper.insert(umsMember);
+                token = jwtTokenUtil.generateToken(umsMember.getUsername());
+                resultObj.put("userId", umsMember.getId());
+                resultObj.put("userInfo", umsMember);
+                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+
+            } else {
+                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                token = jwtTokenUtil.generateToken(userVo.getUsername());
+                resultObj.put("userId", userVo.getId());
+                resultObj.put("userInfo", userVo);
+            }
+
+
+            if (StringUtils.isEmpty(token)) {
+                throw new ApiMallPlusException("登录失败");
+
+            }
+            resultObj.put("tokenHead", tokenHead);
+            resultObj.put("token", token);
+
+
+            return new CommonResult().success(resultObj);
+        } catch (ApiMallPlusException e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Object getCurrentMember() {
         try {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             String requestType = ((HttpServletRequest) request).getMethod();
             if ("OPTIONS".equals(requestType)) {
                 return null;
             }
             String storeId = request.getParameter("storeid");
-            if (ValidatorUtils.empty(storeId)){
+            if (ValidatorUtils.empty(storeId)) {
                 storeId = request.getHeader("storeid");
             }
-            String tokenPre = "authorization"+storeId ;
+            String tokenPre = "authorization" + storeId;
             String authHeader = request.getParameter(tokenPre);
-            if (ValidatorUtils.empty(authHeader)){
+            if (ValidatorUtils.empty(authHeader)) {
                 authHeader = request.getHeader(tokenPre);
             }
             if (authHeader != null && authHeader.startsWith("Bearer")) {
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
-                if (ValidatorUtils.notEmpty(username)){
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, username)),UmsMember.class);
-                    if (member==null || member.getId()==null){
-                        member=getByUsername(username);
+                if (ValidatorUtils.notEmpty(username)) {
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                    if (member == null || member.getId() == null) {
+                        member = getByUsername(username);
                     }
                     return member;
                 }
@@ -156,6 +201,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             return new UmsMember();
         }
     }
+
     @Override
     public void updataMemberOrderInfo() {
         List<OrderStstic> orders = omsOrderMapper.listOrderGroupByMemberId();
@@ -218,9 +264,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateMan(operateMan);
         umsIntegrationChangeHistoryService.save(history);
         UmsMember member = memberMapper.selectById(id);
+        if (ValidatorUtils.empty(member.getIntegration())) {
+            member.setIntegration(0);
+        }
         member.setIntegration(member.getIntegration() + integration);
         memberMapper.updateById(member);
-        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+        redisService.set(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
     }
 
     @Override
@@ -381,7 +430,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
         memberMapper.insert(umsMember);
 
-        redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
+        redisService.set(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
 
         addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
         umsMember.setPassword(null);
@@ -499,7 +548,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             resultObj.put("userInfo", userVo);
         }
         if (StringUtils.isEmpty(token)) {
-            return ApiBaseAction.toResponsFail("登录失败");
+            throw new ApiMallPlusException("登录失败");
         }
         resultObj.put("tokenHead", tokenHead);
         resultObj.put("token", token);
@@ -513,20 +562,20 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
             SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
             if (null == appletSet) {
-                return ApiBaseAction.toResponsFail("没有设置支付配置");
+                throw new ApiMallPlusException("没有设置支付配置");
             }
             String code = req.getCode();
             if (StringUtils.isEmpty(code)) {
                 log.error("code ie empty");
-                return ApiBaseAction.toResponsFail("code ie empty");
+                throw new ApiMallPlusException("code ie empty");
             }
             String userInfos = req.getUserInfo();
 
             String signature = req.getSignature();
-            System.out.println(com.alibaba.fastjson.JSONObject.toJSON(userInfos));
+
             Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
             if (null == me) {
-                return ApiBaseAction.toResponsFail("登录失败 userInfos is null");
+                throw new ApiMallPlusException("登录失败 userInfos is null");
             }
 
             Map<String, Object> resultObj = new HashMap<String, Object>();
@@ -542,12 +591,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
 
             if (null == sessionData || StringUtils.isEmpty(sessionData.getString("openid"))) {
-                return ApiBaseAction.toResponsFail("登录失败openid is empty");
+                throw new ApiMallPlusException("登录失败openid is empty");
             }
             //验证用户信息完整性
             String sha1 = CommonUtil.getSha1(userInfos + sessionData.getString("session_key"));
             if (!signature.equals(sha1)) {
-                return ApiBaseAction.toResponsFail("登录失败,验证用户信息完整性");
+                throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
+
             }
             UmsMember userVo = this.queryByOpenId(sessionData.getString("openid"));
             String token = null;
@@ -591,19 +641,19 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
 
             if (StringUtils.isEmpty(token)) {
-                return ApiBaseAction.toResponsFail("登录失败");
+                throw new ApiMallPlusException("登录失败");
             }
             resultObj.put("tokenHead", tokenHead);
             resultObj.put("token", token);
 
 
-            return ApiBaseAction.toResponsSuccess(resultObj);
+            return new CommonResult().success(resultObj);
         } catch (ApiMallPlusException e) {
             e.printStackTrace();
-            return ApiBaseAction.toResponsFail(e.getMessage());
+            throw new ApiMallPlusException(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            return ApiBaseAction.toResponsFail(e.getMessage());
+            throw new ApiMallPlusException(e.getMessage());
         }
 
     }
@@ -654,7 +704,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         Map<String, Object> tokenMap = new HashMap<>();
         String token = null;
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            MemberDetails userDetails = (MemberDetails) userDetailsService.loadUserByUsername(username);
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("密码不正确");
             }
@@ -671,7 +721,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
             tokenMap.put("userInfo", member);
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
             LOGGER.warn("登录异常:{}", e.getMessage());
 
         }
@@ -687,7 +737,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     public Object initMemberRedis() {
         List<UmsMember> list = memberMapper.selectList(new QueryWrapper<>());
         for (UmsMember member : list) {
-            redisService.set(apiContext.getCurrentProviderId()+":"+String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+            redisService.set(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
         return 1;
     }

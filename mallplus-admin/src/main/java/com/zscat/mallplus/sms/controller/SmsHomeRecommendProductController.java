@@ -48,6 +48,7 @@ public class SmsHomeRecommendProductController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("添加首页推荐")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
@@ -58,6 +59,7 @@ public class SmsHomeRecommendProductController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "sms", REMARK = "保存人气推荐商品表")
     @ApiOperation("保存人气推荐商品表")
     @PostMapping(value = "/creates")
@@ -140,7 +142,6 @@ public class SmsHomeRecommendProductController {
             return new CommonResult().failed();
         }
     }
-
 
 
     @ApiOperation("修改推荐排序")

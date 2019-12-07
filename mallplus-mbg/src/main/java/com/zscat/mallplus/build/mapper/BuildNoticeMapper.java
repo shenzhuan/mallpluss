@@ -1,7 +1,7 @@
 package com.zscat.mallplus.build.mapper;
 
-import com.zscat.mallplus.build.entity.BuildNotice;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zscat.mallplus.build.entity.BuildNotice;
 
 /**
  * <p>

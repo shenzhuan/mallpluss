@@ -76,10 +76,10 @@ public class BillDeliveryItems implements Serializable {
     @Override
     public String toString() {
         return "BillDeliveryItems{" +
-        ", id=" + id +
-        ", deliveryId=" + deliveryId +
-        ", orderItemsId=" + orderItemsId +
-        ", nums=" + nums +
-        "}";
+                ", id=" + id +
+                ", deliveryId=" + deliveryId +
+                ", orderItemsId=" + orderItemsId +
+                ", nums=" + nums +
+                "}";
     }
 }

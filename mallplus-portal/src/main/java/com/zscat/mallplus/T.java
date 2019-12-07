@@ -2,14 +2,9 @@ package com.zscat.mallplus;
 
 
 import com.zscat.mallplus.util.DateUtil;
-import com.zscat.mallplus.utils.HttpUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2019/7/3.

@@ -1,9 +1,9 @@
 package com.zscat.mallplus.build.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.build.entity.BuildingCommunity;
 import com.zscat.mallplus.build.mapper.BuildingCommunityMapper;
 import com.zscat.mallplus.build.service.IBuildingCommunityService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.entity.SysUserRole;
@@ -44,21 +44,22 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
         SysUser user = new SysUser();
         user.setUsername(entity.getName());
         SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-        if (umsAdminList!=null) {
+        if (umsAdminList != null) {
             throw new ApiMallPlusException("此小区已存在");
         }
         user.setStatus(1);
-        user.setStoreId(entity.getId());
+        //  user.setStoreId(entity.getId());
         user.setPassword(passwordEncoder.encode("123456"));
         user.setCreateTime(new Date());
         user.setSupplyId(0L);
-        user.setNote("小区账户：小区ID="+entity.getName()+","+entity.getId());
+        user.setNote("小区账户：小区ID=" + entity.getName() + "," + entity.getId());
         user.setNickName(entity.getName());
         userMapper.insert(user);
 
         // 3 分配物业公司角色
         SysUserRole userRole = new SysUserRole();
-        userRole.setAdminId(user.getId());userRole.setRoleId(3L);
+        userRole.setAdminId(user.getId());
+        userRole.setRoleId(3L);
         userRoleMapper.insert(userRole);
         return true;
     }

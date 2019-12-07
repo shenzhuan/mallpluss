@@ -99,13 +99,13 @@ public class UmsMemberLocation implements Serializable {
     @Override
     public String toString() {
         return "UmsMemberLocation{" +
-        ", id=" + id +
-        ", memberId=" + memberId +
-        ", longitude=" + longitude +
-        ", latitude=" + latitude +
-        ", userName=" + userName +
-        ", pic=" + pic +
-        ", createTime=" + createTime +
-        "}";
+                ", id=" + id +
+                ", memberId=" + memberId +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", userName=" + userName +
+                ", pic=" + pic +
+                ", createTime=" + createTime +
+                "}";
     }
 }

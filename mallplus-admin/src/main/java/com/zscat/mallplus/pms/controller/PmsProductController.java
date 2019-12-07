@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductVertifyRecord;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -51,10 +50,10 @@ public class PmsProductController {
     ) {
         try {
             IPage<PmsProduct> page = null;
-            if (ValidatorUtils.notEmpty(entity.getKeyword())){
-                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("name",entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList)) ;
-            }else {
-                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time").select(ConstansValue.sampleGoodsList)) ;
+            if (ValidatorUtils.notEmpty(entity.getKeyword())) {
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+            } else {
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
 
             }
             return new CommonResult().success(page);
@@ -63,6 +62,7 @@ public class PmsProductController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("根据商品名称或货号模糊查询")
     @RequestMapping(value = "/simpleList", method = RequestMethod.GET)
     @ResponseBody
@@ -70,6 +70,7 @@ public class PmsProductController {
         List<PmsProduct> productList = IPmsProductService.list(keyword);
         return new CommonResult().success(productList);
     }
+
     @SysLog(MODULE = "pms", REMARK = "保存商品信息")
     @ApiOperation("保存商品信息")
     @PostMapping(value = "/create")
@@ -215,14 +216,16 @@ public class PmsProductController {
     @SysLog(MODULE = "pms", REMARK = "批量上下架")
     public Object updatePublishStatu(@RequestBody IdStatus ids, BindingResult result) {
         PmsProduct product = new PmsProduct();
-        product.setId(ids.getId());product.setPublishStatus(ids.getStatus());
+        product.setId(ids.getId());
+        product.setPublishStatus(ids.getStatus());
         Boolean count = IPmsProductService.updateById(product);
-        if (count ) {
+        if (count) {
             return new CommonResult().success(count);
         } else {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("批量推荐商品")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -270,16 +273,18 @@ public class PmsProductController {
 
     @GetMapping(value = "/goods/list")
     public Object getPmsProductListByPage(PmsProduct entity,
-                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            if(entity.getType()==1){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",1).gt("stock",0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
-            }if(entity.getType()==2){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status",0).gt("stock",0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
-            }if(entity.getType()==3){
-                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock",1).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            if (entity.getType() == 1) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status", 1).gt("stock", 0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            }
+            if (entity.getType() == 2) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status", 0).gt("stock", 0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            }
+            if (entity.getType() == 3) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock", 1).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
             }
 
             return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().select(ConstansValue.sampleGoodsList)));

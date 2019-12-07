@@ -5,7 +5,7 @@ import com.zscat.mallplus.ums.entity.UserBankcards;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zscat

@@ -1,11 +1,11 @@
 package com.zscat.mallplus.sys.service;
 
-import com.zscat.mallplus.sys.entity.SysQiniuContent;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.sys.entity.SysQiniuContent;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

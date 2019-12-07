@@ -21,6 +21,15 @@ public class Person {
         this.age = age;
     }
 
+    public static void main(String[] args) {
+        BeanKv kv = new BeanKv();
+        if (kv == null) {
+            System.out.println("1");
+        } else {
+            System.out.println(2);
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -44,6 +53,7 @@ public class Person {
     public void setId(int id) {
         this.id = id;
     }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -51,14 +61,5 @@ public class Person {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
-    }
-
-    public static void main(String[] args) {
-        BeanKv kv=new BeanKv();
-        if (kv==null){
-            System.out.println("1");
-        }else {
-            System.out.println(2);
-        }
     }
 }

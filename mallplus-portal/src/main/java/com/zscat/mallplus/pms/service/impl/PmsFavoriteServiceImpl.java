@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -39,6 +39,7 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
     private SysStoreMapper storeMapper;
     @Autowired
     private IUmsMemberService memberService;
+
     @Override
     public int addProduct(PmsFavorite productCollection) {
         int count = 0;
@@ -51,34 +52,34 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
         if (findCollection == null) {
             productCollection.setAddTime(new Date());
             productCollectionRepository.insert(productCollection);
-            if (productCollection.getType()==1){
+            if (productCollection.getType() == 1) {
                 PmsProduct subject = productMapper.selectById(productCollection.getObjId());
                 subject.setId(productCollection.getObjId());
-                subject.setGiftGrowth(subject.getGiftGrowth()+1);
+                subject.setGiftGrowth(subject.getGiftGrowth() + 1);
                 //更新到数据库
                 productMapper.updateById(subject);
             }
-            if (productCollection.getType()==2){
+            if (productCollection.getType() == 2) {
                 CmsSubject subject = subjectService.getById(productCollection.getObjId());
                 subject.setId(productCollection.getObjId());
-                subject.setForwardCount(subject.getForwardCount()+1);
+                subject.setForwardCount(subject.getForwardCount() + 1);
                 //更新到数据库
                 subjectService.updateById(subject);
             }
 
             count = 1;
-        }else {
-            if (productCollection.getType()==1){
+        } else {
+            if (productCollection.getType() == 1) {
                 PmsProduct subject = productMapper.selectById(productCollection.getObjId());
                 subject.setId(productCollection.getObjId());
-                subject.setGiftGrowth(subject.getGiftGrowth()-1);
+                subject.setGiftGrowth(subject.getGiftGrowth() - 1);
                 //更新到数据库
                 productMapper.updateById(subject);
             }
-            if (productCollection.getType()==2){
+            if (productCollection.getType() == 2) {
                 CmsSubject subject = subjectService.getById(productCollection.getObjId());
                 subject.setId(productCollection.getObjId());
-                subject.setForwardCount(subject.getForwardCount()-1);
+                subject.setForwardCount(subject.getForwardCount() - 1);
                 //更新到数据库
                 subjectService.updateById(subject);
             }
@@ -88,13 +89,13 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
     }
 
 
-
     @Override
     public List<PmsFavorite> listProduct(Long memberId, int type) {
-        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId).eq("type",type).orderByAsc("add_time"));
+        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id", memberId).eq("type", type).orderByAsc("add_time"));
     }
+
     @Override
     public List<PmsFavorite> listCollect(Long memberId) {
-        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id",memberId).orderByAsc("add_time"));
+        return productCollectionRepository.selectList(new QueryWrapper<PmsFavorite>().eq("member_id", memberId).orderByAsc("add_time"));
     }
 }

@@ -52,9 +52,9 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
-                Integer currentProviderId = apiContext.getCurrentProviderId();
+                Long currentProviderId = apiContext.getCurrentProviderId();
                 if (null == currentProviderId) {
-                    currentProviderId = 1;
+                    currentProviderId = 1l;
                     System.out.println("#1129 getCurrentProviderId error.");
                     //  throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
@@ -68,7 +68,7 @@ public class MybatisPlusConfig {
 
             @Override
             public boolean doTableFilter(String tableName) {
-                if (tableName.startsWith("admin_") || tableName.startsWith("QRTZ_")){
+                if (tableName.startsWith("admin_") || tableName.startsWith("QRTZ_")) {
                     return true;
                 }
                 return IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(tableName));

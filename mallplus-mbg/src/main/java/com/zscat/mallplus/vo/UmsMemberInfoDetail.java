@@ -16,8 +16,8 @@ import java.util.List;
  * @since 2019-04-19
  */
 @Data
-public class UmsMemberInfoDetail  implements Serializable {
+public class UmsMemberInfoDetail implements Serializable {
 
-   private UmsMember member;
-    private List<SmsCouponHistory> histories ;
+    private UmsMember member;
+    private List<SmsCouponHistory> histories;
 }

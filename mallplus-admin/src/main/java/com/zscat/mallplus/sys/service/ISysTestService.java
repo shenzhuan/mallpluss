@@ -1,14 +1,13 @@
 package com.zscat.mallplus.sys.service;
 
-import com.zscat.mallplus.sys.entity.SysTest;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.sys.entity.SysTest;
 
 /**
-* @author mallplus
-* @date 2019-12-02
-*/
+ * @author mallplus
+ * @date 2019-12-02
+ */
 
-public interface ISysTestService extends IService<SysTest>
-{
+public interface ISysTestService extends IService<SysTest> {
 
 }

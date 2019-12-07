@@ -55,7 +55,7 @@ public class UmsIntegrationConsumeSetting extends BaseEntity implements Serializ
     /**
      * 登录送积分
      */
-    private Integer login ;
+    private Integer login;
 
     /**
      * 注册送积分

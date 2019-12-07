@@ -57,5 +57,4 @@ public class BuildTypePrice implements Serializable {
     private Long communityId;
 
 
-
 }

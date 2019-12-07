@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zscat
@@ -26,7 +26,7 @@ public class SysAlipayConfigServiceImpl extends ServiceImpl<SysAlipayConfigMappe
     @Override
     public String toPayAsPC(SysAlipayConfig alipay, TradeVo trade) throws Exception {
 
-        if(alipay.getId() == null){
+        if (alipay.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }
         AlipayClient alipayClient = new DefaultAlipayClient(alipay.getGatewayUrl(), alipay.getAppId(), alipay.getPrivateKey(), alipay.getFormat(), alipay.getCharset(), alipay.getPublicKey(), alipay.getSignType());
@@ -41,14 +41,14 @@ public class SysAlipayConfigServiceImpl extends ServiceImpl<SysAlipayConfigMappe
         request.setNotifyUrl(alipay.getNotifyUrl());
         // 填充订单参数
         request.setBizContent("{" +
-                "    \"out_trade_no\":\""+trade.getOutTradeNo()+"\"," +
+                "    \"out_trade_no\":\"" + trade.getOutTradeNo() + "\"," +
                 "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
-                "    \"total_amount\":"+trade.getTotalAmount()+"," +
-                "    \"subject\":\""+trade.getSubject()+"\"," +
-                "    \"body\":\""+trade.getBody()+"\"," +
+                "    \"total_amount\":" + trade.getTotalAmount() + "," +
+                "    \"subject\":\"" + trade.getSubject() + "\"," +
+                "    \"body\":\"" + trade.getBody() + "\"," +
                 "    \"extend_params\":{" +
-                "    \"sys_service_provider_id\":\""+alipay.getSysServiceProviderId()+"\"" +
-                "    }"+
+                "    \"sys_service_provider_id\":\"" + alipay.getSysServiceProviderId() + "\"" +
+                "    }" +
                 "  }");//填充业务参数
         // 调用SDK生成表单, 通过GET方式，口可以获取url
         return alipayClient.pageExecute(request, "GET").getBody();
@@ -57,13 +57,13 @@ public class SysAlipayConfigServiceImpl extends ServiceImpl<SysAlipayConfigMappe
 
     @Override
     public String toPayAsWeb(SysAlipayConfig alipay, TradeVo trade) throws Exception {
-        if(alipay.getId() == null){
+        if (alipay.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }
         AlipayClient alipayClient = new DefaultAlipayClient(alipay.getGatewayUrl(), alipay.getAppId(), alipay.getPrivateKey(), alipay.getFormat(), alipay.getCharset(), alipay.getPublicKey(), alipay.getSignType());
 
         double money = Double.parseDouble(trade.getTotalAmount());
-        if(money <= 0 || money >= 5000){
+        if (money <= 0 || money >= 5000) {
             throw new BusinessMallException("测试金额过大");
         }
         // 创建API对应的request(手机网页版)
@@ -71,14 +71,14 @@ public class SysAlipayConfigServiceImpl extends ServiceImpl<SysAlipayConfigMappe
         request.setReturnUrl(alipay.getReturnUrl());
         request.setNotifyUrl(alipay.getNotifyUrl());
         request.setBizContent("{" +
-                "    \"out_trade_no\":\""+trade.getOutTradeNo()+"\"," +
+                "    \"out_trade_no\":\"" + trade.getOutTradeNo() + "\"," +
                 "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
-                "    \"total_amount\":"+trade.getTotalAmount()+"," +
-                "    \"subject\":\""+trade.getSubject()+"\"," +
-                "    \"body\":\""+trade.getBody()+"\"," +
+                "    \"total_amount\":" + trade.getTotalAmount() + "," +
+                "    \"subject\":\"" + trade.getSubject() + "\"," +
+                "    \"body\":\"" + trade.getBody() + "\"," +
                 "    \"extend_params\":{" +
-                "    \"sys_service_provider_id\":\""+alipay.getSysServiceProviderId()+"\"" +
-                "    }"+
+                "    \"sys_service_provider_id\":\"" + alipay.getSysServiceProviderId() + "\"" +
+                "    }" +
                 "  }");//填充业务参数
         return alipayClient.pageExecute(request, "GET").getBody();
     }

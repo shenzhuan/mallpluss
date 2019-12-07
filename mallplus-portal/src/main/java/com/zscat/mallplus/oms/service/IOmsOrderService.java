@@ -2,8 +2,10 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.vo.*;
-import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
+import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
+import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.oms.vo.TbThanks;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +51,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 预览订单
+     *
      * @param orderParam
      * @return
      */
@@ -56,6 +59,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 多店铺预览订单
+     *
      * @param orderParam
      * @return
      */
@@ -63,6 +67,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * pc 支付
+     *
      * @param tbThanks
      * @return
      */
@@ -70,6 +75,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 添加购物车
+     *
      * @param cartParam
      * @return
      */
@@ -77,6 +83,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 开团
+     *
      * @param orderParam
      * @return
      */
@@ -84,6 +91,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 参团
+     *
      * @param orderParam
      * @return
      */
@@ -91,6 +99,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 积分兑换
+     *
      * @param payParam
      * @return
      */
@@ -98,6 +107,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 关闭订单
+     *
      * @param newE
      * @return
      */
@@ -105,12 +115,14 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 释放库存和销量
+     *
      * @param newE
      */
     void releaseStock(OmsOrder newE);
 
     /**
      * 取消发货
+     *
      * @param order
      * @param remark
      * @return
@@ -119,6 +131,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 确认收货
+     *
      * @param id
      * @return
      */
@@ -126,6 +139,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 余额支付
+     *
      * @param order
      * @return
      */
@@ -133,6 +147,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 团购商品订单预览
+     *
      * @param orderParam
      * @return
      */
@@ -140,6 +155,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 申请退款
+     *
      * @param id
      * @return
      */
@@ -147,6 +163,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 订单评论
+     *
      * @param orderId
      * @param items
      * @return

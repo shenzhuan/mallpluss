@@ -101,5 +101,4 @@ public class SmsDraw implements Serializable {
     private String type;
 
 
-
 }

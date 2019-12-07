@@ -11,7 +11,7 @@
 
     <modules>
         <module>mallplus-mbg</module>
-
+        <module>mallplus-pay</module>
         <module>mallplus-admin</module>
 
         <module>mallplus-portal</module>

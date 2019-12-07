@@ -8,10 +8,10 @@ import java.io.Serializable;
  * Created by Administrator on 2019/9/15.
  */
 @Data
-public class ProductConsultParam  implements Serializable{
-    private  Long goodsId;
-    private  Integer score;
+public class ProductConsultParam implements Serializable {
+    private Long goodsId;
+    private Integer score;
 
-    private  String []images;
-    private  String textarea;
+    private String[] images;
+    private String textarea;
 }

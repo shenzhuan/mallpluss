@@ -5,8 +5,7 @@ package com.zscat.mallplus.sys.util;
  *
  * @author ruoyi
  */
-public class Constants
-{
+public class Constants {
     /**
      * UTF-8 字符集
      */

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class AllEnum {
 
 
-
     /**
      * 改变类型：1->增加；2->减少
      *
@@ -50,6 +49,7 @@ public class AllEnum {
             return value;
         }
     }
+
     /**
      * 积分来源
      *
@@ -203,8 +203,7 @@ public class AllEnum {
         /**
          * 积分兑换
          */
-        jifenPay(5, "jifenPay")
-        ;
+        jifenPay(5, "jifenPay");
 
         private int code;
         private String value;
@@ -224,6 +223,7 @@ public class AllEnum {
             return value;
         }
     }
+
     /**
      * 评论类型：1->商品；2->赠品
      *

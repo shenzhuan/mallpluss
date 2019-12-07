@@ -85,7 +85,7 @@ public class SingeBuildController extends ApiBaseAction {
     @Resource
     private SmsGroupMemberMapper groupMemberMapper;
     @Resource
-    private  PmsProductCategoryMapper categoryMapper;
+    private PmsProductCategoryMapper categoryMapper;
     @Resource
     private IPmsGiftsService giftsService;
     @Resource
@@ -100,21 +100,21 @@ public class SingeBuildController extends ApiBaseAction {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
     public Object home_mobile() {
-        String key = Rediskey.HOMEPAGEMOBILE ;
+        String key = Rediskey.HOMEPAGEMOBILE;
         String json = redisService.get(key);
         HomeContentResult contentResult = null;
         try {
-            if (ValidatorUtils.empty(json)){
+            if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelmobileContent();
-                redisService.set(key,JsonUtils.objectToJson(contentResult));
-                redisService.expire(key,30);
-            }else{
+                redisService.set(key, JsonUtils.objectToJson(contentResult));
+                redisService.expire(key, 30);
+            } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             contentResult = advertiseService.singelmobileContent();
-            redisService.set(key,JsonUtils.objectToJson(contentResult));
-            redisService.expire(key,30);
+            redisService.set(key, JsonUtils.objectToJson(contentResult));
+            redisService.expire(key, 30);
         }
         return new CommonResult().success(contentResult);
     }
@@ -126,13 +126,13 @@ public class SingeBuildController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id+"")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())){
-                log.info("redis缓存失效："+id);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
+                log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效："+id);
+            log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
@@ -142,7 +142,6 @@ public class SingeBuildController extends ApiBaseAction {
         map.put("goods", goods);
         return new CommonResult().success(map);
     }
-
 
 
 }

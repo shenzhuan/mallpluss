@@ -112,13 +112,13 @@ public class SysNotice implements Serializable {
     @Override
     public String toString() {
         return "SysNotice{" +
-        ", id=" + id +
-        ", title=" + title +
-        ", content=" + content +
-        ", type=" + type +
-        ", ctime=" + ctime +
-        ", sort=" + sort +
-        ", isdel=" + isdel +
-        "}";
+                ", id=" + id +
+                ", title=" + title +
+                ", content=" + content +
+                ", type=" + type +
+                ", ctime=" + ctime +
+                ", sort=" + sort +
+                ", isdel=" + isdel +
+                "}";
     }
 }

@@ -68,7 +68,7 @@ public class UmsIntegrationConsumeSettingController {
     @SysLog(MODULE = "ums", REMARK = "更新积分消费设置")
     @ApiOperation("更新积分消费设置")
     @PostMapping(value = "/update/{id}")
-  //  @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
+    //  @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
     public Object updateUmsIntegrationConsumeSetting(@RequestBody UmsIntegrationConsumeSetting entity) {
         try {
             if (IUmsIntegrationConsumeSettingService.updateById(entity)) {

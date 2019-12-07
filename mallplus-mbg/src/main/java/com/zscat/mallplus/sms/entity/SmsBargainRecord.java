@@ -196,19 +196,19 @@ public class SmsBargainRecord implements Serializable {
     @Override
     public String toString() {
         return "SmsBargainRecord{" +
-        ", id=" + id +
-        ", sId=" + sId +
-        ", userId=" + userId +
-        ", money=" + money +
-        ", addTime=" + addTime +
-        ", event=" + event +
-        ", name=" + name +
-        ", tel=" + tel +
-        ", sheng=" + sheng +
-        ", city=" + city +
-        ", quyu=" + quyu +
-        ", address=" + address +
-        ", status=" + status +
-        "}";
+                ", id=" + id +
+                ", sId=" + sId +
+                ", userId=" + userId +
+                ", money=" + money +
+                ", addTime=" + addTime +
+                ", event=" + event +
+                ", name=" + name +
+                ", tel=" + tel +
+                ", sheng=" + sheng +
+                ", city=" + city +
+                ", quyu=" + quyu +
+                ", address=" + address +
+                ", status=" + status +
+                "}";
     }
 }

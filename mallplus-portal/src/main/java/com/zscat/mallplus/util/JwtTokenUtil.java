@@ -90,11 +90,11 @@ public class JwtTokenUtil {
      * @param userDetails 从数据库中查询出来的用户信息
      */
     public boolean validateToken(String token, UserDetails userDetails) {
-        if (userDetails!=null && ValidatorUtils.notEmpty(userDetails.getUsername())){
+        if (userDetails != null && ValidatorUtils.notEmpty(userDetails.getUsername())) {
             String username = getUserNameFromToken(token);
             return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
         }
-       return false;
+        return false;
     }
 
     /**
@@ -122,6 +122,7 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }
+
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_USERNAME, username);

@@ -1,15 +1,16 @@
 package com.zscat.mallplus.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author zscat
@@ -127,14 +128,14 @@ public class SysQiniuContent implements Serializable {
     @Override
     public String toString() {
         return "SysQiniuContent{" +
-        ", id=" + id +
-        ", bucket=" + bucket +
-        ", name=" + name +
-        ", size=" + size +
-        ", type=" + type +
-        ", updateTime=" + updateTime +
-        ", url=" + url +
-        ", suffix=" + suffix +
-        "}";
+                ", id=" + id +
+                ", bucket=" + bucket +
+                ", name=" + name +
+                ", size=" + size +
+                ", type=" + type +
+                ", updateTime=" + updateTime +
+                ", url=" + url +
+                ", suffix=" + suffix +
+                "}";
     }
 }
