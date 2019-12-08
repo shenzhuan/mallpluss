@@ -108,7 +108,7 @@ public class AliPayApiConfigKit {
      */
     public static AliPayApiConfig getAliPayApiConfig() {
         // AliPayApiConfig aliPayApiConfig = null;
-        /*AliPayBean aliPayBean = new AliPayBean();
+        AliPayBean aliPayBean = new AliPayBean();
         aliPayBean.setAppId("2017010804923732");
         aliPayBean.setDomain("http://www.yjlive.cn/api");
         aliPayBean.setServerUrl("https://openapi.alipay.com/gateway.do");
@@ -122,9 +122,9 @@ public class AliPayApiConfigKit {
                 .setServiceUrl(aliPayBean.getServerUrl())
                 .setSignType("RSA2")
                 .build();
-        return aliPayApiConfig;*/
-        String appId = getAppId();
-        return getApiConfig(appId);
+        return aliPayApiConfig;
+      /*  String appId = getAppId();
+        return getApiConfig(appId);*/
     }
 
     /**

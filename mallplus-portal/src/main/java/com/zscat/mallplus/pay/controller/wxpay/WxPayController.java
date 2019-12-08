@@ -28,7 +28,6 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.wxpay.WxPayApi;
 import com.zscat.mallplus.wxpay.WxPayApiConfig;
-import com.zscat.mallplus.wxpay.WxPayApiConfigKit;
 import com.zscat.mallplus.wxpay.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +81,7 @@ public class WxPayController extends AbstractWxPayApiController {
         WxPayApiConfig apiConfig = null;
 
         try {
-            OmsPayments payments = paymentsService.getById(2);
+            OmsPayments payments = paymentsService.getById(1);
             if (payments != null) {
                 WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParams(), WxPayBean.class);
                 apiConfig = WxPayApiConfig.builder()
@@ -95,15 +94,22 @@ public class WxPayController extends AbstractWxPayApiController {
             }
             notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
             refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
-
-           /* WxPayBean wxPayApiConfig = new WxPayBean();
-            wxPayApiConfig.setAppId("wx8321531c6046c924");
-            wxPayApiConfig.setMchId("1533901051");
-            wxPayApiConfig.setDomain("http://www.yjlive.cn/api");
-            wxPayApiConfig.setPartnerKey("shen9136shen9136shen9136shen9136");*/
-
         } catch (Exception e) {
-            throw new ApiMallPlusException(e.getMessage());
+            WxPayBean wxPayBean = new WxPayBean();
+            wxPayBean.setAppId("wx8321531c6046c924");
+            wxPayBean.setMchId("1533901051");
+            wxPayBean.setDomain("http://www.yjlive.cn/api/api");
+            wxPayBean.setPartnerKey("shen9136shen9136shen9136shen9136");
+            apiConfig = WxPayApiConfig.builder()
+                    .appId(wxPayBean.getAppId())
+                    .mchId(wxPayBean.getMchId())
+                    .partnerKey(wxPayBean.getPartnerKey())
+                    .certPath(wxPayBean.getCertPath())
+                    .domain(wxPayBean.getDomain())
+                    .build();
+
+        notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
+        refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
         }
 
         return apiConfig;
@@ -123,70 +129,76 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/wapPay", method = {RequestMethod.POST, RequestMethod.GET})
     public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws IOException {
-        String ip = IpKit.getRealIp(request);
-        if (StrKit.isBlank(ip)) {
-            ip = "127.0.0.1";
-        }
+       try {
+           String ip = IpKit.getRealIp(request);
+           if (StrKit.isBlank(ip)) {
+               ip = "127.0.0.1";
+           }
 
-        OmsOrder orderInfo = orderService.getById(orderId);
-        if (null == orderInfo) {
-            return new CommonResult().failed("订单已取消" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
-            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return new CommonResult().failed( "订单已支付，请不要重复操作" );
-        }
+           OmsOrder orderInfo = orderService.getById(orderId);
+           if (null == orderInfo) {
+               return new CommonResult().failed("订单已取消" );
+           }
+           if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+               return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+           }
+           if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+               return new CommonResult().failed( "订单已支付，请不要重复操作" );
+           }
 
-        H5SceneInfo sceneInfo = new H5SceneInfo();
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
-        H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
-        h5_info.setType("Wap");
-        //此域名必须在商户平台--"产品中心"--"开发配置"中添加
-        h5_info.setWap_url(wxPayApiConfig.getDomain());
-        h5_info.setWap_name("IJPay VIP 充值");
-        sceneInfo.setH5Info(h5_info);
+           H5SceneInfo sceneInfo = new H5SceneInfo();
+           WxPayApiConfig wxPayApiConfig = this.getApiConfig();
+           H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
+           h5_info.setType("Wap");
+           //此域名必须在商户平台--"产品中心"--"开发配置"中添加
+           h5_info.setWap_url(wxPayApiConfig.getDomain());
+           h5_info.setWap_name("IJPay VIP 充值");
+           sceneInfo.setH5Info(h5_info);
 
 
-        Map<String, String> params = UnifiedOrderModel
-                .builder()
-                .appid(wxPayApiConfig.getAppId())
-                .mch_id(wxPayApiConfig.getMchId())
-                .nonce_str(WxPayKit.generateStr())
-                .body(orderInfo.getGoodsName())
-                .attach(orderInfo.getGoodsName())
-                .out_trade_no(WxPayKit.generateStr())
-                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
-                .spbill_create_ip(ip)
-                .notify_url(notifyUrl)
-                .trade_type(TradeType.MWEB.getTradeType())
-                .scene_info(JSON.toJSONString(sceneInfo))
-                .build()
-                .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+           Map<String, String> params = UnifiedOrderModel
+                   .builder()
+                   .appid(wxPayApiConfig.getAppId())
+                   .mch_id(wxPayApiConfig.getMchId())
+                   .nonce_str(WxPayKit.generateStr())
+                   .body(orderInfo.getGoodsName())
+                   .attach(orderInfo.getGoodsName())
+                   .out_trade_no(WxPayKit.generateStr())
+                   .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
+                   .spbill_create_ip(ip)
+                   .notify_url(notifyUrl)
+                   .trade_type(TradeType.MWEB.getTradeType())
+                   .scene_info(JSON.toJSONString(sceneInfo))
+                   .build()
+                   .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-        String xmlResult = WxPayApi.pushOrder(false, params);
-        log.info(xmlResult);
+           String xmlResult = WxPayApi.pushOrder(false, params);
+           log.info("xmlResult:"+xmlResult);
 
-        Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
+           Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
 
-        String return_code = result.get("return_code");
-        String return_msg = result.get("return_msg");
-        if (!WxPayKit.codeIsOk(return_code)) {
-            throw new RuntimeException(return_msg);
-        }
-        String result_code = result.get("result_code");
-        if (!WxPayKit.codeIsOk(result_code)) {
-            throw new RuntimeException(return_msg);
-        }
-        // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
+           String return_code = result.get("return_code");
+           String return_msg = result.get("return_msg");
+           if (!WxPayKit.codeIsOk(return_code)) {
+               throw new RuntimeException(return_msg);
+           }
+           String result_code = result.get("result_code");
+           if (!WxPayKit.codeIsOk(result_code)) {
+               throw new RuntimeException(return_msg);
+           }
+           // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
 
-        String prepayId = result.get("prepay_id");
-        String webUrl = result.get("mweb_url");
+           String prepayId = result.get("prepay_id");
+           String webUrl = result.get("mweb_url");
 
-        log.info("prepay_id:" + prepayId + " mweb_url:" + webUrl);
-        //   response.sendRedirect(webUrl);
-        return new CommonResult().success(webUrl);
+           log.info("prepay_id:" + prepayId + " mweb_url:" + webUrl);
+           //   response.sendRedirect(webUrl);
+           return new CommonResult().success(webUrl);
+       }catch (Exception e){
+           e.printStackTrace();
+           return new CommonResult().failed(e.getMessage());
+       }
+
     }
 
     /**
@@ -206,75 +218,79 @@ public class WxPayController extends AbstractWxPayApiController {
     @RequestMapping(value = "/webPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public Object webPay(HttpServletRequest request, @RequestParam(value = "orderId", required = true, defaultValue = "0") Long orderId) {
-        String totalFee = "0.01";
-        // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-        UmsMember member = umsMemberService.getNewCurrentMember();
-        String openId = member.getWeixinOpenid();
-        System.out.println("1openId:" + openId);
+        try {
+            String totalFee = "0.01";
+            // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
+            UmsMember member = umsMemberService.getNewCurrentMember();
+            String openId = member.getWeixinOpenid();
+            if (StrUtil.isEmpty(openId)) {
+                return new CommonResult().failed("openId is null");
+            }
+            if (StrUtil.isEmpty(totalFee)) {
+                return new CommonResult().failed("请输入数字金额");
+            }
+            String ip = IpKit.getRealIp(request);
+            if (StrUtil.isEmpty(ip)) {
+                ip = "127.0.0.1";
+            }
 
-        if (StrUtil.isEmpty(openId)) {
-            return new AjaxResult().addError("openId is null");
+            OmsOrder orderInfo = orderService.getById(orderId);
+            if (null == orderInfo) {
+                return new CommonResult().failed("订单已取消" );
+            }
+            if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+                return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                return new CommonResult().failed( "订单已支付，请不要重复操作" );
+            }
+            System.out.println(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString());
+
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
+            Map<String, String> params = UnifiedOrderModel
+                    .builder()
+                    .appid(wxPayApiConfig.getAppId())
+                    .mch_id(wxPayApiConfig.getMchId())
+                    .nonce_str(WxPayKit.generateStr())
+                    .body(orderInfo.getGoodsName()) // IJPay 让支付触手可及-公众号支付
+                    .attach(orderInfo.getGoodsName())
+                    .out_trade_no(WxPayKit.generateStr())
+                    .total_fee(orderInfo.getPayAmount().toString())
+                    .spbill_create_ip(ip)
+                    .notify_url(notifyUrl)
+                    .trade_type(TradeType.JSAPI.getTradeType())
+                    .openid(openId)
+                    .build()
+                    .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+
+            String xmlResult = WxPayApi.pushOrder(false, params);
+            log.info("xmlResult:"+xmlResult);
+
+            Map<String, String> resultMap = WxPayKit.xmlToMap(xmlResult);
+            String returnCode = resultMap.get("return_code");
+            String returnMsg = resultMap.get("return_msg");
+            if (!WxPayKit.codeIsOk(returnCode)) {
+                return new CommonResult().failed(returnMsg);
+            }
+            String resultCode = resultMap.get("result_code");
+            if (!WxPayKit.codeIsOk(resultCode)) {
+                return new CommonResult().failed(returnMsg);
+            }
+
+            // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
+
+            String prepayId = resultMap.get("prepay_id");
+
+            Map<String, String> packageParams = WxPayKit.prepayIdCreateSign(prepayId, wxPayApiConfig.getAppId(),
+                    wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+
+            String jsonStr = JSON.toJSONString(packageParams);
+            return new CommonResult().success(jsonStr);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResult().failed(e.getMessage());
         }
-        if (StrUtil.isEmpty(totalFee)) {
-            return new AjaxResult().addError("请输入数字金额");
-        }
-        String ip = IpKit.getRealIp(request);
-        if (StrUtil.isEmpty(ip)) {
-            ip = "127.0.0.1";
-        }
 
-        OmsOrder orderInfo = orderService.getById(orderId);
-        if (null == orderInfo) {
-            return new CommonResult().failed("订单已取消" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
-            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return new CommonResult().failed( "订单已支付，请不要重复操作" );
-        }
-
-
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
-        Map<String, String> params = UnifiedOrderModel
-                .builder()
-                .appid(wxPayApiConfig.getAppId())
-                .mch_id(wxPayApiConfig.getMchId())
-                .nonce_str(WxPayKit.generateStr())
-                .body(orderInfo.getGoodsName()) // IJPay 让支付触手可及-公众号支付
-                .attach(orderInfo.getGoodsName())
-                .out_trade_no(WxPayKit.generateStr())
-                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
-                .spbill_create_ip(ip)
-                .notify_url(notifyUrl)
-                .trade_type(TradeType.JSAPI.getTradeType())
-                .openid(openId)
-                .build()
-                .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
-
-        String xmlResult = WxPayApi.pushOrder(false, params);
-        log.info(xmlResult);
-
-        Map<String, String> resultMap = WxPayKit.xmlToMap(xmlResult);
-        String returnCode = resultMap.get("return_code");
-        String returnMsg = resultMap.get("return_msg");
-        if (!WxPayKit.codeIsOk(returnCode)) {
-            return new AjaxResult().addError(returnMsg);
-        }
-        String resultCode = resultMap.get("result_code");
-        if (!WxPayKit.codeIsOk(resultCode)) {
-            return new AjaxResult().addError(returnMsg);
-        }
-
-        // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
-
-        String prepayId = resultMap.get("prepay_id");
-
-        Map<String, String> packageParams = WxPayKit.prepayIdCreateSign(prepayId, wxPayApiConfig.getAppId(),
-                wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
-
-        String jsonStr = JSON.toJSONString(packageParams);
-        return new CommonResult().success(jsonStr);
     }
 
     /**
@@ -282,13 +298,13 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/scanCode1", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public AjaxResult scanCode1(HttpServletRequest request, HttpServletResponse response,
+    public Object scanCode1(HttpServletRequest request, HttpServletResponse response,
                                 @RequestParam("productId") String productId) {
         try {
             if (StrKit.isBlank(productId)) {
-                return new AjaxResult().addError("productId is null");
+                return new CommonResult().failed("productId is null");
             }
-            WxPayApiConfig config = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig config = this.getApiConfig();
             //获取扫码支付（模式一）url
             String qrCodeUrl = WxPayKit.bizPayUrl(config.getPartnerKey(), config.getAppId(), config.getMchId(), productId);
             log.info(qrCodeUrl);
@@ -304,7 +320,7 @@ public class WxPayController extends AbstractWxPayApiController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new AjaxResult().addError("系统异常：" + e.getMessage());
+            return new CommonResult().failed("系统异常：" + e.getMessage());
         }
         return null;
     }
@@ -342,7 +358,7 @@ public class WxPayController extends AbstractWxPayApiController {
             packageParams.put("nonce_str", nonceStr);
             packageParams.put("product_id", productId);
 
-            WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
             String packageSign = WxPayKit.createSign(packageParams, wxPayApiConfig.getPartnerKey(), SignType.MD5);
 
@@ -408,18 +424,18 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/scanCode2", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public AjaxResult scanCode2(HttpServletRequest request, HttpServletResponse response,
+    public Object scanCode2(HttpServletRequest request, HttpServletResponse response,
                                 @RequestParam("total_fee") String totalFee) {
 
         if (StrKit.isBlank(totalFee)) {
-            return new AjaxResult().addError("支付金额不能为空");
+            return new CommonResult().failed("支付金额不能为空");
         }
 
         String ip = IpKit.getRealIp(request);
         if (StrKit.isBlank(ip)) {
             ip = "127.0.0.1";
         }
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
         Map<String, String> params = UnifiedOrderModel
                 .builder()
@@ -445,11 +461,11 @@ public class WxPayController extends AbstractWxPayApiController {
         String returnMsg = result.get("return_msg");
         System.out.println(returnMsg);
         if (!WxPayKit.codeIsOk(returnCode)) {
-            return new AjaxResult().addError("error:" + returnMsg);
+            return new CommonResult().failed("error:" + returnMsg);
         }
         String resultCode = result.get("result_code");
         if (!WxPayKit.codeIsOk(resultCode)) {
-            return new AjaxResult().addError("error:" + returnMsg);
+            return new CommonResult().failed("error:" + returnMsg);
         }
         //生成预付订单success
 
@@ -470,20 +486,20 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/micropay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public AjaxResult microPay(HttpServletRequest request, HttpServletResponse response) {
+    public Object microPay(HttpServletRequest request, HttpServletResponse response) {
         String authCode = request.getParameter("auth_code");
         String totalFee = request.getParameter("total_fee");
         if (StrKit.isBlank(totalFee)) {
-            return new AjaxResult().addError("支付金额不能为空");
+            return new CommonResult().failed("支付金额不能为空");
         }
         if (StrKit.isBlank(authCode)) {
-            return new AjaxResult().addError("auth_code参数错误");
+            return new CommonResult().failed("auth_code参数错误");
         }
         String ip = IpKit.getRealIp(request);
         if (StrKit.isBlank(ip)) {
             ip = "127.0.0.1";
         }
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
         Map<String, String> params = MicroPayModel.builder()
                 .appid(wxPayApiConfig.getAppId())
@@ -514,14 +530,14 @@ public class WxPayController extends AbstractWxPayApiController {
                 }
             }
             log.info("提交刷卡支付失败>>" + xmlResult);
-            return new AjaxResult().addError(returnMsg);
+            return new CommonResult().failed(returnMsg);
         }
 
         String resultCode = result.get("result_code");
         if (!WxPayKit.codeIsOk(resultCode)) {
             log.info("支付失败>>" + xmlResult);
             String errCodeDes = result.get("err_code_des");
-            return new AjaxResult().addError(errCodeDes);
+            return new CommonResult().failed(errCodeDes);
         }
         //支付成功
         return new AjaxResult().success(xmlResult);
@@ -534,60 +550,66 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public Object appPay(HttpServletRequest request,@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
 
-        String ip = IpKit.getRealIp(request);
-        if (StrKit.isBlank(ip)) {
-            ip = "127.0.0.1";
-        }
-        OmsOrder orderInfo = orderService.getById(orderId);
-        if (null == orderInfo) {
-            return new CommonResult().failed("订单已取消" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
-            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
-        }
-        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return new CommonResult().failed( "订单已支付，请不要重复操作" );
-        }
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        try {
+            String ip = IpKit.getRealIp(request);
+            if (StrKit.isBlank(ip)) {
+                ip = "127.0.0.1";
+            }
+            OmsOrder orderInfo = orderService.getById(orderId);
+            if (null == orderInfo) {
+                return new CommonResult().failed("订单已取消" );
+            }
+            if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+                return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                return new CommonResult().failed( "订单已支付，请不要重复操作" );
+            }
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
-        Map<String, String> params = UnifiedOrderModel
-                .builder()
-                .appid(wxPayApiConfig.getAppId())
-                .mch_id(wxPayApiConfig.getMchId())
-                .nonce_str(WxPayKit.generateStr())
-                .body(orderInfo.getGoodsName())
-                .attach(orderInfo.getGoodsName())
-                .out_trade_no(WxPayKit.generateStr())
-                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
-                .spbill_create_ip(ip)
-                .notify_url(notifyUrl)
-                .trade_type(TradeType.APP.getTradeType())
-                .build()
-                .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+            Map<String, String> params = UnifiedOrderModel
+                    .builder()
+                    .appid(wxPayApiConfig.getAppId())
+                    .mch_id(wxPayApiConfig.getMchId())
+                    .nonce_str(WxPayKit.generateStr())
+                    .body(orderInfo.getGoodsName())
+                    .attach(orderInfo.getGoodsName())
+                    .out_trade_no(WxPayKit.generateStr())
+                    .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
+                    .spbill_create_ip(ip)
+                    .notify_url(notifyUrl)
+                    .trade_type(TradeType.APP.getTradeType())
+                    .build()
+                    .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-        String xmlResult = WxPayApi.pushOrder(false, params);
+            String xmlResult = WxPayApi.pushOrder(false, params);
 
-        log.info(xmlResult);
-        Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
+            log.info(xmlResult);
+            Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
 
-        String returnCode = result.get("return_code");
-        String returnMsg = result.get("return_msg");
-        if (!WxPayKit.codeIsOk(returnCode)) {
-            return new AjaxResult().addError(returnMsg);
+            String returnCode = result.get("return_code");
+            String returnMsg = result.get("return_msg");
+            if (!WxPayKit.codeIsOk(returnCode)) {
+                return new CommonResult().failed(returnMsg);
+            }
+            String resultCode = result.get("result_code");
+            if (!WxPayKit.codeIsOk(resultCode)) {
+                return new CommonResult().failed(returnMsg);
+            }
+            // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
+            String prepayId = result.get("prepay_id");
+
+            Map<String, String> packageParams = WxPayKit.appPrepayIdCreateSign(wxPayApiConfig.getAppId(), wxPayApiConfig.getMchId(), prepayId,
+                    wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+
+            WxAppPayDto dto = JsonUtils.map2pojo(packageParams, WxAppPayDto.class);
+            log.info("返回apk的参数:" + JsonUtils.objectToJson(dto));
+            return new CommonResult().success(dto);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new CommonResult().failed(e.getMessage());
         }
-        String resultCode = result.get("result_code");
-        if (!WxPayKit.codeIsOk(resultCode)) {
-            return new AjaxResult().addError(returnMsg);
-        }
-        // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
-        String prepayId = result.get("prepay_id");
 
-        Map<String, String> packageParams = WxPayKit.appPrepayIdCreateSign(wxPayApiConfig.getAppId(), wxPayApiConfig.getMchId(), prepayId,
-                wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
-
-        WxAppPayDto dto = JsonUtils.map2pojo(packageParams, WxAppPayDto.class);
-        log.info("返回apk的参数:" + JsonUtils.objectToJson(dto));
-        return new CommonResult().success(dto);
     }
 
     /**
@@ -596,62 +618,68 @@ public class WxPayController extends AbstractWxPayApiController {
     @RequestMapping(value = "/miniAppPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public Object miniAppPay(HttpServletRequest request) {
-        //需要通过授权来获取openId
-        UmsMember user = umsMemberService.getNewCurrentMember();
+      try {
+          //需要通过授权来获取openId
+          UmsMember user = umsMemberService.getNewCurrentMember();
 
-        String ip = IpKit.getRealIp(request);
-        if (StrKit.isBlank(ip)) {
-            ip = "127.0.0.1";
-        }
+          String ip = IpKit.getRealIp(request);
+          if (StrKit.isBlank(ip)) {
+              ip = "127.0.0.1";
+          }
 
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
-        if (null == appletSet) {
-            throw new ApiMallPlusException("没有设置支付配置");
-        }
-        WxPayBean wxPayApiConfig = new WxPayBean();
+          SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+          if (null == appletSet) {
+              throw new ApiMallPlusException("没有设置支付配置");
+          }
+          WxPayBean wxPayApiConfig = new WxPayBean();
 
-        wxPayApiConfig.setAppId(appletSet.getAppid());
-        wxPayApiConfig.setMchId(appletSet.getMchid());
-        wxPayApiConfig.setDomain(appletSet.getNotifyurl());
-        wxPayApiConfig.setPartnerKey(appletSet.getPaySignKey());
+          wxPayApiConfig.setAppId(appletSet.getAppid());
+          wxPayApiConfig.setMchId(appletSet.getMchid());
+          wxPayApiConfig.setDomain(appletSet.getNotifyurl());
+          wxPayApiConfig.setPartnerKey(appletSet.getPaySignKey());
 
-        Map<String, String> params = UnifiedOrderModel
-                .builder()
-                .appid(wxPayApiConfig.getAppId())
-                .mch_id(wxPayApiConfig.getMchId())
-                .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-小程序支付")
-                .attach("Node.js 版:https://gitee.com/javen205/TNW")
-                .out_trade_no(WxPayKit.generateStr())
-                .total_fee("1")
-                .spbill_create_ip(ip)
-                .notify_url(notifyUrl)
-                .trade_type(TradeType.JSAPI.getTradeType())
-                .openid(user.getWeixinOpenid())
-                .build()
-                .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+          Map<String, String> params = UnifiedOrderModel
+                  .builder()
+                  .appid(wxPayApiConfig.getAppId())
+                  .mch_id(wxPayApiConfig.getMchId())
+                  .nonce_str(WxPayKit.generateStr())
+                  .body("IJPay 让支付触手可及-小程序支付")
+                  .attach("Node.js 版:https://gitee.com/javen205/TNW")
+                  .out_trade_no(WxPayKit.generateStr())
+                  .total_fee("1")
+                  .spbill_create_ip(ip)
+                  .notify_url(notifyUrl)
+                  .trade_type(TradeType.JSAPI.getTradeType())
+                  .openid(user.getWeixinOpenid())
+                  .build()
+                  .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-        String xmlResult = WxPayApi.pushOrder(false, params);
+          String xmlResult = WxPayApi.pushOrder(false, params);
 
-        log.info(xmlResult);
-        Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
+          log.info(xmlResult);
+          Map<String, String> result = WxPayKit.xmlToMap(xmlResult);
 
-        String returnCode = result.get("return_code");
-        String returnMsg = result.get("return_msg");
-        if (!WxPayKit.codeIsOk(returnCode)) {
-            return new AjaxResult().addError(returnMsg);
-        }
-        String resultCode = result.get("result_code");
-        if (!WxPayKit.codeIsOk(resultCode)) {
-            return new AjaxResult().addError(returnMsg);
-        }
-        // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
-        String prepayId = result.get("prepay_id");
-        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(wxPayApiConfig.getAppId(), prepayId,
-                wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
-        String jsonStr = JSON.toJSONString(packageParams);
-        log.info("小程序支付的参数:" + jsonStr);
-        return new CommonResult().success(packageParams);
+          String returnCode = result.get("return_code");
+          String returnMsg = result.get("return_msg");
+          if (!WxPayKit.codeIsOk(returnCode)) {
+              return new CommonResult().failed(returnMsg);
+          }
+          String resultCode = result.get("result_code");
+          if (!WxPayKit.codeIsOk(resultCode)) {
+              return new CommonResult().failed(returnMsg);
+          }
+          // 以下字段在 return_code 和 result_code 都为 SUCCESS 的时候有返回
+          String prepayId = result.get("prepay_id");
+          Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(wxPayApiConfig.getAppId(), prepayId,
+                  wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
+          String jsonStr = JSON.toJSONString(packageParams);
+          log.info("小程序支付的参数:" + jsonStr);
+          return new CommonResult().success(packageParams);
+      }catch (Exception e){
+          e.printStackTrace();
+          return new CommonResult().failed(e.getMessage());
+      }
+
     }
 
     /**
@@ -666,7 +694,7 @@ public class WxPayController extends AbstractWxPayApiController {
             ip = "127.0.0.1";
         }
 
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
         Map<String, String> params = TransferModel.builder()
                 .mch_appid(wxPayApiConfig.getAppId())
@@ -702,7 +730,7 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public String transferInfo(@RequestParam("partner_trade_no") String partnerTradeNo) {
         try {
-            WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
             Map<String, String> params = GetTransferInfoModel.builder()
                     .nonce_str(WxPayKit.generateStr())
@@ -726,7 +754,7 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public String getPublicKey() {
         try {
-            WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
             Map<String, String> params = new HashMap<String, String>(4);
             params.put("mch_id", wxPayApiConfig.getMchId());
@@ -748,7 +776,7 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public String payBank() {
         try {
-            WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
             //通过WxPayApi.getPublicKey接口获取RSA加密公钥
             //假设获取到的RSA加密公钥为PUBLIC_KEY(PKCS#8格式)
@@ -781,7 +809,7 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public String queryBank(@RequestParam("partner_trade_no") String partnerTradeNo) {
         try {
-            WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
             Map<String, String> params = new HashMap<String, String>(4);
             params.put("mch_id", wxPayApiConfig.getMchId());
@@ -806,7 +834,7 @@ public class WxPayController extends AbstractWxPayApiController {
         if (StrKit.isBlank(outTradeNo) && StrKit.isBlank(transactionId)) {
             return "transactionId、out_trade_no二选一";
         }
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
         Map<String, String> params = RefundModel.builder()
                 .appid(wxPayApiConfig.getAppId())
@@ -834,7 +862,7 @@ public class WxPayController extends AbstractWxPayApiController {
                               @RequestParam("out_refund_no") String outRefundNo,
                               @RequestParam("refund_id") String refundId) {
 
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
+        WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
         Map<String, String> params = RefundQueryModel.builder()
                 .appid(wxPayApiConfig.getAppId())
@@ -864,7 +892,7 @@ public class WxPayController extends AbstractWxPayApiController {
         // 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
         if (WxPayKit.codeIsOk(returnCode)) {
             String reqInfo = params.get("req_info");
-            String decryptData = WxPayKit.decryptData(reqInfo, WxPayApiConfigKit.getWxPayApiConfig().getPartnerKey());
+            String decryptData = WxPayKit.decryptData(reqInfo, this.getApiConfig().getPartnerKey());
             log.info("退款通知解密后的数据=" + decryptData);
             // 更新订单信息
             // 发送通知等
@@ -890,7 +918,7 @@ public class WxPayController extends AbstractWxPayApiController {
 
         // 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
         // 注意此处签名方式需与统一下单的签名类型一致
-        if (WxPayKit.verifyNotify(params, WxPayApiConfigKit.getWxPayApiConfig().getPartnerKey(), SignType.HMACSHA256)) {
+        if (WxPayKit.verifyNotify(params, this.getApiConfig().getPartnerKey(), SignType.HMACSHA256)) {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 // 发送通知等

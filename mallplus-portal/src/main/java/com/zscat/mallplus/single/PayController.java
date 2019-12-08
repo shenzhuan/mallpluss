@@ -191,7 +191,7 @@ public class PayController extends ApiBaseAction {
             return toResponsObject(400, "订单已取消", "");
         }
 
-        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+        if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
             return toResponsObject(400, "订单已已关闭，请不要重复操作", "");
         }
         if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {

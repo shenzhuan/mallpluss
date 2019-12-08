@@ -3,8 +3,6 @@ package com.zscat.mallplus.pay.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.zscat.mallplus.pay.interceptor.AliPayInterceptor;
-import com.zscat.mallplus.pay.interceptor.WxPayInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -22,8 +20,8 @@ import java.util.List;
 public class IJPayConfigurer extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AliPayInterceptor()).addPathPatterns("/api/aliPay/**");
-        registry.addInterceptor(new WxPayInterceptor()).addPathPatterns("/api/wxPay/**");
+       /* registry.addInterceptor(new AliPayInterceptor()).addPathPatterns("/api/aliPay/**");
+        registry.addInterceptor(new WxPayInterceptor()).addPathPatterns("/api/wxPay/**");*/
         super.addInterceptors(registry);
     }
 

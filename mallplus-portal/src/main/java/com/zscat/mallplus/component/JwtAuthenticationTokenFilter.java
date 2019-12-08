@@ -171,6 +171,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 apiContext.setCurrentProviderId(Long.valueOf(storeId));
             }
         }
+        logger.info(formMapKey(11, fullUrl, requestType,
+                IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), "")
+                + ",\"cost\":\"" + 0 + "ms\"");
+
         String tokenPre = this.tokenHeader + storeId;
         String authHeader = request.getParameter(tokenPre);
         if (ValidatorUtils.empty(authHeader)) {
