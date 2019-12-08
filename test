@@ -1,4 +1,30 @@
+server {
+    listen    80;
+    server_name example.com;
 
+    location ^~ /web {
+        proxy_pass     http://localhost:8081;
+        proxy_set_header  Host       $host;
+        proxy_set_header  X-Real-IP    $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location ^~ /admin {
+        proxy_pass     http://localhost:8085;
+        proxy_set_header  Host       $host;
+        proxy_set_header  X-Real-IP    $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location ^~ /h5 {
+       proxy_pass     http://localhost:8082;
+       proxy_set_header  Host       $host;
+       proxy_set_header  X-Real-IP    $remote_addr;
+       proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+http://shop.legendshop.cn/s/system/paySite
 
 
 USE information_schema;
@@ -98,4 +124,91 @@ wechatpay MWEB
 
 
 
+####项目一nginx配置文件
+
+server {
+
+        #访问端口(页面访问端口)
+        listen 80;
+        server_name www.yjlive.cn;
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root html;
+        }
+
+        location / {
+            # 前端工程根目录
+            root /root/jm/h5;
+            index index.html;
+        }
+
+
+		#没有跨域需求可以不配
+        #代理路径 地址是以spi开头的 ‘/api开头的都走这个代理’
+        # 将前端访问的后台端口变更为‘前台id:前台端口/api/xxx/xxx’
+
+        location /api {
+
+            #正则表达式匹配路径
+
+            rewrite  ^/api/(.*)$ /$1 break;
+
+            include  uwsgi_params;
+
+            #后端端口(后端最终访问的端口)
+
+            proxy_pass   http://39.106.212.32:8081 ;
+
+        }
+        location @router {
+        rewrite ^.*$ /index.html last;
+        }
+    }
+
+
+
+	server {
+
+        #访问端口(页面访问端口)
+        listen 80;
+        server_name www.yjlive.cn;
+		#root /usr/local/www/;
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root html;
+        }
+    ##项目一，同过域名直接访问
+		location / {
+            #前端工程根目录
+            alias /root/jm/h5/;
+            index index.html;
+        }
+    ##项目二，同过域名.com/YYY访问
+        location /h5 {
+            # 前端工程根目录
+            alias  /root/jm/mall/;
+			try_files $uri $uri/ @router;
+			index index.html;
+        }
+		# 没有跨域需求可以不配
+        #代理路径 地址是以spi开头的 ‘/api开头的都走这个代理’
+        # 将前端访问的后台端口变更为‘前台id:前台端口/api/xxx/xxx’
+        location /api {
+
+            #正则表达式匹配路径
+
+            rewrite  ^/api/(.*)$ /$1 break;
+
+            include  uwsgi_params;
+
+            #后端端口(后端最终访问的端口)
+
+            proxy_pass   http://39.106.212.32:8081 ;
+
+        }
+        location @router {
+        rewrite ^.*$ /index.html last;
+        }
+    }
 

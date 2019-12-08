@@ -32,6 +32,9 @@ put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-
 
 put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.1-SNAPSHOT.jar  /root/jm
 
+put -r /Users/java/test/git/mallplus/mallplus-portal/MP_verify_8U0gHxfvQWhdo4DS.txt /root/jm/h5
+
+
 put -r /Users/java/test/git/mall-admin-web/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
@@ -283,3 +286,31 @@ delete from sys_admin_log  ;
 1938186471@qq.com
 wx1d852ffdcbedd005
 
+server {
+        listen 80;
+        server_name www.yjlive.cn;
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root html;
+        }
+
+		location / {
+            alias /root/jm/h5/;
+            index index.html;
+        }
+
+        location /h5 {
+            alias  /root/jm/mall/;
+			try_files $uri $uri/ @router;
+			index index.html;
+        }
+        location /api {
+            rewrite  ^/api/(.*)$ /$1 break;
+            include  uwsgi_params;
+            proxy_pass   http://39.106.212.32:8081 ;
+        }
+        location @router {
+        rewrite ^.*$ /index.html last;
+        }
+    }

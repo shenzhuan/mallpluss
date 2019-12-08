@@ -169,4 +169,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return
      */
     Object orderComment(Long orderId, String items);
+
+    CommonResult generateStoreOrder(OrderParam orderParam);
 }

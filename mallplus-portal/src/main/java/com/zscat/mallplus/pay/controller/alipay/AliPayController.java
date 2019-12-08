@@ -13,11 +13,15 @@ import com.zscat.mallplus.alipay.AliPayApiConfigKit;
 import com.zscat.mallplus.alipay.AliPayBean;
 import com.zscat.mallplus.core.kit.PayKit;
 import com.zscat.mallplus.core.kit.RsaKit;
+import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsPayments;
+import com.zscat.mallplus.oms.service.IOmsOrderItemService;
+import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.pay.utils.StringUtils;
-import com.zscat.mallplus.pay.vo.AjaxResult;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import org.slf4j.Logger;
@@ -28,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,9 +61,16 @@ public class AliPayController extends AbstractAliPayApiController {
     String privateKey = "";
     String publicKey = "";
     String appId = "";
+    @Resource
+    private IOmsOrderService orderService;
+    @Resource
+    private IUmsMemberService memberService;
+    @Resource
+    private IOmsOrderItemService orderItemService;
+
     @Autowired
     private IOmsPaymentsService paymentsService;
-    private AjaxResult result = new AjaxResult();
+
 
     @Override
     public AliPayApiConfig getApiConfig() {
@@ -115,19 +128,31 @@ public class AliPayController extends AbstractAliPayApiController {
      */
     @RequestMapping(value = "/appPay")
     @ResponseBody
-    public Object appPay() {
+    public Object appPay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
         try {
+
+            OmsOrder orderInfo = orderService.getById(orderId);
+            if (null == orderInfo) {
+                return new CommonResult().failed("订单已取消" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+                return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                return new CommonResult().failed( "订单已支付，请不要重复操作" );
+            }
+
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-            model.setBody("我是测试数据-By Javen");
-            model.setSubject("App支付测试-By Javen");
+            model.setBody(orderInfo.getGoodsName());
+            model.setSubject(orderInfo.getGoodsName());
             model.setOutTradeNo(StringUtils.getOutTradeNo());
             model.setTimeoutExpress("30m");
-            model.setTotalAmount("0.01");
+            model.setTotalAmount(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString());
             model.setPassbackParams("callback params");
             model.setProductCode("QUICK_MSECURITY_PAY");
-            String orderInfo = AliPayApi.appPayToResponse(model, domain + "/aliPay/notify_url").getBody();
+            String order = AliPayApi.appPayToResponse(model, domain + "/aliPay/notify_url").getBody();
             System.out.println(JSONObject.toJSONString(orderInfo));
-            return new CommonResult().success(orderInfo);
+            return new CommonResult().success(order);
         } catch (AlipayApiException e) {
             e.printStackTrace();
             return new CommonResult().failed(e.getMessage());

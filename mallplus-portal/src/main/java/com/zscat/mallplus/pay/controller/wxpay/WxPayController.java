@@ -9,8 +9,12 @@ import com.jfinal.kit.StrKit;
 import com.zscat.mallplus.core.enums.SignType;
 import com.zscat.mallplus.core.enums.TradeType;
 import com.zscat.mallplus.core.kit.*;
+import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsPayments;
+import com.zscat.mallplus.oms.service.IOmsOrderItemService;
+import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.pay.entity.H5SceneInfo;
 import com.zscat.mallplus.pay.entity.WxAppPayDto;
@@ -38,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +65,11 @@ public class WxPayController extends AbstractWxPayApiController {
     private static final String USER_PAYING = "USERPAYING";
     private Logger log = LoggerFactory.getLogger(this.getClass());
     @Resource
+    private IOmsOrderService orderService;
+    @Resource
     private IUmsMemberService umsMemberService;
+    @Resource
+    private IOmsOrderItemService orderItemService;
     @Autowired
     private IOmsPaymentsService paymentsService;
     @Resource
@@ -94,7 +103,7 @@ public class WxPayController extends AbstractWxPayApiController {
             wxPayApiConfig.setPartnerKey("shen9136shen9136shen9136shen9136");*/
 
         } catch (Exception e) {
-            throw new ApiMallPlusException("支付宝支付参数配置异常");
+            throw new ApiMallPlusException(e.getMessage());
         }
 
         return apiConfig;
@@ -113,33 +122,42 @@ public class WxPayController extends AbstractWxPayApiController {
      * 注意：必须再web页面中发起支付且域名已添加到开发配置中
      */
     @RequestMapping(value = "/wapPay", method = {RequestMethod.POST, RequestMethod.GET})
-    public Object wapPay(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws IOException {
         String ip = IpKit.getRealIp(request);
         if (StrKit.isBlank(ip)) {
             ip = "127.0.0.1";
         }
 
-        H5SceneInfo sceneInfo = new H5SceneInfo();
+        OmsOrder orderInfo = orderService.getById(orderId);
+        if (null == orderInfo) {
+            return new CommonResult().failed("订单已取消" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+            return new CommonResult().failed( "订单已支付，请不要重复操作" );
+        }
 
+        H5SceneInfo sceneInfo = new H5SceneInfo();
+        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
         H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
         h5_info.setType("Wap");
         //此域名必须在商户平台--"产品中心"--"开发配置"中添加
-        h5_info.setWap_url("http://www.yjlive.cn");
+        h5_info.setWap_url(wxPayApiConfig.getDomain());
         h5_info.setWap_name("IJPay VIP 充值");
         sceneInfo.setH5Info(h5_info);
 
-
-        WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
 
         Map<String, String> params = UnifiedOrderModel
                 .builder()
                 .appid(wxPayApiConfig.getAppId())
                 .mch_id(wxPayApiConfig.getMchId())
                 .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-H5支付")
-                .attach("Node.js 版:https://gitee.com/javen205/TNW")
+                .body(orderInfo.getGoodsName())
+                .attach(orderInfo.getGoodsName())
                 .out_trade_no(WxPayKit.generateStr())
-                .total_fee("0.01")
+                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
                 .spbill_create_ip(ip)
                 .notify_url(notifyUrl)
                 .trade_type(TradeType.MWEB.getTradeType())
@@ -176,8 +194,10 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/authCodeToOpenid", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object authCodeToOpenid(Map map) {
-        return new CommonResult().success(umsMemberService.webLogin(map));
+    public Object authCodeToOpenid(@RequestParam(value = "wxH5Appid", required = true, defaultValue = "0")String wxH5Appid,
+                                   @RequestParam(value = "wxH5Secret", required = true, defaultValue = "0")String wxH5Secret,
+                                   @RequestParam(value = "code", required = true, defaultValue = "0")String code) {
+        return new CommonResult().success(umsMemberService.webLogin( wxH5Appid, wxH5Secret,  code));
     }
 
     /**
@@ -185,13 +205,12 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/webPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object webPay(HttpServletRequest request) {
+    public Object webPay(HttpServletRequest request, @RequestParam(value = "orderId", required = true, defaultValue = "0") Long orderId) {
         String totalFee = "0.01";
         // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
         UmsMember member = umsMemberService.getNewCurrentMember();
         String openId = member.getWeixinOpenid();
         System.out.println("1openId:" + openId);
-
 
         if (StrUtil.isEmpty(openId)) {
             return new AjaxResult().addError("openId is null");
@@ -204,16 +223,28 @@ public class WxPayController extends AbstractWxPayApiController {
             ip = "127.0.0.1";
         }
 
+        OmsOrder orderInfo = orderService.getById(orderId);
+        if (null == orderInfo) {
+            return new CommonResult().failed("订单已取消" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+            return new CommonResult().failed( "订单已支付，请不要重复操作" );
+        }
+
+
         WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
         Map<String, String> params = UnifiedOrderModel
                 .builder()
                 .appid(wxPayApiConfig.getAppId())
                 .mch_id(wxPayApiConfig.getMchId())
                 .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-公众号支付")
-                .attach("Node.js 版:https://gitee.com/javen205/TNW")
+                .body(orderInfo.getGoodsName()) // IJPay 让支付触手可及-公众号支付
+                .attach(orderInfo.getGoodsName())
                 .out_trade_no(WxPayKit.generateStr())
-                .total_fee("1000")
+                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
                 .spbill_create_ip(ip)
                 .notify_url(notifyUrl)
                 .trade_type(TradeType.JSAPI.getTradeType())
@@ -501,13 +532,22 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/appPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object appPay(HttpServletRequest request) {
+    public Object appPay(HttpServletRequest request,@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
 
         String ip = IpKit.getRealIp(request);
         if (StrKit.isBlank(ip)) {
             ip = "127.0.0.1";
         }
-
+        OmsOrder orderInfo = orderService.getById(orderId);
+        if (null == orderInfo) {
+            return new CommonResult().failed("订单已取消" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.CLOSED.getValue()) {
+            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+            return new CommonResult().failed( "订单已支付，请不要重复操作" );
+        }
         WxPayApiConfig wxPayApiConfig = WxPayApiConfigKit.getWxPayApiConfig();
 
         Map<String, String> params = UnifiedOrderModel
@@ -515,10 +555,10 @@ public class WxPayController extends AbstractWxPayApiController {
                 .appid(wxPayApiConfig.getAppId())
                 .mch_id(wxPayApiConfig.getMchId())
                 .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-App支付")
-                .attach("Node.js 版:https://gitee.com/javen205/TNW")
+                .body(orderInfo.getGoodsName())
+                .attach(orderInfo.getGoodsName())
                 .out_trade_no(WxPayKit.generateStr())
-                .total_fee("1000")
+                .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
                 .spbill_create_ip(ip)
                 .notify_url(notifyUrl)
                 .trade_type(TradeType.APP.getTradeType())
@@ -843,9 +883,9 @@ public class WxPayController extends AbstractWxPayApiController {
     @ResponseBody
     public String payNotify(HttpServletRequest request) {
         String xmlMsg = HttpKit.readData(request);
-        log.info("微信支付通知=" + xmlMsg);
-        Map<String, String> params = WxPayKit.xmlToMap(xmlMsg);
 
+        Map<String, String> params = WxPayKit.xmlToMap(xmlMsg);
+        log.info("微信支付通知=" + params);
         String returnCode = params.get("return_code");
 
         // 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态

@@ -60,7 +60,6 @@ public class MybatisPlusConfig {
                     log.info("#1129 getCurrentProviderId error.");
                     System.out.println("#1129 getCurrentProviderId error.");
 
-                    //  throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
                 return new LongValue(currentProviderId);
             }
@@ -86,7 +85,7 @@ public class MybatisPlusConfig {
             @Override
             public boolean doFilter(MetaObject metaObject) {
                 MappedStatement ms = SqlParserHelper.getMappedStatement(metaObject);
-                // 过滤自定义查询此时无租户信息约束【 麻花藤 】出现
+
                 if ("com.zscat.mallplus.sys.mapper.SysUserMapper.selectByUserName".equals(ms.getId())) {
                     return true;
                 }

@@ -21,9 +21,10 @@ import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.MemberDetails;
 import com.zscat.mallplus.vo.Rediskey;
 import com.zscat.mallplus.vo.SmsCode;
-import com.zscat.mallplus.wxpay.WxPayApi;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,60 +111,74 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     private IUmsIntegrationChangeHistoryService umsIntegrationChangeHistoryService;
     @Autowired
     private ApiContext apiContext;
-
+    private OkHttpClient okHttpClient = new OkHttpClient();
     @Override
     public UmsMember getNewCurrentMember() {
         return (UmsMember) this.getCurrentMember();
     }
 
     @Override
-    public Object webLogin(Map map) {
-        String openid = WxPayApi.authCodeToOpenid(map);
+    public Object webLogin(String wxH5Appid,String wxH5Secret, String code) {
+        //H5 微信公众号网页登录
         try {
-            Map<String, Object> resultObj = new HashMap<String, Object>();
-            UmsMember userVo = this.queryByOpenId(openid);
-            String token = null;
-            if (null == userVo) {
-                UmsMember umsMember = new UmsMember();
-                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
-                umsMember.setSourceType(2);
-                umsMember.setPassword(passwordEncoder.encode("123456"));
-                umsMember.setCreateTime(new Date());
-                umsMember.setStatus(1);
-                umsMember.setBlance(new BigDecimal(10000));
-                umsMember.setIntegration(0);
-                umsMember.setMemberLevelId(4L);
-                umsMember.setWeixinOpenid(openid);
-                memberMapper.insert(umsMember);
-                token = jwtTokenUtil.generateToken(umsMember.getUsername());
-                resultObj.put("userId", umsMember.getId());
-                resultObj.put("userInfo", umsMember);
-                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+            log.info("https://api.weixin.qq.com/sns/oauth2/access_token?appid="
+                    + wxH5Appid + "&secret=" + wxH5Secret + "&code=" + code + "&grant_type=authorization_code");
+        String json = okHttpClient.newCall(
+                new Request.Builder().url("https://api.weixin.qq.com/sns/oauth2/access_token?appid="
+                        + wxH5Appid + "&secret=" + wxH5Secret + "&code=" + code + "&grant_type=authorization_code").build()).execute().body().string();
+        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(json);
+        log.info(jsonObject.toJSONString());
+        Integer errcode = jsonObject.getInteger("errcode");
+        if (errcode == null || errcode == 0) {
+            String openid = jsonObject.getString("openid");
+                Map<String, Object> resultObj = new HashMap<String, Object>();
+                UmsMember userVo = this.queryByOpenId(openid);
+                String token = null;
+                if (null == userVo) {
+                    UmsMember umsMember = new UmsMember();
+                    umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
+                    umsMember.setSourceType(2);
+                    umsMember.setPassword(passwordEncoder.encode("123456"));
+                    umsMember.setCreateTime(new Date());
+                    umsMember.setStatus(1);
+                    umsMember.setBlance(new BigDecimal(10000));
+                    umsMember.setIntegration(0);
+                    umsMember.setMemberLevelId(4L);
+                    umsMember.setWeixinOpenid(openid);
+                    memberMapper.insert(umsMember);
+                    token = jwtTokenUtil.generateToken(umsMember.getUsername());
+                    resultObj.put("userId" , umsMember.getId());
+                    resultObj.put("userInfo" , umsMember);
+                    addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分" , AllEnum.ChangeSource.login.code(), umsMember.getUsername());
 
-            } else {
-                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
-                token = jwtTokenUtil.generateToken(userVo.getUsername());
-                resultObj.put("userId", userVo.getId());
-                resultObj.put("userInfo", userVo);
-            }
+                } else {
+                    addIntegration(userVo.getId(), regJifen, 1, "注册添加积分" , AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                    token = jwtTokenUtil.generateToken(userVo.getUsername());
+                    resultObj.put("userId" , userVo.getId());
+                    resultObj.put("userInfo" , userVo);
+                }
 
 
-            if (StringUtils.isEmpty(token)) {
-                throw new ApiMallPlusException("登录失败");
+                if (StringUtils.isEmpty(token)) {
+                    throw new ApiMallPlusException("登录失败");
 
-            }
-            resultObj.put("tokenHead", tokenHead);
-            resultObj.put("token", token);
+                }
+                resultObj.put("tokenHead" , tokenHead);
+                resultObj.put("token" , token);
 
 
-            return new CommonResult().success(resultObj);
-        } catch (ApiMallPlusException e) {
-            e.printStackTrace();
-            throw new ApiMallPlusException(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ApiMallPlusException(e.getMessage());
+                return new CommonResult().success(resultObj);
+        }else {
+            throw new ApiMallPlusException(jsonObject.toJSONString());
         }
+            } catch (ApiMallPlusException e) {
+                e.printStackTrace();
+                throw new ApiMallPlusException(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new ApiMallPlusException(e.getMessage());
+            }
+
     }
 
     @Override

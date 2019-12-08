@@ -102,9 +102,8 @@ public interface IUmsMemberService extends IService<UmsMember> {
     /**
      * openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
      *
-     * @param map
      * @return
      */
-    Object webLogin(Map map);
+    Object webLogin(String wxH5Appid,String wxH5Secret, String code);
 }
 

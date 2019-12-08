@@ -133,7 +133,11 @@
             <artifactId>spring-boot-starter-redis</artifactId>
             <version>1.3.8.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.zscat.mallplus</groupId>
+            <artifactId>mallplus-wechat</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <!--lombok依赖-->
         <dependency>
@@ -165,6 +169,11 @@
             <scope>system</scope>
             <version>1.0</version>
             <systemPath>${project.basedir}/lib/taobao-sdk-java-auto_1457166217151-20190906.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.4</version>
         </dependency>
     </dependencies>
 

@@ -108,11 +108,68 @@ public class BOmsController extends ApiBaseAction {
     private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
 
     @ApiOperation("添加商品到购物车")
+    @RequestMapping(value = "/cart.store.add")
+    @ResponseBody
+    public Object addStoreCart(CartParam cartParam) {
+        try {
+            return orderService.addCart(cartParam);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @ApiOperation("获取某个会员的购物车列表")
+    @RequestMapping(value = "/cart.getCartlist", method = RequestMethod.POST)
+    @ResponseBody
+    public Object listStoreCart() {
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            return new CommonResult().success(cartItemService.listStoreCart(umsMember.getId()));
+        }
+        return new ArrayList<OmsCartItem>();
+    }
+
+    @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.add")
     @ResponseBody
     public Object addCart(CartParam cartParam) {
         try {
             return orderService.addCart(cartParam);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    @ResponseBody
+    @PostMapping("/submitStorePreview")
+    public Object submitStorePreview(OrderParam orderParam) {
+        try {
+            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
+            return new CommonResult().success(result);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 提交订单
+     *
+     * @param orderParam
+     * @return
+     */
+    @ApiOperation("根据购物车信息生成订单")
+    @RequestMapping(value = "/order.store.create")
+    @ResponseBody
+    public Object generateStoreOrder(OrderParam orderParam) {
+        try {
+            return orderService.generateStoreOrder(orderParam);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
         } catch (Exception e) {
@@ -140,16 +197,7 @@ public class BOmsController extends ApiBaseAction {
         return new ArrayList<OmsCartItem>();
     }
 
-    @ApiOperation("获取某个会员的购物车列表")
-    @RequestMapping(value = "/cart.getCartlist", method = RequestMethod.POST)
-    @ResponseBody
-    public Object listStoreCart() {
-        UmsMember umsMember = memberService.getNewCurrentMember();
-        if (umsMember != null && umsMember.getId() != null) {
-            return new CommonResult().success(cartItemService.listStoreCart(umsMember.getId()));
-        }
-        return new ArrayList<OmsCartItem>();
-    }
+
 
     @ApiOperation("修改购物车中某个商品的数量")
     @RequestMapping(value = "/cart.setnums", method = RequestMethod.POST)
@@ -594,19 +642,6 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
-    @ResponseBody
-    @PostMapping("/submitStorePreview")
-    public Object submitStorePreview(OrderParam orderParam) {
-        try {
-            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
-            return new CommonResult().success(result);
-        } catch (ApiMallPlusException e) {
-            return new CommonResult().failed(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * 提交订单

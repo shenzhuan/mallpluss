@@ -12,10 +12,10 @@
     <modules>
         <module>mallplus-mbg</module>
         <module>mallplus-pay</module>
-        <module>mallplus-admin</module>
-
+        <module>mallplus-wechat</module>
         <module>mallplus-portal</module>
-        <module>mallplus-search</module>
+       <!-- <module>mallplus-admin</module>-->
+      <!--  <module>mallplus-search</module>-->
     </modules>
 
 </project>
