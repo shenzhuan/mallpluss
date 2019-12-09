@@ -17,7 +17,6 @@ import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.pay.entity.H5SceneInfo;
-import com.zscat.mallplus.pay.entity.WxAppPayDto;
 import com.zscat.mallplus.pay.entity.WxPayBean;
 import com.zscat.mallplus.pay.vo.AjaxResult;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
@@ -32,7 +31,6 @@ import com.zscat.mallplus.wxpay.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +56,7 @@ import java.util.Map;
  *
  * @author Javen
  */
-@Controller
+@RestController
 @RequestMapping("api/wxPay")
 public class WxPayController extends AbstractWxPayApiController {
     private static final String USER_PAYING = "USERPAYING";
@@ -164,7 +162,7 @@ public class WxPayController extends AbstractWxPayApiController {
                    .body(orderInfo.getGoodsName())
                    .attach(orderInfo.getGoodsName())
                    .out_trade_no(WxPayKit.generateStr())
-                   .total_fee(orderInfo.getPayAmount().toString())
+                   .total_fee("1")
                    .spbill_create_ip(ip)
                    .notify_url(notifyUrl)
                    .trade_type(TradeType.MWEB.getTradeType())
@@ -602,9 +600,9 @@ public class WxPayController extends AbstractWxPayApiController {
             Map<String, String> packageParams = WxPayKit.appPrepayIdCreateSign(wxPayApiConfig.getAppId(), wxPayApiConfig.getMchId(), prepayId,
                     wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-            WxAppPayDto dto = JsonUtils.map2pojo(packageParams, WxAppPayDto.class);
-            log.info("返回apk的参数:" + JsonUtils.objectToJson(dto));
-            return new CommonResult().success(dto);
+          //  WxAppPayDto dto = JsonUtils.map2pojo(packageParams, WxAppPayDto.class);
+            log.info("返回apk的参数:" + JsonUtils.objectToJson(packageParams));
+            return new CommonResult().success(JsonUtils.objectToJson(packageParams));
         }catch (Exception e){
             e.printStackTrace();
             return new CommonResult().failed(e.getMessage());

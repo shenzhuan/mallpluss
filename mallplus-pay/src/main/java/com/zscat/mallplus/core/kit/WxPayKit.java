@@ -266,7 +266,7 @@ public class WxPayKit {
         packageParams.put("appId", appId);
         packageParams.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
         packageParams.put("nonceStr", String.valueOf(System.currentTimeMillis()));
-        packageParams.put("packages", "prepay_id=" + prepayId);
+        packageParams.put("package", "prepay_id=" + prepayId);
         if (signType == null) {
             signType = SignType.MD5;
         }
@@ -292,7 +292,7 @@ public class WxPayKit {
         packageParams.put("appid", appId);
         packageParams.put("partnerid", partnerId);
         packageParams.put("prepayid", prepayId);
-        packageParams.put("packages", "Sign=WXPay");
+        packageParams.put("package", "Sign=WXPay");
         packageParams.put("noncestr", String.valueOf(System.currentTimeMillis()));
         packageParams.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
         if (signType == null) {
@@ -318,7 +318,7 @@ public class WxPayKit {
         packageParams.put("appId", appId);
         packageParams.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
         packageParams.put("nonceStr", String.valueOf(System.currentTimeMillis()));
-        packageParams.put("packages", "prepay_id=" + prepayId);
+        packageParams.put("package", "prepay_id=" + prepayId);
         if (signType == null) {
             signType = SignType.MD5;
         }
