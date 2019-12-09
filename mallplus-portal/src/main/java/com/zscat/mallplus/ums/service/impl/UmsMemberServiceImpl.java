@@ -149,10 +149,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     token = jwtTokenUtil.generateToken(umsMember.getUsername());
                     resultObj.put("userId" , umsMember.getId());
                     resultObj.put("userInfo" , umsMember);
-                    addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分" , AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+                    addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分" , AllEnum.ChangeSource.register.code(), umsMember.getUsername());
 
                 } else {
-                    addIntegration(userVo.getId(), regJifen, 1, "注册添加积分" , AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                    addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分" , AllEnum.ChangeSource.login.code(), userVo.getUsername());
+
                     token = jwtTokenUtil.generateToken(userVo.getUsername());
                     resultObj.put("userId" , userVo.getId());
                     resultObj.put("userInfo" , userVo);

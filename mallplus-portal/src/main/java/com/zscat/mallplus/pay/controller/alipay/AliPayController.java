@@ -213,10 +213,21 @@ public class AliPayController extends AbstractAliPayApiController {
 
     @RequestMapping(value = "/wapPay")
     @ResponseBody
-    public void wapPay(HttpServletResponse response) {
-        String body = "我是测试数据-By Javen";
-        String subject = "Javen Wap支付测试";
-        String totalAmount = "1";
+    public Object wapPay(HttpServletResponse response,@RequestParam(value = "orderId", required = true, defaultValue = "0") Long orderId) {
+        OmsOrder orderInfo = orderService.getById(orderId);
+        if (null == orderInfo) {
+            return new CommonResult().failed("订单已取消" );
+        }
+        if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+            return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+        }
+        if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+            return new CommonResult().failed( "订单已支付，请不要重复操作" );
+        }
+
+        String body = orderInfo.getGoodsName();
+        String subject = "mallplus支付测试";
+        String totalAmount = orderInfo.getPayAmount().toString();
         String passbackParams = "1";
         String returnUrl = domain + "/aliPay/return_url";
         String notifyUrl = domain + "/aliPay/notify_url";
@@ -229,13 +240,15 @@ public class AliPayController extends AbstractAliPayApiController {
         String outTradeNo = StringUtils.getOutTradeNo();
         System.out.println("wap outTradeNo>" + outTradeNo);
         model.setOutTradeNo(outTradeNo);
-        model.setProductCode("QUICK_WAP_PAY");
+        model.setProductCode(orderInfo.getOrderSn());
 
         try {
-            AliPayApi.wapPay(response, model, returnUrl, notifyUrl,this.getApiConfig());
+            return new CommonResult().success(AliPayApi.wapPayStr( model, returnUrl, notifyUrl,this.getApiConfig()));
         } catch (Exception e) {
             e.printStackTrace();
+            return new CommonResult().failed(e.getMessage());
         }
+
     }
 
 
