@@ -153,7 +153,7 @@ public class AliPayController extends AbstractAliPayApiController {
             }
 
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-            model.setBody(orderInfo.getGoodsName());
+            model.setBody("zhifu");
             model.setSubject(orderInfo.getGoodsName());
             model.setOutTradeNo(StringUtils.getOutTradeNo());
             model.setTimeoutExpress("30m");
@@ -233,7 +233,7 @@ public class AliPayController extends AbstractAliPayApiController {
         String notifyUrl = domain + "/aliPay/notify_url";
 
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
-        model.setBody(body);
+        model.setBody(subject);
         model.setSubject(subject);
         model.setTotalAmount(totalAmount);
         model.setPassbackParams(passbackParams);

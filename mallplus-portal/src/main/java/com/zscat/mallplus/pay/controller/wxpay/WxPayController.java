@@ -164,7 +164,7 @@ public class WxPayController extends AbstractWxPayApiController {
                    .body(orderInfo.getGoodsName())
                    .attach(orderInfo.getGoodsName())
                    .out_trade_no(WxPayKit.generateStr())
-                   .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
+                   .total_fee(orderInfo.getPayAmount().toString())
                    .spbill_create_ip(ip)
                    .notify_url(notifyUrl)
                    .trade_type(TradeType.MWEB.getTradeType())

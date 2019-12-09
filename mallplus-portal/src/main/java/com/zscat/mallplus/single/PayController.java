@@ -8,7 +8,6 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
 import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
@@ -216,19 +215,7 @@ public class PayController extends ApiBaseAction {
 
             // 商品描述
             parame.put("body", "超市-支付");
-            //订单的商品
-            List<OmsOrderItem> orderGoods = orderItemService.list(new QueryWrapper<>(new OmsOrderItem()).eq("order_id", orderId));
-            if (null != orderGoods) {
-                String body = "超市-";
-                for (OmsOrderItem goodsVo : orderGoods) {
-                    body = body + goodsVo.getProductName() + "、";
-                }
-                if (body.length() > 0) {
-                    body = body.substring(0, body.length() - 1);
-                }
-                // 商品描述
-                parame.put("body", body);
-            }
+
             //支付金额
             parame.put("total_fee", orderInfo.getPayAmount().multiply(new BigDecimal(100)).intValue());
             // 回调地址
