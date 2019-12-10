@@ -1,6 +1,125 @@
-app_id=2017010804923732&biz_content={"out_trade_no":"120616055815756","total_amount":"6.66","subject":"IJPay 让支付触手可及","body":"IJPay 聚合支付-H5","product_code":"QUICK_WAP_WAY"}&charset=UTF-8&method=alipay.trade.wap.pay&notify_url=http://www.yjlive.cn/api/aliPay/notify_url&return_url=http://www.yjlive.cn/apialiPay/return_url&sign_type=RSA2&timestamp=2019-12-06 16:05:58&version=1.0
-XYNkpeHRDm4jHs+wcYRNV68jhctwlA1B+QSc35cCTv63hiLyxXWcy+bWmOJWRu9U6v6x2yaHU78Aw9iCt/0LgE3Z8IUEOg46mj6MbB6xJRgQhht3ozT04OY8fX33sbuGGpZrtkvYXIogymXIDUow9TTpH1bHR/s1K03UBZUJsMYnRpqt9zrPGYkMcCXo9JpUzkA8UqC9Cumf2n8cpRl7Vn0CvtyaoMJnI2lH2CotZ3OFOxe6oKf/+dlpBlsgkZ7CtvbXHBrfJyBP9JsrMvPpHpae9EHhS+RZ1kMxB0U9L3FS3P0Ogj7epdsjnlymW+JXzOehwDY9fR58YBhtaVCKYQ==
+
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
 
 
-https://openapi.alipay.com/gateway.do?app_id=2017010804923732&biz_content=%7B%22out_trade_no%22%3A%22120616055815756%22%2C%22total_amount%22%3A%226.66%22%2C%22subject%22%3A%22IJPay%20%E8%AE%A9%E6%94%AF%E4%BB%98%E8%A7%A6%E6%89%8B%E5%8F%AF%E5%8F%8A%22%2C%22body%22%3A%22IJPay%20%E8%81%9A%E5%90%88%E6%94%AF%E4%BB%98-H5%22%2C%22product_code%22%3A%22QUICK_WAP_WAY%22%7D&charset=UTF-8&method=alipay.trade.wap.pay&
-notify_url=http%3A%2F%2Fwww.yjlive.cn%2Fapi%2FaliPay%2Fnotify_url&return_url=http%3A%2F%2Fwww.yjlive.cn%2FapialiPay%2Freturn_url&sign=XYNkpeHRDm4jHs%2BwcYRNV68jhctwlA1B%2BQSc35cCTv63hiLyxXWcy%2BbWmOJWRu9U6v6x2yaHU78Aw9iCt%2F0LgE3Z8IUEOg46mj6MbB6xJRgQhht3ozT04OY8fX33sbuGGpZrtkvYXIogymXIDUow9TTpH1bHR%2Fs1K03UBZUJsMYnRpqt9zrPGYkMcCXo9JpUzkA8UqC9Cumf2n8cpRl7Vn0CvtyaoMJnI2lH2CotZ3OFOxe6oKf%2F%2BdlpBlsgkZ7CtvbXHBrfJyBP9JsrMvPpHpae9EHhS%2BRZ1kMxB0U9L3FS3P0Ogj7epdsjnlymW%2BJXzOehwDY9fR58YBhtaVCKYQ%3D%3D&sign_type=RSA2&timestamp=2019-12-06%2016%3A05%3A58&version=1.0
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  165;
+client_header_timeout 45;
+
+client_body_timeout 45;
+
+send_timeout 45;
+
+    #gzip  on;
+
+    server {
+        listen       8090;
+        server_name  39.106.212.32;
+	client_max_body_size 10M;
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+        location / {
+  root /root/jm/dist;
+  index index.html;
+}
+
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+
+    }
+server {
+        listen 80;
+        server_name www.yjlive.cn;
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root html;
+        }
+
+		location / {
+            alias /root/jm/h5/;
+            index index.html;
+        }
+
+        location /h5 {
+            alias  /root/jm/mall/;
+			try_files $uri $uri/ @router;
+			index index.html;
+        }
+         location /cms {
+                    alias  /root/jm/cms/;
+        			try_files $uri $uri/ @router;
+        			index index.html;
+                }
+                 location /pc {
+                            alias  /root/jm/pc/;
+                			try_files $uri $uri/ @router;
+                			index index.html;
+                        }
+                           location /pcbak {
+                                                    alias  /root/jm/pcbak/;
+                                        			try_files $uri $uri/ @router;
+                                        			index index.html;
+                                                }
+                         location /h5bak {
+                                    alias  /root/jm/h5bak/;
+                        			try_files $uri $uri/ @router;
+                        			index index.html;
+                                }
+                                location /mei {
+                                                                    alias  /root/jm/mei/;
+                                                        			try_files $uri $uri/ @router;
+                                                        			index index.html;
+                                                                }
+                                                                 location /mei1 {
+                                                                                                                                    alias  /root/jm/mei1/;
+                                                                                                                        			try_files $uri $uri/ @router;
+                                                                                                                        			index index.html;
+                                                                                                                                }
+        location /api {
+            rewrite  ^/api/(.*)$ /$1 break;
+            include  uwsgi_params;
+            proxy_pass   http://39.106.212.32:8081 ;
+        }
+        location @router {
+        rewrite ^.*$ /index.html last;
+        }
+    }
+
+
+
+ }

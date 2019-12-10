@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderItemController", description = "订单中所包含的商品管理")
+@Api(tags = "oms", description = "订单中所包含的商品管理")
 @RequestMapping("/oms/OmsOrderItem")
 public class OmsOrderItemController {
     @Resource

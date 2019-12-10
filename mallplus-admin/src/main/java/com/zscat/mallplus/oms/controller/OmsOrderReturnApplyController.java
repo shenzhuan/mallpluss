@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderReturnApplyController", description = "订单退货申请管理")
+@Api(tags = "oms", description = "订单退货申请管理")
 @RequestMapping("/oms/OmsOrderReturnApply")
 public class OmsOrderReturnApplyController {
     @Resource

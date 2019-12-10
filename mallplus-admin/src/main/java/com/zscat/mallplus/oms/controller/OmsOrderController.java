@@ -37,7 +37,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderController", description = "订单表管理")
+@Api(tags = "oms", description = "订单表管理")
 @RequestMapping("/oms/OmsOrder")
 public class OmsOrderController {
     @Resource

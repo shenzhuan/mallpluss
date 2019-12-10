@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderOperateHistoryController", description = "订单操作历史记录管理")
+@Api(tags = "oms", description = "订单操作历史记录管理")
 @RequestMapping("/oms/OmsOrderOperateHistory")
 public class OmsOrderOperateHistoryController {
     @Resource

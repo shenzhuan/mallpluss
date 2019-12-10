@@ -1,4 +1,6 @@
+netstat -ntlp //查看当前所有tcp端口·
 
+netstat -ntulp |grep 80 //查看所有80端口使用情况·
 
 
 39.106.212.32
@@ -9,6 +11,9 @@ nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
 nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
 
 nohup java -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
+
+
+nohup java -jar /root/jm/bootdo-1.5.0.jar >blog.log 2>&1 &
 
 ps -ef|grep java
 
@@ -31,6 +36,8 @@ put -r /Users/java/test/git/RuoYi-fast/target/RuoYi.jar  /root/jm
 put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-SNAPSHOT.jar  /root/jm
 
 put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.1-SNAPSHOT.jar  /root/jm
+
+put -r /Users/java/test/git/bootdo/bootdo/target/bootdo-1.5.0.jar  /root/jm
 
 put -r /Users/java/test/git/mallplus/mallplus-portal/MP_verify_8U0gHxfvQWhdo4DS.txt /root/jm/h5
 

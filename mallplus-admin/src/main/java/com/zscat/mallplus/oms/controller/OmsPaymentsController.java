@@ -9,6 +9,7 @@ import com.zscat.mallplus.oms.service.IOmsPaymentsService;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.util.List;
  * 支付配置
  */
 @Slf4j
+@Api(tags = "oms", description = "支付配置")
 @RestController
 @RequestMapping("/oms/omsPayments")
 public class OmsPaymentsController {

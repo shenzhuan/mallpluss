@@ -9,6 +9,7 @@ import com.zscat.mallplus.oms.service.IOmsCompanyAddressService;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import java.util.List;
  * 发货地址
  */
 @Slf4j
+@Api(tags = "oms", description = "发货地址列表")
 @RestController
 @RequestMapping("/oms/omsCompanyAddress")
 public class OmsCompanyAddressController {
@@ -36,12 +38,14 @@ public class OmsCompanyAddressController {
     @SysLog(MODULE = "oms", REMARK = "根据条件查询所有发货地址列表")
     @ApiOperation("根据条件查询所有发货地址列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('oms:omsCompanyAddress:read')")
     public Object getOmsCompanyAddressByPage(OmsCompanyAddress entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+            if (ValidatorUtils.notEmpty(entity.getName())){
+                return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<OmsCompanyAddress>(new OmsCompanyAddress()).like("name",entity.getName())));
+            }
             return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有发货地址列表：%s", e.getMessage(), e);

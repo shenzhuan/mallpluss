@@ -42,7 +42,11 @@ public class PmsGiftsController {
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+            if (ValidatorUtils.notEmpty(entity.getTitle())){
+                return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<PmsGifts>(new PmsGifts()).like("title",entity.getTitle())));
+            }
             return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<>(entity)));
+
         } catch (Exception e) {
             log.error("根据条件查询所有帮助表列表：%s", e.getMessage(), e);
         }
@@ -127,6 +131,21 @@ public class PmsGiftsController {
         boolean count = IPmsGiftsService.removeByIds(ids);
         if (count) {
             return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+    @ApiOperation(value = "批量更新显示状态")
+    @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        PmsGifts g = new PmsGifts();
+        g.setId(ids);
+        g.setShowStatus(showStatus);
+        if (IPmsGiftsService.updateById(g)) {
+            return new CommonResult().success();
         } else {
             return new CommonResult().failed();
         }

@@ -12,6 +12,7 @@ import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.BuildTree;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,10 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             for (SysPermission sysMenuDO : menuDOs) {
                 Tree<SysPermission> tree = new Tree<SysPermission>();
                 tree.setId(sysMenuDO.getId().toString());
-                tree.setParentId(sysMenuDO.getPid().toString());
+                if (ValidatorUtils.notEmpty(sysMenuDO.getPid())){
+                    tree.setParentId(sysMenuDO.getPid().toString());
+                }
+
                 tree.setTitle(sysMenuDO.getName());
                 Map<String, Object> attributes = new HashMap<>(16);
                 attributes.put("url", sysMenuDO.getUri());

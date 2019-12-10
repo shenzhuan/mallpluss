@@ -36,11 +36,14 @@ public class PmsBrandController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有品牌表列表")
     @ApiOperation("根据条件查询所有品牌表列表")
     @GetMapping(value = "/list")
-    public Object getPmsBrandByPage(PmsBrand entity,
+    public Object getPmsBrandByPage( PmsBrand entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+            if (ValidatorUtils.notEmpty(entity.getName())){
+                return new CommonResult().success(IPmsBrandService.page(new Page<PmsBrand>(pageNum, pageSize), new QueryWrapper<PmsBrand>(new PmsBrand()).like("name",entity.getName())));
+            }
             return new CommonResult().success(IPmsBrandService.page(new Page<PmsBrand>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有品牌表列表：%s", e.getMessage(), e);
