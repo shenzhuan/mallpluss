@@ -56,21 +56,24 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
 
     @Override
     public List<SmsCoupon> selectNotRecive() {
-        UmsMember currentMember = memberService.getNewCurrentMember();
-        SmsCoupon coupon = new SmsCoupon();
-        coupon.setType(0);
         List<SmsCoupon> list = new ArrayList<>();
-        if (currentMember != null && currentMember.getId() != null) {
-            List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", currentMember.getId()));
-            if (histories != null && histories.size() > 0) {
-                List<Long> ids = histories.stream()
-                        .map(SmsCouponHistory::getCouponId)
-                        .collect(Collectors.toList());
-                list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()).notIn("id", ids));
-            }
+        SmsCoupon coupon = new SmsCoupon();
+        try {
+            UmsMember currentMember = memberService.getNewCurrentMember();
+            coupon.setType(0);
+            if (currentMember != null && currentMember.getId() != null) {
+                List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", currentMember.getId()));
+                if (histories != null && histories.size() > 0) {
+                    List<Long> ids = histories.stream()
+                            .map(SmsCouponHistory::getCouponId)
+                            .collect(Collectors.toList());
+                    list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()).notIn("id", ids));
+                }
 
-        } else {
+            }
+        }catch (Exception e){
             list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
+
         }
         return list;
 

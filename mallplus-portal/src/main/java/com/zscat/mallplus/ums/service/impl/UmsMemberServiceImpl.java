@@ -3,6 +3,7 @@ package com.zscat.mallplus.ums.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ApiContext;
+import com.zscat.mallplus.component.UserUtils;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -191,6 +192,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if ("OPTIONS".equals(requestType)) {
                 return null;
             }
+            UmsMember member = UserUtils.getCurrentMember();
+            if (member!=null && member.getId()!=null){
+                return member;
+            }
             String storeId = request.getParameter("storeid");
             if (ValidatorUtils.empty(storeId)) {
                 storeId = request.getHeader("storeid");
@@ -204,7 +209,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 if (ValidatorUtils.notEmpty(username)) {
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                     member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
                     if (member == null || member.getId() == null) {
                         member = getByUsername(username);
                     }

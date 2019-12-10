@@ -1,7 +1,6 @@
 package com.zscat.mallplus.component;
 
 
-import com.google.common.collect.Lists;
 import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
@@ -31,7 +30,6 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,84 +37,7 @@ import java.util.Map;
  * https://github.com/shenzhuan/mallplus on 2018/4/26.
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-    public static final List<String> IGNORE_TENANT_TABLES = Lists.newArrayList(
-            "user.info",
-            "user.editinfo",
-            "user.changeavatar",
-            "user.logout",
-            "user.addgoodsbrowsing",
-            "user.delgoodsbrowsing",
-            "user.goodsbrowsing",
-            "user.goodscollection",
-            "user.goodscollectionlist",
-            "user.vuesaveusership",
-            "user.saveusership",
-            "user.getshipdetail",
-            "user.setdefship",
-            "user.editship",
-            "user.removeship",
-            "user.getusership",
-            "api/wxpay/user.pay",
-            "user.orderevaluate",
-            "user.getuserdefaultship",
-            "user.issign",
-            "user.sign",
-            "user.mypoint",
-            "user.userpointlog",
-            "user.getbankcardlist",
-            "user.getdefaultbankcard",
-            "user.addbankcard",
-            "user.removebankcard",
-            "user.setdefaultbankcard",
-            "user.getbankcardinfo",
-            "user.editpwd",
-            "user.forgotpwd",
-            "user.recommend",
-            "user.balancelist",
-            "user.sharecode",
-            "user.cash",
-            "user.cashlist",
-            "user.myinvite",
-            "user.activationinvite",
-            "coupon.getcoupon",
-            "coupon.usercoupon",
-            "cart.add",
-            "cart.del",
-            "cart.getlist",
-            "cart.setnums",
-            "cart.getnumber",
-            "order.cancel",
-            "order.del",
-            "order.details",
-            "order.confirm",
-            "order.getlist",
-            "order.create",
-            "submitPreview",
-            "order.getship",
-            "order.getorderlist",
-            "order.getorderstatusnum",
-            "order.aftersaleslist",
-            "order.aftersalesinfo",
-            "order.aftersalesstatus",
-            "order.addaftersales",
-            "order.sendreship",
-            "order.iscomment",
-            "payments.getinfo",
-            "user.getuserpoint",
-            "coupon.getcouponkey",
-            "store.isclerk",
-            "store.storeladinglist",
-            "store.ladinginfo",
-            "store.lading",
-            "store.ladingdel",
-            "distribution_center-api-info",
-            "distribution_center-api-applydistribution",
-            "distribution_center-api-setstore",
-            "distribution_center-api-myorder",
-            "pintuan.pintuanteam",
-            "lottery-api-getLotteryConfig",
-            "lottery-api-lottery",
-            "lottery-api-lotteryLog");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
     @Resource
     public SysWebLogMapper fopSystemOperationLogService;
