@@ -596,6 +596,44 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(relList);
     }
 
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品分类")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商品分类")
+    @GetMapping(value = "/getGoodsTypes")
+    public Object getGoodsTypes() throws Exception {
+        List<PmsProductCategory> relList = new ArrayList<>();
+        String json = redisService.get(Rediskey.goodsCategorys);
+        if (ValidatorUtils.notEmpty(json)) {
+            relList = JsonUtils.json2list(json, PmsProductCategory.class);
+            return new CommonResult().success(relList);
+        }
+        PmsProductCategory pmsProductCategory = new PmsProductCategory();
+        pmsProductCategory.setShowStatus(1);
+        pmsProductCategory.setNavStatus(1);
+        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>(pmsProductCategory));
+        for (PmsProductCategory v : categories) {
+            if (v.getParentId() == 0) {
+                relList.add(v);
+            }
+        }
+        List<PmsProductCategory> list=null;
+        //组装二级分类
+        for (int i=0;i<relList.size();i++){
+            list=new ArrayList<>();
+            for (PmsProductCategory v : categories) {
+                if (v.getParentId().longValue() == relList.get(i).getId().longValue()) {
+                    list.add(v);
+                }
+            }
+            relList.get(i).setChildList(list);
+        }
+        redisService.set(Rediskey.goodsCategorys + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.goodsCategorys + apiContext.getCurrentProviderId(), 2);
+        return new CommonResult().success(relList);
+    }
+
+
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品类型下的商品列表")
