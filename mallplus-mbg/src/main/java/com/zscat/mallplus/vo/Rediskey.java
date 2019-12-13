@@ -55,6 +55,7 @@ public class Rediskey {
     public static String goodsConsult = "goodsConsult";
     public static String categoryAndGoodsList = "categoryAndGoodsList";
     public static String specialcategoryAndGoodsList = "specialcategoryAndGoodsList";
+    public static String goodsCategorys = "goodsCategorys";
     public static String orderDetail = "orderDetail";
     public static String getorderstatusnum = "getorderstatusnum";
     /**
