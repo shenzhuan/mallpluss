@@ -21,9 +21,22 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     void updataMemberOrderInfo();
 
+    /**
+     * 获取小程序openid
+     * @param req
+     * @return
+     */
+    Object getAppletOpenId(AppletLoginParam req);
+
+
+    /**
+     * 小程序 登录注册
+     * @param req
+     * @return
+     */
     Object loginByWeixin(AppletLoginParam req);
 
-
+    Object loginByWeixin1(AppletLoginParam req);
     /**
      * 根据用户名获取会员
      */

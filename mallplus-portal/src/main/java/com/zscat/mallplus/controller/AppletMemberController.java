@@ -126,7 +126,17 @@ public class AppletMemberController extends ApiBaseAction {
         }
 
     }
-
+    @IgnoreAuth
+    @ApiOperation("获取小程序openid")
+    @SysLog(MODULE = "applet", REMARK = "获取小程序openid")
+    @PostMapping("getAppletOpenId")
+    public Object getAppletOpenId(@RequestBody AppletLoginParam param) {
+        try {
+            return memberService.getAppletOpenId(param);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+    }
 
     /**
      * 小程序主页
