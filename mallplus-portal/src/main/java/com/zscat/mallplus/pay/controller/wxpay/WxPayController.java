@@ -642,7 +642,7 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/miniAppPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object miniAppPay(HttpServletRequest request) {
+    public Object miniAppPay(HttpServletRequest request,@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
       try {
           //需要通过授权来获取openId
           UmsMember user = umsMemberService.getNewCurrentMember();
@@ -655,6 +655,16 @@ public class WxPayController extends AbstractWxPayApiController {
           SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
           if (null == appletSet) {
               throw new ApiMallPlusException("没有设置支付配置");
+          }
+          OmsOrder orderInfo = orderService.getById(orderId);
+          if (null == orderInfo) {
+              return new CommonResult().failed("订单已取消" );
+          }
+          if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+              return new CommonResult().failed( "订单已已关闭，请不要重复操作" );
+          }
+          if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+              return new CommonResult().failed( "订单已支付，请不要重复操作" );
           }
           WxPayBean wxPayApiConfig = new WxPayBean();
 
@@ -671,7 +681,7 @@ public class WxPayController extends AbstractWxPayApiController {
                   .body("mallplus-小程序支付")
                   .attach("Node.js 版:https://gitee.com/javen205/TNW")
                   .out_trade_no(WxPayKit.generateStr())
-                  .total_fee("1")
+                  .total_fee(orderInfo.getPayAmount().toString())
                   .spbill_create_ip(ip)
                   .notify_url(notifyUrl)
                   .trade_type(TradeType.JSAPI.getTradeType())
