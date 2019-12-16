@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -46,6 +47,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    @Autowired
+    private ApiContext apiContext;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -90,7 +93,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        LOGGER.info("authenticated user:{}", username);
+                        LOGGER.info("checking username:{}，storeId:{}", username,apiContext.getCurrentProviderId());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
