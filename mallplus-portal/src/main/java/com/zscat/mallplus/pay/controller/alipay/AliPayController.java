@@ -7,6 +7,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.domain.*;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.response.AlipayTradeCreateResponse;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.alipay.AliPayApi;
 import com.zscat.mallplus.alipay.AliPayApiConfig;
 import com.zscat.mallplus.alipay.AliPayApiConfigKit;
@@ -14,6 +15,7 @@ import com.zscat.mallplus.alipay.AliPayBean;
 import com.zscat.mallplus.core.kit.PayKit;
 import com.zscat.mallplus.core.kit.RsaKit;
 import com.zscat.mallplus.enums.OrderStatus;
+import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
@@ -34,9 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -154,10 +156,10 @@ public class AliPayController extends AbstractAliPayApiController {
 
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
             model.setBody("zhifu");
-            model.setSubject(orderInfo.getGoodsName());
+            model.setSubject("mallplus app支付");
             model.setOutTradeNo(StringUtils.getOutTradeNo());
             model.setTimeoutExpress("30m");
-            model.setTotalAmount(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString());
+            model.setTotalAmount(orderInfo.getPayAmount().toString());
             model.setPassbackParams("callback params");
             model.setProductCode("QUICK_MSECURITY_PAY");
             String order = AliPayApi.appPayToResponse(model, domain + "/aliPay/notify_url",this.getApiConfig()).getBody();
@@ -171,8 +173,18 @@ public class AliPayController extends AbstractAliPayApiController {
 
     @RequestMapping(value = "/wapPayNoSdk")
     @ResponseBody
-    public void wapPayNoSdk(HttpServletResponse response) {
+    public void wapPayNoSdk(HttpServletResponse response,@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
         try {
+            OmsOrder orderInfo = orderService.getById(orderId);
+            if (null == orderInfo) {
+                  throw new ApiMallPlusException("订单已取消" );
+            }
+            if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+                throw new ApiMallPlusException( "订单已已关闭，请不要重复操作" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                throw new ApiMallPlusException( "订单已支付，请不要重复操作" );
+            }
             AliPayApiConfig aliPayApiConfig = AliPayApiConfigKit.getAliPayApiConfig();
             Map<String, String> paramsMap = new HashMap<>();
             paramsMap.put("app_id", aliPayApiConfig.getAppId());
@@ -185,10 +197,10 @@ public class AliPayController extends AbstractAliPayApiController {
             paramsMap.put("notify_url", domain + "/aliPay/notify_url");
 
             Map<String, String> bizMap = new HashMap<>();
-            bizMap.put("body", "IJPay 聚合支付-H5");
+            bizMap.put("body", "mallplus 聚合支付-H5");
             bizMap.put("subject", "IJPay 让支付触手可及");
             bizMap.put("out_trade_no", StringUtils.getOutTradeNo());
-            bizMap.put("total_amount", "6.66");
+            bizMap.put("total_amount", orderInfo.getPayAmount().toString());
             bizMap.put("product_code", "QUICK_WAP_WAY");
 
             paramsMap.put("biz_content", JSON.toJSONString(bizMap));
@@ -257,9 +269,19 @@ public class AliPayController extends AbstractAliPayApiController {
      */
     @RequestMapping(value = "/pcPay")
     @ResponseBody
-    public void pcPay(HttpServletResponse response) {
+    public void pcPay(HttpServletResponse response ,@RequestParam(value = "orderId", required = true, defaultValue = "0") Long orderId) {
         try {
-            String totalAmount = "0.01";
+            OmsOrder orderInfo = orderService.getById(orderId);
+            if (null == orderInfo) {
+                throw new ApiMallPlusException("订单已取消" );
+            }
+            if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
+                throw new ApiMallPlusException( "订单已已关闭，请不要重复操作" );
+            }
+            if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                throw new ApiMallPlusException( "订单已支付，请不要重复操作" );
+            }
+            String totalAmount = orderInfo.getPayAmount().toString();
             String outTradeNo = StringUtils.getOutTradeNo();
             log.info("pc outTradeNo>" + outTradeNo);
 
@@ -726,15 +748,24 @@ public class AliPayController extends AbstractAliPayApiController {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 System.out.println(entry.getKey() + " = " + entry.getValue());
             }
-
+            String out_trade_no = params.get("out_trade_no");
+            OmsOrder param = new OmsOrder();
+            param.setOrderSn(out_trade_no);
+            List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+            OmsOrder orderInfo = list.get(0);
+            orderInfo.setStatus(OrderStatus.TO_DELIVER.getValue());
+            orderInfo.setPaymentTime(new Date());
             boolean verifyResult = AlipaySignature.rsaCheckV1(params, publicKey, "UTF-8", "RSA2");
 
             if (verifyResult) {
+                // 更新订单信息
+                orderService.updateById(orderInfo);
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");
                 return new CommonResult().success();
             } else {
-                System.out.println("notify_url 验证失败");
+                log.error("订单" + out_trade_no + "支付失败");
+                orderService.releaseStock(orderInfo);
                 // TODO
                 return new CommonResult().failed();
             }
