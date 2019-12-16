@@ -40,7 +40,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -113,7 +115,31 @@ public class WxPayController extends AbstractWxPayApiController {
         return apiConfig;
     }
 
+    public WxPayApiConfig getApiConfig1() {
+        WxPayApiConfig apiConfig = null;
 
+        try {
+            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            if (null == appletSet) {
+                throw new ApiMallPlusException("没有设置支付配置");
+            }
+            if (appletSet != null) {
+                apiConfig = WxPayApiConfig.builder()
+                        .appId(appletSet.getAppid())
+                        .mchId(appletSet.getMchid())
+                        .partnerKey(appletSet.getPaySignKey())
+                        .certPath(appletSet.getCertname())
+                        .domain(appletSet.getNotifyurl())
+                        .build();
+            }
+            notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
+            refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
+        } catch (Exception e) {
+
+        }
+
+        return apiConfig;
+    }
     @GetMapping("/getKey")
     @ResponseBody
     public void getKey() {
@@ -145,7 +171,8 @@ public class WxPayController extends AbstractWxPayApiController {
            }
 
            H5SceneInfo sceneInfo = new H5SceneInfo();
-           WxPayApiConfig wxPayApiConfig = this.getApiConfig();
+           WxPayApiConfig wxPayApiConfig = this.getApiConfig1();
+
            H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
            h5_info.setType("Wap");
            //此域名必须在商户平台--"产品中心"--"开发配置"中添加
@@ -159,10 +186,10 @@ public class WxPayController extends AbstractWxPayApiController {
                    .appid(wxPayApiConfig.getAppId())
                    .mch_id(wxPayApiConfig.getMchId())
                    .nonce_str(WxPayKit.generateStr())
-                   .body(orderInfo.getGoodsName())
+                   .body("mallplus  微信H5 支付")
                    .attach(orderInfo.getGoodsName())
                    .out_trade_no(WxPayKit.generateStr())
-                   .total_fee("1")
+                   .total_fee(orderInfo.getPayAmount().toString())
                    .spbill_create_ip(ip)
                    .notify_url(notifyUrl)
                    .trade_type(TradeType.MWEB.getTradeType())
@@ -250,7 +277,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .appid(wxPayApiConfig.getAppId())
                     .mch_id(wxPayApiConfig.getMchId())
                     .nonce_str(WxPayKit.generateStr())
-                    .body(orderInfo.getGoodsName()) // IJPay 让支付触手可及-公众号支付
+                    .body("mallplus 公众号支付") // IJPay 让支付触手可及-公众号支付
                     .attach(orderInfo.getGoodsName())
                     .out_trade_no(WxPayKit.generateStr())
                     .total_fee(orderInfo.getPayAmount().toString())
@@ -570,10 +597,10 @@ public class WxPayController extends AbstractWxPayApiController {
                     .appid(wxPayApiConfig.getAppId())
                     .mch_id(wxPayApiConfig.getMchId())
                     .nonce_str(WxPayKit.generateStr())
-                    .body(orderInfo.getGoodsName())
+                    .body("微信APP支付")
                     .attach(orderInfo.getGoodsName())
                     .out_trade_no(WxPayKit.generateStr())
-                    .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString())
+                    .total_fee(orderInfo.getPayAmount().toString())
                     .spbill_create_ip(ip)
                     .notify_url(notifyUrl)
                     .trade_type(TradeType.APP.getTradeType())
@@ -641,7 +668,7 @@ public class WxPayController extends AbstractWxPayApiController {
                   .appid(wxPayApiConfig.getAppId())
                   .mch_id(wxPayApiConfig.getMchId())
                   .nonce_str(WxPayKit.generateStr())
-                  .body("IJPay 让支付触手可及-小程序支付")
+                  .body("mallplus-小程序支付")
                   .attach("Node.js 版:https://gitee.com/javen205/TNW")
                   .out_trade_no(WxPayKit.generateStr())
                   .total_fee("1")
@@ -913,17 +940,28 @@ public class WxPayController extends AbstractWxPayApiController {
         Map<String, String> params = WxPayKit.xmlToMap(xmlMsg);
         log.info("微信支付通知=" + params);
         String returnCode = params.get("return_code");
-
+        //订单编号
+        String out_trade_no = params.get("out_trade_no");
+        OmsOrder param = new OmsOrder();
+        param.setOrderSn(out_trade_no);
+        List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+        OmsOrder orderInfo = list.get(0);
+        orderInfo.setStatus(OrderStatus.TO_DELIVER.getValue());
+        orderInfo.setPaymentTime(new Date());
         // 注意重复通知的情况，同一订单号可能收到多次通知，请注意一定先判断订单状态
         // 注意此处签名方式需与统一下单的签名类型一致
         if (WxPayKit.verifyNotify(params, this.getApiConfig().getPartnerKey(), SignType.HMACSHA256)) {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
+                orderService.updateById(orderInfo);
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");
                 xml.put("return_msg", "OK");
                 return WxPayKit.toXml(xml);
+            }else {
+                log.error("订单" + out_trade_no + "支付失败");
+                orderService.releaseStock(orderInfo);
             }
         }
         return null;

@@ -100,6 +100,7 @@ server {
                         			try_files $uri $uri/ @router;
                         			index index.html;
                                 }
+
                                 location /mei {
                                                                     alias  /root/jm/mei/;
                                                         			try_files $uri $uri/ @router;
