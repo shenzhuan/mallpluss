@@ -205,7 +205,7 @@ public class SysUserController extends ApiController {
         queryU.setUsername(username);
         SysUser umsAdmin = sysUserService.getOne(new QueryWrapper<>(queryU));
         Map<String, Object> data = new HashMap<>();
-        data.put("username", umsAdmin.getUsername());
+        data.put("username", username);
         data.put("roles", new String[]{"TEST"});
         data.put("icon", umsAdmin.getIcon());
         return new CommonResult().success(data);

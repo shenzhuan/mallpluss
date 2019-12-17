@@ -131,7 +131,7 @@ public class SysStore implements Serializable {
 
     private String description;
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     @TableField("industry_one")
     private Long industryOne;

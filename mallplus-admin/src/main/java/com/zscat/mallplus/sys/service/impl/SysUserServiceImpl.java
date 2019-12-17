@@ -120,7 +120,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
-
+            apiContext.setCurrentProviderId(UserUtils.getCurrentMember().getStoreId());
             this.removePermissRedis(UserUtils.getCurrentMember().getId());
         } catch (AuthenticationException e) {
             log.warn("登录异常:{}", e.getMessage());

@@ -151,8 +151,7 @@ public class HomeController {
     @RequestMapping(value = "/navList", method = RequestMethod.GET)
     @ApiOperation(value = "获取导航栏")
     public Object getNavList() {
-
-        return new CommonResult().success(null);
+        return new CommonResult().success(advertiseService.getNav());
     }
 
 
