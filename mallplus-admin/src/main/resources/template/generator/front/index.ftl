@@ -133,7 +133,7 @@
         methods: {
             getList() {
                 this.listLoading = true;
-                fetchList(this.listQuery).then(response = > {
+                fetchList(this.listQuery).then(response => {
                     this.listLoading = false;
                 this.list = response.data.records;
                 this.total = response.data.total;
@@ -155,10 +155,10 @@
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
-                }).then(() = > {
+                }).then(() => {
                     delete${className}(row.id
             ).
-                then(response = > {
+                then(response => {
                     this.$message({
                         message: '删除成功',
                         type: 'success',
@@ -217,7 +217,7 @@
                 let data = new URLSearchParams();
                 data.append("ids", ids);
                 data.append("showStatus", showStatus);
-                updateShowStatus(data).then(response = > {
+                updateShowStatus(data).then(response => {
                     this.getList();
                 this.$message({
                     message: '修改成功',

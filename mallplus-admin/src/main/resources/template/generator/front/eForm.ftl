@@ -25,8 +25,7 @@
     import {create${className}, get${className}, update${className}} from '@/api/${moduleName}/${changeClassName}'
     import SingleUpload from '@/components/Upload/singleUpload'
 
-    const default
-    ${className} = {
+    const default${className} = {
         name: ''
     };
     export default {
@@ -63,7 +62,7 @@
         },
         created() {
             if (this.isEdit) {
-                get${className}(this.$route.query.id).then(response = > {
+                get${className}(this.$route.query.id).then(response => {
                     this.${changeClassName} = response.data;
             })
                 ;
@@ -75,17 +74,17 @@
         },
         methods: {
             onSubmit(formName) {
-                this.$refs[formName].validate((valid) = > {
+                this.$refs[formName].validate((valid) => {
                     if(valid) {
                         this.$confirm('是否提交数据', '提示', {
                             confirmButtonText: '确定',
                             cancelButtonText: '取消',
                             type: 'warning'
-                        }).then(() = > {
+                        }).then(() => {
                             if(this.isEdit
                     )
                         {
-                            update${className}(this.$route.query.id, this.${changeClassName}).then(response = > {
+                            update${className}(this.$route.query.id, this.${changeClassName}).then(response => {
                                 if(response.code == 200
                         )
                             {
@@ -111,7 +110,7 @@
                         }
                     else
                         {
-                            create${className}(this.${changeClassName}).then(response = > {
+                            create${className}(this.${changeClassName}).then(response => {
                                 if(response.code == 200
                         )
                             {

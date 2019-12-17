@@ -34,6 +34,9 @@ public class ${className} implements Serializable {
             @TableId(value = "id", type = IdType.AUTO)
         </#if>
         <#if column.changeColumnName != 'id'>
+            /**
+              ${column.columnComment}
+            **/
             @TableField( "${column.columnName}")
         </#if>
         private ${column.columnType} ${column.changeColumnName};

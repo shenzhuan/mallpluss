@@ -102,9 +102,7 @@ public class OmsOrderSettingController {
     @GetMapping(value = "/{id}")
     public Object getOmsOrderSettingById(@ApiParam("订单设置表id") @PathVariable Long id) {
         try {
-            if (ValidatorUtils.empty(id)) {
-                return new CommonResult().paramFailed("订单设置表id");
-            }
+
             OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
             return new CommonResult().success(coupon);
         } catch (Exception e) {

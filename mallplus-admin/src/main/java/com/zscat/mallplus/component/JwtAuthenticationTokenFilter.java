@@ -6,6 +6,7 @@ import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;
 import com.zscat.mallplus.util.JwtTokenUtil;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,15 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
 
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
-
+        String storeId = request.getParameter("storeid");
+        if (ValidatorUtils.notEmpty(storeId)) {
+            apiContext.setCurrentProviderId(Long.valueOf(storeId));
+        } else {
+            storeId = request.getHeader("storeid");
+            if (ValidatorUtils.notEmpty(storeId)) {
+                apiContext.setCurrentProviderId(Long.valueOf(storeId));
+            }
+        }
         String username = null;
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {

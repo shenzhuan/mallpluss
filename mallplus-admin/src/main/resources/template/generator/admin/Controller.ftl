@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Date;
 
 /**
 * @author ${author}
@@ -55,7 +56,7 @@ return new CommonResult().failed();
 @PreAuthorize("hasAuthority('${moduleName}:${changeClassName}:create')")
 public Object save${className}(@RequestBody ${className} entity) {
 try {
-
+entity.setCreateTime(new Date());
 if (I${className}Service.save(entity)) {
 return new CommonResult().success();
 }
