@@ -98,6 +98,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         }
         if (ValidatorUtils.empty(product.getOriginalPrice())) {
             product.setOriginalPrice(product.getPrice());
+        }if (ValidatorUtils.empty(product.getUnit())) {
+            product.setUnit("件");
         }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格

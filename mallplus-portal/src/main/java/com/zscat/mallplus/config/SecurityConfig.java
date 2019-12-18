@@ -114,7 +114,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         return new MemberDetails(member);
                     } else {
                         member = memberService.getByUsername(username);
-                        return new MemberDetails(member);
+                        if (member!=null){
+                            return new MemberDetails(member);
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

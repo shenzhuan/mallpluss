@@ -18,13 +18,11 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.service.IPmsSmallNaviconCategoryService;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
-import com.zscat.mallplus.sms.entity.SmsFlashPromotion;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.mapper.SmsFlashPromotionSessionMapper;
 import com.zscat.mallplus.sms.mapper.SmsHomeNewProductMapper;
 import com.zscat.mallplus.sms.mapper.SmsHomeRecommendProductMapper;
 import com.zscat.mallplus.sms.service.*;
-import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
 import com.zscat.mallplus.sms.vo.HomeProductAttr;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
@@ -36,13 +34,15 @@ import com.zscat.mallplus.vo.pms.CateProduct;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 会员登录注册管理Controller
@@ -106,7 +106,7 @@ public class AppletMemberController extends ApiBaseAction {
     @PostMapping("login_by_weixin1")
     public Object loginByWeixinNew(AppletLoginParam param) {
         try {
-            return memberService.loginByWeixin(param);
+            return memberService.loginByWeixin1(param);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
@@ -133,6 +133,27 @@ public class AppletMemberController extends ApiBaseAction {
     public Object getAppletOpenId(@RequestBody AppletLoginParam param) {
         try {
             return memberService.getAppletOpenId(param);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+    }
+
+
+    @IgnoreAuth
+    @ApiOperation("小程序绑定手机号解密")
+    @SysLog(MODULE = "applet", REMARK = "小程序绑定手机号解密")
+    @PostMapping("getWxPhone")
+    public Object getWxPhone(@RequestParam String openid,
+                             @RequestParam String keyStr,
+                             @RequestParam String ivStr,
+                             @RequestParam String encDataStr) {
+        try {
+            String phone= memberService.getWxPhone(openid,keyStr,ivStr,encDataStr);
+            if (phone!=null){
+                return  new CommonResult().success(phone);
+            }else{
+                return new CommonResult().failed("获取失败");
+            }
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
@@ -208,31 +229,7 @@ public class AppletMemberController extends ApiBaseAction {
             nav_icon_list.add(c8);
             //获取分类结束
             //获取秒杀活动商品
-            //查询当前在线秒杀活动
-            HomeFlashPromotion homeFlashPromotion = null;
-            HomeFlashPromotion tempsmsFlashList = new HomeFlashPromotion();
-//            String smsFlashPromotionProductJson = redisService.get(Rediskey.appletsmsFlashPromotionProductKey);
-//            if(smsFlashPromotionProductJson!=null){
-//                homeFlashPromotion = JsonUtils.jsonToList(smsFlashPromotionProductJson,SmsFlashPromotionProducts.class);
-//            }
-//            if(smsFlashPromotionProductJson==null||homeFlashPromotion.size()<=0){
-            SmsFlashPromotion queryS = new SmsFlashPromotion();
-            queryS.setIsIndex(1);
-            SmsFlashPromotion indexFlashPromotion = smsFlashPromotionService.getOne(new QueryWrapper<>(queryS));
-            Long flashPromotionId = 0L;
-            //数据库中有当前秒杀活动时赋值
-            if (indexFlashPromotion != null) {
-                flashPromotionId = indexFlashPromotion.getId();
-            }
-            //首页秒杀活动数据
 
-            //根据时间计算当前点档
-            Date now = new Date();
-            String formatNow = DateFormatUtils.format(now, "HH:mm:ss");
-
-
-//            }
-            //获取秒杀活动结束
             //获取首页分类商品列表
             List<CateProduct> cateProductList = null;
             List<CateProduct> temp = new ArrayList<>();
@@ -271,40 +268,15 @@ public class AppletMemberController extends ApiBaseAction {
                     }
                     cateProductList = temp;
                     redisService.set(Rediskey.appletCateProductsKey, JsonUtils.objectToJson(cateProductList));
-                    redisService.expire(Rediskey.appletCateProductsKey, 24 * 60 * 60);
+                    redisService.expire(Rediskey.appletCateProductsKey, 60 );
                 }
             }
 
             //获取首页分类商品列表结束
 
-            //获取热门商品列表
-            List<HomeProductAttr> hot_productList = null;
-            String hotProductJson = redisService.get(Rediskey.appletHotProductsKey);
-            if (hotProductJson != null) {
-                hot_productList = JsonUtils.jsonToList(hotProductJson, HomeProductAttr.class);
-            }
-            if (hotProductJson == null || hot_productList.size() <= 0) {
-                hot_productList = smsHomeRecommendProductMapper.queryList();
-                if (hot_productList != null) {
-                    redisService.set(Rediskey.appletHotProductsKey, JsonUtils.objectToJson(hot_productList));
-                    redisService.expire(Rediskey.appletHotProductsKey, 24 * 60 * 60);
-                }
-            }
 
-            //获取热门商品列表结束
-            //获取首页新品列表
-            List<HomeProductAttr> new_productList = null;
-            String newProductJson = redisService.get(Rediskey.appletNewProductsKey);
-            if (newProductJson != null) {
-                new_productList = JsonUtils.jsonToList(newProductJson, HomeProductAttr.class);
-            }
-            if (newProductJson == null || new_productList.size() <= 0) {
-                new_productList = smsHomeNewProductMapper.queryList();
-                if (new_productList != null) {
-                    redisService.set(Rediskey.appletNewProductsKey, JsonUtils.objectToJson(new_productList));
-                    redisService.expire(Rediskey.appletNewProductsKey, 24 * 60 * 60);
-                }
-            }
+
+
             //获取首页新品列表结束
             //品牌推荐列表开始
 
@@ -327,36 +299,19 @@ public class AppletMemberController extends ApiBaseAction {
                     gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam)));
                 }
                 redisService.set(Rediskey.appletCategoryKey, JsonUtils.objectToJson(productAttributeCategoryList));
-                redisService.expire(Rediskey.appletCategoryKey, 24 * 60 * 60);
+                redisService.expire(Rediskey.appletCategoryKey,  60);
             }
-            List<CmsSubject> subjectList = subjectService.list(new QueryWrapper<CmsSubject>().select(ConstansValue.sampleSubjectList));
+            List<CmsSubject> subjectList = subjectService.list(new QueryWrapper<CmsSubject>().select(ConstansValue.sampleSubjectList).last("limit 5"));
             data.setSubjectList(subjectList);
             data.setCat_goods_cols(2);
             data.setCat_list(productAttributeCategoryList);
             data.setNav_icon_list(nav_icon_list);
             data.setBanner_list(bannerList);
             data.setCoupon_list(couponList);
-            data.setHomeFlashPromotion(homeFlashPromotion);
             data.setCate_products(cateProductList);
-            data.setHot_products(hot_productList);
-            data.setNew_products(new_productList);
+
             data.setModule_list(model_list);
-//            List<SmsRedPacket> redPacketList = redPacketService.list(new QueryWrapper<>());
-//            SmsUserRedPacket userRedPacket = new SmsUserRedPacket();
-//            userRedPacket.setUserId(memberService.getNewCurrentMember().getId());
-//            List<SmsUserRedPacket> list = userRedPacketService.list(new QueryWrapper<>(userRedPacket));
-//            for(SmsRedPacket vo : redPacketList){
-//                if (list!=null && list.size()>0){
-//                    for (SmsUserRedPacket vo1 : list){
-//                        if(vo.getId().equals(vo1.getRedPacketId())){
-//                            vo.setStatus(1);
-//                            vo.setReciveAmount(vo1.getAmount());
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//            data.setRedPacketList(redPacketList);
+
             return new CommonResult().success(data);
         } catch (Exception e) {
             e.printStackTrace();

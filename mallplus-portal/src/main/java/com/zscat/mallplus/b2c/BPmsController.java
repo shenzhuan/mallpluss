@@ -858,6 +858,8 @@ public class BPmsController extends ApiBaseAction {
         }
     }
 
+
+
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
