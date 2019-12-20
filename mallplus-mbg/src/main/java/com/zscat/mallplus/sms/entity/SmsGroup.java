@@ -40,6 +40,7 @@ public class SmsGroup extends BaseEntity implements Serializable {
      */
     @TableField("goods_name")
     private String goodsName;
+    private String pic;
 
     /**
      * 商品价格

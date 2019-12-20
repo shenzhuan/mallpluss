@@ -125,12 +125,8 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
     public Object balancePay(BalancePayParam payParam) {
-        if (payParam.getPayAmount().compareTo(payParam.getBalance()) > 0) {
-            return new CommonResult().failed("余额不足！");
-        } else {
-            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
-            return new CommonResult().success(order);
-        }
+        OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+        return new CommonResult().success(order);
     }
 
     /**

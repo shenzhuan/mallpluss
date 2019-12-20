@@ -9,9 +9,11 @@ import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.pms.vo.PmsProductAndGroup;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
-import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.entity.SmsHomeBrand;
+import com.zscat.mallplus.sms.entity.SmsHomeNewProduct;
+import com.zscat.mallplus.sms.entity.SmsHomeRecommendProduct;
+import com.zscat.mallplus.sms.entity.SmsPaimaiLog;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
 import com.zscat.mallplus.sms.mapper.SmsPaimaiLogMapper;
@@ -29,7 +31,6 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,71 +114,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Autowired
     private IUmsMemberService memberService;
 
-    @Override
-    public PmsProductAndGroup getProductAndGroup(Long id) {
-        PmsProduct goods = productMapper.selectById(id);
-        PmsProductAndGroup vo = new PmsProductAndGroup();
-        try {
-            BeanUtils.copyProperties(goods, vo);
-            SmsGroup queryG = new SmsGroup();
-            queryG.setGoodsId(id);
-            SmsGroup group = groupMapper.selectOne(new QueryWrapper<>(queryG));
-            SmsGroupMember newG = new SmsGroupMember();
-            newG.setGoodsId(id);
-            List<SmsGroupMember> list = groupMemberMapper.selectList(new QueryWrapper<>(newG));
-            if (group != null) {
-                Map<String, List<SmsGroupMember>> map = groupMemberByMainId(list, group);
-                vo.setMap(map);
-            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return vo;
-    }
-
-    /**
-     * 按照异常批次号对已开单数据进行分组
-     *
-     * @param billingList
-     * @return
-     * @throws Exception
-     */
-    private Map<String, List<SmsGroupMember>> groupMemberByMainId(List<SmsGroupMember> billingList, SmsGroup group) throws Exception {
-        Map<String, List<SmsGroupMember>> resultMap = new HashMap<String, List<SmsGroupMember>>();
-        Map<String, List<SmsGroupMember>> map = new HashMap<String, List<SmsGroupMember>>();
-        try {
-            List<Long> ids = new ArrayList<>();
-            for (SmsGroupMember tmExcpNew : billingList) {
-                if (tmExcpNew.getMemberId().equals(tmExcpNew.getMainId())) {
-                    Date cr = tmExcpNew.getCreateTime();
-                    Long nowT = System.currentTimeMillis();
-                    Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(cr, group.getHours()), "yyyy-MM-dd HH:mm:ss");
-                    if (nowT <= endTime.getTime()) {
-                        ids.add(tmExcpNew.getMainId());
-                    }
-                }
-                if (resultMap.containsKey(tmExcpNew.getMainId() + "")) {//map中异常批次已存在，将该数据存放到同一个key（key存放的是异常批次）的map中
-                    resultMap.get(tmExcpNew.getMainId() + "").add(tmExcpNew);
-                } else {//map中不存在，新建key，用来存放数据
-                    List<SmsGroupMember> tmpList = new ArrayList<SmsGroupMember>();
-                    tmpList.add(tmExcpNew);
-                    resultMap.put(tmExcpNew.getMainId() + "", tmpList);
-                }
-            }
-            for (Long id : ids) {
-                if (resultMap.get(id + "") != null) {
-                    map.put(id + "", resultMap.get(id + ""));
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("按照异常批次号对已开单数据进行分组时出现异常", e);
-        }
-
-        return map;
-    }
 
     @Override
     public PmsProduct getUpdateInfo(Long id) {

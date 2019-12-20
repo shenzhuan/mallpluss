@@ -37,9 +37,11 @@ import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.home.Pages;
 import com.zscat.mallplus.vo.home.PagesItems;
 import com.zscat.mallplus.vo.home.Params;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -47,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -57,6 +58,7 @@ import java.util.stream.Collectors;
  * @author zscat
  * @since 2019-04-19
  */
+@Slf4j
 @Service
 public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMapper, SmsHomeAdvertise> implements ISmsHomeAdvertiseService {
     @Autowired
@@ -247,47 +249,51 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Override
     public HomeContentResult contentNew1() {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
         HomeContentResult result = new HomeContentResult();
-        Callable<List> couponListCallable = () -> couponService.selectNotRecive();
-        Callable<List> newGoodsListCallable = () -> this.getNewProductList(0, 4);
-        Callable<List> newHotListCallable = () -> this.getHotProductList(0, 4);
-        Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
-        Callable<List> advListCallable = this::getHomeAdvertiseList;
-
-        FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
-        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
-        FutureTask<List> newHotListTask = new FutureTask<>(newHotListCallable);
-        FutureTask<List> recomSubListTask = new FutureTask<>(recomSubListCallable);
-        FutureTask<List> advListTask = new FutureTask<>(advListCallable);
-
-        executorService.submit(couponListTask);
-        executorService.submit(newGoodsListTask);
-        executorService.submit(newHotListTask);
-        executorService.submit(recomSubListTask);
-        executorService.submit(advListTask);
         try {
-            List<SmsCoupon> couponList = couponListTask.get();
-            if (couponList != null && couponList.size() > 2) {
-                couponList = couponList.subList(0, 2);
+            org.springframework.util.StopWatch stopWatch = new StopWatch("HomeCrmmall" );
+            stopWatch.start("1单条循环处理");
+            List<SmsCoupon> couponList = couponService.selectNotRecive();
+            if (couponList != null && couponList.size() > 0) {
+                if (couponList.size()>4){
+                    couponList = couponList.subList(0, 4);
+                }else {
+                    couponList = couponList.subList(0, couponList.size());
+                }
             }
             result.setCouponList(couponList);
+            stopWatch.stop();
+            stopWatch.start("2单条循环处理");
             //获取首页广告
-            result.setAdvertiseList(advListTask.get());
+            result.setAdvertiseList(getHomeAdvertiseList());
+            stopWatch.stop();
+            stopWatch.start("3单条循环处理");
             //获取新品推荐
-            result.setNewProductList(newGoodsListTask.get());
+            result.setNewProductList(this.getNewProductList(0, 4));
+            stopWatch.stop();
+            stopWatch.start("4单条循环处理");
             //获取人气推荐
-            result.setHotProductList(newHotListTask.get());
+            result.setHotProductList(this.getNewProductList(0, 4));
             //获取推荐专题
-            result.setSubjectList(recomSubListTask.get());
+            stopWatch.stop();
+            stopWatch.start("5单条循环处理");
+            result.setSubjectList(this.getRecommendSubjectList(0, 4));
+            stopWatch.stop();
+            stopWatch.start("6单条循环处理");
             result.setStoreList(getStoreList(1, 8));
+            stopWatch.stop();
+            stopWatch.start("7单条循环处理");
             result.setNavList(getNav());
+            stopWatch.stop();
+            stopWatch.start("8单条循环处理");
             result.setActivityList(getActivityList());
+            stopWatch.stop();
+            stopWatch.start("9单条循环处理");
             result.setSaleProductList(getSaleProductList(1, 3));
+            stopWatch.stop();
+            log.info(stopWatch.prettyPrint());
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -511,14 +517,18 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Override
     public List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) {
-        List<SmsHomeBrand> brands = homeBrandService.list(new QueryWrapper<>());
+        PmsBrand query = new PmsBrand();
+        query.setFactoryStatus(1);
+        return brandService.page(new Page<PmsBrand>(pageNum, pageSize), new QueryWrapper<>(query).orderByDesc("sort")).getRecords();
+
+       /* List<SmsHomeBrand> brands = homeBrandService.list(new QueryWrapper<>());
         if (brands == null || brands.size() == 0) {
             return new ArrayList<>();
         }
         List<Long> ids = brands.stream()
                 .map(SmsHomeBrand::getBrandId)
                 .collect(Collectors.toList());
-        return (List<PmsBrand>) brandService.listByIds(ids);
+        return (List<PmsBrand>) brandService.listByIds(ids);*/
 
     }
 
@@ -553,27 +563,33 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Override
     public List<PmsProduct> getHotProductList(int pageNum, int pageSize) {
-        List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
+        PmsProduct query = new PmsProduct();
+        query.setRecommandStatus(1);
+        query.setVerifyStatus(1);
+        return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")).getRecords();
+       /* List<SmsHomeRecommendProduct> brands = homeRecommendProductService.list(new QueryWrapper<>());
         if (brands == null || brands.size() == 0) {
             return new ArrayList<>();
         }
         List<Long> ids = brands.stream()
                 .map(SmsHomeRecommendProduct::getProductId)
                 .collect(Collectors.toList());
-        return (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id", ids).select(ConstansValue.sampleGoodsList));
+        return (List<PmsProduct>) pmsProductService.list(new QueryWrapper<PmsProduct>().in("id", ids).select(ConstansValue.sampleGoodsList));*/
     }
 
     @Override
     public List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize) {
-        List<SmsHomeRecommendSubject> brands = homeRecommendSubjectService.list(new QueryWrapper<>());
+       /* List<SmsHomeRecommendSubject> brands = homeRecommendSubjectService.list(new QueryWrapper<>());
         if (brands == null || brands.size() == 0) {
             return new ArrayList<>();
         }
 
         List<Long> ids = brands.stream()
                 .map(SmsHomeRecommendSubject::getSubjectId)
-                .collect(Collectors.toList());
-        return (List<CmsSubject>) subjectService.listByIds(ids);
+                .collect(Collectors.toList());*/
+        CmsSubject subject = new CmsSubject();
+        subject.setRecommendStatus(1);
+        return subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList)).getRecords();
     }
 
     @Override

@@ -26,8 +26,10 @@ import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
@@ -105,6 +107,8 @@ public class BPmsController extends ApiBaseAction {
     private IPmsFavoriteService favoriteService;
     @Resource
     private SmsGroupMemberMapper groupMemberMapper;
+    @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
     @Resource
     private PmsProductCategoryMapper categoryMapper;
     @Resource
@@ -321,6 +325,7 @@ public class BPmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询拼团商品列表")
+    @ResponseBody
     @PostMapping(value = "/pintuan.list")
     public Object pintuanList(PmsProduct product,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -336,7 +341,7 @@ public class BPmsController extends ApiBaseAction {
             IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
             return new CommonResult().success(list);
         }
-        return null;
+        return new CommonResult().success(new ArrayList<>());
     }
 
     @SysLog(MODULE = "pms", REMARK = "拼团商品详情")
@@ -344,8 +349,10 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/pintuan.goodsinfo")
     @ApiOperation(value = "拼团商品详情")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        SmsGroup group = groupMapper.selectById(id);
+        Long goodsId = group.getGoodsId();
         //记录浏览量到redis,然后定时更新到数据库
-        String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
+        String key = Rediskey.GOODS_VIEWCOUNT_CODE + goodsId;
         //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
         Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
         Integer viewCount = 0;
@@ -363,17 +370,17 @@ public class BPmsController extends ApiBaseAction {
         }
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodsId + "")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)) {
-                log.info("redis缓存失效：" + id);
-                goods = pmsProductService.getGoodsRedisById(id);
+                log.info("redis缓存失效：" + goodsId);
+                goods = pmsProductService.getGoodsRedisById(goodsId);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效：" + id);
-            goods = pmsProductService.getGoodsRedisById(id);
+            log.info("redis缓存失效：" + goodsId);
+            goods = pmsProductService.getGoodsRedisById(goodsId);
             e.printStackTrace();
         }
-        SmsGroup group = groupMapper.getByGoodsId(id);
+
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
@@ -401,26 +408,53 @@ public class BPmsController extends ApiBaseAction {
             if (nowT > endTime.getTime()) {
                 group.setPintuan_start_status(3);
             }
-            List<SmsGroupMember> list = new ArrayList<>();
-            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", group.getId()));
-            for (SmsGroupMember groupMember : groupMembers) {
-                if (ValidatorUtils.notEmpty(groupMember.getMemberId())) {
-                    List<String> ids = Arrays.asList(groupMember.getMemberId().split(","));
-                    if (group.getMaxPeople() > ids.size()) {
-                        groupMember.setList((List<UmsMember>) memberService.listByIds(ids));
-                    } else {
-                        continue;
-                    }
-                    list.add(groupMember);
-
-                }
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", group.getId()));
+            for (SmsGroupRecord groupRecord : groupRecords) {
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()));
+                groupRecord.setList(groupMembers);
             }
-            map.put("memberGroupList", list);
+            map.put("memberGroupList", groupRecords);
             map.put("group", group);
         }
 
 
         map.put("goods", goods);
+        return new CommonResult().success(map);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "拼团商品详情")
+    @IgnoreAuth
+    @PostMapping(value = "/pintuan.record")
+    @ApiOperation(value = "拼团商品详情")
+    public Object groupRecordDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        SmsGroupRecord groupRecord = groupRecordMapper.selectById(id);
+        if (groupRecord==null){
+            SmsGroupMember smsGroupMember = groupMemberMapper.selectById(id);
+            groupRecord = groupRecordMapper.selectById(smsGroupMember.getGroupRecordId());
+        } if (groupRecord==null){
+            return new CommonResult().failed();
+        }
+            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
+            groupRecord.setList(groupMembers);
+        SmsGroup group = groupMapper.selectById(groupRecord.getGroupId());
+        Map<String, Object> map = new HashMap<>();
+        map.put("group", group);
+        map.put("groupRecord", groupRecord);
+        map.put("isOk", 1);
+        if (group.getMaxPeople()==groupMembers.size()){
+            map.put("isOk", 0);
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        map.put("userBool", 0);
+        map.put("pinkBool", 0);
+        if (member!=null){
+            for (SmsGroupMember groupMember : groupMembers){
+                if (groupMember.getMemberId()==member.getId()){
+                    map.put("userBool", 1);
+                    map.put("pinkBool", 1);
+                }
+            }
+        }
         return new CommonResult().success(map);
     }
 

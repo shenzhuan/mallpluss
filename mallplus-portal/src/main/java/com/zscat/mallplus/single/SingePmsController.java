@@ -19,8 +19,10 @@ import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.sms.entity.SmsFlashPromotionProductRelation;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsFlashPromotionProductRelationService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
@@ -72,6 +74,8 @@ public class SingePmsController extends ApiBaseAction {
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private IPmsProductService pmsProductService;
+    @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
     @Autowired
     private ApiContext apiContext;
     @Resource
@@ -311,7 +315,7 @@ public class SingePmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询团购商品列表")
+    @ApiOperation(value = "查询带团购商品列表")
     @GetMapping(value = "/groupHotGoods/list")
     public Object groupHotGoods(PmsProduct product,
                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -394,7 +398,12 @@ public class SingePmsController extends ApiBaseAction {
             }
         }
         if (group != null) {
-            map.put("memberGroupList", groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", group.getId())));
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", group.getId()));
+            for (SmsGroupRecord groupRecord : groupRecords) {
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()));
+                groupRecord.setList(groupMembers);
+            }
+            map.put("memberGroupList", groupRecords);
             map.put("group", group);
         }
 

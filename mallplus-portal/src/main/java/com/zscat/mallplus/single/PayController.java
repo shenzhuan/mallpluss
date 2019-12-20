@@ -154,7 +154,7 @@ public class PayController extends ApiBaseAction {
     public Object balancePay(PayParam payParam) {
 
         try {
-            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+            OmsOrder order = orderService.blancePay(payParam);
             return new CommonResult().success(order);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());

@@ -120,6 +120,7 @@ public class BOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     @ApiOperation("获取某个会员的购物车列表")
     @RequestMapping(value = "/cart.getCartlist", method = RequestMethod.POST)
     @ResponseBody
@@ -433,7 +434,7 @@ public class BOmsController extends ApiBaseAction {
             orderDetailResult.setBlance(member.getBlance());
         }
         redisService.set(key, JsonUtils.objectToJson(orderDetailResult));
-        redisService.expire(key, 2);
+        redisService.expire(key, 60);
         return new CommonResult().success(orderDetailResult);
     }
 
@@ -677,6 +678,19 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
+    @ApiOperation("取消拼团")
+    @RequestMapping(value = "/combination/remove")
+    @ResponseBody
+    public Object quitGroup(@ApiParam("订单id") @RequestParam Long id) {
+        try {
+            return new CommonResult().success(orderService.quitGroup(id));
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @ApiOperation("提交拼团")
     @RequestMapping(value = "/acceptGroup")
     @ResponseBody
@@ -787,7 +801,7 @@ public class BOmsController extends ApiBaseAction {
         menuList.add(new ServiceMenu("联系客服", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/customer/list"));
         objectMap.put("menuList", menuList);
         redisService.set(key, JsonUtils.objectToJson(objectMap));
-        redisService.expire(key, 2);
+        redisService.expire(key, 60);
         return new CommonResult().success(objectMap);
     }
 

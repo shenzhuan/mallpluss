@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.pms.vo.PmsProductAndGroup;
 
 import java.util.List;
 import java.util.Map;
@@ -19,13 +18,7 @@ import java.util.Map;
  */
 public interface IPmsProductService extends IService<PmsProduct> {
 
-    /**
-     * 查询拼团商品详情
-     *
-     * @param id
-     * @return
-     */
-    PmsProductAndGroup getProductAndGroup(Long id);
+
 
     /**
      * 查询商品详情
