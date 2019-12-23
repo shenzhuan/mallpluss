@@ -400,7 +400,7 @@ public class SingePmsController extends ApiBaseAction {
         if (group != null) {
             List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", group.getId()));
             for (SmsGroupRecord groupRecord : groupRecords) {
-                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()));
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
                 groupRecord.setList(groupMembers);
             }
             map.put("memberGroupList", groupRecords);
@@ -695,12 +695,16 @@ public class SingePmsController extends ApiBaseAction {
     public Object viewList(
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        //拼装返回
+        Map<String, Object> map = new HashMap<>();
+        if (memberService.getNewCurrentMember()==null){
+            return new CommonResult().success(map);
+        }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
-        //拼装返回
-        Map<String, Object> map = new HashMap<>();
+
         //根据用户的ID分頁获取该用户最近浏览的50个商品信息
         List<String> result = redisUtil.lRange(key, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
         if (result != null && result.size() > 0) {

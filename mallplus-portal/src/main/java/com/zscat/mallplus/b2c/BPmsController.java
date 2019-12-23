@@ -640,6 +640,9 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/user.addgoodsbrowsing")
     public Object addView(@RequestParam Long goodsId) {
 
+        if (memberService.getNewCurrentMember()==null){
+            return new CommonResult().success();
+        }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
@@ -661,6 +664,9 @@ public class BPmsController extends ApiBaseAction {
     public Object viewList(
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        if (memberService.getNewCurrentMember()==null){
+            return new CommonResult().success();
+        }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;

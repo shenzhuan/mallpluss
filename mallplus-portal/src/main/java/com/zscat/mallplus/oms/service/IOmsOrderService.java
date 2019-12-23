@@ -84,7 +84,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmOrderResult addGroup(OrderParam orderParam);
+    Object addGroup(OrderParam orderParam);
 
     /**
      * 参团

@@ -230,6 +230,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 result.setCartPromotionItemList(list);
                 //获取用户收货地址列表
                 UmsMemberReceiveAddress queryU = new UmsMemberReceiveAddress();
+                if (currentMember==null){
+                    return new CommonResult().fail(100);
+                }
                 queryU.setMemberId(currentMember.getId());
                 List<UmsMemberReceiveAddress> memberReceiveAddressList = addressService.list(new QueryWrapper<>(queryU));
                 result.setMemberReceiveAddressList(memberReceiveAddressList);
@@ -756,6 +759,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         OmsOrder order = new OmsOrder();
 
         UmsMember currentMember = memberService.getNewCurrentMember();
+        if (currentMember==null){
+            return new CommonResult().fail(100);
+        }
         List<OmsCartItem> list = new ArrayList<>();
         if (ValidatorUtils.empty(orderParam.getTotal())) {
             orderParam.setTotal(1);
@@ -784,7 +790,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
         UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
         createOrderObj(order, orderParam, currentMember, orderItemList, address);
-        order.setMemberId(memberService.getNewCurrentMember().getId());
+        order.setMemberId(currentMember.getId());
         SmsGroup group = groupMapper.getByGoodsId(orderParam.getGoodsId());
         Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
 
@@ -811,9 +817,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 groupMember.setGroupRecordId(groupRecord.getId());
                 groupMemberMapper.insert(groupMember);
             } else {
-                int count = groupMemberMapper.selectCount(new QueryWrapper<SmsGroupMember>().eq("group_record_id",orderParam.getMgId()));
-                if (count>group.getMaxPeople()){
+                List<SmsGroupMember> list1 = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id",orderParam.getMgId()));
+                if (list1!=null && list1.size()>group.getMaxPeople()){
                     return new CommonResult().failed("此拼团已达最大人数");
+                }
+                for (SmsGroupMember smsGroupMember : list1){
+                    if (smsGroupMember.getMemberId().equals(currentMember.getId())){
+                        return new CommonResult().failed("你已经参加过此团");
+                    }
                 }
                 groupMember.setGoodsId(orderParam.getGoodsId());
                 groupMember.setName(currentMember.getNickname());
@@ -1101,6 +1112,18 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             member.setId(order.getGroupId());
             member.setStatus(2);
             groupMemberMapper.updateById(member);
+
+            SmsGroupMember groupMember = groupMemberMapper.selectById(order.getGroupId());
+            SmsGroupRecord groupRecord = groupRecordMapper.selectById(groupMember.getGroupRecordId());
+            SmsGroup group = groupMapper.selectById(groupRecord.getGroupId());
+
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
+                groupRecord.setList(groupMembers);
+                if (groupMembers!=null && groupMembers.size()==group.getMaxPeople()){
+                    groupRecord.setStatus("2");
+                    groupRecordMapper.updateById(groupRecord);
+                }
+
         }
         if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
             order.setPayAmount(new BigDecimal("0.01"));
@@ -1828,7 +1851,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
 
     @Override
-    public ConfirmOrderResult addGroup(OrderParam orderParam) {
+    public Object addGroup(OrderParam orderParam) {
         List<OmsCartItem> list = new ArrayList<>();
         if (ValidatorUtils.empty(orderParam.getTotal())) {
             orderParam.setTotal(1);
@@ -1854,6 +1877,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         result.setCartPromotionItemList(newCartList);
         //获取用户收货地址列表
         UmsMemberReceiveAddress queryU = new UmsMemberReceiveAddress();
+        if (memberService.getNewCurrentMember()==null){
+            return new CommonResult().fail(100);
+        }
         queryU.setMemberId(memberService.getNewCurrentMember().getId());
         List<UmsMemberReceiveAddress> memberReceiveAddressList = addressService.list(new QueryWrapper<>(queryU));
         result.setMemberReceiveAddressList(memberReceiveAddressList);
@@ -1862,6 +1888,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(newCartList, 1);
         result.setCouponHistoryDetailList(couponHistoryDetailList);
         UmsMember member = memberService.getById(memberService.getNewCurrentMember().getId());
+        if(member==null){
+            return new CommonResult().fail(100);
+        }
+
         //获取用户积分
         result.setMemberIntegration(member.getIntegration());
         //获取积分使用规则

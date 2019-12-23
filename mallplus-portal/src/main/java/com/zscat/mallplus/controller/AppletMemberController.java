@@ -101,7 +101,7 @@ public class AppletMemberController extends ApiBaseAction {
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin1")
-    public Object loginByWeixinNew(AppletLoginParam param) {
+    public Object loginByWeixinNew(@RequestBody AppletLoginParam param) {
         try {
             return memberService.loginByWeixin1(param);
         } catch (Exception e) {
