@@ -4,15 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.BaseEntity;
-import com.zscat.mallplus.utils.ValidatorUtils;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
@@ -31,18 +27,17 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField("group_id")
-    private Long groupId;
+    @TableField("group_record_id")
+    private Long groupRecordId;
 
     @TableField("member_id")
-    private String memberId;
+    private Long memberId;
 
     @TableField("create_time")
     private Date createTime;
     @TableField("exipre_time")
     private Long exipreTime;
-    @TableField("main_id")
-    private Long mainId;
+
 
     private String name;
 
@@ -56,102 +51,7 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
 
     @TableField("order_id")
     private String orderId;
-    @TableField(exist = false)
-    private List pics;
 
-    @TableField(exist = false)
-    private List<UmsMember> list;
+    private String pic;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public Long getExipreTime() {
-        return exipreTime;
-    }
-
-    public void setExipreTime(Long exipreTime) {
-        this.exipreTime = exipreTime;
-    }
-
-    public String getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(String memberId) {
-        this.memberId = memberId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Long getMainId() {
-        return mainId;
-    }
-
-    public void setMainId(Long mainId) {
-        this.mainId = mainId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getGoodsId() {
-        return goodsId;
-    }
-
-    public void setGoodsId(Long goodsId) {
-        this.goodsId = goodsId;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public List getPics() {
-        if (ValidatorUtils.notEmpty(name)) {
-            this.pics = Arrays.asList(name.split(","));
-        }
-        return pics;
-    }
-
-    public void setPics(List pics) {
-        if (ValidatorUtils.notEmpty(name)) {
-            this.pics = Arrays.asList(name.split(","));
-        }
-    }
 }

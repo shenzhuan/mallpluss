@@ -20,6 +20,6 @@ public class PayParam {
     private Integer payment_type;
     //
     private Long orderId;
-
+    private Long memberGroupId;
 
 }

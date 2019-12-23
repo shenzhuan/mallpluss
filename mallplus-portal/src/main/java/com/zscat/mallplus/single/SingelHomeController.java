@@ -108,14 +108,14 @@ public class SingelHomeController {
             if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelmobileContent();
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 2);
+                redisService.expire(key, 60);
             } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
         } catch (Exception e) {
             contentResult = advertiseService.singelmobileContent();
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 2);
+            redisService.expire(key, 60);
         }
         return new CommonResult().success(contentResult);
     }
@@ -132,14 +132,14 @@ public class SingelHomeController {
             if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelContent();
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 2);
+                redisService.expire(key, 60);
             } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
         } catch (Exception e) {
             contentResult = advertiseService.singelContent();
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 2);
+            redisService.expire(key, 60);
         }
         return new CommonResult().success(contentResult);
     }
@@ -156,14 +156,14 @@ public class SingelHomeController {
             if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.singelContent1();
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 2);
+                redisService.expire(key, 60);
             } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
             }
         } catch (Exception e) {
             contentResult = advertiseService.singelContent1();
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 2);
+            redisService.expire(key, 60);
         }
         return new CommonResult().success(contentResult);
     }

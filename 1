@@ -95,20 +95,7 @@ server {
     root /root/jm/h5;
     index index.html;
 }
-server {
-    listen 8083;
-    server_name _;
-    root /root/jm/mall;
-    index index.html;
-try_files $uri $uri/ /index.html;
-}
-server {
-    listen 8087;
-    server_name _;
-    root /root/jm/jsshop;
-    index index.html;
-try_files $uri $uri/ /index.html;
-}
+
 server {
     listen 8084;
     server_name _;

@@ -2,6 +2,7 @@ package com.zscat.mallplus.ums.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
 import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.component.UserUtils;
 import com.zscat.mallplus.enums.AllEnum;
@@ -18,10 +19,7 @@ import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.AppletLoginParam;
-import com.zscat.mallplus.vo.MemberDetails;
-import com.zscat.mallplus.vo.Rediskey;
-import com.zscat.mallplus.vo.SmsCode;
+import com.zscat.mallplus.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import okhttp3.OkHttpClient;
@@ -118,6 +116,23 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         return (UmsMember) this.getCurrentMember();
     }
 
+    @Override
+    public String getWxPhone(String openid, String keyStr, String ivStr, String encDataStr) {
+        //解析手机号
+        WxPhoneInfo wxPhoneInfo = null;
+        System.err.println("encDataStr=" + encDataStr + ",keyStr=" + keyStr + ",ivStr=" + ivStr);
+        try {
+            String result = AES.wxDecrypt(encDataStr, keyStr, ivStr);
+            Gson gson = new Gson();
+            wxPhoneInfo = gson.fromJson(result, WxPhoneInfo.class);
+            if (wxPhoneInfo!=null){
+                return wxPhoneInfo.getPhoneNumber();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @Override
     public Object webLogin(String wxH5Appid,String wxH5Secret, String code) {
         //H5 微信公众号网页登录
@@ -758,18 +773,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
 
             }
-            UmsMember userVo = new UmsMember();
-            // 判断是否绑定了手机号
-            if (ValidatorUtils.notEmpty(req.getPhone())){
-                UmsMember queryO = new UmsMember();
-                queryO.setWeixinOpenid(req.getPhone());
-                userVo= memberMapper.selectOne(new QueryWrapper<>(queryO));
-            }
-
+            UmsMember userVo = this.queryByOpenId(sessionData.getString("openid"));
             String token = null;
             if (null == userVo) {
                 UmsMember umsMember = new UmsMember();
-                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(8));
+                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
                 umsMember.setSourceType(2);
                 umsMember.setPassword(passwordEncoder.encode("123456"));
                 umsMember.setCreateTime(new Date());
@@ -799,37 +807,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
 
             } else {
-                //  userVo = this.queryByOpenId(sessionData.getString("openid"));
-                if (ValidatorUtils.notEmpty(userVo.getWeixinOpenid())){
-                    addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
-                    token = jwtTokenUtil.generateToken(userVo.getUsername());
-                    resultObj.put("userId", userVo.getId());
-                    resultObj.put("userInfo", userVo);
-                }else {
-                    userVo.setPassword(passwordEncoder.encode("123456"));
-                    userVo.setCreateTime(new Date());
-                    userVo.setStatus(1);
-                    userVo.setBlance(new BigDecimal(10000));
-                    userVo.setIntegration(0);
-                    userVo.setMemberLevelId(4L);
-                    userVo.setAvatar(req.getCloudID());
-                    userVo.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
-
-                    userVo.setGender((Integer) me.get("gender"));
-                    userVo.setHistoryIntegration(0);
-                    userVo.setWeixinOpenid(sessionData.getString("openid"));
-                    if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
-                        //会员头像(默认头像)
-                        userVo.setIcon("/upload/img/avatar/01.jpg");
-                    } else {
-                        userVo.setIcon(me.get("avatarUrl").toString());
-                    }
-                    // umsMember.setGender(Integer.parseInt(me.get("gender")));
-                    userVo.setNickname(me.get("nickName").toString());
-
-                    memberMapper.updateById(userVo);
-                }
-
+                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                token = jwtTokenUtil.generateToken(userVo.getUsername());
+                resultObj.put("userId", userVo.getId());
+                resultObj.put("userInfo", userVo);
             }
 
 

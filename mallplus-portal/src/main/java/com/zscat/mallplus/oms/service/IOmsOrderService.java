@@ -2,10 +2,7 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
-import com.zscat.mallplus.oms.vo.OrderParam;
-import com.zscat.mallplus.oms.vo.TbThanks;
+import com.zscat.mallplus.oms.vo.*;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +84,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmOrderResult addGroup(OrderParam orderParam);
+    Object addGroup(OrderParam orderParam);
 
     /**
      * 参团
@@ -145,6 +142,8 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     OmsOrder blancePay(OmsOrder order);
 
+    OmsOrder blancePay(PayParam payParam);
+
     /**
      * 团购商品订单预览
      *
@@ -171,4 +170,9 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Object orderComment(Long orderId, String items);
 
     CommonResult generateStoreOrder(OrderParam orderParam);
+
+    Object applyRe(String items);
+
+
+    Object quitGroup(Long id);
 }

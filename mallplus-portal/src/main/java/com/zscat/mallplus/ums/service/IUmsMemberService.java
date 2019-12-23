@@ -118,5 +118,16 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @return
      */
     Object webLogin(String wxH5Appid,String wxH5Secret, String code);
+
+
+    /**
+     * 小程序获取的手机加密信息进行解密
+     * @param openid
+     * @param keyStr
+     * @param ivStr
+     * @param encDataStr
+     * @return
+     */
+    String getWxPhone(String openid,String keyStr, String ivStr,String encDataStr);
 }
 

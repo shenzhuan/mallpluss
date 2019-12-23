@@ -96,7 +96,7 @@ public class AliPayController extends AbstractAliPayApiController {
             }
 
         } catch (Exception e) {
-             AliPayBean aliPayBean = new AliPayBean();
+            AliPayBean aliPayBean = new AliPayBean();
             aliPayBean.setAppId("2017010804923732");
             aliPayBean.setDomain("http://www.yjlive.cn/api/api");
             aliPayBean.setServerUrl("https://openapi.alipay.com/gateway.do");
@@ -157,9 +157,9 @@ public class AliPayController extends AbstractAliPayApiController {
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
             model.setBody("zhifu");
             model.setSubject("mallplus app支付");
-            model.setOutTradeNo(StringUtils.getOutTradeNo());
+            model.setOutTradeNo(orderInfo.getOrderSn());
             model.setTimeoutExpress("30m");
-            model.setTotalAmount(orderInfo.getPayAmount().toString());
+            model.setTotalAmount(orderInfo.getPayAmount().floatValue()+"");
             model.setPassbackParams("callback params");
             model.setProductCode("QUICK_MSECURITY_PAY");
             String order = AliPayApi.appPayToResponse(model, domain + "/aliPay/notify_url",this.getApiConfig()).getBody();
@@ -177,7 +177,7 @@ public class AliPayController extends AbstractAliPayApiController {
         try {
             OmsOrder orderInfo = orderService.getById(orderId);
             if (null == orderInfo) {
-                  throw new ApiMallPlusException("订单已取消" );
+                throw new ApiMallPlusException("订单已取消" );
             }
             if (orderInfo.getStatus() == OrderStatus.CLOSED.getValue()) {
                 throw new ApiMallPlusException( "订单已已关闭，请不要重复操作" );
@@ -239,7 +239,6 @@ public class AliPayController extends AbstractAliPayApiController {
 
         String body = orderInfo.getGoodsName();
         String subject = "mallplus支付测试";
-        String totalAmount = orderInfo.getPayAmount().toString();
         String passbackParams = "1";
         String returnUrl = domain + "/aliPay/return_url";
         String notifyUrl = domain + "/aliPay/notify_url";
@@ -247,11 +246,9 @@ public class AliPayController extends AbstractAliPayApiController {
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
         model.setBody(subject);
         model.setSubject(subject);
-        model.setTotalAmount(totalAmount);
+        model.setTotalAmount(orderInfo.getPayAmount().floatValue()+"");
         model.setPassbackParams(passbackParams);
-        String outTradeNo = StringUtils.getOutTradeNo();
-        System.out.println("wap outTradeNo>" + outTradeNo);
-        model.setOutTradeNo(outTradeNo);
+        model.setOutTradeNo(orderInfo.getOrderSn());
         model.setProductCode(orderInfo.getOrderSn());
 
         try {
@@ -281,17 +278,13 @@ public class AliPayController extends AbstractAliPayApiController {
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
                 throw new ApiMallPlusException( "订单已支付，请不要重复操作" );
             }
-            String totalAmount = orderInfo.getPayAmount().toString();
-            String outTradeNo = StringUtils.getOutTradeNo();
-            log.info("pc outTradeNo>" + outTradeNo);
-
             String returnUrl = domain + "/aliPay/return_url";
             String notifyUrl = domain + "/aliPay/notify_url";
             AlipayTradePagePayModel model = new AlipayTradePagePayModel();
 
-            model.setOutTradeNo(outTradeNo);
+            model.setOutTradeNo(orderInfo.getOrderSn());
             model.setProductCode("FAST_INSTANT_TRADE_PAY");
-            model.setTotalAmount(totalAmount);
+            model.setTotalAmount(orderInfo.getPayAmount().floatValue()+"");
             model.setSubject("Javen PC支付测试");
             model.setBody("Javen IJPay PC支付测试");
             model.setPassbackParams("passback_params");

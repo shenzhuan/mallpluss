@@ -21,17 +21,26 @@ import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.ums.service.impl.RedisUtil;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -43,6 +52,8 @@ import java.util.List;
 @Api(tags = "OmsController", description = "订单管理系统")
 @RequestMapping("/api/single/oms")
 public class SingeOmsController extends ApiBaseAction {
+    // 物流信息缓存间隔暂定3个小时
+    private static final Long maxCacheTime = 1000 * 60 * 60 * 3L;
     @Resource
     private UmsMemberMapper memberMapper;
     @Resource
@@ -55,6 +66,9 @@ public class SingeOmsController extends ApiBaseAction {
     private IPmsProductConsultService pmsProductConsultService;
     @Autowired
     private IUmsMemberService memberService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
@@ -95,7 +109,12 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().success(orderDetailResult);
     }
-
+    @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
+    @RequestMapping(value = "/itemDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public Object itemDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        return new CommonResult().success(orderItemService.getById(id));
+    }
     @SysLog(MODULE = "小程序订单管理", REMARK = "取消订单")
     @ApiOperation("关闭订单")
     @RequestMapping(value = "/closeOrder", method = RequestMethod.POST)
@@ -151,6 +170,12 @@ public class SingeOmsController extends ApiBaseAction {
         return orderService.orderComment(orderId, items);
     }
 
+    @SysLog(MODULE = "oms", REMARK = "申请售后")
+    @ApiOperation(value = "申请售后")
+    @PostMapping(value = "/applyRe")
+    public Object applyRe(@RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
+        return orderService.applyRe(items);
+    }
     @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
@@ -245,6 +270,100 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return null;
     }
+    /**
+     * 查看物流
+     */
+    @ApiOperation("查看物流")
+    @ResponseBody
+    @RequestMapping("/logisticbyapi")
+    public Object getWayBillInfo(String no, String type) throws Exception {
+        try {
+            no = "801132164062135036";
+            if (StringUtils.isEmpty(no)) {
+                throw new ApiMallPlusException("请传入运单号");
+            }
+            // String host = "http://kdwlcxf.market.alicloudapi.com";
+            // String path = "/kdwlcx";
 
+            // String host = "https://wdexpress.market.alicloudapi.com";
+            // String path = "/gxali";
+
+            String host = "https://wuliu.market.alicloudapi.com";
+            String path = "/kdi";
+
+            String method = "GET";
+
+            String appcode = "436e99b5b81044698cbaf100d164aa63";  // !!! 替换这里填写你自己的AppCode 请在买家中心查看
+
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Authorization", "APPCODE " + appcode); //格式为:Authorization:APPCODE 83359fd73fe11248385f570e3c139xxx
+            Map<String, String> querys = new HashMap<String, String>();
+            querys.put("no", no);  // !!! 请求参数  运单号
+            if (ValidatorUtils.notEmpty(type)) {
+                querys.put("type", type);// !!! 请求参数   快递公司
+            }
+
+            // 物流信息
+            String returnStr = "";
+
+
+            Map<String, Object> returnMap = new HashMap<String, Object>();
+
+            try {
+                log.info("---------开始查询运单号为{}的物流信息", no);
+
+                // 只有当redis里面有缓存，且缓存时间不超过最大缓存时长，直接取缓存数据
+                if (redisUtil.hExists(Rediskey.KDWL_INFO_CACHE, no)) {
+
+                    // redis已经有缓存
+                    Object kdwlInfo = redisUtil.hGet(Rediskey.KDWL_INFO_CACHE, no);
+                    if (ValidatorUtils.notEmpty(kdwlInfo)) {
+                        Map<String, Object> kdwlInfoToMap = JsonUtils.readJsonToMap(kdwlInfo.toString());
+                        Long cacheBeginTime = (Long) kdwlInfoToMap.get("queryTime");
+                        // 计算已经缓存时长
+                        if (System.currentTimeMillis() - cacheBeginTime < maxCacheTime) {
+                            // 直接取缓存
+                            // kdwlInfoToMap.remove("queryTime");
+                            log.info("---------此次查询的物流信息来至于Redis缓存");
+                            log.info("---------查询运单号为{}的物流信息结束,物流信息：{}", no, kdwlInfo);
+                            return kdwlInfoToMap;
+                        } else {
+                            // TODO: 2018/8/23 这里已经存过缓存时间 如果缓存数据得到的 物流的状态是已签收，是否需要重新查询？？还是直接返回
+
+                        }
+
+                    }
+                }
+
+                // 重新查询最新物流信息
+                HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+
+                // 从返回信息中拿到
+                returnStr = EntityUtils.toString(response.getEntity());
+
+                if (StringUtils.isEmpty(returnStr)) {
+                    throw new ApiMallPlusException("查询物流信息失败");
+                }
+
+                // 重新缓存 [这里包含运单号输错 也缓存 避免有人故意调我们物流接口 次数用完]
+                returnMap = JsonUtils.readJsonToMap(returnStr);
+                if (returnMap != null) {
+                    returnMap.put("queryTime", System.currentTimeMillis());
+                }
+                redisUtil.hPut(Rediskey.KDWL_INFO_CACHE, no, JsonUtils.objectToJson(returnMap));
+
+                log.info("---------此次查询的物流信息来至于重新查询");
+                log.info("---------查询运单号为{}的物流信息结束,物流信息：{}", no, returnStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return returnMap;
+        } catch (Exception e) {
+            log.error("get waybillInfo error. error=" + e.getMessage(), e);
+            return new CommonResult().failed("获取物流信息失败，请稍后重试");
+        }
+
+    }
 
 }

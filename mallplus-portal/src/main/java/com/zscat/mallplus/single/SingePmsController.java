@@ -19,8 +19,10 @@ import com.zscat.mallplus.pms.vo.*;
 import com.zscat.mallplus.sms.entity.SmsFlashPromotionProductRelation;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
 import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsFlashPromotionProductRelationService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
@@ -72,6 +74,8 @@ public class SingePmsController extends ApiBaseAction {
     private IUmsMemberLevelService memberLevelService;
     @Resource
     private IPmsProductService pmsProductService;
+    @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
     @Autowired
     private ApiContext apiContext;
     @Resource
@@ -311,7 +315,7 @@ public class SingePmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
-    @ApiOperation(value = "查询团购商品列表")
+    @ApiOperation(value = "查询带团购商品列表")
     @GetMapping(value = "/groupHotGoods/list")
     public Object groupHotGoods(PmsProduct product,
                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -394,7 +398,12 @@ public class SingePmsController extends ApiBaseAction {
             }
         }
         if (group != null) {
-            map.put("memberGroupList", groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", group.getId())));
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", group.getId()));
+            for (SmsGroupRecord groupRecord : groupRecords) {
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
+                groupRecord.setList(groupMembers);
+            }
+            map.put("memberGroupList", groupRecords);
             map.put("group", group);
         }
 
@@ -686,12 +695,16 @@ public class SingePmsController extends ApiBaseAction {
     public Object viewList(
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        //拼装返回
+        Map<String, Object> map = new HashMap<>();
+        if (memberService.getNewCurrentMember()==null){
+            return new CommonResult().success(map);
+        }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //获取用户的浏览的商品的总页数;
         long pageCount = redisUtil.lLen(key);
-        //拼装返回
-        Map<String, Object> map = new HashMap<>();
+
         //根据用户的ID分頁获取该用户最近浏览的50个商品信息
         List<String> result = redisUtil.lRange(key, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
         if (result != null && result.size() > 0) {
@@ -704,7 +717,12 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
-
+    @ApiOperation("生成商品海报")
+    @GetMapping(value = "/getposter")
+    public Object getposter(@RequestParam Long id) {
+        PmsProduct product = pmsProductService.getById(id);
+        return new CommonResult().success(product.getPic());
+    }
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;

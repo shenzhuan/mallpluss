@@ -154,7 +154,7 @@ public class PayController extends ApiBaseAction {
     public Object balancePay(PayParam payParam) {
 
         try {
-            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+            OmsOrder order = orderService.blancePay(payParam);
             return new CommonResult().success(order);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
@@ -236,13 +236,13 @@ public class PayController extends ApiBaseAction {
             String return_msg = MapUtils.getString("return_msg", resultUn);
             //
             if (return_code.equalsIgnoreCase("FAIL")) {
-                throw new ApiMallPlusException("支付失败," + return_msg);
+                return new CommonResult().failed("支付失败," + return_msg);
             } else if (return_code.equalsIgnoreCase("SUCCESS")) {
                 // 返回数据
                 String result_code = MapUtils.getString("result_code", resultUn);
                 String err_code_des = MapUtils.getString("err_code_des", resultUn);
                 if (result_code.equalsIgnoreCase("FAIL")) {
-                    throw new ApiMallPlusException("支付失败," + err_code_des);
+                    return new CommonResult().failed("支付失败," + err_code_des);
                 } else if (result_code.equalsIgnoreCase("SUCCESS")) {
                     String prepay_id = MapUtils.getString("prepay_id", resultUn);
                     // 先生成paySign 参考https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_7&index=5
@@ -282,9 +282,9 @@ public class PayController extends ApiBaseAction {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ApiMallPlusException("下单失败,error=" + e.getMessage());
+            return new CommonResult().failed("支付失败,error=" + e.getMessage());
         }
-        throw new ApiMallPlusException("下单失败");
+        return new CommonResult().failed("支付失败");
     }
 
     /**

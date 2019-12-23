@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.sms.entity.SmsGroup;
 import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
 import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
-import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -19,8 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +36,8 @@ import java.util.List;
 @Api(tags = "SmsGroupController", description = "管理")
 @RequestMapping("/sms/SmsGroup")
 public class SmsGroupController {
+    @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
     @Resource
     private ISmsGroupService ISmsGroupService;
     @Resource
@@ -64,22 +65,17 @@ public class SmsGroupController {
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
     @GetMapping(value = "/listGroupMember")
-    public Object listGroupMember(SmsGroupMember entity,
+    public Object listGroupMember(SmsGroupRecord entity,
                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            List<SmsGroupMember> list = new ArrayList<>();
-            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_id", entity.getGroupId()));
-            for (SmsGroupMember groupMember : groupMembers) {
-                if (ValidatorUtils.notEmpty(groupMember.getMemberId())) {
-                    List<String> ids = Arrays.asList(groupMember.getMemberId().split(","));
-                    groupMember.setList((List<UmsMember>) memberService.listByIds(ids));
-                    list.add(groupMember);
-
-                }
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", entity.getId()));
+            for (SmsGroupRecord groupRecord : groupRecords) {
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
+                groupRecord.setList(groupMembers);
             }
-            return new CommonResult().success(list);
+            return new CommonResult().success(groupRecords);
 
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
