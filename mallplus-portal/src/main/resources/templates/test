@@ -44,6 +44,7 @@ put -r /Users/java/test/git/bootdo/bootdo/target/bootdo-1.5.0.jar  /root/jm
 
 put -r /Users/java/test/git/mallplus/mallplus-portal/MP_verify_8U0gHxfvQWhdo4DS.txt /root/jm/h5
 
+put -r /Users/java/test/git/web/vue_mogu_web/cms  /root/jm
 
 put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
 

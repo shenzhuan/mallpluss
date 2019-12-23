@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.*;
+import com.zscat.mallplus.cms.mapper.CmsSubjectMapper;
 import com.zscat.mallplus.cms.service.*;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
@@ -48,7 +49,8 @@ import java.util.stream.Collectors;
 @Api(tags = "CmsController", description = "内容关系管理")
 @RequestMapping("/api/single/cms")
 public class SingeCmsController extends ApiBaseAction {
-
+    @Resource
+    private CmsSubjectMapper subjectMapper;
     @Resource
     private ISmsGroupService groupService;
     @Resource
@@ -101,7 +103,18 @@ public class SingeCmsController extends ApiBaseAction {
     public Object subjectList(CmsSubject subject,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).orderByDesc("create_time")));
+
+        if (ValidatorUtils.empty(subject.getType())) {
+            return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList).orderByDesc("create_time")));
+        }
+        if (subject.getType() == 1) {
+            return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList).orderByDesc("read_count")));
+        } else if (subject.getType() == 2) {
+            return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList).orderByDesc("collect_count")));
+        } else if (subject.getType() == 3) {
+            return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList).orderByDesc("comment_count")));
+        }
+        return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList).orderByDesc("create_time")));
     }
 
     @SysLog(MODULE = "cms", REMARK = "查询文章分类列表")
@@ -428,5 +441,27 @@ public class SingeCmsController extends ApiBaseAction {
     @GetMapping("/listTimeline")
     public Object listTimeline() {
         return new CommonResult().success(subjectService.listTimeLine());
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "cms", REMARK = "查询文章列表")
+    @ApiOperation(value = "查询文章列表")
+    @GetMapping(value = "/subjectListByTime/list")
+    public Object subjectListByTime(CmsSubject subject,
+                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                    @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        return new CommonResult().success(subjectMapper.loadArticleByArchive(subject.getCreateTimeVar()));
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "cms", REMARK = "查询文章列表")
+    @ApiOperation(value = "查询文章列表")
+    @GetMapping(value = "/getTime/list")
+    public Object getTime(CmsSubject subject,
+                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                          @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        return new CommonResult().success(subjectMapper.articleArchiveList());
     }
 }

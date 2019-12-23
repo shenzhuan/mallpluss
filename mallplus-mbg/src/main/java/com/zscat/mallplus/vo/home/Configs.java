@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class Configs implements Serializable {
+    private String version = "mallplus-1.1.1";
     private Integer about_article_id = 5;
     private Integer cate_style = 3;
     private Integer cate_type = 1;
@@ -25,8 +26,8 @@ public class Configs implements Serializable {
     private String shop_default_image = "http=//demo.jihainet.com/static/uploads/images/d6/60/71/5cde803675475.png";
     private String shop_desc = "管易云";
     private String shop_logo = "http=//demo.jihainet.com/static/uploads/images/68/f6/1b/5cde803088e85.png";
-    private String shop_mobile = "18530801653";
-    private String shop_name = "管易云";
+    private String shop_mobile = "13146587722";
+    private String shop_name = "mallplus多租户商城";
     private String show_inviter = "";
     private String statistics = "";
     private Integer store_switch = 1;

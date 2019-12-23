@@ -70,7 +70,7 @@ public class SmsGroupController {
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", entity.getId()));
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", entity.getGroupId()));
             for (SmsGroupRecord groupRecord : groupRecords) {
                 List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
                 groupRecord.setList(groupMembers);

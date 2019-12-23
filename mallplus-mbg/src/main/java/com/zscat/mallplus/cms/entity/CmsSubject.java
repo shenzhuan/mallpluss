@@ -129,6 +129,9 @@ public class CmsSubject extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List pics;
 
+    @TableField(exist = false)
+    private String createTimeVar;
+
     public List getPics() {
         if (ValidatorUtils.notEmpty(albumPics)) {
             this.pics = Arrays.asList(albumPics.split(","));

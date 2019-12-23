@@ -7,6 +7,7 @@ import com.zscat.mallplus.vo.timeline.TimelinePost;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -23,4 +24,9 @@ public interface CmsSubjectMapper extends BaseMapper<CmsSubject> {
     List<TimelinePost> listTimelinePost(@Param("year") Integer year, @Param("month") Integer month);
 
     List<Timeline> listTimeline();
+
+    List<Map> articleArchiveList();
+
+    List<CmsSubject> loadArticleByArchive(@Param("createTime") String createTime);
+
 }
