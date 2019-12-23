@@ -101,7 +101,7 @@ public class SingeCmsController extends ApiBaseAction {
     public Object subjectList(CmsSubject subject,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).orderByDesc("create_time").select(ConstansValue.sampleSubjectList)));
+        return new CommonResult().success(subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).orderByDesc("create_time")));
     }
 
     @SysLog(MODULE = "cms", REMARK = "查询文章分类列表")

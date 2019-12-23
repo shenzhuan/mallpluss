@@ -72,7 +72,7 @@ public class SmsGroupController {
         try {
             List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", entity.getId()));
             for (SmsGroupRecord groupRecord : groupRecords) {
-                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()));
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
                 groupRecord.setList(groupMembers);
             }
             return new CommonResult().success(groupRecords);
