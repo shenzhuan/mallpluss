@@ -15,7 +15,7 @@
         <module>mallplus-wechat</module>
         <module>mallplus-portal</module>
         <module>mallplus-admin</module>
-      <!--  <module>mallplus-search</module>-->
+        <module>mallplus-search</module>
     </modules>
 
 </project>
