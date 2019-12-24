@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;
@@ -101,15 +102,18 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         }if (ValidatorUtils.empty(product.getUnit())) {
             product.setUnit("件");
         }
+        SysUser user = UserUtils.getCurrentMember();
+        product.setStoreName(user.getStoreName());
+        product.setStoreId(user.getStoreId());
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();
         //会员价格
         //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
         //阶梯价格
-        relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
+        // relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
         //满减价格
-        relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
+        // relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
 
         //添加sku库存信息
         relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
@@ -120,7 +124,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //关联优选
         relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
         count = 1;
-        //    redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
+        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
     }
 

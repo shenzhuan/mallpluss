@@ -223,6 +223,26 @@ public class SingeOmsController extends ApiBaseAction {
         return null;
     }
 
+
+    /**
+     * 提交订单
+     *
+     * @param orderParam
+     * @return
+     */
+    @ApiOperation("根据购物车信息生成订单")
+    @RequestMapping(value = "/generateStoreOrder")
+    @ResponseBody
+    public Object generateStoreOrder(OrderParam orderParam) {
+        try {
+            return orderService.generateStoreOrder(orderParam);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     /**
      * 提交订单
      *

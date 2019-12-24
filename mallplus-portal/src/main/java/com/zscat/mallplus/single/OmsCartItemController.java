@@ -5,10 +5,8 @@ import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.CartMarkingVo;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
@@ -72,14 +70,15 @@ public class OmsCartItemController {
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
             map.put("cartItemList", cartItemList);
-            CartMarkingVo vo = new CartMarkingVo();
+            /*CartMarkingVo vo = new CartMarkingVo();
             vo.setCartList(cartItemList);
             SmsBasicMarking marking = smsBasicMarkingService.matchOrderBasicMarking(vo);
             if (marking != null) {
                 map.put("promoteAmount", marking.getMinAmount());
             } else {
                 map.put("promoteAmount", 0);
-            }
+            }*/
+            map.put("promoteAmount", 0);
 
             return new CommonResult().success(map);
         }
