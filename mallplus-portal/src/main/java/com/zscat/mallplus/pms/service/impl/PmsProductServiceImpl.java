@@ -171,24 +171,23 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setProductLadderList(productLadderList);
 */
         List<PmsSkuStock> skuStockList = skuStockMapper.selectList(new QueryWrapper<PmsSkuStock>().eq("product_id", goods.getId()));
-
+        param.setSkuStockList(skuStockList);
         List<PmsProductAttributeValue> productAttributeValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 1));
-
-        List<CmsSubjectProductRelation> subjectProductRelationList = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("product_id", goods.getId()));
-
-        List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList = prefrenceAreaProductRelationMapper.selectList(new QueryWrapper<CmsPrefrenceAreaProductRelation>().eq("product_id", goods.getId()));
-
-        List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
-        param.setProductCanShuValueList(productCanShuValueList);
-
-        param.setPrefrenceAreaProductRelationList(prefrenceAreaProductRelationList);
         param.setProductAttributeValueList(productAttributeValueList);
 
-        param.setSkuStockList(skuStockList);
-        param.setSubjectProductRelationList(subjectProductRelationList);
+        // List<CmsSubjectProductRelation> subjectProductRelationList = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("product_id", goods.getId()));
 
-        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
-        param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
+        //   List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList = prefrenceAreaProductRelationMapper.selectList(new QueryWrapper<CmsPrefrenceAreaProductRelation>().eq("product_id", goods.getId()));
+
+        // List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
+        // param.setProductCanShuValueList(productCanShuValueList);
+
+        //  param.setPrefrenceAreaProductRelationList(prefrenceAreaProductRelationList);
+
+        //param.setSubjectProductRelationList(subjectProductRelationList);
+
+        //List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
+        //  param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
         redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
