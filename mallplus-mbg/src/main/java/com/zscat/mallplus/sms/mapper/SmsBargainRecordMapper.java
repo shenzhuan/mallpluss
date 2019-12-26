@@ -9,7 +9,7 @@ import com.zscat.mallplus.sms.entity.SmsBargainRecord;
  * </p>
  *
  * @author zscat
- * @since 2019-10-17
+ * @since 2019-12-25
  */
 public interface SmsBargainRecordMapper extends BaseMapper<SmsBargainRecord> {
 

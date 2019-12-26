@@ -1,10 +1,13 @@
 package com.zscat.mallplus.b2c;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.BargainEnum;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
@@ -12,6 +15,9 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.mapper.SmsBargainConfigMapper;
+import com.zscat.mallplus.sms.mapper.SmsBargainMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsBargainRecordMapper;
 import com.zscat.mallplus.sms.mapper.SmsFlashPromotionSessionMapper;
 import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.SmsFlashPromotionSessionVo;
@@ -30,12 +36,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: shenzhuan
@@ -46,6 +57,9 @@ import java.util.*;
 @RestController
 @Api(tags = "SingeMarkingController", description = "营销管理")
 public class BSmsController extends ApiBaseAction {
+
+    @Value("${file.path}")
+    private String path;
 
     @Resource
     private ISmsBasicGiftsService basicGiftsService;
@@ -72,6 +86,382 @@ public class BSmsController extends ApiBaseAction {
 
     @Autowired
     private ISmsHomeAdvertiseService advertiseService;
+
+    @Resource
+    private SmsBargainConfigMapper bargainConfigMapper;
+    @Resource
+    private SmsBargainRecordMapper bargainRecordMapper;
+    @Resource
+    private SmsBargainMemberMapper bargainMemberMapper;
+
+    @SysLog(MODULE = "pms", REMARK = "查询砍价商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询砍价商品列表")
+    @ResponseBody
+    @PostMapping(value = "/bargain/list")
+    public Object groupHotGoods(PmsProduct product,
+                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        List<SmsBargainConfig> groupList = bargainConfigMapper.selectList(new QueryWrapper<>());
+        List<SmsBargainConfig> result = new ArrayList<>();
+        for (SmsBargainConfig group : groupList) {
+
+            Long nowT = System.currentTimeMillis();
+            if (nowT < group.getInvalidTime().getTime()) {
+                PmsProduct g = pmsProductService.getById(group.getGoodsId());
+                if (g != null) {
+                    group.setGoods(g);
+                    result.add(group);
+                }
+
+            }
+        }
+        return new CommonResult().success(result);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询砍价商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询砍价商品列表")
+    @ResponseBody
+    @PostMapping(value = "/sample/bargain/list")
+    public Object pintuanList(PmsProduct product,
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        List<SmsBargainConfig> groupList = bargainConfigMapper.selectList(new QueryWrapper<>());
+        if (groupList != null && groupList.size() > 0) {
+            List<Long> ids = groupList.stream()
+                    .map(SmsBargainConfig::getGoodsId)
+                    .collect(Collectors.toList());
+            product.setPublishStatus(1);
+            product.setVerifyStatus(1);
+            product.setMemberId(null);
+            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids).select(ConstansValue.sampleGoodsList));
+            return new CommonResult().success(list);
+        }
+        return new CommonResult().success(new ArrayList<>());
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "砍价商品详情")
+    @IgnoreAuth
+    @PostMapping(value = "/bargain/detail")
+    @ApiOperation(value = "砍价商品详情")
+    public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        SmsBargainConfig group = bargainConfigMapper.selectById(id);
+        Long goodsId = group.getGoodsId();
+
+        GoodsDetailResult goods = null;
+        try {
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodsId + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods)) {
+                log.info("redis缓存失效：" + goodsId);
+                goods = pmsProductService.getGoodsRedisById(goodsId);
+            }
+        } catch (Exception e) {
+            log.info("redis缓存失效：" + goodsId);
+            goods = pmsProductService.getGoodsRedisById(goodsId);
+            e.printStackTrace();
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+
+        if (group != null && umsMember != null) {
+            // group.setPintuan_start_status(1);
+            // group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
+            Long nowT = System.currentTimeMillis();
+
+            /*if (nowT > endTime.getTime()) {
+                group.setPintuan_start_status(3);
+            }*/
+            SmsBargainRecord groupRecords = bargainRecordMapper.selectOne(new QueryWrapper<SmsBargainRecord>().eq("bargin_id", group.getId()).eq("member_id", umsMember.getId()));
+            if (groupRecords != null) {
+                List<SmsBargainMember> groupMembers = bargainMemberMapper.selectList(new QueryWrapper<SmsBargainMember>().eq("bargin_record_id", groupRecords.getId()));
+                groupRecords.setList(groupMembers);
+            } else {
+                groupRecords = new SmsBargainRecord();
+                groupRecords.setBarginId(group.getId());
+                groupRecords.setCreateTime(new Date());
+                groupRecords.setMemberId(umsMember.getId());
+                groupRecords.setName(umsMember.getUsername());
+                groupRecords.setStatus(BargainEnum.Status.INIT.code());
+
+                SmsBargainMember query = new SmsBargainMember();
+                query.setMemberId(umsMember.getId());
+                query.setBargainId(group.getId());
+                query.setGoodsId(group.getGoodsId());
+                query.setBarginRecordId(groupRecords.getId());
+                query.setCreateTime(new Date());
+                query.setMemberId(umsMember.getId());
+                query.setName(umsMember.getUsername());
+                /**
+                 * 生成 [m,n] 的数字
+                 * int i1 = random.nextInt() * (n-m+1)+m;
+                 * */
+                String[] rands = group.getParameter().split(",");
+                int max = Integer.parseInt(rands[1]);
+                int min = Integer.parseInt(rands[0]);
+                int pp = new Random().nextInt(max - min + 1) + min;
+                query.setPrice(new BigDecimal(pp).setScale(2, RoundingMode.HALF_UP));
+
+                couponService.insertBarginRe(groupRecords, query);
+
+            }
+            map.put("memberGroupList", groupRecords);
+            map.put("group", group);
+        }
+        map.put("goods", goods);
+        return new CommonResult().success(map);
+    }
+
+    private static Lock lock = new ReentrantLock(false);
+
+    /**
+     * 帮助好友砍价
+     */
+    @PostMapping("/bargain/help")
+    @ApiOperation(value = "帮助好友砍价", notes = "帮助好友砍价")
+    public Object help(@RequestParam(value = "bargainId", required = false, defaultValue = "0") Long bargainId,
+                       @RequestParam(value = "barginRecordId", required = false, defaultValue = "0") Long barginRecordId
+    ) {
+        if (ObjectUtil.isNull(bargainId)) return new CommonResult().failed("参数错误");
+        Map<String, Object> map = new LinkedHashMap<>();
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member != null) {
+            SmsBargainMember query = new SmsBargainMember();
+            query.setMemberId(member.getId());
+            query.setBargainId(bargainId);
+            if (bargainMemberMapper.selectCount(new QueryWrapper<>(query)) > 0) {
+                map.put("status", "SUCCESSFUL");
+                return new CommonResult().success(map);
+            }
+            try {
+                lock.lock();
+                SmsBargainConfig group = bargainConfigMapper.selectById(bargainId);
+                if (group == null) {
+                    return new CommonResult().failed("参数错误");
+                }
+                query.setCreateTime(new Date());
+                query.setMemberId(member.getId());
+                query.setName(member.getUsername());
+                /**
+                 * 生成 [m,n] 的数字
+                 * int i1 = random.nextInt() * (n-m+1)+m;
+                 * */
+                String[] rands = group.getParameter().split(",");
+                int max = Integer.parseInt(rands[1]);
+                int min = Integer.parseInt(rands[0]);
+                int pp = new Random().nextInt(max - min + 1) + min;
+                query.setPrice(new BigDecimal(pp).setScale(2, RoundingMode.HALF_UP));
+                query.setGoodsId(group.getGoodsId());
+                query.setBarginRecordId(barginRecordId);
+                bargainMemberMapper.insert(query);
+
+                BigDecimal alreadPrice = BigDecimal.ZERO; //已经砍了的价格
+                List<SmsBargainMember> groupMembers = bargainMemberMapper.selectList(new QueryWrapper<SmsBargainMember>().eq("bargin_record_id", barginRecordId));
+                for (SmsBargainMember bargainMember : groupMembers) {
+                    alreadPrice = alreadPrice.add(bargainMember.getPrice());
+                }
+                if (alreadPrice.compareTo(group.getPrice()) > 0) {
+                    group.setPepoles(group.getPepoles() + 1);
+                    bargainConfigMapper.updateById(group);
+
+                    SmsBargainRecord record = new SmsBargainRecord();
+                    record.setId(barginRecordId);
+                    record.setStatus(BargainEnum.Status.SUCESS.code());
+                    bargainRecordMapper.updateById(record);
+                }
+            } finally {
+                lock.unlock();
+            }
+
+            map.put("status", "SUCCESS");
+            return new CommonResult().success(map);
+        }
+
+
+        return new CommonResult().fail(100);
+    }
+
+    /**
+     * 拼团海报
+     */
+    @PostMapping("/bargain/poster")
+    @ApiOperation(value = "拼团海报", notes = "拼团海报")
+    public Object poster(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+
+        if (ObjectUtil.isNull(id)) return new CommonResult().failed("参数有误");
+
+        SmsBargainRecord group = bargainRecordMapper.selectById(id);
+        return new CommonResult().success(group);
+        /*String siteUrl = "siteUrl";
+        if(StrUtil.isEmpty(siteUrl)){
+            return new CommonResult().failed("未配置h5地址");
+        }
+        String apiUrl = "apiUrl";
+        if(StrUtil.isEmpty(siteUrl)){
+            return new CommonResult().failed("未配置api地址");
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member!=null){
+            Long uid=member.getId();
+
+            BigDecimal alreadPrice=BigDecimal.ZERO; //已经砍了的价格
+            SmsBargainRecord groupRecords = bargainRecordMapper.selectOne(new QueryWrapper<SmsBargainRecord>().eq("bargin_id", group.getId()).eq("member_id",member.getId()));
+            if (groupRecords!=null){
+                List<SmsBargainMember> groupMembers = bargainMemberMapper.selectList(new QueryWrapper<SmsBargainMember>().eq("bargin_record_id", groupRecords.getId()));
+                groupRecords.setList(groupMembers);
+                for (SmsBargainMember bargainMember: groupMembers){
+                    alreadPrice=alreadPrice.add(bargainMember.getPrice());
+                }
+            }else {
+                return new CommonResult().success("没有参加");
+            }
+
+            //用户可以砍掉的金额 好友砍价之前获取可以砍价金额
+            double coverPrice = NumberUtil.sub(group.getOriginPrice()
+                    ,group.getPrice()).doubleValue();
+            //用户剩余要砍掉的价格
+            double surplusPrice = NumberUtil.sub(group.getOriginPrice(),
+                    alreadPrice).doubleValue();
+
+
+            String name = id+"_"+uid + "_"+"_bargain_share_wap.jpg";
+
+            String fileDir = path+"qrcode"+ File.separator;
+            String qrcodeUrl = "";
+            if(ObjectUtil.isNull(groupRecords.getShareimg())){
+                //生成二维码
+                File file = FileUtil.mkdir(new File(fileDir));
+                QrCodeUtil.generate(siteUrl+"/activity/dargain_detail/"+id+"/"+uid+"?spread="+uid, 180, 180,
+                        FileUtil.file(fileDir+name));
+
+
+                qrcodeUrl = fileDir+name;
+            }else{
+                qrcodeUrl = groupRecords.getShareimg();
+            }
+
+            String spreadPicName = id+"_"+uid + "_"+"_bargain_user_spread.jpg";
+            String spreadPicPath = fileDir+spreadPicName;
+
+
+            String spreadUrl = "";
+            InputStream stream =  getClass().getClassLoader().getResourceAsStream("poster.jpg");
+            InputStream streamT =  getClass().getClassLoader()
+                    .getResourceAsStream("simsunb.ttf");
+            File newFile = new File("poster.jpg");
+            File newFileT = new File("simsunb.ttf");
+            try {
+                FileUtils.copyInputStreamToFile(stream, newFile);
+                FileUtils.copyInputStreamToFile(streamT, newFileT);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(ObjectUtil.isNull(groupRecords.getSpreadpic())){
+                try {
+
+                    //第一步标题
+                    Font font =  Font.createFont(Font.TRUETYPE_FONT, newFileT);
+                    Font f= font.deriveFont(Font.PLAIN,40);
+                    //font.
+                    ImgUtil.pressText(//
+                            newFile,
+                            FileUtil.file(spreadPicPath),
+                            group.getGoodsName(),
+                            Color.BLACK,
+                            f, //字体
+                            0, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            -480, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f//透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
+                    );
+
+                    Font f2= font.deriveFont(Font.PLAIN,45);
+                    //第2步价格
+                    ImgUtil.pressText(//
+                            FileUtil.file(spreadPicPath),
+                            FileUtil.file(spreadPicPath),
+                            NumberUtil.sub(group.getPrice(),
+                                    group.getPrice()).toString(),
+                            Color.RED,
+                            f2, //字体
+                            -160, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            -380, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f//透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
+                    );
+
+                    Font f3= font.deriveFont(Font.PLAIN,30);
+                    //第3步几人团
+                    ImgUtil.pressText(//
+                            FileUtil.file(spreadPicPath),
+                            FileUtil.file(spreadPicPath),
+                            "已砍至",
+                            Color.WHITE,
+                            f3, //字体
+                            90, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            -385, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f//透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
+                    );
+
+                    //第4步介绍
+                    String pro = "还差还差" + surplusPrice + "即可砍价成功";
+                    ImgUtil.pressText(//
+                            FileUtil.file(spreadPicPath),
+                            FileUtil.file(spreadPicPath),
+                            pro,
+                            Color.BLACK,
+                            f3, //字体
+                            -50, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            -300, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f//透明度：alpha 必须是范围 [0.0, 1.0] 之内（包含边界值）的一个浮点数字
+                    );
+
+                    //第5步商品图片
+                    //下载图片
+                    String picImage = fileDir+id+"_bargain_image.jpg";
+                    HttpUtil.downloadFile(groupRecords.getSpreadpic(),
+                            FileUtil.file(picImage));
+
+                    ImgUtil.scale(
+                            FileUtil.file(picImage),
+                            FileUtil.file(picImage),
+                            0.5f//缩放比例
+                    );
+
+                    ImgUtil.pressImage(
+                            FileUtil.file(spreadPicPath),
+                            FileUtil.file(spreadPicPath),
+                            ImgUtil.read(FileUtil.file(picImage)), //水印图片
+                            0, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            -80, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f
+                    );
+
+                    ImgUtil.pressImage(
+                            FileUtil.file(spreadPicPath),
+                            FileUtil.file(spreadPicPath),
+                            ImgUtil.read(FileUtil.file(qrcodeUrl)), //水印图片
+                            0, //x坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            390, //y坐标修正值。 默认在中间，偏移量相对于中间偏移
+                            0.8f
+                    );
+
+
+                    spreadUrl = apiUrl + "/api/file/qrcode/"+spreadPicName;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else{
+                spreadUrl = apiUrl + "/api/file/" ;
+            }
+            Map<String,Object> map = new LinkedHashMap<>();
+            map.put("url",spreadUrl);
+            return new CommonResult().success(map);
+        }
+
+       return new CommonResult().success();*/
+    }
+
 
     @ApiOperation("领取指定优惠券")
     @PostMapping(value = "/coupon.getcoupon")
@@ -276,5 +666,28 @@ public class BSmsController extends ApiBaseAction {
             redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         return viewCount;
+    }
+
+    /**
+     * 生成 [m,n] 的数字
+     * int i1 = random.nextInt() * (n-m+1)+m;
+     */
+    public static void main(String[] args) {
+        int max = 5;
+        int min = 1;
+        int num = new Random().nextInt(max - min + 1) + min;
+        System.out.println(num);
+        Random random = new Random();
+        int i1 = new Random().nextInt() * (5 - 1 + 1) + 1;
+        System.out.println(i1);
+        String group = "1,5";
+        String[] rands = group.split(",");
+        double dd = Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1;
+        System.out.println(Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1);
+        System.out.println(random.nextInt());
+        System.out.println(random.nextInt() * (Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1));
+        System.out.println(Double.valueOf(rands[0]));
+        double pp = random.nextInt() * dd + Double.valueOf(rands[0]);
+        System.out.println(pp);
     }
 }

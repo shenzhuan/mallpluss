@@ -3,6 +3,7 @@ package com.zscat.mallplus.oms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.BargainEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.*;
@@ -25,9 +26,7 @@ import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.vo.ProductConsultParam;
 import com.zscat.mallplus.sms.entity.*;
-import com.zscat.mallplus.sms.mapper.SmsGroupMapper;
-import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
-import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
+import com.zscat.mallplus.sms.mapper.*;
 import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.*;
@@ -135,7 +134,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Resource
     private UmsIntegrationChangeHistoryMapper integrationChangeHistoryMapper;
 
-
+    @Resource
+    private SmsBargainConfigMapper bargainConfigMapper;
+    @Resource
+    private SmsBargainRecordMapper bargainRecordMapper;
+    @Resource
+    private SmsBargainMemberMapper bargainMemberMapper;
     @Autowired
     private ISmsBasicGiftsService basicGiftsService;
     @Autowired
@@ -512,9 +516,34 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         if (ValidatorUtils.empty(orderParam.getAddressId())) {
             return new CommonResult().failed("address is null");
         }
-        //团购订单
+
         SmsGroupActivity smsGroupActivity = null;
-        if (orderParam.getOrderType() == 3) {
+        // 砍价
+        if (orderParam.getOrderType() == 4) {
+            order.setGroupId(orderParam.getGroupId());
+            SmsBargainConfig bargainGoods = bargainConfigMapper.selectById(orderParam.getBargainId());
+            //checkGoods(pmsProduct, true, orderParam.getTotal());
+            OmsCartItem cartItem = new OmsCartItem();
+            cartItem.setProductId(orderParam.getGoodsId());
+            cartItem.setMemberId(memberService.getNewCurrentMember().getId());
+            cartItem.setChecked(1);
+            cartItem.setPrice(bargainGoods.getPrice());
+            cartItem.setProductName(bargainGoods.getGoodsName());
+            cartItem.setQuantity(orderParam.getTotal());
+            cartItem.setProductPic(bargainGoods.getPic());
+            cartItem.setCreateDate(new Date());
+            cartItem.setMemberId(memberService.getNewCurrentMember().getId());
+            List<OmsCartItem> list = new ArrayList<>();
+            if (cartItem != null) {
+                list.add(cartItem);
+            } else {
+                throw new ApiMallPlusException("订单已提交");
+            }
+            if (!CollectionUtils.isEmpty(list)) {
+                cartPromotionItemList = cartItemService.calcCartPromotion(list);
+            }
+        } else if (orderParam.getOrderType() == 3) { //团购订单
+            order.setGroupId(orderParam.getGroupActivityId());
             smsGroupActivity = smsGroupActivityService.getById(orderParam.getGroupActivityId());
             if (ValidatorUtils.notEmpty(smsGroupActivity.getGoodsIds())) {
                 List<PmsProduct> productList = (List<PmsProduct>) productService.listByIds(
@@ -681,7 +710,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                                         orderItem.setProductPrice(pmsGifts.getPrice());
                                         orderItem.setProductQuantity(1);
                                         orderItem.setType(AllEnum.OrderItemType.GIFT.code());
-
                                         orderItemList.add(orderItem);
                                     }
                                 }
@@ -713,6 +741,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             couponHistory.setOrderId(order.getId());
             couponHistory.setOrderSn(order.getOrderSn());
             couponHistoryService.updateById(couponHistory);
+        }
+        if (orderParam.getOrderType() == AllEnum.OrderType.KNAN_JIA.code()) {
+            SmsBargainRecord groupRecords = bargainRecordMapper.selectById(orderParam.getBargainRecordId());
+            groupRecords.setStatus(BargainEnum.Status.PAY.code());
+            groupRecords.setOrderId(order.getId());
+            bargainRecordMapper.updateById(groupRecords);
         }
         OmsOrderOperateHistory history = new OmsOrderOperateHistory();
         history.setOrderId(order.getId());
@@ -895,7 +929,15 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             cartItem.setProductId(orderParam.getGoodsId());
             cartItem.setMemberId(memberService.getNewCurrentMember().getId());
             cartItem.setChecked(1);
-            cartItem.setPrice(pmsProduct.getPrice());
+            if (orderParam.getOrderType().equals(AllEnum.OrderType.KNAN_JIA.code())) {
+                SmsBargainConfig bargainGoods = bargainConfigMapper.selectById(orderParam.getBargainId());
+                cartItem.setPrice(bargainGoods.getPrice());
+            } else if (orderParam.getOrderType().equals(AllEnum.OrderType.PIN_GROUP.code())) {
+                SmsGroup bargainGoods = groupMapper.selectById(orderParam.getGroupId());
+                cartItem.setPrice(bargainGoods.getGroupPrice());
+            } else {
+                cartItem.setPrice(pmsProduct.getPrice());
+            }
             cartItem.setProductName(pmsProduct.getName());
             cartItem.setQuantity(orderParam.getTotal());
             cartItem.setProductPic(pmsProduct.getPic());
@@ -1893,10 +1935,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
 
         //获取用户积分
-        result.setMemberIntegration(member.getIntegration());
+        // result.setMemberIntegration(member.getIntegration());
         //获取积分使用规则
-        UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectById(1L);
-        result.setIntegrationConsumeSetting(integrationConsumeSetting);
+       /* UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectById(1L);
+        result.setIntegrationConsumeSetting(integrationConsumeSetting);*/
         //计算总金额、活动优惠、应付金额
         ConfirmOrderResult.CalcAmount calcAmount = calcCartAmount(newCartList, transFee, BigDecimal.ZERO);
         result.setCalcAmount(calcAmount);

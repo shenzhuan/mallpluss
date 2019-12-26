@@ -39,5 +39,8 @@ public class OrderParam {
     private Long mgId = 0l;
     private Long skillId = 0l; // 秒杀ID
 
+    private Long bargainId; //砍价
+    private Long bargainRecordId;//砍价记录
+
 
 }

@@ -103,10 +103,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         //  if (  IGNORE_TENANT_TABLES.stream().anyMatch((e) -> e.equalsIgnoreCase(interfaceName))){
 
+
         if (authHeader != null && authHeader.startsWith("Bearer")) {
             String authToken = authHeader.substring("Bearer".length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
-            LOGGER.info("checking username:{}，storeId:{}", username,storeId);
+
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (userDetails != null && userDetails.getUsername() != null) {
                 if (userDetails != null && jwtTokenUtil.validateToken(authToken, userDetails)) {
@@ -119,6 +120,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } else {
             logger.info("no token" + request.getRequestURI());
         }
+        LOGGER.info("checking username:{}，storeId:{}", username, storeId);
         // }
 
         startTime = System.currentTimeMillis();

@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * <p>
- * 砍价免单记录表
+ * 拼团记录
  * </p>
  *
  * @author zscat
@@ -21,52 +21,44 @@ import java.util.List;
  */
 @Setter
 @Getter
-@TableName("sms_bargain_record")
-public class SmsBargainRecord implements Serializable {
+@TableName("sms_bargain_member")
+public class SmsBargainMember implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 用户ID
-     */
+    @TableField("bargin_record_id")
+    private Long barginRecordId;
+    @TableField("bargin_id")
+    private Long bargainId;
+
     @TableField("member_id")
     private Long memberId;
 
-    /**
-     * 添加时间
-     */
     @TableField("create_time")
     private Date createTime;
 
-    /**
-     * 收货人
-     */
     private String name;
 
-    private String shareimg;
-
-    private String spreadpic;
-
     /**
-     * 状态 0:砍价中 1:砍价成功 2:逾期失效 3:生成订单
+     * 状态
      */
     private Integer status;
 
+    /**
+     * 所属店铺
+     */
     @TableField("store_id")
     private Integer storeId;
 
-    @TableField("bargin_id")
-    private Long barginId;
+    private String pic;
 
-    @TableField("order_id")
-    private Long orderId;
+    @TableField("goods_id")
+    private Long goodsId;
 
-    @TableField(exist = false)
-    List<SmsBargainMember> list;
+    private BigDecimal price;
+
+
 }

@@ -355,7 +355,7 @@ public class SingePmsController extends ApiBaseAction {
             product.setPublishStatus(1);
             product.setVerifyStatus(1);
             product.setMemberId(null);
-            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
+            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids).select(ConstansValue.sampleGoodsList));
             return new CommonResult().success(list);
         }
         return null;

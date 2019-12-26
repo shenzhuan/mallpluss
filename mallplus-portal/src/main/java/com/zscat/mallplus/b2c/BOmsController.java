@@ -790,7 +790,20 @@ public class BOmsController extends ApiBaseAction {
         }
         objectMap.put("user", umsMember);
         objectMap.put("count", count);
+
+        redisService.set(key, JsonUtils.objectToJson(objectMap));
+        redisService.expire(key, 60);
+        return new CommonResult().success(objectMap);
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "服务菜单")
+    @ApiOperation(value = "服务菜单")
+    @PostMapping(value = "/menuList")
+    public Object menuList() {
         List<ServiceMenu> menuList = new ArrayList<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+
         menuList.add(new ServiceMenu("会员中心", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9934a7c.png", "/pages/user_vip/index", "/user/vip"));
         menuList.add(new ServiceMenu("砍价记录", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9918091.png", "/pages/activity/user_goods_bargain_list/index", "/activity/bargain/record"));
         menuList.add(new ServiceMenu("我的推广", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9943575.png", "/pages/user_spread_user/index", "/user/user_promotion"));
@@ -799,10 +812,14 @@ public class BOmsController extends ApiBaseAction {
         menuList.add(new ServiceMenu("我的收藏", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99269d1.png", "/pages/user_goods_collection/index", "/collection"));
         menuList.add(new ServiceMenu("优惠券", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc991f394.png", "/pages/user_coupon/index", "/user/user_coupon"));
         menuList.add(new ServiceMenu("联系客服", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/customer/list"));
-        objectMap.put("menuList", menuList);
-        redisService.set(key, JsonUtils.objectToJson(objectMap));
-        redisService.expire(key, 60);
-        return new CommonResult().success(objectMap);
+        if (umsMember != null && umsMember.getId() != null) {
+            if (ValidatorUtils.empty(umsMember.getRoomNums())) {
+                menuList.add(new ServiceMenu("绑定社区", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/BindingCommunity"));
+            } else {
+                menuList.add(new ServiceMenu(umsMember.getRoomDesc(), "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/index"));
+            }
+        }
+        return new CommonResult().success(menuList);
     }
 
     @IgnoreAuth

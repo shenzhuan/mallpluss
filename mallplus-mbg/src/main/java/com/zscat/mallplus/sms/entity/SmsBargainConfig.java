@@ -1,10 +1,16 @@
 package com.zscat.mallplus.sms.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -12,8 +18,10 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author zscat
- * @since 2019-10-17
+ * @since 2019-12-25
  */
+@Setter
+@Getter
 @TableName("sms_bargain_config")
 public class SmsBargainConfig implements Serializable {
 
@@ -22,25 +30,8 @@ public class SmsBargainConfig implements Serializable {
     /**
      * id
      */
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
-    /**
-     * 插件id
-     */
-    @TableField("plug_ins_id")
-    private Long plugInsId;
-
-    /**
-     * 能砍的次数
-     */
-    @TableField("can_num")
-    private Integer canNum;
-
-    /**
-     * 每天最多帮别人砍的次数
-     */
-    @TableField("help_num")
-    private Integer helpNum;
 
     /**
      * 每次砍价的参数
@@ -51,81 +42,41 @@ public class SmsBargainConfig implements Serializable {
      * 逾期失效时间
      */
     @TableField("invalid_time")
-    private Integer invalidTime;
+    private Date invalidTime;
 
     /**
      * 修改时间
      */
-    @TableField("add_time")
-    private LocalDateTime addTime;
+    @TableField("create_time")
+    private Date createTime;
+
+    @TableField("store_id")
+    private Integer storeId;
+
+    private Integer pepoles;
+    /**
+     * 商品
+     */
+    @TableField("goods_id")
+    private Long goodsId;
+
+    /**
+     * 原价
+     */
+    @TableField("origin_price")
+    private BigDecimal originPrice;
+
+    /**
+     * 成功价
+     */
+    private BigDecimal price;
+
+    @TableField("goods_name")
+    private String goodsName;
+    private String pic;
 
 
-    public Long getId() {
-        return id;
-    }
+    @TableField(exist = false)
+    PmsProduct goods;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getPlugInsId() {
-        return plugInsId;
-    }
-
-    public void setPlugInsId(Long plugInsId) {
-        this.plugInsId = plugInsId;
-    }
-
-    public Integer getCanNum() {
-        return canNum;
-    }
-
-    public void setCanNum(Integer canNum) {
-        this.canNum = canNum;
-    }
-
-    public Integer getHelpNum() {
-        return helpNum;
-    }
-
-    public void setHelpNum(Integer helpNum) {
-        this.helpNum = helpNum;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
-
-    public Integer getInvalidTime() {
-        return invalidTime;
-    }
-
-    public void setInvalidTime(Integer invalidTime) {
-        this.invalidTime = invalidTime;
-    }
-
-    public LocalDateTime getAddTime() {
-        return addTime;
-    }
-
-    public void setAddTime(LocalDateTime addTime) {
-        this.addTime = addTime;
-    }
-
-    @Override
-    public String toString() {
-        return "SmsBargainConfig{" +
-                ", id=" + id +
-                ", plugInsId=" + plugInsId +
-                ", canNum=" + canNum +
-                ", helpNum=" + helpNum +
-                ", parameter=" + parameter +
-                ", invalidTime=" + invalidTime +
-                ", addTime=" + addTime +
-                "}";
-    }
 }

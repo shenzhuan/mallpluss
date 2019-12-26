@@ -3,10 +3,11 @@ package com.zscat.mallplus.single;
 
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.build.BuildHomeResult;
+import com.zscat.mallplus.build.service.IBuildingCommunityService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
-import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.*;
@@ -94,25 +95,47 @@ public class SingeBuildController extends ApiBaseAction {
     @Autowired
     private IUmsMemberService memberService;
 
+    @Resource
+    private IBuildingCommunityService communityService;
 
+    @SysLog(MODULE = "pms", REMARK = "所有社区和房间")
+    @IgnoreAuth
+    @GetMapping(value = "/allCommunity")
+    @ApiOperation(value = "所有社区和房间")
+    public Object allCommunity() {
+        return new CommonResult().success(communityService.allCommunity());
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "绑定小区和房间")
+    @IgnoreAuth
+    @PostMapping(value = "/bindCommunity")
+    @ApiOperation(value = "绑定小区和房间")
+    public Object bindCommunity(@RequestParam(value = "selectedMore2", required = false, defaultValue = "0") String selectedMore2) {
+
+        try {
+            return communityService.bindCommunity(selectedMore2);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+    }
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
-    @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
-    public Object home_mobile() {
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
+    public Object home_mobile(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         String key = Rediskey.HOMEPAGEMOBILE;
         String json = redisService.get(key);
-        HomeContentResult contentResult = null;
+        BuildHomeResult contentResult = null;
         try {
             if (ValidatorUtils.empty(json)) {
-                contentResult = advertiseService.singelmobileContent();
+                contentResult = communityService.singleContent(id);
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
                 redisService.expire(key, 30);
             } else {
-                contentResult = JsonUtils.jsonToPojo(redisService.get(key), HomeContentResult.class);
+                contentResult = JsonUtils.jsonToPojo(redisService.get(key), BuildHomeResult.class);
             }
         } catch (Exception e) {
-            contentResult = advertiseService.singelmobileContent();
+            contentResult = communityService.singleContent(id);
             redisService.set(key, JsonUtils.objectToJson(contentResult));
             redisService.expire(key, 30);
         }

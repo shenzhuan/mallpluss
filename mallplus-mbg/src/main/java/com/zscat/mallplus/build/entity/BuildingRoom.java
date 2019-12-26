@@ -14,7 +14,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 小区
+ * 单元 房间
  * </p>
  *
  * @author zscat
