@@ -458,7 +458,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
         //这是要生成二维码的url
-        String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+        String url = "http://www.yjlive.cn:8082/?spread=" + user.getId();
         //要添加到二维码下面的文字
         String words = user.getUsername() + "的二维码";
         //调用刚才的工具类

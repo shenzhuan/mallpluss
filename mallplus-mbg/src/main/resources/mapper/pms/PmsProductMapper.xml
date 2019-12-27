@@ -49,6 +49,9 @@
         <result column="supply_id" property="supplyId"/>
         <result column="create_time" property="createTime"/>
         <result column="school_id" property="schoolId"/>
+        <result column="school_name" property="schoolName"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area_name" property="areaName"/>
         <result column="transfee" property="transfee"/>
     </resultMap>
 

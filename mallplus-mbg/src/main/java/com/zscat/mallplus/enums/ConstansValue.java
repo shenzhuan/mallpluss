@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class ConstansValue {
     public static final List<String> IGNORE_TENANT_TABLES = Lists.newArrayList("sys_admin_log", "sys_web_log", "sys_permission_category", "columns", "tables", "information_schema.columns",
-            "information_schema.tables", "oms_payments", "sys_store", "sys_permission", "pms_product_attribute", "pms_product_category_attribute_relation", "pms_product_attribute_value",
+            "information_schema.tables", "oms_payments", "sys_store", "sys_area", "sys_school", "sys_permission", "pms_product_attribute", "pms_product_category_attribute_relation", "pms_product_attribute_value",
             "pms_product_category_attribute_relation", "bak_category", "bak_goods", "bak_brand", "ums_member_level", "building_user_community","gen_config");
 
     public static final String sampleGoodsList = "id, brand_id, product_category_id, feight_template_id, product_attribute_category_id, name, pic, product_sn,\n" +
