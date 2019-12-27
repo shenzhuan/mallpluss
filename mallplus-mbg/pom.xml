@@ -130,6 +130,11 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.zscat.mallplus</groupId>
+            <artifactId>mallplus-monitor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -6,6 +6,7 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.BargainEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.notice.NoticeComponents;
 import com.zscat.mallplus.oms.entity.*;
 import com.zscat.mallplus.oms.mapper.OmsCartItemMapper;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -74,6 +75,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> implements IOmsOrderService {
+
+    @Autowired
+    private NoticeComponents noticeComponents;
 
     @Resource
     private ISmsGroupActivityService smsGroupActivityService;
@@ -775,6 +779,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             stopWatch.stop();
         }
         log.info(stopWatch.prettyPrint());
+        noticeComponents.createOrderSucess("用户" + currentMember.getUsername() + "创建了订单" + order.getId() + ",商品名称" + order.getGoodsName());
         return new CommonResult().success("下单成功", result);
     }
 

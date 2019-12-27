@@ -1,0 +1,30 @@
+package com;
+
+import com.zscat.mallplus.notice.AnotherComponent;
+import com.zscat.mallplus.notice.NoticeComponents;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = MallPortalApplicationTests.class)
+public class DemoApplicationTests {
+
+    @Autowired
+    private AnotherComponent anotherComponent;
+
+    @Test
+    public void contextLoads1() {
+        anotherComponent.giveMeError();
+    }
+
+    @Autowired
+    private NoticeComponents noticeComponents;
+
+    @Test
+    public void contextLoads() {
+        noticeComponents.someMethod("赵四");
+    }
+}
