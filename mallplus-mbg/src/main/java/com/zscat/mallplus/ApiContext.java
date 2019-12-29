@@ -19,7 +19,7 @@ public class ApiContext {
          threadLocal.set(providerId);
      }*/
     private static final Map<String, Object> mContext = Maps.newConcurrentMap();
-    private static ThreadLocal<Long> threadLocal = new ThreadLocal<>();
+    private static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
     // private static final Map<String, Object> mContext = Maps.newConcurrentMap();
 
    /* public Long getCurrentProviderId() {
@@ -45,11 +45,11 @@ public class ApiContext {
     }*/
     private static ThreadLocal<ConcurrentMap> contextHolder = new ThreadLocal<>();
 
-    public Long getCurrentProviderId() {
-        return (Long) mContext.get(KEY_CURRENT_PROVIDER_ID);
+    public Integer getCurrentProviderId() {
+        return (Integer) mContext.get(KEY_CURRENT_PROVIDER_ID);
     }
 
-    public void setCurrentProviderId(Long providerId) {
+    public void setCurrentProviderId(Integer providerId) {
         mContext.put(KEY_CURRENT_PROVIDER_ID, providerId);
     }
 }

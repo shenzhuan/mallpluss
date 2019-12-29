@@ -168,17 +168,35 @@ public class SingePmsController extends ApiBaseAction {
     @IgnoreAuth
     @ApiOperation(value = "查询商品列表")
     @GetMapping(value = "/goods/list")
-    public Object goodsList(PmsProduct product,
+    public Object goodsList(
+            @RequestParam(value = "storeId", required = false) Integer storeId,
+            @RequestParam(value = "sort", required = false) Integer sort,
+            @RequestParam(value = "keyword", required = false) String keyword,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
         product.setVerifyStatus(1);
         product.setMemberId(null);
+        product.setSort(sort);
+        if (ValidatorUtils.notEmpty(storeId)){
+            product.setStoreId(storeId);
+        }
+        String orderColum="create_time";
+        if (ValidatorUtils.notEmpty(product.getSort())){
+            if (product.getSort()==1){
+                orderColum="sale";
+            }else  if (product.getSort()==2){
+                orderColum="price";
+            }else  if (product.getSort()==3){
+                orderColum="price";
+            }
+        }
         IPage<PmsProduct> list;
-        if (ValidatorUtils.notEmpty(product.getKeyword())) {
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", product.getKeyword()).select(ConstansValue.sampleGoodsList));
+        if (ValidatorUtils.notEmpty(keyword)) {
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name",keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
         } else {
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList));
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
         }
         return new CommonResult().success(list);
     }

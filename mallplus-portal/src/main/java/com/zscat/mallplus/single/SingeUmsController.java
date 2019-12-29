@@ -261,38 +261,7 @@ public class SingeUmsController extends ApiBaseAction {
         }
     }
 
-    @SysLog(MODULE = "sys", REMARK = "保存")
-    @ApiOperation("保存")
-    @PostMapping(value = "/applyStore")
-    @Transactional
-    public Object applyStore(SysStore entity) {
-        try {
-            entity.setTryTime(new Date());
-            entity.setCreateTime(new Date());
-            UmsMember umsMember = memberService.getNewCurrentMember();
-            if (storeMapper.insert(entity) > 0) {
-                SysUser user = new SysUser();
-                user.setUsername(umsMember.getUsername());
-                SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-                if (umsAdminList != null && umsAdminList.getId() != null) {
-                    return new CommonResult().failed("保存失败");
-                }
-                user.setStatus(1);
 
-                user.setPassword(umsMember.getPassword());
-                user.setCreateTime(new Date());
-                user.setIcon(entity.getLogo());
-                user.setNickName(entity.getName());
-                //user.setStoreId(entity.getId());
-                user.setEmail(entity.getSupportPhone());
-                userMapper.insert(user);
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            return new CommonResult().failed(e.getMessage());
-        }
-        return new CommonResult().failed("保存失败");
-    }
 
     /*@ApiOperation(value = "会员绑定区域")
     @PostMapping(value = "/bindArea")

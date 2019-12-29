@@ -210,7 +210,6 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
 数据文件： /usr/local/mysql/data
 
-默认密码： uAiqwVwjJ8-i
 
 命令：     systemctl (start|stop|restart|disable) mysql
 

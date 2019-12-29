@@ -428,14 +428,14 @@ public class BHomeController {
     }
 
     @IgnoreAuth
-    @PostMapping("/upload")
+    @PostMapping("/api/upload")
     @ApiOperation("上传文件")
     public Object upload(@RequestParam("file") MultipartFile file) throws Exception {
         return new CommonResult().success(aliyunOSSUtil.upload(file));
     }
 
     @IgnoreAuth
-    @PostMapping("/uploads")
+    @PostMapping("/api/uploads")
     @ApiOperation("多文件上传文件")
     public Object uploads(@RequestPart("file") MultipartFile[] file) throws Exception {
         StringBuffer stringBuffer = new StringBuffer();

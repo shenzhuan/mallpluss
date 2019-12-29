@@ -85,11 +85,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         String storeId = request.getParameter("storeid");
         if (ValidatorUtils.notEmpty(storeId)) {
-            apiContext.setCurrentProviderId(Long.valueOf(storeId));
+            apiContext.setCurrentProviderId(Integer.valueOf(storeId));
         } else {
             storeId = request.getHeader("storeid");
             if (ValidatorUtils.notEmpty(storeId)) {
-                apiContext.setCurrentProviderId(Long.valueOf(storeId));
+                apiContext.setCurrentProviderId(Integer.valueOf(storeId));
             }
         }
         logger.info(formMapKey(11, fullUrl, requestType,
