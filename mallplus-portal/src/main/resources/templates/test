@@ -210,7 +210,6 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
 数据文件： /usr/local/mysql/data
 
-
 命令：     systemctl (start|stop|restart|disable) mysql
 
 示例：    启动mysql  systemctl start mysql
@@ -219,7 +218,12 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
           禁止mysql  systemctl disable mysql
 
+https://www.cnblogs.com/lywJ/p/10697460.html
 
+/usr/local/redis/redis-4.0.9/src
+
+/etc/init.d/redis_6379 start
+/etc/init.d/redis_6379 stop
 
 ################################ Nginx ##################################
 
