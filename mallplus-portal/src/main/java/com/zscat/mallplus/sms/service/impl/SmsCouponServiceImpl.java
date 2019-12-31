@@ -3,12 +3,8 @@ package com.zscat.mallplus.sms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.sms.entity.SmsCoupon;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
-import com.zscat.mallplus.sms.entity.SmsCouponProductCategoryRelation;
-import com.zscat.mallplus.sms.entity.SmsCouponProductRelation;
-import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
-import com.zscat.mallplus.sms.mapper.SmsCouponMapper;
+import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.mapper.*;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -36,6 +32,13 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon> implements ISmsCouponService {
+
+    @Resource
+    private SmsBargainConfigMapper bargainConfigMapper;
+    @Resource
+    private SmsBargainRecordMapper bargainRecordMapper;
+    @Resource
+    private SmsBargainMemberMapper bargainMemberMapper;
 
     @Resource
     private IUmsMemberService memberService;
@@ -326,5 +329,12 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
             }
         }
         return total;
+    }
+
+    @Transactional
+    @Override
+    public void insertBarginRe(SmsBargainRecord groupRecords, SmsBargainMember query) {
+        bargainRecordMapper.insert(groupRecords);
+        bargainMemberMapper.insert(query);
     }
 }

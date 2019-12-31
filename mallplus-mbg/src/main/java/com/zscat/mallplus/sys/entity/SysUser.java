@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,7 +19,7 @@ import java.util.Date;
  */
 @Data
 @TableName("sys_user")
-public class SysUser extends BaseEntity implements Serializable {
+public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -88,4 +87,7 @@ public class SysUser extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private String code;
+
+    @TableField("store_id")
+    private Integer storeId;
 }

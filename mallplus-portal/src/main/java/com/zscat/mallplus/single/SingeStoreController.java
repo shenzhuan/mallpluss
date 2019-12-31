@@ -1,33 +1,13 @@
 package com.zscat.mallplus.single;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.cms.service.ISysAreaService;
-import com.zscat.mallplus.cms.service.ISysSchoolService;
-import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
-import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
-import com.zscat.mallplus.pms.mapper.PmsProductMapper;
-import com.zscat.mallplus.pms.service.IPmsFavoriteService;
-import com.zscat.mallplus.pms.service.IPmsProductService;
-import com.zscat.mallplus.sys.entity.SysArea;
-import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
-import com.zscat.mallplus.sys.mapper.SysStoreMapper;
-import com.zscat.mallplus.sys.mapper.SysUserMapper;
-import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
-import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
 import com.zscat.mallplus.ums.service.IStoreService;
-import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
@@ -38,14 +18,10 @@ import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,17 +39,19 @@ public class SingeStoreController extends ApiBaseAction {
     private IStoreService storeService;
     @Autowired
     private RedisService redisService;
+    @Resource
+    private RedisUtil redisUtil;
 
     @SysLog(MODULE = "sys", REMARK = "保存")
     @ApiOperation("保存")
     @PostMapping(value = "/applyStore")
     public Object applyStore(SysStore entity) {
         try {
-            storeService.applyStore(entity);
+            return storeService.applyStore(entity);
         } catch (Exception e) {
+            e.printStackTrace();
             return new CommonResult().failed(e.getMessage());
         }
-        return new CommonResult().failed("保存失败");
     }
 
 
@@ -105,10 +83,45 @@ public class SingeStoreController extends ApiBaseAction {
             if (member==null){
                 return new CommonResult().fail(100);
             }
-            id=member.getStoreId();
+            id = memberService.getById(member.getId()).getStoreId();
         }
         SysStore store = storeService.getById(id);
+        //记录浏览量到redis,然后定时更新到数据库
+        String key = Rediskey.STORE_VIEWCOUNT_CODE + id;
+        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
+        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.STORE_VIEWCOUNT_KEY);
+        Integer viewCount = 0;
+        if (!viewCountItem.isEmpty()) {
+            if (viewCountItem.containsKey(key)) {
+                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, viewCount + "");
+            } else {
+                viewCount = 1;
+                redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
+            }
+        } else {
+            redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
+        }
         return new CommonResult().success(store);
+    }
+
+    @ApiOperation("获取店铺详情")
+    @RequestMapping(value = "/detail1", method = RequestMethod.GET)
+    @ResponseBody
+    public Object detail1(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+        Map map = new HashMap();
+        if (ValidatorUtils.empty(id)) {
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member == null) {
+                return new CommonResult().fail(100);
+            }
+            UmsMember newMember = memberService.getById(member.getId());
+            id = newMember.getStoreId();
+            map.put("member", newMember);
+        }
+        SysStore store = storeService.getById(id);
+        map.put("store", store);
+        return new CommonResult().success(map);
     }
     @ApiOperation("获取店铺详情")
     @RequestMapping(value = "/home", method = RequestMethod.GET)
@@ -122,24 +135,25 @@ public class SingeStoreController extends ApiBaseAction {
                 if (member==null){
                     return new CommonResult().fail(100);
                 }
-                id=member.getStoreId();
+                UmsMember newMember = memberService.getById(member.getId());
+                id = newMember.getStoreId();
             }
             if (ValidatorUtils.empty(id)){
-                return new CommonResult().failed("weikaitou");
+                return new CommonResult().failed("商户申请中");
             }
             key = String.format(Rediskey.STOREHOMEPAGEMOBILE, id);
             String json = redisService.get(key);
             if (ValidatorUtils.empty(json)) {
                 contentResult = storeService.singeleContent(id);
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 360);
+                redisService.expire(key, 60);
             } else {
                 contentResult = JsonUtils.jsonToPojo(redisService.get(key), StoreContentResult.class);
             }
         } catch (Exception e) {
             contentResult = storeService.singeleContent(id);
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 360);
+            redisService.expire(key, 60);
         }
         return new CommonResult().success(contentResult);
     }

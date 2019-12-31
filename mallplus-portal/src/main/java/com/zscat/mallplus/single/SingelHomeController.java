@@ -90,7 +90,8 @@ public class SingelHomeController {
         if (umsMember != null && umsMember.getId() != null) {
             List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", umsMember.getId()));
             detail.setHistories(histories);
-            detail.setMember(umsMember);
+            UmsMember newMember = memberService.getById(umsMember.getId());
+            detail.setMember(newMember);
             return new CommonResult().success(detail);
         }
         return new CommonResult().failed();

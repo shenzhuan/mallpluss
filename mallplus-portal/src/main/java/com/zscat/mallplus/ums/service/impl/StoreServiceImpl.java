@@ -15,9 +15,7 @@ import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
-import com.zscat.mallplus.ums.entity.OmsShip;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.mapper.OmsShipMapper;
 import com.zscat.mallplus.ums.service.IStoreService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -53,6 +51,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     @Override
     @Transactional
     public Object applyStore(SysStore entity) {
+
         entity.setStatus(1);
         entity.setTryTime(new Date());
         entity.setCreateTime(new Date());
@@ -60,20 +59,22 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
         if (umsMember == null) {
             return new CommonResult().fail(100);
         }
-        if (storeMapper.insert(entity) > 0) {
+        if (1 > 0) {
             SysUser user = new SysUser();
             user.setUsername(umsMember.getUsername());
             SysUser umsAdminList = userMapper.selectByUserName(umsMember.getUsername());
             if (umsAdminList != null && umsAdminList.getId() != null) {
                 return new CommonResult().failed("你已申请");
             }
-            user.setStatus(1);
+            storeMapper.insert(entity);
+            user.setStatus(3);
             user.setPassword(umsMember.getPassword());
             user.setCreateTime(new Date());
             user.setIcon(entity.getLogo());
             user.setNickName(entity.getName());
             user.setStoreId(entity.getId());
             user.setEmail(entity.getSupportPhone());
+            user.setStoreName(entity.getName());
             userMapper.insert(user);
             umsMember.setStoreId(entity.getId());
             memberService.updateById(umsMember);

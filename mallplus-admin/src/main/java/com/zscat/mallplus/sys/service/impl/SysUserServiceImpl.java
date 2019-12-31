@@ -1,5 +1,6 @@
 package com.zscat.mallplus.sys.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ApiContext;
@@ -121,6 +122,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
             apiContext.setCurrentProviderId(UserUtils.getCurrentMember().getStoreId());
+            log.info(JSONObject.toJSONString(UserUtils.getCurrentMember()));
             this.removePermissRedis(UserUtils.getCurrentMember().getId());
         } catch (AuthenticationException e) {
             log.warn("登录异常:{}", e.getMessage());

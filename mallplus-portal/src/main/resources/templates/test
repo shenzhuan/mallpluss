@@ -5,13 +5,15 @@ netstat -ntulp |grep 80 //查看所有80端口使用情况·
 
 39.106.212.32
 
- nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT1.jar >web1.log 2>&1 &
 
-nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT1.jar >web1.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
-nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
 
-nohup java -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
 
 
 nohup java -jar /root/jm/bootdo-1.5.0.jar >blog.log 2>&1 &
@@ -222,6 +224,8 @@ https://www.cnblogs.com/lywJ/p/10697460.html
 
 /usr/local/redis/redis-4.0.9/src
 
+rm -rf /var/run/redis_6379.pid
+
 /etc/init.d/redis_6379 start
 /etc/init.d/redis_6379 stop
 
@@ -285,6 +289,8 @@ https://pub.alimama.com/?spm=a2321.7393627.1998051820.1.98f118e2koGcdA
 功能列表 https://www.processon.com/view/link/5da6a3d9e4b0ea86c2b2a817
 <iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:525px; height:245px;" src="https://www.processon.com/embed/mind/5d9f0933e4b06b7d6ec5b3ef"></iframe>
 
+YIJUNlive0322
+
 DELETE FROM admin_day_statics;
 DELETE FROM admin_sys_job_log;
 DELETE FROM sys_admin_log;
@@ -337,3 +343,72 @@ wxeca56e2ff8f277d9
 2681196506@qq.com
 wx0c1055c6158f7851
 baa79ed796ec18e932c547fe009d9af0
+
+
+put -r /Users/java/gen/jdk-8u191-linux-x64.tar.gz  /root/soft
+
+mv jdk-8u191-linux-x64.tar.gz /usr/local/jdk/
+
+#set java environment
+JAVA_HOME=/usr/local/jdk/jdk1.8.0_191
+CLASSPATH=.:$JAVA_HOME/lib.tools.jar
+PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME CLASSPATH PATH
+
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/local/nginx/sbin/nginx --conf-path=/usr/local/nginx/conf/nginx.conf --with-http_stub_status_module --with-http_ssl_module  && make && make install
+
+
+
+ cd /usr/local/nginx
+          nginx -s reload
+
+vim /usr/local/nginx/conf/nginx.conf
+
+# systemctl start nginx               启动服务
+
+# systemctl stop nginx               停止服务
+
+# systemctl restart nginx             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status nginx                查看服务当前状态
+
+# systemctl enable nginx               设置开机自启动
+
+#systemctl disable nginx               停止开机自启动
+
+
+
+# systemctl start redis               启动服务
+
+# systemctl stop redis               停止服务
+
+# systemctl restart redis             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status redis                查看服务当前状态
+
+# systemctl enable redis               设置开机自启动
+
+#systemctl disable redis               停止开机自启动
+
+
+Xl;7GrjQXt*8
+
+# systemctl start mysqld              启动服务
+
+# systemctl stop mysqld                停止服务
+
+# systemctl restart mysqld              重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status mysqld              查看服务当前状态
+
+# systemctl enable mysqld             设置开机自启动
+
+#systemctl disable mysqld             停止开机自启动
+
+https://www.jianshu.com/p/19f6b809d255
