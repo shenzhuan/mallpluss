@@ -1,6 +1,8 @@
 
 
 
+nohup java -Xms128m -Xmx256m -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+
 39.106.212.32
 put -r /Users/java/test/git/meihuang_admin_vue/h5bak  /root/jm
 put -r /Users/java/test/git/mallplus/mallplus-admin/target/meizhuang-admin-0.0.1-SNAPSHOT.jar  /root/jm
