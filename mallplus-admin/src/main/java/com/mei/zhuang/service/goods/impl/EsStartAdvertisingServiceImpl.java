@@ -33,7 +33,7 @@ public class EsStartAdvertisingServiceImpl extends ServiceImpl<EsStartAdvertisin
     @Override
     public Object select(EsStartAdvertising entity) {
         PageHelper.startPage(entity.getCurrent(), entity.getSize());
-        return new CommonResult().success(PageInfo.of(esStartAdvertisingMapper.selectList(new QueryWrapper<EsStartAdvertising>())));
+        return PageInfo.of(esStartAdvertisingMapper.selectList(new QueryWrapper<EsStartAdvertising>()));
 
     }
 

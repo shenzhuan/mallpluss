@@ -953,7 +953,9 @@ public class DataViewServiceImpl implements DataViewService {
             if (resultByMonthData.getString("errcode") != null) {
                 return null;
             }
-            result = JSON.parseArray(resultByMonthData.getString("list")).getJSONObject(0);
+            if (resultByMonthData.getString("list")!=null){
+                result = JSON.parseArray(resultByMonthData.getString("list")).getJSONObject(0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -9,7 +9,6 @@
         <result column="contact_mobile" property="contactMobile"/>
         <result column="contact_name" property="contactName"/>
         <result column="logo" property="logo"/>
-        <result column="status" property="status"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 

@@ -18,10 +18,10 @@ import java.util.Date;
 @TableName("es_shop_brand")
 public class EsShopBrand {
 
-    @TableId(value = "id", type = IdType.AUTO)     private Long id;
-
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
+    private Long brandNo;
     private Long brandId;
-
     private String brandName;
 
     private String contactMobile;
@@ -30,7 +30,7 @@ public class EsShopBrand {
 
     private String logo;
 
-    private Integer status;
+    private Integer isDelete;
 
     private Date createTime;
 
