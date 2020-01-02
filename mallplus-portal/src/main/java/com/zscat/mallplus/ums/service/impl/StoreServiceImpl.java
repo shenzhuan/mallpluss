@@ -13,8 +13,10 @@ import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.sys.entity.SysUserRole;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
+import com.zscat.mallplus.sys.mapper.SysUserRoleMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IStoreService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
@@ -42,6 +44,8 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     @Resource
     SysUserMapper userMapper;
     @Resource
+    SysUserRoleMapper userRoleMapper;
+    @Resource
     IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
     IPmsProductService productService;
@@ -68,6 +72,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             }
             storeMapper.insert(entity);
             user.setStatus(3);
+            user.setSupplyId(1L);
             user.setPassword(umsMember.getPassword());
             user.setCreateTime(new Date());
             user.setIcon(entity.getLogo());
@@ -78,6 +83,11 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             userMapper.insert(user);
             umsMember.setStoreId(entity.getId());
             memberService.updateById(umsMember);
+
+            SysUserRole userRole = new SysUserRole();
+            userRole.setRoleId(1L);
+            userRole.setAdminId(user.getId());
+            userRoleMapper.insert(userRole);
             return new CommonResult().success(entity);
         }
         return new CommonResult().failed("");
