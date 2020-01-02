@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <groupId>com.zscat.mallplus</groupId>
-    <artifactId>mallplus-admin</artifactId>
+    <groupId>com.zscat.meizhuang</groupId>
+    <artifactId>meizhuang-admin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>mallplus-admin</name>
-    <description>mallplus-admin project for mall</description>
+    <name>meizhuang-admin</name>
+    <description>meizhuang-admin project for mall</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -42,9 +42,9 @@
 
 
         <dependency>
-            <groupId>com.zscat.mallplus</groupId>
-            <artifactId>mallplus-mbg</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.zscat.meizhuang</groupId>
+            <artifactId>meizhuang-mbg</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
