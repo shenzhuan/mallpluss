@@ -1,7 +1,5 @@
 package com.cxytiandi.encrypt.springboot.annotation;
 
-import java.lang.annotation.*;
-
 /**
  * 指定某个方法不需要加密
  *

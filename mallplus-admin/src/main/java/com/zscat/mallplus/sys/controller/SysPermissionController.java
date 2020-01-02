@@ -47,8 +47,8 @@ public class SysPermissionController extends BaseController {
                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            if (ValidatorUtils.notEmpty(entity.getName())){
-                return new CommonResult().success(ISysPermissionService.list(new QueryWrapper<SysPermission>(new SysPermission()).like("name",entity.getName()).orderByAsc("sort")));
+            if (ValidatorUtils.notEmpty(entity.getName())) {
+                return new CommonResult().success(ISysPermissionService.list(new QueryWrapper<SysPermission>(new SysPermission()).like("name", entity.getName()).orderByAsc("sort")));
             }
             return new CommonResult().success(ISysPermissionService.list(new QueryWrapper<>(entity).orderByAsc("sort")));
         } catch (Exception e) {

@@ -22,27 +22,27 @@ public class ApiContext {
     private static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
     // private static final Map<String, Object> mContext = Maps.newConcurrentMap();
 
-   /* public Long getCurrentProviderId() {
-        ConcurrentMap mContext=contextHolder.get();
-        System.out.println("1="+mContext);
+    /* public Long getCurrentProviderId() {
+         ConcurrentMap mContext=contextHolder.get();
+         System.out.println("1="+mContext);
 
-        if (mContext==null){
-            return 0l;
-        }
-        System.out.println("2="+mContext.get(KEY_CURRENT_PROVIDER_ID));
-        return (Long) mContext.get(KEY_CURRENT_PROVIDER_ID);
-    }
+         if (mContext==null){
+             return 0l;
+         }
+         System.out.println("2="+mContext.get(KEY_CURRENT_PROVIDER_ID));
+         return (Long) mContext.get(KEY_CURRENT_PROVIDER_ID);
+     }
 
-    public void setCurrentProviderId(Long providerId) {
-        ConcurrentMap mContext=contextHolder.get();
-        if (mContext==null){
-            mContext= Maps.newConcurrentMap();
-        }
-        mContext.put(KEY_CURRENT_PROVIDER_ID,providerId);
+     public void setCurrentProviderId(Long providerId) {
+         ConcurrentMap mContext=contextHolder.get();
+         if (mContext==null){
+             mContext= Maps.newConcurrentMap();
+         }
+         mContext.put(KEY_CURRENT_PROVIDER_ID,providerId);
 
-        System.out.println("3="+mContext);
-        contextHolder.set(mContext);
-    }*/
+         System.out.println("3="+mContext);
+         contextHolder.set(mContext);
+     }*/
     private static ThreadLocal<ConcurrentMap> contextHolder = new ThreadLocal<>();
 
     public Integer getCurrentProviderId() {

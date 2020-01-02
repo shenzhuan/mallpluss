@@ -97,9 +97,9 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     public StoreContentResult singeleContent(Integer id) {
         StoreContentResult result = new StoreContentResult();
         List<PmsProductAttributeCategory> categoryList = productAttributeCategoryService.page(new Page<PmsProductAttributeCategory>(0, 10), new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", id)).getRecords();
-        if (categoryList!=null && categoryList.size()>5){
-            result.setCategoryList(categoryList.subList(0,5));
-            result.setCategoryList1(categoryList.subList(5,categoryList.size()-1));
+        if (categoryList != null && categoryList.size() > 5) {
+            result.setCategoryList(categoryList.subList(0, 5));
+            result.setCategoryList1(categoryList.subList(5, categoryList.size() - 1));
         }
         PmsProduct product = new PmsProduct();
         product.setVerifyStatus(1);

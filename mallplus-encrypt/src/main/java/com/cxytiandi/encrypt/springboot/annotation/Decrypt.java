@@ -1,7 +1,5 @@
 package com.cxytiandi.encrypt.springboot.annotation;
 
-import java.lang.annotation.*;
-
 /**
  * 解密注解
  * <p>

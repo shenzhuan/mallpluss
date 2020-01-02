@@ -109,12 +109,14 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().success(orderDetailResult);
     }
+
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/itemDetail", method = RequestMethod.GET)
     @ResponseBody
     public Object itemDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         return new CommonResult().success(orderItemService.getById(id));
     }
+
     @SysLog(MODULE = "小程序订单管理", REMARK = "取消订单")
     @ApiOperation("关闭订单")
     @RequestMapping(value = "/closeOrder", method = RequestMethod.POST)
@@ -176,6 +178,7 @@ public class SingeOmsController extends ApiBaseAction {
     public Object applyRe(@RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
         return orderService.applyRe(items);
     }
+
     @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
@@ -243,6 +246,7 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     /**
      * 提交订单
      *
@@ -290,6 +294,7 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     /**
      * 查看物流
      */

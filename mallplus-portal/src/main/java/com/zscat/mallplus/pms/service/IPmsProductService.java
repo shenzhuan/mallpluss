@@ -19,7 +19,6 @@ import java.util.Map;
 public interface IPmsProductService extends IService<PmsProduct> {
 
 
-
     /**
      * 查询商品详情
      *

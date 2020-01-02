@@ -115,7 +115,6 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private IUmsMemberService memberService;
 
 
-
     @Override
     public PmsProduct getUpdateInfo(Long id) {
         return productMapper.selectById(id);

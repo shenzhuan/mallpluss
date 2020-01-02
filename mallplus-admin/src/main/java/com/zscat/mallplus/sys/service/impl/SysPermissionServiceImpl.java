@@ -58,7 +58,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             for (SysPermission sysMenuDO : menuDOs) {
                 Tree<SysPermission> tree = new Tree<SysPermission>();
                 tree.setId(sysMenuDO.getId().toString());
-                if (ValidatorUtils.notEmpty(sysMenuDO.getPid())){
+                if (ValidatorUtils.notEmpty(sysMenuDO.getPid())) {
                     tree.setParentId(sysMenuDO.getPid().toString());
                 }
 

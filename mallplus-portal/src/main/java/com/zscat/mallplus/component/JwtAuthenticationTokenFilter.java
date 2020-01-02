@@ -106,7 +106,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer")) {
             String authToken = authHeader.substring("Bearer".length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
-            LOGGER.info("checking username:{}，storeId:{}", username,storeId);
+            LOGGER.info("checking username:{}，storeId:{}", username, storeId);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (userDetails != null && userDetails.getUsername() != null) {
                 if (userDetails != null && jwtTokenUtil.validateToken(authToken, userDetails)) {

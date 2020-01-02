@@ -111,6 +111,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Autowired
     private ApiContext apiContext;
     private OkHttpClient okHttpClient = new OkHttpClient();
+
     @Override
     public UmsMember getNewCurrentMember() {
         return (UmsMember) this.getCurrentMember();
@@ -125,7 +126,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             String result = AES.wxDecrypt(encDataStr, keyStr, ivStr);
             Gson gson = new Gson();
             wxPhoneInfo = gson.fromJson(result, WxPhoneInfo.class);
-            if (wxPhoneInfo!=null){
+            if (wxPhoneInfo != null) {
                 return wxPhoneInfo.getPhoneNumber();
             }
         } catch (Exception e) {
@@ -133,20 +134,21 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
         return null;
     }
+
     @Override
-    public Object webLogin(String wxH5Appid,String wxH5Secret, String code) {
+    public Object webLogin(String wxH5Appid, String wxH5Secret, String code) {
         //H5 微信公众号网页登录
         try {
             log.info("https://api.weixin.qq.com/sns/oauth2/access_token?appid="
                     + wxH5Appid + "&secret=" + wxH5Secret + "&code=" + code + "&grant_type=authorization_code");
-        String json = okHttpClient.newCall(
-                new Request.Builder().url("https://api.weixin.qq.com/sns/oauth2/access_token?appid="
-                        + wxH5Appid + "&secret=" + wxH5Secret + "&code=" + code + "&grant_type=authorization_code").build()).execute().body().string();
-        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(json);
-        log.info(jsonObject.toJSONString());
-        Integer errcode = jsonObject.getInteger("errcode");
-        if (errcode == null || errcode == 0) {
-            String openid = jsonObject.getString("openid");
+            String json = okHttpClient.newCall(
+                    new Request.Builder().url("https://api.weixin.qq.com/sns/oauth2/access_token?appid="
+                            + wxH5Appid + "&secret=" + wxH5Secret + "&code=" + code + "&grant_type=authorization_code").build()).execute().body().string();
+            com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(json);
+            log.info(jsonObject.toJSONString());
+            Integer errcode = jsonObject.getInteger("errcode");
+            if (errcode == null || errcode == 0) {
+                String openid = jsonObject.getString("openid");
                 Map<String, Object> resultObj = new HashMap<String, Object>();
                 UmsMember userVo = this.queryByOpenId(openid);
                 String token = null;
@@ -163,16 +165,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     umsMember.setWeixinOpenid(openid);
                     memberMapper.insert(umsMember);
                     token = jwtTokenUtil.generateToken(umsMember.getUsername());
-                    resultObj.put("userId" , umsMember.getId());
-                    resultObj.put("userInfo" , umsMember);
-                    addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分" , AllEnum.ChangeSource.register.code(), umsMember.getUsername());
+                    resultObj.put("userId", umsMember.getId());
+                    resultObj.put("userInfo", umsMember);
+                    addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
 
                 } else {
-                    addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分" , AllEnum.ChangeSource.login.code(), userVo.getUsername());
+                    addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
 
                     token = jwtTokenUtil.generateToken(userVo.getUsername());
-                    resultObj.put("userId" , userVo.getId());
-                    resultObj.put("userInfo" , userVo);
+                    resultObj.put("userId", userVo.getId());
+                    resultObj.put("userInfo", userVo);
                 }
 
 
@@ -180,21 +182,21 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     throw new ApiMallPlusException("登录失败");
 
                 }
-                resultObj.put("tokenHead" , tokenHead);
-                resultObj.put("token" , token);
+                resultObj.put("tokenHead", tokenHead);
+                resultObj.put("token", token);
 
 
                 return new CommonResult().success(resultObj);
-        }else {
-            throw new ApiMallPlusException(jsonObject.toJSONString());
-        }
-            } catch (ApiMallPlusException e) {
-                e.printStackTrace();
-                throw new ApiMallPlusException(e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new ApiMallPlusException(e.getMessage());
+            } else {
+                throw new ApiMallPlusException(jsonObject.toJSONString());
             }
+        } catch (ApiMallPlusException e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        }
 
     }
 
@@ -208,7 +210,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 return null;
             }
             UmsMember member = UserUtils.getCurrentMember();
-            if (member!=null && member.getId()!=null){
+            if (member != null && member.getId() != null) {
                 return member;
             }
             String storeId = request.getParameter("storeid");
@@ -224,13 +226,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 if (ValidatorUtils.notEmpty(username)) {
-                     member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                    member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
                     if (member == null || member.getId() == null) {
                         member = getByUsername(username);
                     }
                     return member;
                 }
-            }else {
+            } else {
                 return new UmsMember();
             }
             return new CommonResult().fail(100);
@@ -593,23 +595,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         resultObj.put("token", token);
         return resultObj;
     }
+
     @Override
-    public Object getAppletOpenId(AppletLoginParam req){
-    SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
-    if (null == appletSet) {
-        throw new ApiMallPlusException("没有设置支付配置");
-    }
-    String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-    String code = req.getCode();
-    if (StringUtils.isEmpty(code)) {
-        log.error("code ie empty");
-        throw new ApiMallPlusException("code ie empty");
-    }
-    //获取openid
-    String requestUrl = String.format(webAccessTokenhttps,
-            appletSet.getAppid(),
-            appletSet.getAppsecret(),
-            code);
+    public Object getAppletOpenId(AppletLoginParam req) {
+        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        if (null == appletSet) {
+            throw new ApiMallPlusException("没有设置支付配置");
+        }
+        String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+        String code = req.getCode();
+        if (StringUtils.isEmpty(code)) {
+            log.error("code ie empty");
+            throw new ApiMallPlusException("code ie empty");
+        }
+        //获取openid
+        String requestUrl = String.format(webAccessTokenhttps,
+                appletSet.getAppid(),
+                appletSet.getAppsecret(),
+                code);
 
 
         JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
@@ -626,7 +629,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
         }
         return new CommonResult().success(sessionData.getString("openid"));
-}
+    }
+
     @Override
     public Object loginByWeixin(AppletLoginParam req) {
         try {
@@ -638,11 +642,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             Map<String, Object> resultObj = new HashMap<String, Object>();
             UmsMember userVo = new UmsMember();
             // 判断是否绑定了手机号
-            if (ValidatorUtils.notEmpty(req.getPhone())){
+            if (ValidatorUtils.notEmpty(req.getPhone())) {
                 UmsMember queryO = new UmsMember();
                 queryO.setPhone(req.getPhone());
-                userVo= memberMapper.selectOne(new QueryWrapper<>(queryO));
-            }else {
+                userVo = memberMapper.selectOne(new QueryWrapper<>(queryO));
+            } else {
                 throw new ApiMallPlusException("登录失败 请先绑定手机号");
             }
 
@@ -679,13 +683,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
 
             } else {
-              //  userVo = this.queryByOpenId(sessionData.getString("openid"));
-                if (ValidatorUtils.notEmpty(userVo.getWeixinOpenid())){
+                //  userVo = this.queryByOpenId(sessionData.getString("openid"));
+                if (ValidatorUtils.notEmpty(userVo.getWeixinOpenid())) {
                     addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
                     token = jwtTokenUtil.generateToken(userVo.getUsername());
                     resultObj.put("userId", userVo.getId());
                     resultObj.put("userInfo", userVo);
-                }else {
+                } else {
                     userVo.setPassword(passwordEncoder.encode("123456"));
                     userVo.setCreateTime(new Date());
                     userVo.setStatus(1);
@@ -730,6 +734,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
 
     }
+
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {

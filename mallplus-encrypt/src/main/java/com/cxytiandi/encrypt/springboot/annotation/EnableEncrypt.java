@@ -3,8 +3,6 @@ package com.cxytiandi.encrypt.springboot.annotation;
 import com.cxytiandi.encrypt.springboot.autoconfigure.EncryptAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
-import java.lang.annotation.*;
-
 /**
  * 启用加密Starter
  * <p>

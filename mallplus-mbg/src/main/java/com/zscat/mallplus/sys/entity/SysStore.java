@@ -27,7 +27,7 @@ public class SysStore implements Serializable {
 
 
     private String name;
-// 1 申请 2 拒绝 3 成功
+    // 1 申请 2 拒绝 3 成功
     private Integer status;
 
     private Long uid;

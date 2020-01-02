@@ -172,29 +172,29 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "storeId", required = false) Integer storeId,
             @RequestParam(value = "sort", required = false) Integer sort,
             @RequestParam(value = "keyword", required = false) String keyword,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
         product.setVerifyStatus(1);
         product.setMemberId(null);
         product.setSort(sort);
-        if (ValidatorUtils.notEmpty(storeId)){
+        if (ValidatorUtils.notEmpty(storeId)) {
             product.setStoreId(storeId);
         }
-        String orderColum="create_time";
-        if (ValidatorUtils.notEmpty(product.getSort())){
-            if (product.getSort()==1){
-                orderColum="sale";
-            }else  if (product.getSort()==2){
-                orderColum="price";
-            }else  if (product.getSort()==3){
-                orderColum="price";
+        String orderColum = "create_time";
+        if (ValidatorUtils.notEmpty(product.getSort())) {
+            if (product.getSort() == 1) {
+                orderColum = "sale";
+            } else if (product.getSort() == 2) {
+                orderColum = "price";
+            } else if (product.getSort() == 3) {
+                orderColum = "price";
             }
         }
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name",keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
+            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
         } else {
             list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
         }
@@ -418,7 +418,7 @@ public class SingePmsController extends ApiBaseAction {
         if (group != null) {
             List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", group.getId()));
             for (SmsGroupRecord groupRecord : groupRecords) {
-                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
                 groupRecord.setList(groupMembers);
             }
             map.put("memberGroupList", groupRecords);
@@ -644,10 +644,10 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(v);
             }
         }
-        List<PmsProductCategory> list=null;
+        List<PmsProductCategory> list = null;
         //组装二级分类
-        for (int i=0;i<relList.size();i++){
-            list=new ArrayList<>();
+        for (int i = 0; i < relList.size(); i++) {
+            list = new ArrayList<>();
             for (PmsProductCategory v : categories) {
                 if (v.getParentId().longValue() == relList.get(i).getId().longValue()) {
                     list.add(v);
@@ -715,7 +715,7 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         //拼装返回
         Map<String, Object> map = new HashMap<>();
-        if (memberService.getNewCurrentMember()==null){
+        if (memberService.getNewCurrentMember() == null) {
             return new CommonResult().success(map);
         }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
@@ -741,6 +741,7 @@ public class SingePmsController extends ApiBaseAction {
         PmsProduct product = pmsProductService.getById(id);
         return new CommonResult().success(product.getPic());
     }
+
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;

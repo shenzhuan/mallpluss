@@ -43,8 +43,8 @@ public class OmsCompanyAddressController {
                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            if (ValidatorUtils.notEmpty(entity.getName())){
-                return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<OmsCompanyAddress>(new OmsCompanyAddress()).like("name",entity.getName())));
+            if (ValidatorUtils.notEmpty(entity.getName())) {
+                return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<OmsCompanyAddress>(new OmsCompanyAddress()).like("name", entity.getName())));
             }
             return new CommonResult().success(IOmsCompanyAddressService.page(new Page<OmsCompanyAddress>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {

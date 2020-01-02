@@ -10,45 +10,45 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2019-12-17
-短信记录
-*/
+ * @author mallplus
+ * @date 2019-12-17
+ * 短信记录
+ */
 @Data
 @TableName("sms_content_msg")
 public class SmsContentMsg implements Serializable {
 
 
-            @TableId(value = "id", type = IdType.AUTO)
-        private Integer id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
 
-            @TableField( "phone")
-        private String phone;
+    @TableField("phone")
+    private String phone;
 
 
-            @TableField( "status")
-        private Integer status;
+    @TableField("status")
+    private Integer status;
 
 
-            @TableField( "content")
-        private String content;
+    @TableField("content")
+    private String content;
 
 
-            @TableField( "result")
-        private String result;
+    @TableField("result")
+    private String result;
 
 
-            @TableField( "create_time")
-        private Date createTime;
+    @TableField("create_time")
+    private Date createTime;
 
 
-            @TableField( "content_id")
-        private Integer contentId;
+    @TableField("content_id")
+    private Integer contentId;
 
 
-            @TableField( "type")
-        private Integer type;
+    @TableField("type")
+    private Integer type;
 
 
 }

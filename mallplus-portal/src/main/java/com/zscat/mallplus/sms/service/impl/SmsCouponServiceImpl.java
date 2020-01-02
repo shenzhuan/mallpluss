@@ -60,7 +60,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     @Override
     public List<SmsCoupon> selectNotRecive() {
         SmsCoupon coupon = new SmsCoupon();
-        List<SmsCoupon>   list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
+        List<SmsCoupon> list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
         return list;
 
     }
@@ -82,13 +82,14 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
 
         }
         return list;
 
     }
+
     @Override
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
         UmsMember currentMember = memberService.getNewCurrentMember();

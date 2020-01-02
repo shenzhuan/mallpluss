@@ -63,12 +63,12 @@ public class SingeStoreController extends ApiBaseAction {
                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setStatus(3);
-        String orderColum="create_time";
-        if (ValidatorUtils.notEmpty(entity.getIsChecked())){
-            if (entity.getIsChecked()==1){
-                orderColum="hit";
-            }else  if (entity.getIsChecked()==2){
-                orderColum="collect";
+        String orderColum = "create_time";
+        if (ValidatorUtils.notEmpty(entity.getIsChecked())) {
+            if (entity.getIsChecked() == 1) {
+                orderColum = "hit";
+            } else if (entity.getIsChecked() == 2) {
+                orderColum = "collect";
             }
         }
         return new CommonResult().success(storeService.page(new Page<SysStore>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc(orderColum)));
@@ -78,9 +78,9 @@ public class SingeStoreController extends ApiBaseAction {
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
-        if (ValidatorUtils.empty(id)){
+        if (ValidatorUtils.empty(id)) {
             UmsMember member = memberService.getNewCurrentMember();
-            if (member==null){
+            if (member == null) {
                 return new CommonResult().fail(100);
             }
             id = memberService.getById(member.getId()).getStoreId();
@@ -123,22 +123,23 @@ public class SingeStoreController extends ApiBaseAction {
         map.put("store", store);
         return new CommonResult().success(map);
     }
+
     @ApiOperation("获取店铺详情")
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     @ResponseBody
     public Object home(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
         StoreContentResult contentResult = null;
-        String key ="";
+        String key = "";
         try {
-            if (ValidatorUtils.empty(id)){
+            if (ValidatorUtils.empty(id)) {
                 UmsMember member = memberService.getNewCurrentMember();
-                if (member==null){
+                if (member == null) {
                     return new CommonResult().fail(100);
                 }
                 UmsMember newMember = memberService.getById(member.getId());
                 id = newMember.getStoreId();
             }
-            if (ValidatorUtils.empty(id)){
+            if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("商户申请中");
             }
             key = String.format(Rediskey.STOREHOMEPAGEMOBILE, id);

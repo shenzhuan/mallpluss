@@ -123,6 +123,7 @@ public class AppletMemberController extends ApiBaseAction {
         }
 
     }
+
     @IgnoreAuth
     @ApiOperation("获取小程序openid")
     @SysLog(MODULE = "applet", REMARK = "获取小程序openid")
@@ -145,10 +146,10 @@ public class AppletMemberController extends ApiBaseAction {
                              @RequestParam String ivStr,
                              @RequestParam String encDataStr) {
         try {
-            String phone= memberService.getWxPhone(openid,keyStr,ivStr,encDataStr);
-            if (phone!=null){
-                return  new CommonResult().success(phone);
-            }else{
+            String phone = memberService.getWxPhone(openid, keyStr, ivStr, encDataStr);
+            if (phone != null) {
+                return new CommonResult().success(phone);
+            } else {
                 return new CommonResult().failed("获取失败");
             }
         } catch (Exception e) {
@@ -308,7 +309,7 @@ public class AppletMemberController extends ApiBaseAction {
                 gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam)));
             }
             redisService.set(Rediskey.appletCategoryKey, JsonUtils.objectToJson(productAttributeCategoryList));
-            redisService.expire(Rediskey.appletCategoryKey,  60);
+            redisService.expire(Rediskey.appletCategoryKey, 60);
         }
         List<CmsSubject> subjectList = subjectService.list(new QueryWrapper<CmsSubject>().select(ConstansValue.sampleSubjectList).last("limit 5"));
         //获取轮播图
@@ -352,10 +353,11 @@ public class AppletMemberController extends ApiBaseAction {
         data.setBanner_list(bannerList);
         data.setSubjectList(subjectList);
         data.setCat_list(productAttributeCategoryList);
-       // data.setCate_products(cateProductList);
+        // data.setCate_products(cateProductList);
         data.setCoupon_list(couponList);
         return new CommonResult().success(data);
     }
+
     @IgnoreAuth
     @ApiOperation("小程序用户详情")
     @SysLog(MODULE = "applet", REMARK = "小程序用户详情")

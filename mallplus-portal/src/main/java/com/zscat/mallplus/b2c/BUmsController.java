@@ -105,7 +105,7 @@ public class BUmsController {
     public Object balancelist(UmsMemberBlanceLog entity,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        if (memberService.getNewCurrentMember()==null){
+        if (memberService.getNewCurrentMember() == null) {
             return new CommonResult().success();
         }
         entity.setMemberId(memberService.getNewCurrentMember().getId());

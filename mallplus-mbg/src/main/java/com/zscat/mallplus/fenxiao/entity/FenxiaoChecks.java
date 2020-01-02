@@ -10,37 +10,37 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2019-12-17
-分销审核
-*/
+ * @author mallplus
+ * @date 2019-12-17
+ * 分销审核
+ */
 @Data
 @TableName("fenxiao_checks")
 public class FenxiaoChecks implements Serializable {
 
 
-            @TableId(value = "id", type = IdType.AUTO)
-        private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
 
-            @TableField( "member_id")
-        private Integer memberId;
+    @TableField("member_id")
+    private Integer memberId;
 
 
-            @TableField( "phone")
-        private String phone;
+    @TableField("phone")
+    private String phone;
 
 
-            @TableField( "status")
-        private String status;
+    @TableField("status")
+    private String status;
 
 
-            @TableField( "create_time")
-        private Date createTime;
+    @TableField("create_time")
+    private Date createTime;
 
 
-            @TableField( "update_time")
-        private Date updateTime;
+    @TableField("update_time")
+    private Date updateTime;
 
 
 }
