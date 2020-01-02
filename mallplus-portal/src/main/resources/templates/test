@@ -1,19 +1,22 @@
+netstat -ntlp //查看当前所有tcp端口·
+
+netstat -ntulp |grep 80 //查看所有80端口使用情况·
+
+
+39.106.212.32
 
 
 
 nohup java -Xms128m -Xmx256m -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
-39.106.212.32
-put -r /Users/java/test/git/meihuang_admin_vue/h5bak  /root/jm
-put -r /Users/java/test/git/mallplus/mallplus-admin/target/meizhuang-admin-0.0.1-SNAPSHOT.jar  /root/jm
-nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
 
 
-nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
-
-nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
-
-nohup java -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
+nohup java -jar /root/jm/bootdo-1.5.0.jar >blog.log 2>&1 &
 
 ps -ef|grep java
 
@@ -33,11 +36,19 @@ put -r /Users/shenzhuan/Documents/tools/apache-tomcat-8.0.52 /root/jm
 
 put -r /Users/java/test/git/RuoYi-fast/target/RuoYi.jar  /root/jm
 
+nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+
 put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-SNAPSHOT.jar  /root/jm
 
 put -r /Users/java/test/git/mallplus/mallplus-portal/target/mallplus-portal-0.0.1-SNAPSHOT.jar  /root/jm
 
-put -r /Users/java/test/git/mall-admin-web/dist  /root/jm
+put -r /Users/java/test/git/bootdo/bootdo/target/bootdo-1.5.0.jar  /root/jm
+
+put -r /Users/java/test/git/mallplus/mallplus-portal/MP_verify_8U0gHxfvQWhdo4DS.txt /root/jm/h5
+
+put -r /Users/java/test/git/web/vue_mogu_web/cms  /root/jm
+
+put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
@@ -60,13 +71,7 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
 put -r /Users/java/test/git/crmbmall/jsshop  /root/jm
 
-nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
-
-
-put -r /Users/java/test/git/mallplus/mallplus-admin/target/meizhuang-admin-0.0.1-SNAPSHOT.jar  /root/jm
-put -r /Users/java/test/git/meihuang_admin_vue/h5bak  /root/jm
-
-
+scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
 
 scp /path/filename username@servername:/path
 
@@ -207,8 +212,6 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
 数据文件： /usr/local/mysql/data
 
-默认密码： uAiqwVwjJ8-i
-
 命令：     systemctl (start|stop|restart|disable) mysql
 
 示例：    启动mysql  systemctl start mysql
@@ -217,7 +220,14 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
           禁止mysql  systemctl disable mysql
 
+https://www.cnblogs.com/lywJ/p/10697460.html
 
+/usr/local/redis/redis-4.0.9/src
+
+rm -rf /var/run/redis_6379.pid
+
+/etc/init.d/redis_6379 start
+/etc/init.d/redis_6379 stop
 
 ################################ Nginx ##################################
 
@@ -271,13 +281,15 @@ h5演示  http://yjlive.cn:8082/
 前端vue 项目路径下有一个zip包
 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
 
-
+https://admin.it120.cc/#/user/apiExtOrderEvaluate/list
 https://pub.alimama.com/?spm=a2321.7393627.1998051820.1.98f118e2koGcdA
 
 单机版项目地址 https://gitee.com/zscat/mallplus
 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 功能列表 https://www.processon.com/view/link/5da6a3d9e4b0ea86c2b2a817
 <iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:525px; height:245px;" src="https://www.processon.com/embed/mind/5d9f0933e4b06b7d6ec5b3ef"></iframe>
+
+YIJUNlive0322
 
 DELETE FROM admin_day_statics;
 DELETE FROM admin_sys_job_log;
@@ -293,5 +305,112 @@ delete from sys_admin_log  ;
 
 1938186471@qq.com
 wx1d852ffdcbedd005
-ab9f4f588c539816f32f23dcce9b5835
 
+server {
+        listen 80;
+        server_name www.yjlive.cn;
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+            root html;
+        }
+
+		location / {
+            alias /root/jm/h5/;
+            index index.html;
+        }
+
+        location /h5 {
+            alias  /root/jm/mall/;
+			try_files $uri $uri/ @router;
+			index index.html;
+        }
+        location /api {
+            rewrite  ^/api/(.*)$ /$1 break;
+            include  uwsgi_params;
+            proxy_pass   http://39.106.212.32:8081 ;
+        }
+        location @router {
+        rewrite ^.*$ /index.html last;
+        }
+    }
+
+
+3392805238@qq.com
+wxeca56e2ff8f277d9
+4c8df450d885fff986b8d42048a90052
+
+2681196506@qq.com
+wx0c1055c6158f7851
+baa79ed796ec18e932c547fe009d9af0
+
+
+put -r /Users/java/gen/jdk-8u191-linux-x64.tar.gz  /root/soft
+
+mv jdk-8u191-linux-x64.tar.gz /usr/local/jdk/
+
+#set java environment
+JAVA_HOME=/usr/local/jdk/jdk1.8.0_191
+CLASSPATH=.:$JAVA_HOME/lib.tools.jar
+PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME CLASSPATH PATH
+
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/local/nginx/sbin/nginx --conf-path=/usr/local/nginx/conf/nginx.conf --with-http_stub_status_module --with-http_ssl_module  && make && make install
+
+
+
+ cd /usr/local/nginx
+          nginx -s reload
+
+vim /usr/local/nginx/conf/nginx.conf
+
+# systemctl start nginx               启动服务
+
+# systemctl stop nginx               停止服务
+
+# systemctl restart nginx             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status nginx                查看服务当前状态
+
+# systemctl enable nginx               设置开机自启动
+
+#systemctl disable nginx               停止开机自启动
+
+/usr/local/redis/redis-5.0.3/redis.conf
+
+/usr/local/redis/redis-5.0.3/src/redis-server /usr/local/redis/redis-5.0.3/redis.conf
+
+# systemctl start redis               启动服务
+
+# systemctl stop redis               停止服务
+
+# systemctl restart redis             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status redis                查看服务当前状态
+
+# systemctl enable redis               设置开机自启动
+
+#systemctl disable redis               停止开机自启动
+
+
+Xl;7GrjQXt*8
+
+# systemctl start mysqld              启动服务
+
+# systemctl stop mysqld                停止服务
+
+# systemctl restart mysqld              重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status mysqld              查看服务当前状态
+
+# systemctl enable mysqld             设置开机自启动
+
+#systemctl disable mysqld             停止开机自启动
+
+https://www.jianshu.com/p/19f6b809d255
