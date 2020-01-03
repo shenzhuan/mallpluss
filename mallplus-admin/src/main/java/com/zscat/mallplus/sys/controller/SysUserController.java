@@ -211,6 +211,7 @@ public class SysUserController extends ApiController {
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
             data.put("storeId", umsAdmin.getStoreId());
+            data.put("storeName", umsAdmin.getStoreName());
         }
 
         return new CommonResult().success(data);
@@ -221,6 +222,7 @@ public class SysUserController extends ApiController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public Object logout() {
+
         return new CommonResult().success(null);
     }
 

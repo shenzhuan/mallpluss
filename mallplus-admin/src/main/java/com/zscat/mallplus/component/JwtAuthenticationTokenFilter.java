@@ -95,7 +95,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
             if (fullUrl.contains("logout") || fullUrl.contains("login")) {
-
+                if (fullUrl.contains("logout")) {
+                    SecurityContextHolder.getContext().setAuthentication(null);
+                }
             } else {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
