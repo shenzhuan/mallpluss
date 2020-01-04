@@ -29,17 +29,28 @@
 
 小程序下载 地址 https://gitee.com/catshen/mall-applet
 后台管理下载地址 https://github.com/shenzhuan/mallplus
-项目演示地址： [http://39.98.190.128/index.html](http://39.98.190.128/index.html)  
-  
-![后台管理系统功能演示.gif](/document/resource/mallplus-admin.gif)
+关注公众号 获取更多资料和体验小程序
+<img src="https://images.gitee.com/uploads/images/2019/0519/174631_65c2a4e8_134431.png" width="140px" height="140px" />
+[TOC]
 
->   发布页面 http://m3w.cn/mallcloud  
->   h5地址  http://www.yjlive.cn:8082/#/ 
->  后台管理地址 http://www.yjlive.cn:8090 
->  小程序体验码
->  ![输入图片说明](https://images.gitee.com/uploads/images/2019/0621/100856_b901ecef_134431.png "屏幕截图.png")
->  app体验 加群下载
->  apk下载 链接: https://pan.baidu.com/s/1UiFtg3AQ2-muNjfQjsjXPw 提取码: nda2
+
+- 商户入驻流程  https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1634420&doc_id=326093
+- 单机版项目地址 https://gitee.com/zscat/mallplus
+- 前端vue 项目路径下有一个zip包
+- 文档详情blog http://yjlive.cn:8084/
+- 后台端 http://yjlive.cn:8086/index
+- 商户端演示  http://yjlive.cn:8090/
+- uniapp h5演示  http://yjlive.cn:8082/
+- pc演示  http://yjlive.cn:8084/
+- 商户端 h5演示  http://yjlive.cn:8083/
+- 部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
+- 微服务版项目地址 https://gitee.com/catshen/zscat_sw
+- 前端vue 项目路径下有一个zip包
+- 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
+ 
+- 微服务版项目地址 https://gitee.com/catshen/zscat_sw
+- 前端vue 项目路径下有一个zip包
+- 部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
 
 ### 组织结构
 
