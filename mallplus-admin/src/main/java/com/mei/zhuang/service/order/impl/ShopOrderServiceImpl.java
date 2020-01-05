@@ -783,8 +783,11 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         orderDetail.setGift5(gift5);
         orderDetail.setGift6(gift6);
         orderDetail.setOrderGoodsList(orderGoods);
-        EsShopFriendGiftCard FriendGiftCard = markingFegin.GiftCard(order.getGiftId());
-        orderDetail.setGiftCard(FriendGiftCard);
+        if (ValidatorUtils.notEmpty(order.getGiftId())){
+            EsShopFriendGiftCard FriendGiftCard = markingFegin.GiftCard(order.getGiftId());
+            orderDetail.setGiftCard(FriendGiftCard);
+        }
+
 
 //赋值定制服务数据
 
@@ -1488,6 +1491,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     //订单详情
     @Override
     public Object preOrder(BookOrderParam orderParam) {
+        if (ValidatorUtils.empty(orderParam.getTotal())) {
+            orderParam.setTotal(1);
+        }
         String type = orderParam.getType();
         List<EsShopCart> cartPromotionItemList = new ArrayList<>();
         List<EsShopCart> cartItemList = new ArrayList<>();
@@ -1613,6 +1619,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
 
     @Override
     public Object friendbookOrder(BookOrderParam orderParam) throws Exception {
+        if (ValidatorUtils.empty(orderParam.getTotal())) {
+            orderParam.setTotal(1);
+        }
         BigDecimal moneyBasic = new BigDecimal("0");
         Date nowD = new Date();
         EsShopOrderSettings query = new EsShopOrderSettings();
@@ -2138,6 +2147,7 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
                 calcAmount.setPayAmount(new BigDecimal(0.01));
             }
             calcAmount.setFreightAmount(dispatchPrice.setScale(2, BigDecimal.ROUND_HALF_UP));
+            result.setDefaultAddress(this.getDefaultItem(orderParam.getMemberId()));
             result.setCalcAmount(calcAmount);
             stopWatch.stop();
             log.info(stopWatch.prettyPrint());
@@ -2146,7 +2156,12 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
         }
         return result;
     }
-
+    public EsDeliveryAddresser getDefaultItem(Long memberId) {
+        EsDeliveryAddresser q = new EsDeliveryAddresser();
+        q.setIsDefault(1);
+        q.setMemberId(memberId);
+        return addresserMapper.selectOne(new QueryWrapper<EsDeliveryAddresser>(q));
+    }
     @Override
     public Object linkToBuy(CartParam cartParam) {
         return null;
@@ -2155,6 +2170,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
     @Override
     @Transactional
     public Object bookOrder(BookOrderParam orderParam) throws Exception {
+        if (ValidatorUtils.empty(orderParam.getTotal())) {
+            orderParam.setTotal(1);
+        }
         BigDecimal moneyBasic = new BigDecimal("0");
         Date nowD = new Date();
         EsShopOrderSettings query = new EsShopOrderSettings();
@@ -3175,6 +3193,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
      */
     @Override
     public void push(EsMember member, EsShopOrder order, String formId, int infoId, List<EsShopOrderGoods> orderGoodsList) {
+   if (11>2){
+       return;
+   }
         Long userId = order.getMemberId();
         Long orderId = order.getId();
         log.info("发送模版消息：userId=" + order.getMemberId() + ",orderId=" + orderId + ",formId=" + formId);
@@ -3205,6 +3226,9 @@ public class ShopOrderServiceImpl extends ServiceImpl<EsShopOrderMapper, EsShopO
             query.setId((long) id);
             query.setStatus(1);
             EsCoreMessageTemplate messageTemplate = esCoreMessageTemplateMapper.selectOne(new QueryWrapper<>(query));
+if (messageTemplate==null){
+    return;
+}
             JSONArray a = (JSONArray) JSONArray.parse(messageTemplate.getTemplate());
             Map<String, TemplateData> param = new HashMap<String, TemplateData>();
             int count = 0;

@@ -1,6 +1,7 @@
 package com.mei.zhuang.service.goods.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -160,47 +161,54 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
 
                 List<String> lists = new ArrayList<String>();
                 String[] id = entity.getCategoryId().split(",");
-                for (int i = 0; i < id.length; i++) {
-                    String name = "";
-                    EsShopGoodsCategory essOne = null;
-                    EsShopGoodsCategory essTwo = null;
+                System.out.println(id.length);
+                if (id!=null && id.length>0 && entity.getCategoryId()!="[]"){
+                    for (int i = 0; i < id.length; i++) {
+                        String name = "";
+                        EsShopGoodsCategory essOne = null;
+                        EsShopGoodsCategory essTwo = null;
 
-                    EsShopGoodsCategory ess = esShopGoodsCategoryMapper.selDetail(Long.parseLong(id[i]));
-                    if (ess.getParentId() != null) {
-                        essTwo = esShopGoodsCategoryMapper.selDetail(ess.getParentId());
-                        if (essTwo != null) {
-                            essOne = esShopGoodsCategoryMapper.selDetail(essTwo.getParentId());
+                        EsShopGoodsCategory ess = esShopGoodsCategoryMapper.selDetail(Long.parseLong(id[i]));
+                        if (ess.getParentId() != null) {
+                            essTwo = esShopGoodsCategoryMapper.selDetail(ess.getParentId());
+                            if (essTwo != null) {
+                                essOne = esShopGoodsCategoryMapper.selDetail(essTwo.getParentId());
+                            }
+                        }
+                        if (essOne != null) {
+                            name += essOne.getName() + "/" + essTwo.getName() + "/" + ess.getName();
+                            essOne = null;
+                            essTwo = null;
+                            ess = null;
+                        } else if (essTwo != null) {
+                            name += essTwo.getName() + "/" + ess.getName();
+                            essTwo = null;
+                            ess = null;
+                        } else {
+                            name += ess.getName();
+                            ess = null;
+                        }
+                        if (entity.getCategoryName() != null && !entity.getCategoryName().equals("")) {
+                            entity.setCategoryName(entity.getCategoryName() + "," + name);
+                        } else {
+                            entity.setCategoryName(name);
                         }
                     }
-                    if (essOne != null) {
-                        name += essOne.getName() + "/" + essTwo.getName() + "/" + ess.getName();
-                        essOne = null;
-                        essTwo = null;
-                        ess = null;
-                    } else if (essTwo != null) {
-                        name += essTwo.getName() + "/" + ess.getName();
-                        essTwo = null;
-                        ess = null;
-                    } else {
-                        name += ess.getName();
-                        ess = null;
-                    }
-                    if (entity.getCategoryName() != null && !entity.getCategoryName().equals("")) {
-                        entity.setCategoryName(entity.getCategoryName() + "," + name);
-                    } else {
-                        entity.setCategoryName(name);
-                    }
                 }
+
             }
             if (entity.getIsPutaway() == 0) {
                 entity.setStatus(-2);
+            }
+            if (ValidatorUtils.notEmpty(entity.getThumbs())){
+                entity.setThumbs(entity.getThumbs().replace("[","").replace("]",""));
             }
             this.save(entity);
             if (entity.getId() != null) {
                 EsShopGoodsQRCode qrCode = new EsShopGoodsQRCode();
                 qrCode.setGoodsId(entity.getId());
-                qrCode.setImgBase(ImgBase64Util.StringUtil(entity.getId()));
-                esShopGoodsQRCodeMapper.insert(qrCode);
+          //      qrCode.setImgBase(ImgBase64Util.StringUtil(entity.getId()));
+            //    esShopGoodsQRCodeMapper.insert(qrCode);
             }
 
 

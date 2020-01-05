@@ -52,7 +52,7 @@ public class ApiUserController extends BaseController {
     private ApiInterfaceBiz apiInterfaceBiz;
 
     public static void main(String[] args) {
-        String password = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode("111111");
+        String password = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode("123456");
         System.out.println(password);
     }
 

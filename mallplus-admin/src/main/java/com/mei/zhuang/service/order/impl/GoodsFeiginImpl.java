@@ -223,7 +223,7 @@ public class GoodsFeiginImpl implements GoodsFegin {
             specItem.setSpecId(spec.getId());
             specItem.setTitle("规格值");
             specItem.setDisplayOrder(0);
-            specItem.setShow("1");
+            specItem.setShows("1");
             specItem.setStatus(1);
             specItem.setType(1);
             specItem.setTypeword("1");
@@ -289,7 +289,7 @@ public class GoodsFeiginImpl implements GoodsFegin {
             EsShopGoodsSpecItem specItem1 = esShopGoodsSpecItemService.getOne(new QueryWrapper<>(specItem));
             specItem.setSpecId(spec.getId());
             specItem.setDisplayOrder(0);
-            specItem.setShow("1");
+            specItem.setShows("1");
             specItem.setStatus(1);
             specItem.setType(1);
             specItem.setMoney(goods.getPrice());

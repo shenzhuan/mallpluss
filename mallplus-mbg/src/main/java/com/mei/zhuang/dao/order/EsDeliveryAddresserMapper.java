@@ -13,4 +13,5 @@ import com.mei.zhuang.entity.order.EsDeliveryAddresser;
  */
 public interface EsDeliveryAddresserMapper extends BaseMapper<EsDeliveryAddresser> {
 
+    void updateStatusByMember(Long memberId);
 }

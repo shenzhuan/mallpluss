@@ -3,15 +3,19 @@ package com.mei.zhuang.service.member.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mei.zhuang.constant.AdminCommonConstant;
 import com.mei.zhuang.constant.RedisConstant;
+import com.mei.zhuang.constant.UserConstant;
 import com.mei.zhuang.dao.member.EsCoreSmsMapper;
 import com.mei.zhuang.dao.member.EsMemberMapper;
 import com.mei.zhuang.dao.member.EsMiniprogramMapper;
 import com.mei.zhuang.entity.member.EsCoreSms;
 import com.mei.zhuang.entity.member.EsMember;
+import com.mei.zhuang.jwt.JWTInfo;
 import com.mei.zhuang.service.member.EsMemberService;
 import com.mei.zhuang.service.order.ShopOrderService;
 import com.mei.zhuang.util.JsonUtil;
+import com.mei.zhuang.util.JwtTokenUtil;
 import com.mei.zhuang.util.MiniAESUtil;
 import com.mei.zhuang.utils.CommonUtil;
 import com.mei.zhuang.utils.SmsUtils;
@@ -23,11 +27,16 @@ import com.mei.zhuang.vo.data.customer.CustGroupIndexParam;
 import com.mei.zhuang.vo.data.trade.TradeAnalyzeParam;
 import com.mei.zhuang.vo.order.OrderStstic;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -55,6 +64,8 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     private ShopOrderService orderService;
     private String REDIS_KEY_PREFIX_AUTH_CODE = "bindPhone:authCode:";
 
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public Object loginByWeixin(LoginVo entity) {
@@ -273,6 +284,159 @@ public class EsMemberServiceImpl extends ServiceImpl<EsMemberMapper, EsMember> i
     @Override
     public List<EsMember> memberselect(Integer param1, Integer param2) {
         return memberMapper.memberselect(param1, param2);
+    }
+
+    @Override
+    public Object register(String phone, String password, String confimpassword, String authCode, String invitecode) {
+        //没有该用户进行添加操作
+        EsMember umsMember = new EsMember();
+        umsMember.setNickname(phone);
+        umsMember.setMobile(phone);
+        umsMember.setMobileVerified(1);
+        umsMember.setPassword(password);
+        umsMember.setConfimpassword(confimpassword);
+        umsMember.setPhonecode(authCode);
+        if (ValidatorUtils.notEmpty(umsMember.getPhonecode()) && !verifyAuthCode(umsMember.getPhonecode(), umsMember.getMobile())) {
+            return new CommonResult().failed("验证码错误");
+        }
+        //验证验证码
+        if (ValidatorUtils.notEmpty(umsMember.getPhonecode()) && !verifyAuthCode(umsMember.getPhonecode(), umsMember.getMobile())) {
+            return new CommonResult().failed("验证码错误");
+        }
+        if (!umsMember.getPassword().equals(umsMember.getConfimpassword())) {
+            return new CommonResult().failed("密码不一致");
+        }
+        //查询是否已有该用户
+
+        EsMember queryM = new EsMember();
+        queryM.setMobile(umsMember.getMobile());
+        EsMember umsMembers = memberMapper.selectOne(new QueryWrapper<>(queryM));
+        if (umsMembers != null) {
+            return new CommonResult().failed("该用户已经存在");
+        }
+        //没有该用户进行添加操作
+
+        EsMember insertMember = new EsMember();
+
+        insertMember.setNickname(umsMember.getMobile());
+        insertMember.setBuyCount(0);
+        insertMember.setBuyMoney(new BigDecimal(0));
+        insertMember.setMobile(umsMember.getMobile());
+        String newpassword = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode(umsMember.getPassword());
+        insertMember.setPassword(newpassword);
+        insertMember.setCreateTime(new Date());
+        insertMember.setMobileVerified(1);
+        insertMember.setBalance(new BigDecimal(0));
+
+
+        String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+        umsMember.setAvatar(defaultIcon);
+       /* //这是要生成二维码的url
+        String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+        //要添加到二维码下面的文字
+        String words = user.getUsername() + "的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+
+
+        umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));*/
+        memberMapper.insert(insertMember);
+        umsMember.setPassword(null);
+        return new CommonResult().success("注册成功", null);
+    }
+
+    @Override
+    public Object updatePassword(String telephone, String password, String authCode) {
+        return null;
+    }
+
+    @Override
+    public Object appLogin(String openid, Integer sex, String headimgurl, String unionid, String nickname, String city, Integer source) {
+        return null;
+    }
+
+    @Override
+    public Object login(String phone, String password) {
+        Map<String, Object> resultObj = new HashMap<String, Object>();
+        try {
+            EsMember member = memberMapper.selectmember(phone);
+            if (member==null) {
+                throw new BadCredentialsException("用户不存");
+            }
+
+
+            boolean bo = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).matches(password,member.getPassword());
+            if (!bo) {
+                throw new BadCredentialsException("密码不正确");
+            }
+            resultObj.put("token",  jwtTokenUtil.generateToken(new JWTInfo(phone, password, phone)));
+            resultObj.put("userInfo", member);
+            resultObj.put("userId", member.getId());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return resultObj;
+    }
+
+    @Override
+    public Object loginByCode(String phone, String authCode) {
+        return null;
+    }
+
+    @Override
+    public Object simpleReg(String phone, String password, String confimpassword, String invitecode) {
+        //没有该用户进行添加操作
+        EsMember umsMember = new EsMember();
+        umsMember.setNickname(phone);
+        umsMember.setMobile(phone);
+        umsMember.setMobileVerified(1);
+        umsMember.setPassword(password);
+        umsMember.setConfimpassword(confimpassword);
+
+
+        if (!umsMember.getPassword().equals(umsMember.getConfimpassword())) {
+            return new CommonResult().failed("密码不一致");
+        }
+        //查询是否已有该用户
+
+        EsMember queryM = new EsMember();
+        queryM.setMobile(umsMember.getMobile());
+        EsMember umsMembers = memberMapper.selectOne(new QueryWrapper<>(queryM));
+        if (umsMembers != null) {
+            return new CommonResult().failed("该用户已经存在");
+        }
+        //没有该用户进行添加操作
+
+        EsMember insertMember = new EsMember();
+
+        insertMember.setNickname(umsMember.getMobile());
+        insertMember.setBuyCount(0);
+        insertMember.setBuyMoney(new BigDecimal(0));
+        insertMember.setMobile(umsMember.getMobile());
+        String newpassword = new BCryptPasswordEncoder(AdminCommonConstant.USER_PW_ENCORDER_SALT).encode(umsMember.getPassword());
+        insertMember.setPassword(newpassword);
+        insertMember.setCreateTime(new Date());
+        insertMember.setMobileVerified(1);
+        insertMember.setBalance(new BigDecimal(0));
+
+
+        String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+        umsMember.setAvatar(defaultIcon);
+       /* //这是要生成二维码的url
+        String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+        //要添加到二维码下面的文字
+        String words = user.getUsername() + "的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+
+
+        umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));*/
+        memberMapper.insert(insertMember);
+        umsMember.setPassword(null);
+        return new CommonResult().success("注册成功", null);
     }
 
 

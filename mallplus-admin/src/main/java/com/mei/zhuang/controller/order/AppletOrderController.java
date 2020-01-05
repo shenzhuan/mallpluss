@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mei.zhuang.dao.order.EsCoreMessageTemplateMapper;
 import com.mei.zhuang.dao.order.EsShopFormidMapper;
+import com.mei.zhuang.dao.order.OmsPaymentsMapper;
 import com.mei.zhuang.entity.order.*;
 import com.mei.zhuang.enums.OrderStatus;
 import com.mei.zhuang.exception.BusinessException;
@@ -204,7 +205,7 @@ public class AppletOrderController {
     @ResponseBody
     public Object addCart(CartParam cartParam) {
         if (ValidatorUtils.empty(cartParam.getTotal())) {
-            return new CommonResult().paramFailed("数量为空");
+            cartParam.setTotal(1);
         }
         if (ValidatorUtils.empty(cartParam.getGoodsId())) {
             return new CommonResult().paramFailed("商品id为空");
@@ -223,7 +224,15 @@ public class AppletOrderController {
         return null;
 
     }
-
+    @Resource
+    OmsPaymentsMapper omsPaymentsMapper;
+    @ApiOperation("显示所有支付方式")
+    @RequestMapping(value = "/payments.getlist", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getPayments() {
+        List<OmsPayments> paymentss = omsPaymentsMapper.selectList(new QueryWrapper<OmsPayments>().eq("status", 1));
+        return new CommonResult().success(paymentss);
+    }
     @ApiOperation("立即购买")
     @RequestMapping(value = "/linkToBuy")
     @ResponseBody

@@ -119,7 +119,11 @@ public class EsMember extends Model<EsMember> {
     private Long ids;
     @TableField(exist = false)
     private String date;
+    @TableField(exist = false)
+    private String confimpassword;
 
+    @TableField(exist = false)
+    private String phonecode;
     @Override
     protected Serializable pkVal() {
         return this.id;

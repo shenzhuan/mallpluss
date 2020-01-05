@@ -19,6 +19,8 @@ public class CommonResult {
     private int code;
     private String message;
     private Object data;
+    //参数校验失败
+    public static final int VALIDATE_FAILED = 102;
 
     /**
      * 普通成功返回
@@ -31,6 +33,16 @@ public class CommonResult {
         this.code = SUCCESS;
         this.message = "操作成功";
 
+        return this;
+    }
+    /**
+     * 参数验证失败使用
+     *
+     * @param msg 错误信息
+     */
+    public CommonResult validateFailed(String msg) {
+        this.code = VALIDATE_FAILED;
+        this.message = msg;
         return this;
     }
 

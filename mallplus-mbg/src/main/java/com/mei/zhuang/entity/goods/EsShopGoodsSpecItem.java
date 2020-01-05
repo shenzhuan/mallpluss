@@ -43,7 +43,7 @@ public class EsShopGoodsSpecItem extends Model<EsShopGoodsSpecItem> {
     @TableField("option_id")
     private Integer optionId;//规格扩展的id（goods_option的id）
 
-    private String show;//规格选项的显示
+    private String shows;//规格选项的显示
 
     private Integer status;//规格选项的默认值（1-默认、2-不默认
 

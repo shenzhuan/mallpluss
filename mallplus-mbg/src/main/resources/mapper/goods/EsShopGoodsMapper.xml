@@ -174,7 +174,7 @@
 
         <if test="idAndName!=null and idAndName!=''">
             and
-            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) )  ]]>
 
         </if>
         <if test="putawayType != null and putawayType != ''">
@@ -207,7 +207,7 @@
 
         <if test="idAndName!=null and idAndName!=''">
             and
-            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) )  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -240,7 +240,7 @@
 
         <if test="idAndName!=null and idAndName!=''">
             and
-            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) )  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -352,7 +352,7 @@
 
         <if test="idAndName!=null and idAndName!=''">
             and
-            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) )  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}
@@ -381,7 +381,7 @@
 
         <if test="idAndName!=null and idAndName!=''">
             and
-            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) or string_to_array(keyword, ',') && ARRAY['' || #{idAndName}])  ]]>
+            <![CDATA[  (title like concat(concat('%',#{idAndName},'%')) )  ]]>
         </if>
         <if test="putawayType!=null and putawayType!=''">
             and putaway_type = #{putawayType}

@@ -16,6 +16,8 @@
         <result column="phone" property="phone"/>
         <result column="province" property="province"/>
     </resultMap>
-
+    <update id="updateStatusByMember">
+        update es_delivery_addresser set is_default = 0 where member_id = #{memberId}
+    </update>
 
 </mapper>

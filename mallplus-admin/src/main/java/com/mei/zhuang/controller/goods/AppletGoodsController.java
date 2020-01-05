@@ -1,10 +1,13 @@
 package com.mei.zhuang.controller.goods;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.mei.zhuang.constant.RedisConstant;
 import com.mei.zhuang.controller.SysLog;
 import com.mei.zhuang.entity.goods.*;
+import com.mei.zhuang.enums.ConstansValue;
 import com.mei.zhuang.service.member.impl.RedisUtil;
 import com.mei.zhuang.service.goods.*;
 import com.mei.zhuang.utils.JsonUtils;
@@ -15,13 +18,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Auther: shenzhuan
@@ -55,6 +56,9 @@ public class AppletGoodsController {
     @Resource
     private EsShopCustomizedBasicService esShopCustomizedBasicService;
 
+    @Resource
+    private RedisUtil redisUtil;
+
     @ApiOperation("小程序首页")
     @PostMapping(value = "/home")
     public Object home() {
@@ -70,6 +74,40 @@ public class AppletGoodsController {
             return new CommonResult().paramFailed();
         }
         return new CommonResult().success(goodsService.goodsDetail(id));
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @ApiOperation(value = "查询商品列表")
+    @GetMapping(value = "/goods/list")
+    public Object goodsList(
+            @RequestParam(value = "storeId", required = false) Long storeId,
+            @RequestParam(value = "sort", required = false) Integer sort,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        EsShopGoods product = new EsShopGoods();
+        product.setStatus(1);
+
+        product.setDisplayOrder(sort);
+        if (ValidatorUtils.notEmpty(storeId)) {
+            product.setShopId(storeId);
+        }
+        String orderColum = "create_time";
+        if (ValidatorUtils.notEmpty(product.getDisplayOrder())) {
+            if (product.getDisplayOrder() == 1) {
+                orderColum = "sale";
+            } else if (product.getDisplayOrder() == 2) {
+                orderColum = "price";
+            } else if (product.getDisplayOrder() == 3) {
+                orderColum = "price";
+            }
+        }
+        IPage<EsShopGoods> list;
+        if (ValidatorUtils.notEmpty(keyword)) {
+            list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).orderByDesc(orderColum));
+        } else {
+            list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).orderByDesc(orderColum));
+        }
+        return new CommonResult().success(list);
     }
 
     @SysLog(MODULE = "小程序商品管理", REMARK = "根据条件查询所有商品列表(模糊查询)")
@@ -345,4 +383,50 @@ public class AppletGoodsController {
 
     }
 
+    @ApiOperation("添加商品浏览记录")
+    @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
+    @PostMapping(value = "/addView")
+    public Object addView(@RequestParam Long goodsId
+    ,@RequestParam Long memberId) {
+
+        String key = String.format(RedisConstant.GOODSHISTORY,memberId);
+
+        //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
+
+        redisUtil.lRemove(key, 1, goodsId.toString());
+        //将value push 到该key下的list中
+        redisUtil.lLeftPush(key, goodsId.toString());
+        //使用ltrim将60个数据之后的数据剪切掉
+        redisUtil.lTrim(key, 0, 59);
+        //设置缓存时间为一个月
+        redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
+        return new CommonResult().success();
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询用户浏览记录列表")
+    @ApiOperation(value = "查询用户浏览记录列表")
+    @GetMapping(value = "/viewList")
+    public Object viewList(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "memberId", required = false, defaultValue = "1") Integer memberId) {
+        //拼装返回
+        Map<String, Object> map = new HashMap<>();
+
+        String key = String.format(RedisConstant.GOODSHISTORY, memberId);
+
+        //获取用户的浏览的商品的总页数;
+        long pageCount = redisUtil.lLen(key);
+
+        //根据用户的ID分頁获取该用户最近浏览的50个商品信息
+        List<String> result = redisUtil.lRange(key, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
+        if (result != null && result.size() > 0) {
+            List<EsShopGoods> list = (List<EsShopGoods>) goodsService.listByIds(result);
+
+            map.put("result", list);
+            map.put("pageCount", (pageCount % pageSize == 0 ? pageCount / pageSize : pageCount / pageSize + 1));
+        }
+
+        return new CommonResult().success(map);
+    }
 }

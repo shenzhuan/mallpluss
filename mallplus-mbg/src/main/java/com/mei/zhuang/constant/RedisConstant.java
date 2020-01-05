@@ -7,6 +7,8 @@ package com.mei.zhuang.constant;
  */
 public class RedisConstant {
 
+    public static String GOODSHISTORY = "GOODSHISTORY:%s";
+
     public static int oneDay = 3600 * 24;
     public static int oneYear = 3600 * 24 * 365;
     public static int tenYear = 3600 * 24 * 365 * 10;
