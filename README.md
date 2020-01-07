@@ -41,8 +41,8 @@
 - 后台端 http://yjlive.cn:8086/index
 - 商户端演示  http://yjlive.cn:8090/
 - uniapp h5演示  http://yjlive.cn:8082/
-- pc演示  http://yjlive.cn:8084/
-- 商户端 h5演示  http://yjlive.cn:8083/
+- pc演示  http://yjlive.cn:8088/
+- 商户端 h5演示  http://yjlive.cn:8084/
 - 部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
 - 微服务版项目地址 https://gitee.com/catshen/zscat_sw
 - 前端vue 项目路径下有一个zip包
@@ -276,15 +276,4 @@ nginx | 1.10 | http://nginx.org/en/download.html
 
 Copyright (c) 2018-2019 zscatzheng
 
-|      | mall单机版                   | mallplus多租户单机版              | mallplus多租户dubbo版本           | mallplus多租户springcloud版本     | mallplus-uniapp版本               |    |    |
-| ---- | ---------------------------- | --------------------------------- | --------------------------------- | --------------------------------- | --------------------------------- | -- | -- |
-| 技术 | springboot mybatis redis vue | springboot mybatis-plus redis vue | springboot mybatis-plus redis vue | springboot mybatis-plus redis vue | springboot mybatis-plus redis vue |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
-|      |                              |                                   |                                   |                                   |                                   |    |    |
 
