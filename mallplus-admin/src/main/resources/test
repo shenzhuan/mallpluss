@@ -31,3 +31,6 @@ DELETE FROM building_floor;
 DELETE FROM building_unit;
 DELETE FROM building_room;
 DELETE FROM building_owner;
+
+SELECT id,`name`,`status`  from sys_store ;
+update pms_product set store_id=6,store_name='北京耳机专卖' where store_name is null

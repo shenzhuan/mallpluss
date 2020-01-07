@@ -69,7 +69,7 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 
 
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
-put -r /Users/java/test/git/crmbmall/jsshop  /root/jm
+put -r /Users/java/test/git/crmbmall/h5bak1  /root/jm
 
 scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
 
@@ -80,43 +80,7 @@ scp /path/filename username@servername:/path
     app-secret: d1caf84b65c25ee4188cabbcbbf172c6
 
 
-      location / {
 
-  root /root/jm/dist;
-
-  index index.html;
-
-}
-
-
-
- server {
-
-        listen       1218;
-
-        server_name  39.106.212.32;
-
-    location / {
-
-         root /root/jm/pc;
-
-        index index.html;
-
-         }
-
-
-
-        error_page   500 502 503 504  /50x.html;
-
-        location = /50x.html {
-
-            root   html;
-
-        }
-
-
-
-}
 
 
 
@@ -149,6 +113,9 @@ https://s.click.taobao.com/nyYgc1w
 #  https://market.aliyun.com/products/53400005/cmjj014493.html        #
 
 #                                                                     #
+
+https://www.kdocs.cn/l/sbdaFdZLl?f=111
+https://www.codeqq.com/log/5venx9mz.html
 
 https://openhome.alipay.com/mini/dev/list
 
@@ -306,34 +273,6 @@ delete from sys_admin_log  ;
 1938186471@qq.com
 wx1d852ffdcbedd005
 
-server {
-        listen 80;
-        server_name www.yjlive.cn;
-
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-            root html;
-        }
-
-		location / {
-            alias /root/jm/h5/;
-            index index.html;
-        }
-
-        location /h5 {
-            alias  /root/jm/mall/;
-			try_files $uri $uri/ @router;
-			index index.html;
-        }
-        location /api {
-            rewrite  ^/api/(.*)$ /$1 break;
-            include  uwsgi_params;
-            proxy_pass   http://39.106.212.32:8081 ;
-        }
-        location @router {
-        rewrite ^.*$ /index.html last;
-        }
-    }
 
 
 3392805238@qq.com
@@ -395,7 +334,7 @@ vim /usr/local/nginx/conf/nginx.conf
 #systemctl disable redis               停止开机自启动
 
 
-Xl;7GrjQXt*8
+
 
 # systemctl start mysqld              启动服务
 
@@ -412,3 +351,5 @@ Xl;7GrjQXt*8
 #systemctl disable mysqld             停止开机自启动
 
 https://www.jianshu.com/p/19f6b809d255
+
+https://sit-admin.ec.widiazine.cn/#/

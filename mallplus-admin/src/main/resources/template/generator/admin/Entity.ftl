@@ -35,7 +35,7 @@ public class ${className} implements Serializable {
         </#if>
         <#if column.changeColumnName != 'id'>
             /**
-              ${column.columnComment}
+            ${column.columnComment}
             **/
             @TableField( "${column.columnName}")
         </#if>

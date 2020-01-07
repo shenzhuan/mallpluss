@@ -86,6 +86,20 @@ public class SingeCmsController extends ApiBaseAction {
     @Resource
     private CmsSubjectProductRelationMapper subjectProductRelationMapper;
 
+    @Resource
+    private ICmsZhaoPinService ICmsZhaoPinService;
+
+
+    @IgnoreAuth
+    @SysLog(MODULE = "cms", REMARK = "查询招聘列表")
+    @ApiOperation(value = "查询招聘列表")
+    @GetMapping(value = "/zhaopin/list")
+    public Object rewardList(CmsZhaoPin subject,
+                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(ICmsZhaoPinService.page(new Page<CmsZhaoPin>(pageNum, pageSize), new QueryWrapper<>(subject).orderByDesc("create_time")));
+    }
+
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
     @ApiOperation(value = "查询打赏列表")
@@ -399,6 +413,21 @@ public class SingeCmsController extends ApiBaseAction {
         subject.setCreateTime(new Date());
 
         boolean count = commentService.save(subject);
+        if (count) {
+            commonResult = new CommonResult().success(count);
+        } else {
+            commonResult = new CommonResult().failed();
+        }
+        return commonResult;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "添加招聘")
+    @ApiOperation(value = "添加招聘")
+    @PostMapping(value = "/addZhaoPin")
+    public Object addSubjectCom(CmsZhaoPin subject, BindingResult result) {
+        CommonResult commonResult;
+        subject.setCreateTime(new Date());
+        boolean count = ICmsZhaoPinService.save(subject);
         if (count) {
             commonResult = new CommonResult().success(count);
         } else {

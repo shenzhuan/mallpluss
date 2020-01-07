@@ -21,8 +21,15 @@
         <hutool.version>[4.1.12,)</hutool.version>
         <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
         <mail.version>1.4.7</mail.version>
+        <oshi.version>3.9.1</oshi.version>
     </properties>
     <dependencies>
+        <!-- 获取系统信息 -->
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>${oshi.version}</version>
+        </dependency>
         <!--邮件依赖-->
         <dependency>
             <groupId>javax.mail</groupId>
