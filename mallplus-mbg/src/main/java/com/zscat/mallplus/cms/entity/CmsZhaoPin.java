@@ -36,6 +36,8 @@ public class CmsZhaoPin implements Serializable {
     @TableField("age")
     private Integer age;
 
+    private Integer status;
+
 
     /**
      * 性别
@@ -101,4 +103,8 @@ public class CmsZhaoPin implements Serializable {
 
     @TableField("create_time")
     private Date createTime;
+
+    private String phone;
+
+    private String zhiwei;
 }
