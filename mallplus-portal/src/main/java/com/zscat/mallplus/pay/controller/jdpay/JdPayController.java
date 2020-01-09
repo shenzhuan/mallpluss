@@ -20,11 +20,11 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * <p>IJPay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
+ * <p>mallplus Pay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
  *
  * <p>不依赖任何第三方 mvc 框架，仅仅作为工具使用简单快速完成支付模块的开发，可轻松嵌入到任何系统里。 </p>
  *
- * <p>IJPay 交流群: 723992875</p>
+ * <p>mallplus Pay 交流群: 320860169</p>
  *
  * <p>Node.js 版: https://gitee.com/javen205/TNW</p>
  *
@@ -42,9 +42,9 @@ public class JdPayController {
     @RequestMapping("")
     @ResponseBody
     public String index() {
-        log.info("欢迎使用 IJPay 中的京东支付 -By Javen  <br/><br>  交流群：723992875");
+        log.info("欢迎使用 mallplus Pay 中的京东支付 -By Javen  <br/><br>  交流群：320860169");
         log.info(jdPayBean.toString());
-        return ("欢迎使用 IJPay 中的京东支付 -By Javen  <br/><br>  交流群：723992875");
+        return ("欢迎使用 mallplus Pay 中的京东支付 -By Javen  <br/><br>  交流群：320860169");
     }
 
     @GetMapping("/test")
@@ -65,8 +65,8 @@ public class JdPayController {
                 .version("V2.0")
                 .merchant(jdPayBean.getMchId())
                 .tradeNum(System.currentTimeMillis() + "")
-                .tradeName("IJPay 让支付触手可及")
-                .tradeDesc("https://gitee.com/javen205/IJPay")
+                .tradeName("mallplus Pay 让支付触手可及")
+                .tradeDesc("https://gitee.com/javen205/mallplus Pay")
                 .tradeTime(DateUtil.format(new Date(), "yyyyMMddHHmmss"))
                 .amount("1")
                 .orderType("1")
@@ -129,16 +129,16 @@ public class JdPayController {
                 .version("V2.0")
                 .merchant(jdPayBean.getMchId())
                 .tradeNum(System.currentTimeMillis() + "")
-                .tradeName("IJPay")
-                .tradeDesc("IJPay 让支付触手可及")
+                .tradeName("mallplus Pay")
+                .tradeDesc("mallplus Pay 让支付触手可及")
                 .tradeTime(DateUtil.format(new Date(), "yyyyMMddHHmmss"))
                 .amount("10000")
                 .orderType("0")
                 .currency("CNY")
-                .note("IJPay 了解一下")
+                .note("mallplus Pay 了解一下")
                 .callbackUrl("https://jdpay.com")
                 .notifyUrl("https://jdpay.com")
-                .userId("IJPay001")
+                .userId("mallplus Pay001")
                 .build()
                 .createSign(jdPayBean.getRsaPrivateKey(), jdPayBean.getDesKey());
 
@@ -160,13 +160,13 @@ public class JdPayController {
                 .version("V2.0")
                 .merchant(jdPayBean.getMchId())
                 .tradeNum(System.currentTimeMillis() + "")
-                .tradeName("IJPay")
-                .tradeDesc("IJPay 让支付触手可及")
+                .tradeName("mallplus Pay")
+                .tradeDesc("mallplus Pay 让支付触手可及")
                 .tradeTime(DateUtil.format(new Date(), "yyyyMMddHHmmss"))
 //                .amount("1000")
                 .orderType("0")
                 .currency("CNY")
-                .note("IJPay 了解一下")
+                .note("mallplus Pay 了解一下")
                 .notifyUrl("https://jdpay.com")
                 .build()
                 .createSign(jdPayBean.getRsaPrivateKey(), jdPayBean.getDesKey());
@@ -218,15 +218,15 @@ public class JdPayController {
                 .token(token)
                 .version("V2.0")
                 .merchant(jdPayBean.getMchId())
-                .device("IJPay Dev")
+                .device("mallplus Pay Dev")
                 .tradeNum(System.currentTimeMillis() + "")
-                .tradeName("IJPay 刷卡支付")
-                .tradeDesc("IJPay 了解一下")
+                .tradeName("mallplus Pay 刷卡支付")
+                .tradeDesc("mallplus Pay 了解一下")
                 .tradeTime(DateUtil.format(new Date(), "yyyyMMddHHmmss"))
                 .amount(amount)
                 .currency("CNY")
                 .note("备注")
-                .notifyUrl("https://gitee.com/javen205/IJPay")
+                .notifyUrl("https://gitee.com/javen205/mallplus Pay")
                 .build()
                 .genReqXml(jdPayBean.getRsaPrivateKey(), jdPayBean.getDesKey(), "V2.0", jdPayBean.getMchId());
         String queryResult = JdPayApi.fkmPay(reqXml);

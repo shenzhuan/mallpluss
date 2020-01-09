@@ -46,11 +46,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>IJPay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
+ * <p>mallplus Pay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
  *
  * <p>不依赖任何第三方 mvc 框架，仅仅作为工具使用简单快速完成支付模块的开发，可轻松嵌入到任何系统里。 </p>
  *
- * <p>IJPay 交流群: 723992875</p>
+ * <p>mallplus Pay 交流群: 320860169</p>
  *
  * <p>Node.js 版: https://gitee.com/javen205/TNW</p>
  *
@@ -177,7 +177,7 @@ public class WxPayController extends AbstractWxPayApiController {
             h5_info.setType("Wap");
             //此域名必须在商户平台--"产品中心"--"开发配置"中添加
             h5_info.setWap_url(wxPayApiConfig.getDomain());
-            h5_info.setWap_name("IJPay VIP 充值");
+            h5_info.setWap_name("mallplus Pay VIP 充值");
             sceneInfo.setH5Info(h5_info);
 
 
@@ -277,7 +277,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .appid(wxPayApiConfig.getAppId())
                     .mch_id(wxPayApiConfig.getMchId())
                     .nonce_str(WxPayKit.generateStr())
-                    .body("mallplus 公众号支付") // IJPay 让支付触手可及-公众号支付
+                    .body("mallplus 公众号支付") // mallplus Pay 让支付触手可及-公众号支付
                     .attach(orderInfo.getStoreName())
                     .out_trade_no(orderInfo.getOrderSn())
                     .total_fee(orderInfo.getPayAmount().multiply(new BigDecimal(100)).intValue()+"")
@@ -396,7 +396,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .appid(wxPayApiConfig.getAppId())
                     .mch_id(wxPayApiConfig.getMchId())
                     .nonce_str(WxPayKit.generateStr())
-                    .body("IJPay 让支付触手可及-扫码支付模式一")
+                    .body("mallplus Pay 让支付触手可及-扫码支付模式一")
                     .attach("Node.js 版:https://gitee.com/javen205/TNW")
                     .out_trade_no(WxPayKit.generateStr())
                     .total_fee("1")
@@ -467,7 +467,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 .appid(wxPayApiConfig.getAppId())
                 .mch_id(wxPayApiConfig.getMchId())
                 .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-扫码支付模式二")
+                .body("mallplus Pay 让支付触手可及-扫码支付模式二")
                 .attach("Node.js 版:https://gitee.com/javen205/TNW")
                 .out_trade_no(WxPayKit.generateStr())
                 .total_fee("1")
@@ -530,7 +530,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 .appid(wxPayApiConfig.getAppId())
                 .mch_id(wxPayApiConfig.getMchId())
                 .nonce_str(WxPayKit.generateStr())
-                .body("IJPay 让支付触手可及-刷卡支付")
+                .body("mallplus Pay 让支付触手可及-刷卡支付")
                 .attach("Node.js 版:https://gitee.com/javen205/TNW")
                 .out_trade_no(WxPayKit.generateStr())
                 .total_fee("1")
@@ -739,7 +739,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 .openid(openId)
                 .check_name("NO_CHECK")
                 .amount("100")
-                .desc("IJPay 让支付触手可及-企业付款")
+                .desc("mallplus Pay 让支付触手可及-企业付款")
                 .spbill_create_ip(ip)
                 .build()
                 .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256, false);
@@ -828,7 +828,7 @@ public class WxPayController extends AbstractWxPayApiController {
             //收款方开户行
             params.put("bank_code", "1001");
             params.put("amount", "1");
-            params.put("desc", "IJPay 让支付触手可及-付款到银行卡");
+            params.put("desc", "mallplus Pay 让支付触手可及-付款到银行卡");
             params.put("sign", WxPayKit.createSign(params, wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256));
             return WxPayApi.payBank(params, wxPayApiConfig.getCertPath(), wxPayApiConfig.getMchId());
         } catch (Exception e) {

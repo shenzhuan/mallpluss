@@ -108,8 +108,8 @@ public class UnionPayController {
     @RequestMapping("")
     @ResponseBody
     public String index() {
-        logger.info("欢迎使用IJPay银联支付	- by Javen");
-        return "欢迎使用IJPay银联支付	- by Javen";
+        logger.info("欢迎使用mallplus Pay银联支付	- by Javen");
+        return "欢迎使用mallplus Pay银联支付	- by Javen";
     }
 
     /**
@@ -407,7 +407,7 @@ public class UnionPayController {
                     logger.info("验证签名成功");
                     String respCode = rspData.get("respCode");
                     if ("00".equals(respCode)) {
-                        String outPutDirectory = "/Users/Javen/Documents/dev/IJPay";
+                        String outPutDirectory = "/Users/Javen/Documents/dev/mallplus Pay";
 //						String outPutDirectory ="d:\\";
                         // 交易成功，解析返回报文中的fileContent并落地
                         String zipFilePath = AcpService.deCodeFileContent(rspData, outPutDirectory, DemoBase.encoding);
@@ -472,7 +472,7 @@ public class UnionPayController {
                     .setBillQueryInfo(AcpService.base64Encode(JSONUtil.toJsonPrettyStr(map), DemoBase.encoding))
                     .setBackUrl(SDKConfig.getConfig().getBackUrl())
                     .setFrontUrl(SDKConfig.getConfig().getFrontUrl())
-//					.setReqReserved("IJPay repaymentGateway")
+//					.setReqReserved("mallplus Pay repaymentGateway")
                     .createMap();
             UnionPayApi.jfFrontConsume(response, reqData);
         } catch (IOException e) {
@@ -503,7 +503,7 @@ public class UnionPayController {
                     .setTxnTime(DateUtil.format(new Date(), "yyyyMMddHHmmss"))//订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
                     .setTxnAmt("2580")
                     .setBackUrl(SDKConfig.getConfig().getBackUrl())
-                    .setReqReserved("IJPay qrCodePay")
+                    .setReqReserved("mallplus Pay qrCodePay")
                     .createMap();
             Map<String, String> rspData = UnionPayApi.backRequestByMap(reqData);
             if (!rspData.isEmpty()) {
