@@ -4,6 +4,7 @@ package com.zscat.mallplus.single;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.exception.Server;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -496,6 +497,17 @@ public class SingelHomeController {
     public Object initMemberRedis() {
 
         return new CommonResult().success(memberService.initMemberRedis());
+
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页推荐商品")
+    @GetMapping(value = "/jvm")
+    public Object servi() throws Exception {
+        Server server = new Server();
+        server.copyTo();
+        return new CommonResult().success(server);
 
     }
 }

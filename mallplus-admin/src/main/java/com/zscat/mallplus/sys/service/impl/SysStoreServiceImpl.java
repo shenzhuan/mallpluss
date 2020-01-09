@@ -1,18 +1,12 @@
 package com.zscat.mallplus.sys.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ApiContext;
-import com.zscat.mallplus.bill.entity.BakBrand;
-import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
-import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
-import com.zscat.mallplus.pms.entity.PmsProductCategory;
 import com.zscat.mallplus.pms.mapper.PmsBrandMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
@@ -30,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 
 /**
@@ -92,7 +83,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setEmail(entity.getSupportPhone());
         apiContext.setCurrentProviderId(entity.getId());
         //
-        if (entity.getType() != null) {
+       /* if (entity.getType() != null) {
             CompletableFuture.runAsync(() -> {
 
                 BakCategory category = bakCategoryMapper.selectById(entity.getType());
@@ -150,7 +141,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
                     }
                 }
             });
-        }
+        }*/
         return userMapper.insert(user) > 0;
     }
 
