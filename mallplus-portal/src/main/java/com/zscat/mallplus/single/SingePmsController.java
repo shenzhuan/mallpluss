@@ -170,6 +170,8 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/goods/list")
     public Object goodsList(
             @RequestParam(value = "storeId", required = false) Integer storeId,
+            @RequestParam(value = "areaId", required = false) Long areaId,
+            @RequestParam(value = "schoolId", required = false) Long schoolId,
             @RequestParam(value = "sort", required = false) Integer sort,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
@@ -181,6 +183,12 @@ public class SingePmsController extends ApiBaseAction {
         product.setSort(sort);
         if (ValidatorUtils.notEmpty(storeId)) {
             product.setStoreId(storeId);
+        }
+        if (ValidatorUtils.notEmpty(areaId)) {
+            product.setAreaId(areaId);
+        }
+        if (ValidatorUtils.notEmpty(schoolId)) {
+            product.setSchoolId(schoolId);
         }
         String orderColum = "create_time";
         if (ValidatorUtils.notEmpty(product.getSort())) {
