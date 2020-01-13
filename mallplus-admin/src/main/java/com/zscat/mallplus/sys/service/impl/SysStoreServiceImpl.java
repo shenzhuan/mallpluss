@@ -80,6 +80,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setIcon(entity.getLogo());
         user.setNickName(entity.getName());
         //user.setStoreId(entity.getId());
+        user.setStoreName(entity.getName());
         user.setEmail(entity.getSupportPhone());
         apiContext.setCurrentProviderId(entity.getId());
         //
