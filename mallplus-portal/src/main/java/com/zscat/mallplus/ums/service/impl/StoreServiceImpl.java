@@ -20,13 +20,18 @@ import com.zscat.mallplus.sys.mapper.SysUserRoleMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IStoreService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.MatrixToImageWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +56,8 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     IPmsProductService productService;
     @Autowired
     private ISmsHomeAdvertiseService advertiseService;
-
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Override
     @Transactional
     public Object applyStore(SysStore entity) {
@@ -70,7 +76,16 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             if (umsAdminList != null && umsAdminList.getId() != null) {
                 return new CommonResult().failed("你已申请");
             }
+
             storeMapper.insert(entity);
+            String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
+            //要添加到二维码下面的文字
+            String words = user.getUsername() + "的二维码";
+            //调用刚才的工具类
+            ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+            InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+            entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
+            storeMapper.updateById(entity);
             user.setStatus(3);
             user.setSupplyId(1L);
             user.setPassword(umsMember.getPassword());
