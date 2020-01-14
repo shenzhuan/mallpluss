@@ -8,14 +8,13 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.util.UserUtils;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,8 +28,7 @@ import java.util.List;
 @MapperScan("com.zscat.mallplus.*.mapper*")
 public class MybatisPlusConfig {
     private static final List<String> IGNORE_TENANT_TABLES = ConstansValue.IGNORE_TENANT_TABLES;
-    @Autowired
-    private ApiContext apiContext;
+
 
     /**
      * 分页插件
@@ -52,13 +50,13 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
-                Integer currentProviderId = apiContext.getCurrentProviderId();
-                if (null == currentProviderId) {
-                    currentProviderId = 1;
+                Integer storeId = UserUtils.getCurrentMember().getStoreId();
+                if (null == storeId) {
+                    // storeId = 1;
                     System.out.println("#1129 getCurrentProviderId error.");
-                    //  throw new RuntimeException("#1129 getCurrentProviderId error.");
+                    throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
-                return new LongValue(currentProviderId);
+                return new LongValue(storeId);
             }
 
             @Override

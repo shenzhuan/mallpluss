@@ -4,7 +4,6 @@ package com.zscat.mallplus.single;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
@@ -76,8 +75,7 @@ public class SingePmsController extends ApiBaseAction {
     private IPmsProductService pmsProductService;
     @Resource
     private SmsGroupRecordMapper groupRecordMapper;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
@@ -143,7 +141,7 @@ public class SingePmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
                 log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -396,7 +394,7 @@ public class SingePmsController extends ApiBaseAction {
 
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods)) {
                 log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -626,8 +624,8 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList + apiContext.getCurrentProviderId(), 2);
+        redisService.set(Rediskey.specialcategoryAndGoodsList, JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList, 2);
         return new CommonResult().success(relList);
     }
 
@@ -663,8 +661,8 @@ public class SingePmsController extends ApiBaseAction {
             }
             relList.get(i).setChildList(list);
         }
-        redisService.set(Rediskey.goodsCategorys + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.goodsCategorys + apiContext.getCurrentProviderId(), 2);
+        redisService.set(Rediskey.goodsCategorys, JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.goodsCategorys, 2);
         return new CommonResult().success(relList);
     }
 

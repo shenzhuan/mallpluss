@@ -3,7 +3,6 @@ package com.zscat.mallplus.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
@@ -22,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -53,8 +51,7 @@ public class SysStoreController {
     private RedisUtil redisUtil;
     @Resource
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private BakCategoryMapper bakCategoryMapper;
 

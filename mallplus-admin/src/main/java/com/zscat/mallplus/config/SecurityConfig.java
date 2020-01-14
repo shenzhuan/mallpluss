@@ -1,6 +1,6 @@
 package com.zscat.mallplus.config;
 
-import com.zscat.mallplus.ApiContext;
+
 import com.zscat.mallplus.bo.AdminUserDetails;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
@@ -50,8 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    @Autowired
-    private ApiContext apiContext;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

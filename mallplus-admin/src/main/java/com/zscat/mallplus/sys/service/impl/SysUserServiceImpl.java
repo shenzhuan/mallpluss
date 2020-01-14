@@ -3,7 +3,6 @@ package com.zscat.mallplus.sys.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.build.entity.UserCommunityRelate;
 import com.zscat.mallplus.build.mapper.UserCommunityRelateMapper;
 import com.zscat.mallplus.exception.BusinessMallException;
@@ -94,8 +93,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private Integer expireMinute;
     @Value("${aliyun.sms.day-count:30}")
     private Integer dayCount;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private UserCommunityRelateMapper userCommunityRelateMapper;
 
@@ -121,7 +119,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
-            apiContext.setCurrentProviderId(UserUtils.getCurrentMember().getStoreId());
+            System.out.println(JSONObject.toJSONString(UserUtils.getCurrentMember()));
             log.info(JSONObject.toJSONString(UserUtils.getCurrentMember()));
             this.removePermissRedis(UserUtils.getCurrentMember().getId());
         } catch (AuthenticationException e) {

@@ -1,7 +1,6 @@
 package com.zscat.mallplus.sys.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
@@ -17,7 +16,6 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +42,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
 
     @Resource
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private BakCategoryMapper bakCategoryMapper;
     @Resource
@@ -79,10 +76,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setCreateTime(new Date());
         user.setIcon(entity.getLogo());
         user.setNickName(entity.getName());
-        //user.setStoreId(entity.getId());
+        user.setStoreId(entity.getId());
         user.setStoreName(entity.getName());
         user.setEmail(entity.getSupportPhone());
-        apiContext.setCurrentProviderId(entity.getId());
+
         //
        /* if (entity.getType() != null) {
             CompletableFuture.runAsync(() -> {
