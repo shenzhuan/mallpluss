@@ -142,6 +142,8 @@ public class SysStore implements Serializable {
     private Integer hit;
 
     private Integer collect;
+    @TableField("is_boutique")
+    private Integer isBoutique;
     @TableField(exist = false)
     private Integer goodsCount;
 

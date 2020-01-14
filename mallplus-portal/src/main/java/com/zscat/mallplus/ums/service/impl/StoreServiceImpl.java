@@ -100,6 +100,8 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
         if (categoryList != null && categoryList.size() > 5) {
             result.setCategoryList(categoryList.subList(0, 5));
             result.setCategoryList1(categoryList.subList(5, categoryList.size() - 1));
+        } else {
+            result.setCategoryList(categoryList);
         }
         PmsProduct product = new PmsProduct();
         product.setVerifyStatus(1);
