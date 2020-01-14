@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.util.UserUtils;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -52,7 +53,7 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
-                Long currentProviderId = apiContext.getCurrentProviderId();
+                Long currentProviderId = UserUtils.getCurrentMember().getStoreId();
                 if (null == currentProviderId) {
                     currentProviderId = 1l;
                     System.out.println("#1129 getCurrentProviderId error.");
