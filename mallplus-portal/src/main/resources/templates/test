@@ -34,7 +34,7 @@ sudo sh /root/jm/apache-tomcat-8.0.52/bin/startup.sh
 put -r /Users/shenzhuan/Documents/tools/apache-tomcat-8.0.52 /root/jm
 
 
-put -r /Users/java/test/git/RuoYi-fast/target/RuoYi.jar  /root/jm
+put -r /Users/java/test/git/mallplus_background/target/RuoYi.jar  /root/jm
 
 nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
