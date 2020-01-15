@@ -18,6 +18,7 @@ import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -94,6 +95,9 @@ public class SysUserController extends ApiController {
            /* if (ValidatorUtils.empty(entity.getStoreId())){
                 entity.setStoreId(UserUtils.getCurrentMember().getStoreId());
             }*/
+            SysUser sysUser = UserUtils.getCurrentMember();
+            entity.setStoreId(sysUser.getStoreId());
+            entity.setStoreName(sysUser.getStoreName());
             if (sysUserService.saves(entity)) {
                 return new CommonResult().success();
             }
