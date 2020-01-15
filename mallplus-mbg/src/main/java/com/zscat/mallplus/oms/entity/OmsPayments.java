@@ -46,7 +46,7 @@ public class OmsPayments implements Serializable {
     /**
      * 参数
      */
-    private String params;
+    private String paramss;
 
     /**
      * 排序

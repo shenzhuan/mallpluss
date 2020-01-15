@@ -79,8 +79,8 @@ public class AliPayController extends AbstractAliPayApiController {
         try {
             //aliPayApiConfig = AliPayApiConfigKit.getApiConfig(aliPayBean.getAppId());
             OmsPayments payments = paymentsService.getById(2);
-            if (payments != null) {
-                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParams(), AliPayBean.class);
+            if (payments != null && payments.getStatus() == 1) {
+                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParamss(), AliPayBean.class);
                 aliPayApiConfig = AliPayApiConfig.builder()
                         .setAppId(aliPayBean.getAppId())
                         .setAliPayPublicKey(aliPayBean.getPublicKey())
@@ -96,7 +96,7 @@ public class AliPayController extends AbstractAliPayApiController {
             }
 
         } catch (Exception e) {
-            AliPayBean aliPayBean = new AliPayBean();
+           /* AliPayBean aliPayBean = new AliPayBean();
             aliPayBean.setAppId("2017010804923732");
             aliPayBean.setDomain("http://www.yjlive.cn/api/api");
             aliPayBean.setServerUrl("https://openapi.alipay.com/gateway.do");
@@ -113,7 +113,7 @@ public class AliPayController extends AbstractAliPayApiController {
             domain = aliPayBean.getDomain();
             privateKey = aliPayBean.getPrivateKey();
             publicKey = aliPayBean.getPublicKey();
-            appId = aliPayBean.getAppId();
+            appId = aliPayBean.getAppId();*/
         }
         return aliPayApiConfig;
 

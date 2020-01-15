@@ -82,8 +82,8 @@ public class WxPayController extends AbstractWxPayApiController {
 
         try {
             OmsPayments payments = paymentsService.getById(1);
-            if (payments != null) {
-                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParams(), WxPayBean.class);
+            if (payments != null && payments.getStatus() == 1) {
+                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParamss(), WxPayBean.class);
                 apiConfig = WxPayApiConfig.builder()
                         .appId(wxPayBean.getAppId())
                         .mchId(wxPayBean.getMchId())
@@ -91,11 +91,12 @@ public class WxPayController extends AbstractWxPayApiController {
                         .certPath(wxPayBean.getCertPath())
                         .domain(wxPayBean.getDomain())
                         .build();
+                notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
+                refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
             }
-            notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
-            refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
+
         } catch (Exception e) {
-            WxPayBean wxPayBean = new WxPayBean();
+            /*WxPayBean wxPayBean = new WxPayBean();
             wxPayBean.setAppId("wx8321531c6046c924");
             wxPayBean.setMchId("1533901051");
             wxPayBean.setDomain("http://www.yjlive.cn/api/api");
@@ -109,7 +110,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .build();
 
             notifyUrl = apiConfig.getDomain().concat("/wxPay/payNotify");
-            refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");
+            refundNotifyUrl = apiConfig.getDomain().concat("/wxPay/refundNotify");*/
         }
 
         return apiConfig;
