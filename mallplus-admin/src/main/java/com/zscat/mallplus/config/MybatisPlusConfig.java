@@ -54,6 +54,7 @@ public class MybatisPlusConfig {
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
                 Long currentProviderId = UserUtils.getCurrentMember().getStoreId();
+                System.out.println("currentProviderId=" + currentProviderId);
                 if (null == currentProviderId) {
                     currentProviderId = 1l;
                     System.out.println("#1129 getCurrentProviderId error.");

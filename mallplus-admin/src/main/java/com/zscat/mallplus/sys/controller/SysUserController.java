@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -221,6 +222,7 @@ public class SysUserController extends ApiController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public Object logout() {
+        SecurityContextHolder.getContext().setAuthentication(null);
         return new CommonResult().success(null);
     }
 

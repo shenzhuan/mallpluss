@@ -10,13 +10,14 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class mallplus PayConfigurer extends WebMvcConfigurationSupport {
+public class IJPayConfigurer extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
        /* registry.addInterceptor(new AliPayInterceptor()).addPathPatterns("/api/aliPay/**");

@@ -194,9 +194,13 @@ public class SingelHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @GetMapping("/bannerList")
-    public Object bannerList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
-        return new CommonResult().success(bannerList);
+    public Object bannerList(@RequestParam(value = "type", required = false) Integer type) {
+        SmsHomeAdvertise advertise = new SmsHomeAdvertise();
+        advertise.setStatus(1);
+        if (ValidatorUtils.notEmpty(type)) {
+            advertise.setType(type);
+        }
+        return new CommonResult().success(advertiseService.list(new QueryWrapper<>(advertise)));
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询首页推荐品牌")

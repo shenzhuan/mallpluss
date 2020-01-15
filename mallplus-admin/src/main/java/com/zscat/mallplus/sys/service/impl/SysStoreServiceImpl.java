@@ -87,8 +87,9 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setPassword(passwordEncoder.encode(entity.getSupportName()));
         user.setCreateTime(new Date());
         user.setIcon(entity.getLogo());
+        user.setStoreName(entity.getName());
         user.setNickName(entity.getName());
-        //user.setStoreId(entity.getId());
+        user.setStoreId(entity.getId());
         user.setEmail(entity.getSupportPhone());
            apiContext.setCurrentProviderId(entity.getId());
         //

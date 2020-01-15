@@ -91,6 +91,15 @@ public class SingeUmsController extends ApiBaseAction {
         return new CommonResult().success(member);
     }
 
+
+    @ApiOperation("获取商铺详情")
+    @RequestMapping(value = "/store/detail", method = RequestMethod.GET)
+    @ResponseBody
+    public Object storeSampleDetail(@RequestParam(value = "storeid", required = false, defaultValue = "0") Long storeid) {
+        SysStore store = storeMapper.selectById(storeid);
+        return new CommonResult().success(store);
+    }
+
     @IgnoreAuth
     @ApiOperation(value = "查询商铺列表")
     @GetMapping(value = "/store/list")
