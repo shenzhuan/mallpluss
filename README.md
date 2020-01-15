@@ -257,6 +257,11 @@ nginx | 1.10 | http://nginx.org/en/download.html
 
 Copyright (c) 2018-2019 zscatzheng
 
+
+ **- 版权声明** 
+- 本项目由北京zscat科技有限公司开发，禁止未经授权用于商业用途。个人学习可免费使用。如需商业授权，请加微信。
+- 本项目由北京zscat科技有限公司开发，禁止未经授权用于商业用途。个人学习可免费使用。如需商业授权，请加微信。
+
 ### 我的微信号
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/175349_ce8614db_134431.jpeg "流逝.jpeg")
