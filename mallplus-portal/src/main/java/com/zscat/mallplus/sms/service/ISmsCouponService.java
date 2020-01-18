@@ -41,9 +41,9 @@ public interface ISmsCouponService extends IService<SmsCoupon> {
     List<SmsCouponHistoryDetail> listCart(List<OmsCartItem> cartItemList, Integer type);
 
 
-    List<SmsCoupon> selectNotRecive(Long memberId);
+    List<SmsCoupon> selectNotRecive(Integer pageSize);
 
-    List<SmsCoupon> selectRecive(Long memberId);
+    List<SmsCoupon> selectRecive(Integer pageSize);
 
     List<SmsCoupon> selectNotRecive();
 

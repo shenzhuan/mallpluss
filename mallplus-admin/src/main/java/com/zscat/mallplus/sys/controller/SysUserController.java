@@ -18,6 +18,7 @@ import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -90,9 +91,10 @@ public class SysUserController extends ApiController {
     @PostMapping(value = "/register")
     public Object saveUser(@RequestBody SysUser entity) {
         try {
-           /* if (ValidatorUtils.empty(entity.getStoreId())){
+            if (ValidatorUtils.empty(entity.getStoreId())) {
                 entity.setStoreId(UserUtils.getCurrentMember().getStoreId());
-            }*/
+            }
+            entity.setStoreName(UserUtils.getCurrentMember().getStoreName());
             if (sysUserService.saves(entity)) {
                 return new CommonResult().success();
             }

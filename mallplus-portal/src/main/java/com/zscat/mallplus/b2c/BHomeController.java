@@ -33,6 +33,7 @@ import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
 import com.zscat.mallplus.vo.home.Configs;
 import com.zscat.mallplus.vo.home.Pages;
+import com.zscat.mallplus.vo.home.ServiceMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -354,6 +355,31 @@ public class BHomeController {
         return new CommonResult().success();
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "服务菜单")
+    @ApiOperation(value = "服务菜单")
+    @PostMapping(value = "/menuList")
+    public Object menuList() {
+        List<ServiceMenu> menuList = new ArrayList<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+
+        menuList.add(new ServiceMenu("会员中心", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9934a7c.png", "/pages/user_vip/index", "/user/vip"));
+        menuList.add(new ServiceMenu("砍价记录", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9918091.png", "/pages/activity/user_goods_bargain_list/index", "/activity/bargain/record"));
+        menuList.add(new ServiceMenu("我的推广", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9943575.png", "/pages/user_spread_user/index", "/user/user_promotion"));
+        menuList.add(new ServiceMenu("我的余额", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc992db31.png", "/pages/user_money/index", "/user/account"));
+        menuList.add(new ServiceMenu("地址信息", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99101a8.png", "/pages/user_address_list/index", "/user/add_manage"));
+        menuList.add(new ServiceMenu("我的收藏", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99269d1.png", "/pages/user_goods_collection/index", "/collection"));
+        menuList.add(new ServiceMenu("优惠券", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc991f394.png", "/pages/user_coupon/index", "/user/user_coupon"));
+        menuList.add(new ServiceMenu("联系客服", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/customer/list"));
+        if (umsMember != null && umsMember.getId() != null) {
+            if (ValidatorUtils.empty(umsMember.getRoomNums())) {
+                menuList.add(new ServiceMenu("绑定社区", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/BindingCommunity"));
+            } else {
+                menuList.add(new ServiceMenu(umsMember.getRoomDesc(), "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/index"));
+            }
+        }
+        return new CommonResult().success(menuList);
+    }
     /**
      * 发送短信验证码
      *

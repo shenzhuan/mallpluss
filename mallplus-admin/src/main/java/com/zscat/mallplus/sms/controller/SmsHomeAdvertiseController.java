@@ -13,7 +13,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -74,7 +73,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "更新首页轮播广告表")
     @ApiOperation("更新首页轮播广告表")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:update')")
     public Object updateSmsHomeAdvertise(@RequestBody SmsHomeAdvertise entity) {
         try {
             if (ISmsHomeAdvertiseService.updateById(entity)) {

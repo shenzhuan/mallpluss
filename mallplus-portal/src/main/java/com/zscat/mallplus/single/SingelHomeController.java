@@ -2,6 +2,7 @@ package com.zscat.mallplus.single;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.exception.Server;
@@ -101,6 +102,17 @@ public class SingelHomeController {
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/userSampleInfo", method = RequestMethod.GET)
+    public Object userSampleInfo() {
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            return new CommonResult().success(umsMember);
+        }
+        return new CommonResult().fail(100);
+    }
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/home_mobile", method = RequestMethod.GET)
     public Object home_mobile() {
         String key = Rediskey.HOMEPAGEMOBILE;
@@ -183,9 +195,19 @@ public class SingelHomeController {
     @ApiOperation("优惠券")
     @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
     @RequestMapping(value = "/couponList", method = RequestMethod.GET)
-    public Object couponList() {
-        List<SmsCoupon> contentResult = couponService.selectNotRecive();
-        return new CommonResult().success(contentResult);
+    public Object couponList(SmsCoupon entity,
+                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+
+        return new CommonResult().success(couponService.page(new Page<SmsCoupon>(pageNum, pageSize), new QueryWrapper<>(entity)));
+    }
+
+    @IgnoreAuth
+    @ApiOperation("优惠券")
+    @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
+    @RequestMapping(value = "/selectNotRecive", method = RequestMethod.GET)
+    public Object selectNotRecive(@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return new CommonResult().success(couponService.selectNotRecive(pageSize));
     }
 
     /**

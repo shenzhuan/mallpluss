@@ -13,6 +13,6 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class BaseEntity implements Serializable {
-   /* @TableField("store_id")
+   /*@TableField("store_id")
     private Integer storeId;*/
 }

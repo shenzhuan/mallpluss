@@ -108,7 +108,7 @@ public class SingeStoreController extends ApiBaseAction {
     @ApiOperation("获取店铺详情")
     @RequestMapping(value = "/detail1", method = RequestMethod.GET)
     @ResponseBody
-    public Object detail1(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+    public Object detail1(@RequestParam(value = "id", required = false) Integer id) {
         Map map = new HashMap();
         if (ValidatorUtils.empty(id)) {
             UmsMember member = memberService.getNewCurrentMember();

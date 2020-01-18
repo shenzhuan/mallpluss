@@ -80,7 +80,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             storeMapper.insert(entity);
             String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
             //要添加到二维码下面的文字
-            String words = user.getUsername() + "的二维码";
+            String words = entity.getName() + "的二维码";
             //调用刚才的工具类
             ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
             InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());

@@ -52,6 +52,8 @@ put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
 
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5bak1 /root/jm
+
 put -r /Users/java/test/git/mobile-mall/unpackage/dist/build/jsshop /root/jm
 
 put -r /Users/java/test/git/pc/pc /root/jm

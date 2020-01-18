@@ -29,6 +29,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -90,6 +91,27 @@ public class SingeUmsController extends ApiBaseAction {
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         UmsMember member = memberService.getById(id);
         return new CommonResult().success(member);
+    }
+
+    @ApiOperation("修改密码")
+    @RequestMapping(value = "/updateMember", method = RequestMethod.POST)
+    public Object updatePassword(
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "icon", required = false) String icon,
+            @RequestParam(value = "gender", required = false) Integer gender
+    ) {
+        UmsMember m = new UmsMember();
+        m.setId(memberService.getNewCurrentMember().getId());
+        if (ValidatorUtils.notEmpty(nickname)) {
+            m.setNickname(nickname);
+        }
+        if (ValidatorUtils.notEmpty(icon)) {
+            m.setIcon(icon);
+        }
+        if (ValidatorUtils.notEmpty(gender)) {
+            m.setGender(gender);
+        }
+        return memberService.updateById(m);
     }
 
     @IgnoreAuth
