@@ -133,5 +133,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @return
      */
     String getWxPhone(String openid, String keyStr, String ivStr, String encDataStr);
+
+    Object resetPassword(String phone, String password, String confimpassword, String authCode);
 }
 

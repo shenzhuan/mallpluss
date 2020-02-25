@@ -1,6 +1,7 @@
 package com.zscat.mallplus.single;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
@@ -19,10 +20,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * 购物车管理Controller
@@ -130,7 +129,7 @@ public class OmsCartItemController {
         }
         int count = cartItemService.delete(memberService.getNewCurrentMember().getId(), resultList);
         if (count > 0) {
-            return new CommonResult().success(count);
+            return new CommonResult().success(list());
         }
         return new CommonResult().failed();
     }
@@ -146,5 +145,30 @@ public class OmsCartItemController {
         return new CommonResult().failed();
     }
 
+    /**
+     * 购物车商品货品勾选状态
+     * <p>
+     * 如果原来没有勾选，则设置勾选状态；如果商品已经勾选，则设置非勾选状态。
+     *
 
+     * @return 购物车信息
+     */
+    @PostMapping("checked")
+    public Object checked(@RequestParam Integer checkValue,
+                          @RequestParam List<Integer> productIds) {
+        if (productIds == null) {
+            return new CommonResult().paramFailed();
+        }
+
+        if (checkValue == null) {
+            return new CommonResult().paramFailed();
+        }
+
+        OmsCartItem item =new OmsCartItem();
+        item.setChecked(checkValue);
+        item.setModifyDate(new Date());
+            cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).in("product_id",productIds));
+
+        return list();
+    }
 }

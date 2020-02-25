@@ -415,8 +415,6 @@ public class SingelHomeController {
         if (confimpassword == null || "".equals(confimpassword)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
-
-
         return memberService.simpleReg(phone, password, confimpassword, invitecode);
     }
 

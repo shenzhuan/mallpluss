@@ -325,6 +325,19 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
+    public Object resetPassword(String phone, String password, String confimpassword, String authCode){
+        if (ValidatorUtils.notEmpty(authCode) && !verifyAuthCode(authCode, phone)) {
+            return new CommonResult().failed("验证码错误");
+        }
+        if (!password.equals(confimpassword)) {
+            return new CommonResult().failed("密码不一致");
+        }
+        UmsMember umsMember = new UmsMember();
+        umsMember.setPassword(passwordEncoder.encode(password));
+        memberMapper.update(umsMember,new QueryWrapper<UmsMember>().eq("phone",phone));
+        return  true;
+    }
+    @Override
     public CommonResult register(String phone, String password, String confim, String authCode, String invitecode) {
 
         //没有该用户进行添加操作
@@ -447,14 +460,19 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setMemberLevelId(4L);
         umsMember.setMemberLevelName("普通会员");
         umsMember.setUsername(user.getUsername());
+        umsMember.setNickname(user.getUsername());
         umsMember.setSourceType(user.getSourceType());
         umsMember.setPhone(user.getPhone());
         umsMember.setPassword(passwordEncoder.encode(user.getPassword()));
         umsMember.setCreateTime(new Date());
         umsMember.setStatus(1);
+        umsMember.setBuyCount(0);
+        umsMember.setBuyMoney(BigDecimal.ZERO);
         umsMember.setBlance(new BigDecimal(10000));
         umsMember.setIntegration(10000);
-
+        if (ValidatorUtils.notEmpty(user.getInvitecode()) ) {
+            umsMember.setInvitecode(user.getInvitecode());
+        }
         String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
         umsMember.setIcon(defaultIcon);
         //这是要生成二维码的url

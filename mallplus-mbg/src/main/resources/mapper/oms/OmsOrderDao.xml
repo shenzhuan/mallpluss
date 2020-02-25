@@ -212,7 +212,7 @@ WHERE MONTH(create_time) = MONTH(#{date})
     </select>
 
     <select id="listByDate" resultMap="BaseResultMap">
-        select pay_amount,status from oms_order where
+        select id, pay_amount,status from oms_order where
         <if test="type==1">
             date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
         </if>
