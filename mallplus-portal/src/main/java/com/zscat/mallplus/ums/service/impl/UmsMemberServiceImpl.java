@@ -211,11 +211,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if (member != null && member.getId() != null) {
                 return member;
             }
-            String storeId = request.getParameter("storeid");
-            if (ValidatorUtils.empty(storeId)) {
-                storeId = request.getHeader("storeid");
-            }
-            String tokenPre = "authorization" + storeId;
+
+            String tokenPre = "authorization" ;
             String authHeader = request.getParameter(tokenPre);
             if (ValidatorUtils.empty(authHeader)) {
                 authHeader = request.getHeader(tokenPre);
@@ -750,11 +747,108 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
 
     }
+    @Override
+    public Object loginByWeixin2(AppletLoginnewParam req){
+        try {
+            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            if (null == appletSet) {
+                throw new ApiMallPlusException("没有设置支付配置");
+            }
+            String code = req.getCode();
+            if (StringUtils.isEmpty(code)) {
+                log.error("code ie empty");
+                throw new ApiMallPlusException("code ie empty");
+            }
+            UserInfo userInfos = req.getUserInfo();
 
+            String signature = req.getSignature();
+
+            if (null == userInfos) {
+                throw new ApiMallPlusException("登录失败 userInfos is null");
+            }
+
+            Map<String, Object> resultObj = new HashMap<String, Object>();
+
+            String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+
+            //获取openid
+            String requestUrl = String.format(webAccessTokenhttps,
+                    appletSet.getAppid(),
+                    appletSet.getAppsecret(),
+                    code);
+
+            JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
+
+            if (null == sessionData || StringUtils.isEmpty(sessionData.getString("openid"))) {
+                throw new ApiMallPlusException("登录失败openid is empty");
+            }
+            //验证用户信息完整性
+          //  String sha1 = CommonUtil.getSha1(JsonUtils.toJsonStr(userInfos) + sessionData.getString("session_key"));
+          //  if (!signature.equals(sha1)) {
+            //    throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
+          //  }
+            UmsMember userVo = this.queryByOpenId(sessionData.getString("openid"));
+            String token = null;
+            if (null == userVo) {
+                UmsMember umsMember = new UmsMember();
+                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
+                umsMember.setSourceType(2);
+                umsMember.setPassword(passwordEncoder.encode("123456"));
+                umsMember.setCreateTime(new Date());
+                umsMember.setStatus(1);
+                umsMember.setBlance(new BigDecimal(10000));
+                umsMember.setIntegration(0);
+                umsMember.setMemberLevelId(4L);
+                umsMember.setAvatar(req.getCloudID());
+                umsMember.setCity(userInfos.getCountry() + "-" + userInfos.getProvince() + "-" +
+                        userInfos.getCity());
+
+                umsMember.setGender(Integer.valueOf(userInfos.getGender()));
+                umsMember.setHistoryIntegration(0);
+                umsMember.setWeixinOpenid(sessionData.getString("openid"));
+                if (StringUtils.isEmpty(userInfos.getAvatarUrl())) {
+                    //会员头像(默认头像)
+                    umsMember.setIcon("/upload/img/avatar/01.jpg");
+                } else {
+                    umsMember.setIcon(userInfos.getAvatarUrl());
+                }
+                // umsMember.setGender(Integer.parseInt(me.get("gender")));
+                umsMember.setNickname(userInfos.getNickName());
+
+                memberMapper.insert(umsMember);
+                token = jwtTokenUtil.generateToken(umsMember.getUsername());
+                resultObj.put("userId", umsMember.getId());
+                resultObj.put("userInfo", umsMember);
+                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+
+            } else {
+                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                token = jwtTokenUtil.generateToken(userVo.getUsername());
+                resultObj.put("userId", userVo.getId());
+                resultObj.put("userInfo", userVo);
+            }
+
+
+            if (StringUtils.isEmpty(token)) {
+                throw new ApiMallPlusException("登录失败");
+            }
+            resultObj.put("tokenHead", tokenHead);
+            resultObj.put("token", token);
+
+
+            return new CommonResult().success(resultObj);
+        } catch (ApiMallPlusException e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        }
+
+    }
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {
-
             SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
@@ -790,10 +884,9 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             }
             //验证用户信息完整性
             String sha1 = CommonUtil.getSha1(userInfos + sessionData.getString("session_key"));
-            if (!signature.equals(sha1)) {
+           /* if (!signature.equals(sha1)) {
                 throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
-
-            }
+            }*/
             UmsMember userVo = this.queryByOpenId(sessionData.getString("openid"));
             String token = null;
             if (null == userVo) {

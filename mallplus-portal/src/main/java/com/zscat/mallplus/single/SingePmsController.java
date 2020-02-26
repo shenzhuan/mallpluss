@@ -806,7 +806,15 @@ public class SingePmsController extends ApiBaseAction {
         PmsProduct product = pmsProductService.getById(id);
         return new CommonResult().success(product.getPic());
     }
+    @ApiOperation("生成商品海报")
+    @GetMapping(value = "/goodsCount")
+    public Object goodsCount() {
+        PmsProduct productQueryParam = new PmsProduct();
 
+        productQueryParam.setPublishStatus(1);
+        productQueryParam.setVerifyStatus(1);
+        return new CommonResult().success(pmsProductService.count(new QueryWrapper<>(productQueryParam)));
+    }
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;

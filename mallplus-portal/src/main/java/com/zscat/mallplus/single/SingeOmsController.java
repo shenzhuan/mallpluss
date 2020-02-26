@@ -26,7 +26,9 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
+import com.zscat.mallplus.vo.home.ServiceMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -38,6 +40,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -402,6 +406,77 @@ public class SingeOmsController extends ApiBaseAction {
             return new CommonResult().failed("获取物流信息失败，请稍后重试");
         }
 
+    }
+
+    @IgnoreAuth
+    @ApiOperation("获取订单不同状态的数量")
+    @SysLog(MODULE = "applet", REMARK = "获取订单不同状态的数量")
+    @GetMapping("/order.getorderstatusnum")
+    public Object getOrderStatusSum() {
+        Map<String, Object> objectMap = new HashMap<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        OrderStatusCount count = new OrderStatusCount();
+        if (umsMember != null && umsMember.getId() != null) {
+            OmsOrder param = new OmsOrder();
+            param.setMemberId(umsMember.getId());
+            List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+            int status0 = 0;
+            int status1 = 0;
+            int status2 = 0;
+            int status3 = 0;
+            int status4 = 0;
+            int status5 = 0;
+            int status14 = 0;
+
+            int statusAll = 0;
+            BigDecimal payAmount = BigDecimal.ZERO;
+            for (OmsOrder consult : list) {
+                if (consult.getStatus() == OrderStatus.INIT.getValue()) {
+                    status0++;
+                }
+                if (consult.getStatus() == OrderStatus.REFUND.getValue()) {
+                    status14++;
+                }
+                if (consult.getStatus() == OrderStatus.TO_DELIVER.getValue()) {
+                    status1++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+                }
+                if (consult.getStatus() == OrderStatus.DELIVERED.getValue()) {
+                    status2++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.TO_COMMENT.getValue()) {
+                    status3++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.TRADE_SUCCESS.getValue()) {
+                    status4++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
+                    status5++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+            }
+            statusAll = status1 + status2 + status3 + status4 + status5;
+            count.setPayAmount(payAmount);
+            count.setStatusAll(statusAll);
+            count.setStatus0(status0);
+            count.setStatus1(status1);
+            count.setStatus2(status2);
+            count.setStatus3(status3);
+            count.setStatus4(status4);
+            count.setStatus5(status5);
+            count.setStatus14(status14);
+        }
+        objectMap.put("user", umsMember);
+        objectMap.put("count", count);
+
+        return new CommonResult().success(objectMap);
     }
 
 }

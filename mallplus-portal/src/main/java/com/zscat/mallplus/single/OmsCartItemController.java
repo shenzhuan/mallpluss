@@ -12,6 +12,7 @@ import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.CartParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -170,5 +171,15 @@ public class OmsCartItemController {
             cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).in("product_id",productIds));
 
         return list();
+    }
+    @ApiOperation("修改购物车中某个商品的数量")
+    @RequestMapping(value = "/getnumber", method = RequestMethod.GET)
+    @ResponseBody
+    public Object getnumber() {
+        Integer count = cartItemService.countCart(memberService.getNewCurrentMember().getId());
+        if (ValidatorUtils.notEmpty(count) && count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().success(0);
     }
 }

@@ -1962,7 +1962,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         OmsCartItem cartItem = new OmsCartItem();
         PmsProduct pmsProduct = productService.getById(cartParam.getGoodsId());
-        if (ValidatorUtils.notEmpty(cartParam.getSkuId())) {
+        if (ValidatorUtils.notEmpty(cartParam.getSkuId()) && cartParam.getSkuId()>0) {
             PmsSkuStock pmsSkuStock = skuStockMapper.selectById(cartParam.getSkuId());
             checkGoods(pmsProduct, false, cartParam.getTotal());
             checkSkuGoods(pmsSkuStock, cartParam.getTotal());
