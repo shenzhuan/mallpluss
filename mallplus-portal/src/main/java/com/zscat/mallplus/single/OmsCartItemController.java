@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -79,6 +80,25 @@ public class OmsCartItemController {
                 map.put("promoteAmount", 0);
             }*/
             map.put("promoteAmount", 0);
+            Integer goodsCount = 0;
+            BigDecimal goodsAmount = new BigDecimal(0.00);
+            Integer checkedGoodsCount = 0;
+            BigDecimal checkedGoodsAmount = new BigDecimal(0.00);
+            for (OmsCartItem cart : cartItemList) {
+                goodsCount += cart.getQuantity();
+                goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
+                if (cart.getChecked()==1) {
+                    checkedGoodsCount += cart.getQuantity();
+                    checkedGoodsAmount = checkedGoodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
+                }
+            }
+            Map<String, Object> cartTotal = new HashMap<>();
+            cartTotal.put("goodsCount", goodsCount);
+            cartTotal.put("goodsAmount", goodsAmount);
+            cartTotal.put("checkedGoodsCount", checkedGoodsCount);
+            cartTotal.put("checkedGoodsAmount", checkedGoodsAmount);
+
+            map.put("cartTotal", cartTotal);
 
             return new CommonResult().success(map);
         }

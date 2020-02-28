@@ -4,8 +4,8 @@ alter table fenxiao_records add type int not Null;
 
 alter table sms_coupon_history add min_point decimal not Null;
 
-
-
+alter table pms_product add is_fenxiao int ;
+alter table oms_cart_item add is_fenxiao int ;
 
 
 1.添加分销

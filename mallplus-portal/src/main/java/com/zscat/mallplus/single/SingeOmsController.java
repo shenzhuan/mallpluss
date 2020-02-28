@@ -197,6 +197,19 @@ public class SingeOmsController extends ApiBaseAction {
     }
 
     @ResponseBody
+    @GetMapping("/couponSelectList")
+    public Object couponHistoryDetailList(OrderParam orderParam) {
+        try {
+            return new CommonResult().success(orderService.couponHistoryDetailList(orderParam));
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
         try {

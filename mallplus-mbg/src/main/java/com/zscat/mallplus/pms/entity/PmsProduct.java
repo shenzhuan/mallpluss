@@ -89,6 +89,9 @@ public class PmsProduct extends BaseEntity implements Serializable {
     @TableField("verify_status")
     private Integer verifyStatus;
 
+
+    @TableField("is_fenxiao")
+    private Integer isFenxiao;
     /**
      * 排序
      */
@@ -267,7 +270,8 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private int qsType;
-
+    @TableField(exist = false)
+    private BigDecimal fenxiaoPrice;
     @TableField(exist = false)
     private TimeSecound timeSecound;
 }

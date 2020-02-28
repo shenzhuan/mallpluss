@@ -290,6 +290,62 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         return cartItems;
     }
+    /**
+     * @return
+     */
+    @Override
+    public Object couponHistoryDetailList(OrderParam orderParam) {
+
+        String type = orderParam.getType();
+        UmsMember currentMember = memberService.getNewCurrentMember();
+        List<OmsCartItem> list = new ArrayList<>();
+        if ("3".equals(type)) { // 1 商品详情 2 勾选购物车 3全部购物车的商品
+            list = cartItemService.list(currentMember.getId(), null);
+        } else if ("1".equals(type)) {
+            String cartId = orderParam.getCartId();
+            if (org.apache.commons.lang.StringUtils.isBlank(cartId)) {
+                throw new ApiMallPlusException("参数为空");
+            }
+            OmsCartItem omsCartItem = cartItemService.selectById(Long.valueOf(cartId));
+            if (omsCartItem == null) {
+                return null;
+            }
+            list.add(omsCartItem);
+        } else if ("2".equals(type)) {
+            String cart_id_list1 = orderParam.getCartIds();
+            if (org.apache.commons.lang.StringUtils.isBlank(cart_id_list1)) {
+                throw new ApiMallPlusException("参数为空");
+            }
+            String[] ids1 = cart_id_list1.split(",");
+            List<Long> resultList = new ArrayList<>(ids1.length);
+            for (String s : ids1) {
+                resultList.add(Long.valueOf(s));
+            }
+            list = cartItemService.list(currentMember.getId(), resultList);
+        } else if ("6".equals(type)) { // 秒杀
+            SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(orderParam.getSkillId());
+            PmsProduct product = productService.getById(relation.getProductId());
+            OmsCartItem omsCartItem = new OmsCartItem();
+            omsCartItem.setQuantity(orderParam.getTotal());
+            if (orderParam.getTotal() > relation.getFlashPromotionLimit()) {
+                throw new ApiMallPlusException("超过秒杀个数！");
+            }
+            omsCartItem.setPrice(relation.getFlashPromotionPrice());
+            omsCartItem.setProductBrand(product.getBrandId() + "");
+            omsCartItem.setProductCategoryId(product.getProductCategoryId());
+            omsCartItem.setProductName(product.getName());
+            omsCartItem.setProductPic(product.getPic());
+            omsCartItem.setProductId(product.getId());
+            omsCartItem.setChecked(1);
+            omsCartItem.setProductSn(product.getProductSn());
+
+            list.add(omsCartItem);
+        }
+
+        //获取用户可用优惠券列表
+        List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(list, 1);
+        return new CommonResult().success(couponHistoryDetailList);
+    }
 
     /**
      * @return
@@ -505,9 +561,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Override
     public CommonResult generateOrder(OrderParam orderParam) {
-        if (ValidatorUtils.empty(orderParam.getTotal())) {
-            orderParam.setTotal(1);
-        }
+
         String type = orderParam.getType();
         UmsMember currentMember = memberService.getNewCurrentMember();
         OmsOrder order = new OmsOrder();
@@ -559,6 +613,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(orderParam.getSkillId());
                 PmsProduct product = productService.getById(relation.getProductId());
                 OmsCartItem omsCartItem = new OmsCartItem();
+                if (ValidatorUtils.empty(orderParam.getTotal())) {
+                    orderParam.setTotal(1);
+                }
                 omsCartItem.setQuantity(orderParam.getTotal());
                 if (orderParam.getTotal() > relation.getFlashPromotionLimit()) {
                     throw new ApiMallPlusException("超过秒杀个数！");
@@ -713,38 +770,42 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         orderItemService.saveBatch(orderItemList);
         // 佣金计算
         for (OmsCartItem cartPromotionItem : newCartItemList) {
-            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
-            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
-                //一级 分销
-                FenxiaoRecords records1 = new FenxiaoRecords();
-                records1.setCreateTime(new Date());
-                records1.setStatus("1");
-                records1.setGoodsId(cartPromotionItem.getProductId());
-                records1.setStoreId(cartPromotionItem.getStoreId());
-                records1.setLevel("1");
-                records1.setType(fenxiaoConfig.getType());
-                records1.setMemberId(Long.valueOf(currentMember.getInvitecode()));
-                records1.setInviteId(currentMember.getId());
-                records1.setOrderId(order.getId());
-                records1.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getOnePercent()))).divide(BigDecimal.valueOf(100)));
-                fenxiaoRecordsMapper.insert(records1);
-                //二级 分销
-                UmsMember member = memberService.getById(currentMember.getInvitecode());
-                if (member != null && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getTwoPercent() > 0) {
-                    FenxiaoRecords records = new FenxiaoRecords();
-                    records.setCreateTime(new Date());
-                    records.setStatus("1");
-                    records.setGoodsId(cartPromotionItem.getProductId());
-                    records.setStoreId(cartPromotionItem.getStoreId());
-                    records.setLevel("2");
-                    records.setType(fenxiaoConfig.getType());
-                    records.setMemberId(Long.valueOf(member.getInvitecode()));
-                    records.setInviteId(member.getId());
-                    records.setOrderId(order.getId());
-                    records.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getTwoPercent()))).divide(BigDecimal.valueOf(100)));
-                    fenxiaoRecordsMapper.insert(records);
+            if (cartPromotionItem.getIsFenxiao()==1){
+                FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
+                if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
+                    //  UmsMember member = memberService.getById(currentMember.getInvitecode());
+                    //一级 分销
+                    FenxiaoRecords records1 = new FenxiaoRecords();
+                    records1.setCreateTime(new Date());
+                    records1.setStatus("1");
+                    records1.setGoodsId(cartPromotionItem.getProductId());
+                    records1.setStoreId(cartPromotionItem.getStoreId());
+                    records1.setLevel("1");
+                    records1.setType(fenxiaoConfig.getType());
+                    records1.setMemberId(Long.valueOf(currentMember.getInvitecode()));
+                    records1.setInviteId(currentMember.getId());
+                    records1.setOrderId(order.getId());
+                    records1.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getOnePercent()))).divide(BigDecimal.valueOf(100)));
+                    fenxiaoRecordsMapper.insert(records1);
+                    //二级 分销
+                    UmsMember member = memberService.getById(currentMember.getInvitecode());
+                    if (member != null && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getTwoPercent() > 0) {
+                        FenxiaoRecords records = new FenxiaoRecords();
+                        records.setCreateTime(new Date());
+                        records.setStatus("1");
+                        records.setGoodsId(cartPromotionItem.getProductId());
+                        records.setStoreId(cartPromotionItem.getStoreId());
+                        records.setLevel("2");
+                        records.setType(fenxiaoConfig.getType());
+                        records.setMemberId(Long.valueOf(member.getInvitecode()));
+                        records.setInviteId(member.getId());
+                        records.setOrderId(order.getId());
+                        records.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getTwoPercent()))).divide(BigDecimal.valueOf(100)));
+                        fenxiaoRecordsMapper.insert(records);
+                    }
                 }
             }
+
         }
         //如使用优惠券更新优惠券使用状态
         if (orderParam.getCouponId() != null && orderParam.getCouponId() > 0) {
@@ -1972,6 +2033,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             OmsCartItem existCartItem = cartItemMapper.selectOne(new QueryWrapper<>(cartItem));
             if (existCartItem == null) {
                 cartItem.setChecked(1);
+                cartItem.setIsFenxiao(pmsProduct.getIsFenxiao());
                 cartItem.setMemberId(memberService.getNewCurrentMember().getId());
                 cartItem.setPrice(pmsSkuStock.getPrice());
                 cartItem.setProductSkuCode(pmsSkuStock.getSkuCode());
@@ -2395,39 +2457,42 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
             // 佣金计算
             for (OmsCartItem cartPromotionItem : newCartItemList) {
-                FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
-                if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
-                    //  UmsMember member = memberService.getById(currentMember.getInvitecode());
-                    //一级 分销
-                    FenxiaoRecords records1 = new FenxiaoRecords();
-                    records1.setCreateTime(new Date());
-                    records1.setStatus("1");
-                    records1.setGoodsId(cartPromotionItem.getProductId());
-                    records1.setStoreId(cartPromotionItem.getStoreId());
-                    records1.setLevel("1");
-                    records1.setType(fenxiaoConfig.getType());
-                    records1.setMemberId(Long.valueOf(currentMember.getInvitecode()));
-                    records1.setInviteId(currentMember.getId());
-                    records1.setOrderId(order.getId());
-                    records1.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getOnePercent()))).divide(BigDecimal.valueOf(100)));
-                    fenxiaoRecordsMapper.insert(records1);
-                    //二级 分销
-                    UmsMember member = memberService.getById(currentMember.getInvitecode());
-                    if (member != null && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getTwoPercent() > 0) {
-                        FenxiaoRecords records = new FenxiaoRecords();
-                        records.setCreateTime(new Date());
-                        records.setStatus("1");
-                        records.setGoodsId(cartPromotionItem.getProductId());
-                        records.setStoreId(cartPromotionItem.getStoreId());
-                        records.setLevel("2");
-                        records.setType(fenxiaoConfig.getType());
-                        records.setMemberId(Long.valueOf(member.getInvitecode()));
-                        records.setInviteId(member.getId());
-                        records.setOrderId(order.getId());
-                        records.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getTwoPercent()))).divide(BigDecimal.valueOf(100)));
-                        fenxiaoRecordsMapper.insert(records);
+                if (cartPromotionItem.getIsFenxiao()==1){
+                    FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
+                    if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
+                        //  UmsMember member = memberService.getById(currentMember.getInvitecode());
+                        //一级 分销
+                        FenxiaoRecords records1 = new FenxiaoRecords();
+                        records1.setCreateTime(new Date());
+                        records1.setStatus("1");
+                        records1.setGoodsId(cartPromotionItem.getProductId());
+                        records1.setStoreId(cartPromotionItem.getStoreId());
+                        records1.setLevel("1");
+                        records1.setType(fenxiaoConfig.getType());
+                        records1.setMemberId(Long.valueOf(currentMember.getInvitecode()));
+                        records1.setInviteId(currentMember.getId());
+                        records1.setOrderId(order.getId());
+                        records1.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getOnePercent()))).divide(BigDecimal.valueOf(100)));
+                        fenxiaoRecordsMapper.insert(records1);
+                        //二级 分销
+                        UmsMember member = memberService.getById(currentMember.getInvitecode());
+                        if (member != null && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getTwoPercent() > 0) {
+                            FenxiaoRecords records = new FenxiaoRecords();
+                            records.setCreateTime(new Date());
+                            records.setStatus("1");
+                            records.setGoodsId(cartPromotionItem.getProductId());
+                            records.setStoreId(cartPromotionItem.getStoreId());
+                            records.setLevel("2");
+                            records.setType(fenxiaoConfig.getType());
+                            records.setMemberId(Long.valueOf(member.getInvitecode()));
+                            records.setInviteId(member.getId());
+                            records.setOrderId(order.getId());
+                            records.setMoney(cartPromotionItem.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity()).multiply(new BigDecimal(fenxiaoConfig.getTwoPercent()))).divide(BigDecimal.valueOf(100)));
+                            fenxiaoRecordsMapper.insert(records);
+                        }
                     }
                 }
+
             }
             //如使用优惠券更新优惠券使用状态
             if (orderParam.getCouponId() != null && orderParam.getCouponId() > 0) {

@@ -25,6 +25,7 @@ import com.zscat.mallplus.pay.utils.StringUtils;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -753,6 +754,9 @@ public class AliPayController extends AbstractAliPayApiController {
             if (verifyResult) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
+                if (ValidatorUtils.isEmpty(orderInfo.getPid())|| orderInfo.getPid()<1){
+                    orderService.update(orderInfo,new QueryWrapper<OmsOrder>().eq("pid",orderInfo.getId()));
+                }
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");
                 return new CommonResult().success();

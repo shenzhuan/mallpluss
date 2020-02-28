@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -56,6 +58,8 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     IPmsProductService productService;
     @Autowired
     private ISmsHomeAdvertiseService advertiseService;
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
     @Override
@@ -99,6 +103,11 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             umsMember.setStoreId(entity.getId());
             memberService.updateById(umsMember);
 
+            FenxiaoConfig config=new FenxiaoConfig();
+            config.setId(Long.valueOf(entity.getId()));
+            config.setStoreId(entity.getId());
+            config.setStatus(0);
+            fenxiaoConfigMapper.insert(config);
             SysUserRole userRole = new SysUserRole();
             userRole.setRoleId(1L);
             userRole.setAdminId(user.getId());

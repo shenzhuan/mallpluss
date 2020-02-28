@@ -58,7 +58,7 @@
     </sql>
 
     <select id="selectNotRecive" resultMap="BaseResultMap">
-        SELECT sms_coupon.* from sms_coupon where start_time >=now() and now()>=end_time and id not in
+        SELECT sms_coupon.* from sms_coupon where now()>=start_time  and end_time>=now() and id not in
         (SELECT coupon_id from sms_coupon_history where member_id =
         #{memberId}) limit #{limit}
 

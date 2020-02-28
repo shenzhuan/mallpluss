@@ -25,6 +25,7 @@ import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.wxpay.WxPayApi;
 import com.zscat.mallplus.wxpay.WxPayApiConfig;
 import com.zscat.mallplus.wxpay.model.*;
@@ -168,6 +169,9 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                if (ValidatorUtils.isEmpty(orderInfo.getPid())|| orderInfo.getPid()<0){
+
+                }
                 return new CommonResult().failed("订单已支付，请不要重复操作");
             }
 
@@ -965,6 +969,9 @@ public class WxPayController extends AbstractWxPayApiController {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
+                if (ValidatorUtils.isEmpty(orderInfo.getPid())|| orderInfo.getPid()<1){
+                    orderService.update(orderInfo,new QueryWrapper<OmsOrder>().eq("pid",orderInfo.getId()));
+                }
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

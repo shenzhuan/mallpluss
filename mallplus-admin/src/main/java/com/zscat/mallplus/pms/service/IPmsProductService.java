@@ -59,6 +59,7 @@ public interface IPmsProductService extends IService<PmsProduct> {
      */
     int updateNewStatus(List<Long> ids, Integer newStatus);
 
+    int updateisFenxiao(List<Long> ids, Integer newStatus);
     /**
      * 批量删除商品
      */

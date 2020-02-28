@@ -47,11 +47,18 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     void sendDelayMessageCancelOrder(Long orderId);
 
     /**
-     * 预览订单
-     *
+     * 获取用户可用优惠券列表
      * @param orderParam
      * @return
      */
+     Object couponHistoryDetailList(OrderParam orderParam) ;
+
+        /**
+         * 预览订单
+         *
+         * @param orderParam
+         * @return
+         */
     ConfirmOrderResult submitPreview(OrderParam orderParam);
 
     /**

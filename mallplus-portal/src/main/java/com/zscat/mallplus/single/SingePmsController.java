@@ -10,6 +10,8 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
@@ -61,6 +63,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/single/pms")
 public class SingePmsController extends ApiBaseAction {
 
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
     @Autowired
     private ISmsFlashPromotionProductRelationService smsFlashPromotionProductRelationService;
     @Resource
@@ -164,6 +168,30 @@ public class SingePmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
+    @GetMapping(value = "/goods/category")
+    @ApiOperation(value = "查询商品详情信息")
+    public Object category(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        PmsProductCategory cur = productCategoryService.getById(id);
+        PmsProductCategory parent = null;
+        List<PmsProductCategory> children = null;
+
+        if (cur.getParentId() == 0) {
+            parent = cur;
+            children = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",cur.getParentId()));
+            cur = children.size() > 0 ? children.get(0) : cur;
+        } else {
+            parent = productCategoryService.getById(cur.getParentId());
+            children = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",cur.getParentId()));
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("currentCategory", cur);
+        data.put("parentCategory", parent);
+        data.put("brotherCategory", children);
+        return new CommonResult().success(data);
+
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @IgnoreAuth
     @GetMapping(value = "/goods/detail1")
     @ApiOperation(value = "查询商品详情信息")
     public Object queryProductDetail1(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
@@ -203,7 +231,7 @@ public class SingePmsController extends ApiBaseAction {
 
             @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestParam(value = "sort", required = false) Integer sort,
-            @RequestParam(value = "sort", required = false,defaultValue = "1") Integer orderBy,
+            @RequestParam(value = "orderBy", required = false,defaultValue = "1") Integer orderBy,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
@@ -212,22 +240,23 @@ public class SingePmsController extends ApiBaseAction {
         product.setVerifyStatus(1);
         product.setMemberId(null);
         product.setSort(sort);
-        if (ValidatorUtils.notEmpty(productCategoryId)) {
+
+        if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId>0) {
             product.setProductCategoryId(productCategoryId);
         }
-        if (ValidatorUtils.notEmpty(brandId)) {
+        if (ValidatorUtils.notEmpty(brandId)  && brandId>0) {
             product.setBrandId(brandId);
         }
-        if (ValidatorUtils.notEmpty(productAttributeCategoryId)) {
+        if (ValidatorUtils.notEmpty(productAttributeCategoryId)  && productAttributeCategoryId>0) {
             product.setProductAttributeCategoryId(productAttributeCategoryId);
         }
-        if (ValidatorUtils.notEmpty(storeId)) {
+        if (ValidatorUtils.notEmpty(storeId)  && storeId>0) {
             product.setStoreId(storeId);
         }
-        if (ValidatorUtils.notEmpty(areaId)) {
+        if (ValidatorUtils.notEmpty(areaId)  && areaId>0) {
             product.setAreaId(areaId);
         }
-        if (ValidatorUtils.notEmpty(schoolId)) {
+        if (ValidatorUtils.notEmpty(schoolId)  && schoolId>0) {
             product.setSchoolId(schoolId);
         }
         String orderColum = "create_time";
@@ -240,21 +269,39 @@ public class SingePmsController extends ApiBaseAction {
 
             }
         }
+        product.setSort(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
             if (orderBy.equals("1")){
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
+                buildFenPrice(list);
             }else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
+                buildFenPrice(list);
             }
         } else {
             if (orderBy.equals("1")){
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
+                buildFenPrice(list);
             }else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
+                buildFenPrice(list);
             }
         }
         return new CommonResult().success(list);
+    }
+
+    private void buildFenPrice(IPage<PmsProduct> list) {
+        if (list!=null && list.getRecords()!=null && list.getRecords().size()>0){
+            for (PmsProduct pmsProduct :list.getRecords()){
+                if (pmsProduct.getIsFenxiao()!=null && pmsProduct.getIsFenxiao()==1){
+                    FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+                    if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1  && fenxiaoConfig.getOnePercent() > 0) {
+                        pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+                    }
+                }
+            }
+        }
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")

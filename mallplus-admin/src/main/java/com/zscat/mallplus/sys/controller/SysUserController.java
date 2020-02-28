@@ -79,6 +79,7 @@ public class SysUserController extends ApiController {
                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+            entity.setStoreId(UserUtils.getCurrentMember().getStoreId());
             return new CommonResult().success(sysUserService.page(new Page<SysUser>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有用户列表：%s", e.getMessage(), e);
