@@ -5,7 +5,7 @@ netstat -ntulp |grep 80 //查看所有80端口使用情况·
 
 39.106.212.32
 
-nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT1.jar >web1.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web1.log 2>&1 &
 
 nohup java -Xms128m -Xmx256m -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
@@ -259,15 +259,17 @@ delete from sys_web_log  ;
 delete from admin_sys_job_log  ;
 delete from sys_admin_log  ;
 
+mallplus商户端)
 1938186471@qq.com
 wx1d852ffdcbedd005
 
 
-
+为保障帐号(mallplus之之小店)安全，请用
 3392805238@qq.com
 wxeca56e2ff8f277d9
 4c8df450d885fff986b8d42048a90052
 
+kaka
 2681196506@qq.com
 wx0c1055c6158f7851
 baa79ed796ec18e932c547fe009d9af0

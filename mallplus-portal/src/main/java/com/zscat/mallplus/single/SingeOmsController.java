@@ -163,7 +163,7 @@ public class SingeOmsController extends ApiBaseAction {
         try {
             return orderService.confimDelivery(id);
         } catch (Exception e) {
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class SingeOmsController extends ApiBaseAction {
             return orderService.applyRefund(id);
         } catch (Exception e) {
             log.error("订单确认收货：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
     }
 

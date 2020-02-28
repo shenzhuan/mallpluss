@@ -27,8 +27,8 @@ public class MpGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("/Users/java/gen");
-        //  gc.setOutputDir("F:\\home");
+        //gc.setOutputDir("/Users/java/gen");
+          gc.setOutputDir("F:\\home");
         gc.setFileOverride(true);
         gc.setActiveRecord(false);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存
@@ -58,7 +58,7 @@ public class MpGenerator {
         });
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("uAiqwVwjJ8-i");
+        dsc.setPassword("shen@123");
         dsc.setUrl("jdbc:mysql://39.106.212.32:3306/mallplus1");
         mpg.setDataSource(dsc);
 
@@ -108,7 +108,7 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"sms_group_record"});
+        strategy.setInclude(new String[]{"mallplus_search_history"});
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
@@ -133,7 +133,7 @@ public class MpGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setParent("com.zscat.mallplus");
-        pc.setModuleName("sms");
+        pc.setModuleName("sys");
         mpg.setPackageInfo(pc);
 
 
