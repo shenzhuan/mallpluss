@@ -47,6 +47,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -189,6 +190,61 @@ public class SingePmsController extends ApiBaseAction {
         data.put("brotherCategory", children);
         return new CommonResult().success(data);
 
+    }
+    /**
+     * 当前分类栏目
+     *
+     * @param id 分类类目ID
+     * @return 当前分类栏目
+     */
+    @GetMapping("catalog/current")
+    public Object current(@NotNull Integer id) {
+        // 当前分类
+        PmsProductCategory currentCategory = productCategoryService.getById(id);
+        if(currentCategory == null){
+            return new CommonResult().paramFailed();
+        }
+        List<PmsProductCategory>
+        currentSubCategory = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",currentCategory.getParentId()));
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("currentCategory", currentCategory);
+        data.put("currentSubCategory", currentSubCategory);
+        return new CommonResult().success(data);
+    }
+    /**
+     * 分类详情
+     *
+     * @param id   分类类目ID。
+     *             如果分类类目ID是空，则选择第一个分类类目。
+     *             需要注意，这里分类类目是一级类目
+     * @return 分类详情
+     */
+    @GetMapping("catalog/index")
+    public Object index(Integer id) {
+
+        // 所有一级分类目录
+        List<PmsProductCategory> l1CatList = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("level",1));
+
+        // 当前一级分类目录
+        PmsProductCategory currentCategory = null;
+        if (id != null) {
+            currentCategory = productCategoryService.getById(id);
+        } else {
+            currentCategory = l1CatList.get(0);
+        }
+
+        // 当前一级分类目录对应的二级分类目录
+        List<PmsProductCategory> currentSubCategory = null;
+        if (null != currentCategory) {
+            currentSubCategory = productCategoryService.list(new QueryWrapper<PmsProductCategory>().eq("parent_id",currentCategory.getParentId()));
+        }
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("categoryList", l1CatList);
+        data.put("currentCategory", currentCategory);
+        data.put("currentSubCategory", currentSubCategory);
+        return new CommonResult().success(data);
     }
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
@@ -804,7 +860,7 @@ public class SingePmsController extends ApiBaseAction {
     @PostMapping(value = "/addView")
     public Object addView(@RequestParam Long goodsId) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getUsername());
+        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
         //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
