@@ -1213,6 +1213,13 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
         orderService.updateById(order);
+        if (ValidatorUtils.isEmpty(order.getPid()) || order.getPid() < 1) {
+            OmsOrder childOrder = new OmsOrder();
+            childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
+            childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
+            childOrder.setPaymentTime(new Date());
+            orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", order.getId()));
+        }
         if (ValidatorUtils.notEmpty(order.getGroupId())) {
             SmsGroupMember member = new SmsGroupMember();
             member.setId(order.getGroupId());
@@ -1267,6 +1274,13 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
         orderService.updateById(order);
+        if (ValidatorUtils.isEmpty(order.getPid()) || order.getPid() < 1) {
+            OmsOrder childOrder = new OmsOrder();
+            childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
+            childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
+            childOrder.setPaymentTime(new Date());
+            orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", order.getId()));
+        }
         if (ValidatorUtils.notEmpty(order.getGroupId())) {
             SmsGroupMember member = new SmsGroupMember();
             member.setId(order.getGroupId());

@@ -14,6 +14,7 @@ import com.zscat.mallplus.alipay.AliPayApiConfigKit;
 import com.zscat.mallplus.alipay.AliPayBean;
 import com.zscat.mallplus.core.kit.PayKit;
 import com.zscat.mallplus.core.kit.RsaKit;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
@@ -755,7 +756,11 @@ public class AliPayController extends AbstractAliPayApiController {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
-                    orderService.update(orderInfo, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
+                    OmsOrder childOrder = new OmsOrder();
+                    childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
+                    childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
+                    childOrder.setPaymentTime(new Date());
+                    orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");

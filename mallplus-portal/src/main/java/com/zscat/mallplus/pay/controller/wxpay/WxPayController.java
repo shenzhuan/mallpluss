@@ -9,6 +9,7 @@ import com.jfinal.kit.StrKit;
 import com.zscat.mallplus.core.enums.SignType;
 import com.zscat.mallplus.core.enums.TradeType;
 import com.zscat.mallplus.core.kit.*;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
@@ -970,7 +971,11 @@ public class WxPayController extends AbstractWxPayApiController {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
-                    orderService.update(orderInfo, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
+                    OmsOrder childOrder = new OmsOrder();
+                    childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
+                    childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
+                    childOrder.setPaymentTime(new Date());
+                    orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
