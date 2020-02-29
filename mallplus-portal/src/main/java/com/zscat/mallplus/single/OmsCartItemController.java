@@ -180,16 +180,29 @@ public class OmsCartItemController {
         if (productIds == null) {
             return new CommonResult().paramFailed();
         }
-
         if (checkValue == null) {
             return new CommonResult().paramFailed();
         }
-
         OmsCartItem item =new OmsCartItem();
         item.setChecked(checkValue);
         item.setModifyDate(new Date());
-            cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).in("product_id",productIds));
+        cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).in("product_id",productIds));
+        return list();
+    }
 
+    @PostMapping("singleChecked")
+    public Object singleChecked(@RequestParam Integer checkValue,
+                          @RequestParam Integer productId) {
+        if (productId == null) {
+            return new CommonResult().paramFailed();
+        }
+        if (checkValue == null) {
+            return new CommonResult().paramFailed();
+        }
+        OmsCartItem item =new OmsCartItem();
+        item.setChecked(checkValue);
+        item.setModifyDate(new Date());
+        cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).eq("product_id",productId));
         return list();
     }
     @ApiOperation("修改购物车中某个商品的数量")

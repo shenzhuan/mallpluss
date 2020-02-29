@@ -87,7 +87,7 @@
         oms_order o
         LEFT JOIN oms_order_item ot ON o.id = ot.order_id
         WHERE
-        o.status = 0
+        o.status = 12
         AND  date_add(NOW(), INTERVAL -#{minute} MINUTE)>o.create_time;
     </select>
     <select id="orderMonthStatic" resultType="Map">

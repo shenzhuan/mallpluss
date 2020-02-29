@@ -182,4 +182,14 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
 
     Object quitGroup(Long id);
+
+    /**
+     * autoDeliveryOrder
+     * @return
+     */
+    CommonResult autoDeliveryOrder();
+
+    CommonResult autoCommentOrder();
+
+    CommonResult autoSucessOrder();
 }

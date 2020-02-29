@@ -80,7 +80,7 @@ public class OrderTimeOutCancelTask {
         Long t1= System.currentTimeMillis();
         String yesteday = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, DateUtils.addDays(new Date(), -1));
         List<OmsOrder> orders = orderMapper.listByDate(yesteday, 1);
-       // 获取订单为 待评价和已完成的
+        // 获取订单为 待评价和已完成的
         List<Long> ids = new ArrayList<>();
         for (OmsOrder order : orders) {
             if (order.getStatus() == 4 || order.getStatus() == 5) {
