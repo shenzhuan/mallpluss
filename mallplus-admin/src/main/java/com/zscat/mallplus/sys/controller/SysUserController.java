@@ -179,6 +179,26 @@ public class SysUserController extends ApiController {
 
     @SysLog(MODULE = "sys", REMARK = "登录以后返回token")
     @ApiOperation(value = "登录以后返回token")
+    @RequestMapping(value = "/login1", method = RequestMethod.POST)
+    @ResponseBody
+    public Object login1( @RequestParam(value = "username", defaultValue = "1") String username,
+                         @RequestParam(value = "password", defaultValue = "1") String password) {
+        try {
+            String token = sysUserService.login(username, password);
+            if (token == null) {
+                return new CommonResult().paramFailed("用户名或密码错误");
+            }
+            Map<String, Object> tokenMap = new HashMap<>();
+            tokenMap.put("token", token);
+            tokenMap.put("tokenHead", tokenHead);
+            tokenMap.put("userInfo", UserUtils.getCurrentMember());
+            return new CommonResult().success(tokenMap);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+    }
+    @SysLog(MODULE = "sys", REMARK = "登录以后返回token")
+    @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Object login(@RequestBody SysUser umsAdminLoginParam, BindingResult result) {
@@ -195,9 +215,7 @@ public class SysUserController extends ApiController {
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
-
     }
-
     @SysLog(MODULE = "sys", REMARK = "获取当前登录用户信息")
     @ApiOperation(value = "获取当前登录用户信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -211,6 +229,7 @@ public class SysUserController extends ApiController {
         data.put("username", username);
         data.put("roles", new String[]{"TEST"});
         if (umsAdmin != null) {
+            data.put("sysUser", umsAdmin);
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
             data.put("storeId", umsAdmin.getStoreId());
