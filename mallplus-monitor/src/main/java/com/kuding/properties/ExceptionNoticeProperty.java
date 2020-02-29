@@ -13,21 +13,26 @@ import java.util.Map;
 public class ExceptionNoticeProperty {
 
     /**
+     * 发送钉钉异常通知给谁
+     */
+    Map<String, DingDingExceptionNoticeProperty> dingding;
+    /**
+     * 发送邮件异常通知给谁
+     */
+    Map<String, EmailExceptionNoticeProperty> email;
+    /**
      * 是否开启异常通知
      */
     private Boolean openNotice;
-
     /**
      * 追踪信息的包含的包名
      */
     private String includedTracePackage;
-
     /**
      * 异常工程名
      */
     @Value("${spring.application.name:${exceptionnotice.project-name:无名工程}}")
     private String projectName;
-
     /**
      * <p>
      * 通过注解进行监控，目前提供两种方式：
@@ -40,37 +45,22 @@ public class ExceptionNoticeProperty {
      * </ol>
      */
     private ListenType listenType = ListenType.COMMON;
-
     /**
      * 开启redis存储
      */
     private boolean enableRedisStorage;
-
     /**
      * redis的键
      */
     private String redisKey = "prometheus-notice";
-
     /**
      * 排除的需要统计的异常
      */
     private List<Class<? extends RuntimeException>> excludeExceptions = new LinkedList<>();
-
     /**
      * 当listenType为WEB_MVC时，处理请求异常通知时需要的header名称信息
      */
     private List<String> includeHeaderName = new ArrayList<String>();
-
-    /**
-     * 发送钉钉异常通知给谁
-     */
-    Map<String, DingDingExceptionNoticeProperty> dingding;
-
-    /**
-     * 发送邮件异常通知给谁
-     */
-    Map<String, EmailExceptionNoticeProperty> email;
-
     /**
      * 默认通知人，当异常通知找不到背锅侠时，就用默认背锅侠
      */

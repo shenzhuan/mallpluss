@@ -10,55 +10,53 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2019-12-17
-分销配置
-*/
+ * @author mallplus
+ * @date 2019-12-17
+ * 分销配置
+ */
 @Data
 @TableName("fenxiao_config")
 public class FenxiaoConfig implements Serializable {
 
 
-            @TableId(value = "id", type = IdType.AUTO)
-        private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
 
-            @TableField( "status")
-        private Integer status;
+    @TableField("status")
+    private Integer status;
 
 
-            @TableField( "type")
-        private Integer type;
+    @TableField("type")
+    private Integer type;
 
 
-            @TableField( "fan_percent")
-        private Integer fanPercent;
+    @TableField("fan_percent")
+    private Integer fanPercent;
 
 
-            @TableField( "fan_type")
-        private Integer fanType;
+    @TableField("fan_type")
+    private Integer fanType;
 
 
-            @TableField( "withdraw_type")
-        private Integer withdrawType;
+    @TableField("withdraw_type")
+    private Integer withdrawType;
 
 
-            @TableField( "one_percent")
-        private Integer onePercent;
+    @TableField("one_percent")
+    private Integer onePercent;
 
 
-            @TableField( "two_percent")
-        private Integer twoPercent;
+    @TableField("two_percent")
+    private Integer twoPercent;
 
 
-            @TableField( "three_percent")
-        private Integer threePercent;
+    @TableField("three_percent")
+    private Integer threePercent;
 
 
-            @TableField( "create_time")
-        private Date createTime;
-
-
+    @TableField("create_time")
+    private Date createTime;
 
 
 }

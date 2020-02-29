@@ -24,15 +24,11 @@ public class BuildHomeResult {
     List<ActivityVo> activityList;
     //轮播广告
     List<BuildAdv> advertiseList;
-
+    BuildingCommunity community;
+    List<BuildingFloor> floorList;
     //推荐品牌
     private List<SysStore> storeList;
-
     //推荐专题
     private List<BuildNotice> subjectList;
-
-    BuildingCommunity community;
-
-    List<BuildingFloor> floorList;
 
 }

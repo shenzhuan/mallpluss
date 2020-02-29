@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author mallplus
  * @date 2019-12-27
- *  砍价商品
+ * 砍价商品
  */
 @Slf4j
 @RestController

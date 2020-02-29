@@ -9,9 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ClearBodyInterceptor implements HandlerInterceptor {
 
-    private CurrentRequetBodyResolver currentRequetBodyResolver;
-
     private final Log logger = LogFactory.getLog(getClass());
+    private CurrentRequetBodyResolver currentRequetBodyResolver;
 
     public ClearBodyInterceptor(CurrentRequetBodyResolver currentRequetBodyResolver) {
         this.currentRequetBodyResolver = currentRequetBodyResolver;

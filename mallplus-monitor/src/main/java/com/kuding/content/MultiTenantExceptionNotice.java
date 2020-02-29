@@ -4,13 +4,13 @@ import java.util.Map;
 
 public class MultiTenantExceptionNotice extends HttpExceptionNotice {
 
+    private String tenantId;
+
     public MultiTenantExceptionNotice(RuntimeException exception, String filter, String url, Map<String, String> param,
                                       String requestBody, Map<String, String> headers, String tenantId) {
         super(exception, filter, url, param, requestBody, headers);
         this.tenantId = tenantId;
     }
-
-    private String tenantId;
 
     /**
      * @return the tenantId

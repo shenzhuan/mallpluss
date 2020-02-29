@@ -14,13 +14,10 @@ import java.util.Map;
 
 public class DingDingNoticeSendComponent implements INoticeSendComponent {
 
-    private SimpleHttpClient simpleHttpClient;
-
-    private ExceptionNoticeProperty exceptionNoticeProperty;
-
-    private Map<String, DingDingExceptionNoticeProperty> map;
-
     private final Log logger = LogFactory.getLog(getClass());
+    private SimpleHttpClient simpleHttpClient;
+    private ExceptionNoticeProperty exceptionNoticeProperty;
+    private Map<String, DingDingExceptionNoticeProperty> map;
 
     public DingDingNoticeSendComponent(SimpleHttpClient simpleHttpClient,
                                        ExceptionNoticeProperty exceptionNoticeProperty, Map<String, DingDingExceptionNoticeProperty> map) {
@@ -37,17 +34,17 @@ public class DingDingNoticeSendComponent implements INoticeSendComponent {
     }
 
     /**
-     * @return the exceptionNoticeProperty
-     */
-    public ExceptionNoticeProperty getExceptionNoticeProperty() {
-        return exceptionNoticeProperty;
-    }
-
-    /**
      * @param simpleHttpClient the simpleHttpClient to set
      */
     public void setSimpleHttpClient(SimpleHttpClient simpleHttpClient) {
         this.simpleHttpClient = simpleHttpClient;
+    }
+
+    /**
+     * @return the exceptionNoticeProperty
+     */
+    public ExceptionNoticeProperty getExceptionNoticeProperty() {
+        return exceptionNoticeProperty;
     }
 
     /**

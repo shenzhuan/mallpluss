@@ -42,8 +42,8 @@ public class PmsGiftsController {
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            if (ValidatorUtils.notEmpty(entity.getTitle())){
-                return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<PmsGifts>(new PmsGifts()).like("title",entity.getTitle())));
+            if (ValidatorUtils.notEmpty(entity.getTitle())) {
+                return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<PmsGifts>(new PmsGifts()).like("title", entity.getTitle())));
             }
             return new CommonResult().success(IPmsGiftsService.page(new Page<PmsGifts>(pageNum, pageSize), new QueryWrapper<>(entity)));
 
@@ -135,6 +135,7 @@ public class PmsGiftsController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation(value = "批量更新显示状态")
     @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
     @ResponseBody

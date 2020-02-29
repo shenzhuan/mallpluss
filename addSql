@@ -1,19 +1,32 @@
-// request拦截器
-service.interceptors.request.use(config => {
-  if (store.getters.token) {
-      let test = config.data;
-      if(test){
-          config.data['access_token']= getToken()
-      }
 
-    config.headers['Authorization'] = 'bearer ' +getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-  }else{
-      config.headers['client_id'] = 'app';
-      config.headers['client_secret'] = 'app';
-  }
-  return config
-}, error => {
-  // Do something with request error
-  console.log(error) // for debug
-  Promise.reject(error)
-})
+alter table fenxiao_records add goodsId bigint not Null;
+alter table fenxiao_records add type int not Null;
+
+alter table sms_coupon_history add min_point decimal not Null;
+
+alter table pms_product add is_fenxiao int ;
+alter table oms_cart_item add is_fenxiao int ;
+
+CREATE TABLE `mallplus_keyword` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `keyword` varchar(127) NOT NULL DEFAULT '' COMMENT '关键字',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '关键字的跳转链接',
+  `is_hot` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否是热门关键字',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否是默认关键字',
+  `sort_order` int(11) NOT NULL DEFAULT '100' COMMENT '排序',
+  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='关键字表';
+
+CREATE TABLE `mallplus_search_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT '用户表的用户ID',
+  `keyword` varchar(63) NOT NULL COMMENT '搜索关键字',
+  `from` varchar(63) NOT NULL DEFAULT '' COMMENT '搜索来源，如pc、wx、app',
+  `add_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史表';

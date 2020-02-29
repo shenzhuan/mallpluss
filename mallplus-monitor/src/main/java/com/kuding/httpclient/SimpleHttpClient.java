@@ -28,15 +28,13 @@ import static java.util.stream.Collectors.toList;
 
 public class SimpleHttpClient {
 
+    private final Log logger = LogFactory.getLog(getClass());
+    private final String defaultContentType = "application/json; charset=utf-8";
     private Gson gson;
 
     public SimpleHttpClient(Gson gson) {
         this.gson = gson;
     }
-
-    private final Log logger = LogFactory.getLog(getClass());
-
-    private final String defaultContentType = "application/json; charset=utf-8";
 
     public <K> String doPost(String url, K jsonParam, Map<String, String> headers)
             throws ClientProtocolException, IOException {

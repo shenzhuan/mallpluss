@@ -118,6 +118,7 @@ public class SingeBuildController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")

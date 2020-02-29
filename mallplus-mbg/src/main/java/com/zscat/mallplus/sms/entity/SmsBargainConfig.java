@@ -26,57 +26,46 @@ import java.util.Date;
 public class SmsBargainConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @TableField(exist = false)
+    PmsProduct goods;
     /**
      * id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
     /**
      * 每次砍价的参数
      */
     private String parameter;
-
     /**
      * 逾期失效时间
      */
     @TableField("invalid_time")
     private Date invalidTime;
-
     /**
      * 修改时间
      */
     @TableField("create_time")
     private Date createTime;
-
     @TableField("store_id")
     private Integer storeId;
-
     private Integer pepoles;
     /**
      * 商品
      */
     @TableField("goods_id")
     private Long goodsId;
-
     /**
      * 原价
      */
     @TableField("origin_price")
     private BigDecimal originPrice;
-
     /**
      * 成功价
      */
     private BigDecimal price;
-
     @TableField("goods_name")
     private String goodsName;
     private String pic;
-
-
-    @TableField(exist = false)
-    PmsProduct goods;
 
 }

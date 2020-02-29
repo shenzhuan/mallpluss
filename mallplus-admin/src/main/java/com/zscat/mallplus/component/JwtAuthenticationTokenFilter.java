@@ -102,7 +102,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        LOGGER.info("checking username:{}，storeId:{}", username,apiContext.getCurrentProviderId());
+                        LOGGER.info("checking username:{}，storeId:{}", username, apiContext.getCurrentProviderId());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
@@ -129,7 +129,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-                fopSystemOperationLogService.save(sysLog);
+            fopSystemOperationLogService.save(sysLog);
         }
     }
 

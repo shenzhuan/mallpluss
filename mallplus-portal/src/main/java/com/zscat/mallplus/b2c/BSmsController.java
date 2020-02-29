@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 @Api(tags = "SingeMarkingController", description = "营销管理")
 public class BSmsController extends ApiBaseAction {
 
+    private static Lock lock = new ReentrantLock(false);
     @Value("${file.path}")
     private String path;
-
     @Resource
     private ISmsBasicGiftsService basicGiftsService;
     @Resource
@@ -83,16 +83,37 @@ public class BSmsController extends ApiBaseAction {
     private IPmsProductService pmsProductService;
     @Autowired
     private IUmsMemberService memberService;
-
     @Autowired
     private ISmsHomeAdvertiseService advertiseService;
-
     @Resource
     private SmsBargainConfigMapper bargainConfigMapper;
     @Resource
     private SmsBargainRecordMapper bargainRecordMapper;
     @Resource
     private SmsBargainMemberMapper bargainMemberMapper;
+
+    /**
+     * 生成 [m,n] 的数字
+     * int i1 = random.nextInt() * (n-m+1)+m;
+     */
+    public static void main(String[] args) {
+        int max = 5;
+        int min = 1;
+        int num = new Random().nextInt(max - min + 1) + min;
+        System.out.println(num);
+        Random random = new Random();
+        int i1 = new Random().nextInt() * (5 - 1 + 1) + 1;
+        System.out.println(i1);
+        String group = "1,5";
+        String[] rands = group.split(",");
+        double dd = Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1;
+        System.out.println(Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1);
+        System.out.println(random.nextInt());
+        System.out.println(random.nextInt() * (Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1));
+        System.out.println(Double.valueOf(rands[0]));
+        double pp = random.nextInt() * dd + Double.valueOf(rands[0]);
+        System.out.println(pp);
+    }
 
     @SysLog(MODULE = "pms", REMARK = "查询砍价商品列表")
     @IgnoreAuth
@@ -212,8 +233,6 @@ public class BSmsController extends ApiBaseAction {
         map.put("goods", goods);
         return new CommonResult().success(map);
     }
-
-    private static Lock lock = new ReentrantLock(false);
 
     /**
      * 帮助好友砍价
@@ -462,7 +481,6 @@ public class BSmsController extends ApiBaseAction {
        return new CommonResult().success();*/
     }
 
-
     @ApiOperation("领取指定优惠券")
     @PostMapping(value = "/coupon.getcoupon")
     public Object add(@RequestParam(value = "couponId", required = true) Long couponId) {
@@ -491,7 +509,6 @@ public class BSmsController extends ApiBaseAction {
         return new CommonResult().success(couponHistoryList);
     }
 
-
     @ApiOperation("获取单个商品得优惠详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -503,7 +520,6 @@ public class BSmsController extends ApiBaseAction {
         map.put("basicGiftsList", basicGiftsList);
         return new CommonResult().success(map);
     }
-
 
     @ApiOperation("秒杀活动时间段")
     @RequestMapping(value = "/seckillTime", method = RequestMethod.POST)
@@ -562,7 +578,6 @@ public class BSmsController extends ApiBaseAction {
         vo.setSeckillTime(smsFlashSessionInfos);
         return new CommonResult().success(vo);
     }
-
 
     @ApiOperation("秒杀活动时间段商品")
     @RequestMapping(value = "/seckillGoods", method = RequestMethod.POST)
@@ -647,7 +662,6 @@ public class BSmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
-
     private Integer recordGoodsFoot(Long id) {
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.GOODS_VIEWCOUNT_CODE + id;
@@ -666,28 +680,5 @@ public class BSmsController extends ApiBaseAction {
             redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
         }
         return viewCount;
-    }
-
-    /**
-     * 生成 [m,n] 的数字
-     * int i1 = random.nextInt() * (n-m+1)+m;
-     */
-    public static void main(String[] args) {
-        int max = 5;
-        int min = 1;
-        int num = new Random().nextInt(max - min + 1) + min;
-        System.out.println(num);
-        Random random = new Random();
-        int i1 = new Random().nextInt() * (5 - 1 + 1) + 1;
-        System.out.println(i1);
-        String group = "1,5";
-        String[] rands = group.split(",");
-        double dd = Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1;
-        System.out.println(Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1);
-        System.out.println(random.nextInt());
-        System.out.println(random.nextInt() * (Double.valueOf(rands[1]) - Double.valueOf(rands[0]) + 1));
-        System.out.println(Double.valueOf(rands[0]));
-        double pp = random.nextInt() * dd + Double.valueOf(rands[0]);
-        System.out.println(pp);
     }
 }

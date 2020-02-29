@@ -7,6 +7,11 @@ import static java.util.stream.Collectors.toList;
 
 public class HttpExceptionNotice extends ExceptionNotice {
 
+    protected String url;
+    protected Map<String, String> paramInfo;
+    protected String requestBody;
+    protected Map<String, String> headers;
+
     public HttpExceptionNotice(RuntimeException exception, String filter, String url, Map<String, String> param,
                                String requestBody, Map<String, String> headers) {
         super(exception, filter, null);
@@ -16,14 +21,6 @@ public class HttpExceptionNotice extends ExceptionNotice {
         this.headers = headers;
 
     }
-
-    protected String url;
-
-    protected Map<String, String> paramInfo;
-
-    protected String requestBody;
-
-    protected Map<String, String> headers;
 
     /**
      * @return the url

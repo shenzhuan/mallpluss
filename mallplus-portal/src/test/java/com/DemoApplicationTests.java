@@ -14,14 +14,13 @@ public class DemoApplicationTests {
 
     @Autowired
     private AnotherComponent anotherComponent;
+    @Autowired
+    private NoticeComponents noticeComponents;
 
     @Test
     public void contextLoads1() {
         anotherComponent.giveMeError();
     }
-
-    @Autowired
-    private NoticeComponents noticeComponents;
 
     @Test
     public void contextLoads() {

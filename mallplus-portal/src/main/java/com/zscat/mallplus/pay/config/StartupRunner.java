@@ -17,6 +17,7 @@ public class StartupRunner implements CommandLineRunner {
 
     @Autowired
     private NoticeComponents noticeComponents;
+
     @Override
     public void run(String... args) throws Exception {
         logger.info("startup runner");

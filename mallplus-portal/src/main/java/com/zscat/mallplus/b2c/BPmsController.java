@@ -428,28 +428,29 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation(value = "拼团商品详情")
     public Object groupRecordDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         SmsGroupRecord groupRecord = groupRecordMapper.selectById(id);
-        if (groupRecord==null){
+        if (groupRecord == null) {
             SmsGroupMember smsGroupMember = groupMemberMapper.selectById(id);
             groupRecord = groupRecordMapper.selectById(smsGroupMember.getGroupRecordId());
-        } if (groupRecord==null){
+        }
+        if (groupRecord == null) {
             return new CommonResult().failed();
         }
-            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status",2));
-            groupRecord.setList(groupMembers);
+        List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
+        groupRecord.setList(groupMembers);
         SmsGroup group = groupMapper.selectById(groupRecord.getGroupId());
         Map<String, Object> map = new HashMap<>();
         map.put("group", group);
         map.put("groupRecord", groupRecord);
         map.put("isOk", 1);
-        if (group.getMaxPeople()==groupMembers.size()){
+        if (group.getMaxPeople() == groupMembers.size()) {
             map.put("isOk", 0);
         }
         UmsMember member = memberService.getNewCurrentMember();
         map.put("userBool", 0);
         map.put("pinkBool", 0);
-        if (member!=null){
-            for (SmsGroupMember groupMember : groupMembers){
-                if (groupMember.getMemberId()==member.getId()){
+        if (member != null) {
+            for (SmsGroupMember groupMember : groupMembers) {
+                if (groupMember.getMemberId() == member.getId()) {
                     map.put("userBool", 1);
                     map.put("pinkBool", 1);
                 }
@@ -640,7 +641,7 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/user.addgoodsbrowsing")
     public Object addView(@RequestParam Long goodsId) {
 
-        if (memberService.getNewCurrentMember()==null){
+        if (memberService.getNewCurrentMember() == null) {
             return new CommonResult().success();
         }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
@@ -664,7 +665,7 @@ public class BPmsController extends ApiBaseAction {
     public Object viewList(
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        if (memberService.getNewCurrentMember()==null){
+        if (memberService.getNewCurrentMember() == null) {
             return new CommonResult().success();
         }
         String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
@@ -897,7 +898,6 @@ public class BPmsController extends ApiBaseAction {
             return new CommonResult().failed();
         }
     }
-
 
 
     private Integer recordGoodsFoot(Long id) {

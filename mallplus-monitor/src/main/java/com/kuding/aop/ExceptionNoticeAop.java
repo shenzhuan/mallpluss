@@ -13,9 +13,8 @@ import java.util.Arrays;
 @Aspect
 public class ExceptionNoticeAop {
 
-    private ExceptionHandler exceptionHandler;
-
     private final Log logger = LogFactory.getLog(getClass());
+    private ExceptionHandler exceptionHandler;
 
     public ExceptionNoticeAop(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;

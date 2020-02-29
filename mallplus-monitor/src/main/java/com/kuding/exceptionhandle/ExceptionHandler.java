@@ -19,17 +19,12 @@ import java.util.*;
 
 public class ExceptionHandler {
 
-    private ExceptionRedisStorageComponent exceptionRedisStorageComponent;
-
-    private ExceptionNoticeProperty exceptionNoticeProperty;
-
-    private ExceptionNoticeFrequencyStrategy exceptionNoticeFrequencyStrategy;
-
     private final Map<String, INoticeSendComponent> blameMap = new HashMap<>();
-
     private final Map<String, ExceptionStatistics> checkUid = Collections.synchronizedMap(new HashMap<>());
-
     private final Log logger = LogFactory.getLog(getClass());
+    private ExceptionRedisStorageComponent exceptionRedisStorageComponent;
+    private ExceptionNoticeProperty exceptionNoticeProperty;
+    private ExceptionNoticeFrequencyStrategy exceptionNoticeFrequencyStrategy;
 
     public ExceptionHandler(ExceptionNoticeProperty exceptionNoticeProperty,
                             Collection<INoticeSendComponent> noticeSendComponents,

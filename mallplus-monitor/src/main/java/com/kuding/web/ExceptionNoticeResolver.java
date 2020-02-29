@@ -18,15 +18,11 @@ import java.util.Map;
 
 public class ExceptionNoticeResolver implements HandlerExceptionResolver {
 
-    private ExceptionHandler exceptionHandler;
-
-    private ExceptionNoticeProperty exceptionNoticeProperty;
-
-    private CurrentRequetBodyResolver currentRequetBodyResolver;
-
-    private CurrentRequestHeaderResolver currentRequestHeaderResolver;
-
     private final Log logger = LogFactory.getLog(getClass());
+    private ExceptionHandler exceptionHandler;
+    private ExceptionNoticeProperty exceptionNoticeProperty;
+    private CurrentRequetBodyResolver currentRequetBodyResolver;
+    private CurrentRequestHeaderResolver currentRequestHeaderResolver;
 
     public ExceptionNoticeResolver(ExceptionHandler exceptionHandler,
                                    CurrentRequetBodyResolver currentRequetBodyResolver,

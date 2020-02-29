@@ -99,6 +99,17 @@ public class SingeExpressController extends ApiBaseAction {
     @Resource
     private IBuildingCommunityService communityService;
 
+    public static void main(String[] args) {
+        String key = "LXFBZ-BEZC4-4W6UE-XOBM4-WHA5E-C6FHZ";
+        String url = "https://apis.map.qq.com/ws/place/v1/search?key=" + key;
+        String string = "https://apis.map.qq.com/uri/v1/search?keyword=酒店&region=北京&referer=" + key;
+        StringBuffer sb = new StringBuffer("https://apis.map.qq.com/ws/geocoder/v1/?");
+        sb.append("address=" + "北京市");
+        sb.append("&key=" + key);
+
+        System.out.println(HttpUtil.get(sb.toString()));
+    }
+
     @SysLog(MODULE = "pms", REMARK = "所有社区和房间")
     @IgnoreAuth
     @GetMapping(value = "/allCommunity")
@@ -166,18 +177,6 @@ public class SingeExpressController extends ApiBaseAction {
 
         map.put("goods", goods);
         return new CommonResult().success(map);
-    }
-
-
-    public static void main(String[] args) {
-        String key = "LXFBZ-BEZC4-4W6UE-XOBM4-WHA5E-C6FHZ";
-        String url = "https://apis.map.qq.com/ws/place/v1/search?key=" + key;
-        String string = "https://apis.map.qq.com/uri/v1/search?keyword=酒店&region=北京&referer=" + key;
-        StringBuffer sb = new StringBuffer("https://apis.map.qq.com/ws/geocoder/v1/?");
-        sb.append("address=" + "北京市");
-        sb.append("&key=" + key);
-
-        System.out.println(HttpUtil.get(sb.toString()));
     }
 
 

@@ -1,12 +1,12 @@
 package com.zscat.mallplus.fenxiao.service;
 
-import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 
 /**
-* @author mallplus
-* @date 2019-12-17
-*/
+ * @author mallplus
+ * @date 2019-12-17
+ */
 
 public interface IFenxiaoConfigService extends IService<FenxiaoConfig> {
 

@@ -251,13 +251,13 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     public HomeContentResult contentNew1() {
         HomeContentResult result = new HomeContentResult();
         try {
-            org.springframework.util.StopWatch stopWatch = new StopWatch("HomeCrmmall" );
+            org.springframework.util.StopWatch stopWatch = new StopWatch("HomeCrmmall");
             stopWatch.start("1单条循环处理");
             List<SmsCoupon> couponList = couponService.selectNotRecive();
             if (couponList != null && couponList.size() > 0) {
-                if (couponList.size()>4){
+                if (couponList.size() > 4) {
                     couponList = couponList.subList(0, 4);
-                }else {
+                } else {
                     couponList = couponList.subList(0, couponList.size());
                 }
             }
