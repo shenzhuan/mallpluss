@@ -48,17 +48,18 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 获取用户可用优惠券列表
+     *
      * @param orderParam
      * @return
      */
-     Object couponHistoryDetailList(OrderParam orderParam) ;
+    Object couponHistoryDetailList(OrderParam orderParam);
 
-        /**
-         * 预览订单
-         *
-         * @param orderParam
-         * @return
-         */
+    /**
+     * 预览订单
+     *
+     * @param orderParam
+     * @return
+     */
     ConfirmOrderResult submitPreview(OrderParam orderParam);
 
     /**
@@ -185,6 +186,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * autoDeliveryOrder
+     *
      * @return
      */
     CommonResult autoDeliveryOrder();

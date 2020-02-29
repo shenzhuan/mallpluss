@@ -212,7 +212,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 return member;
             }
 
-            String tokenPre = "authorization" ;
+            String tokenPre = "authorization";
             String authHeader = request.getParameter(tokenPre);
             if (ValidatorUtils.empty(authHeader)) {
                 authHeader = request.getHeader(tokenPre);
@@ -322,7 +322,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     }
 
     @Override
-    public Object resetPassword(String phone, String password, String confimpassword, String authCode){
+    public Object resetPassword(String phone, String password, String confimpassword, String authCode) {
         if (ValidatorUtils.notEmpty(authCode) && !verifyAuthCode(authCode, phone)) {
             return new CommonResult().failed("验证码错误");
         }
@@ -331,9 +331,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
         UmsMember umsMember = new UmsMember();
         umsMember.setPassword(passwordEncoder.encode(password));
-        memberMapper.update(umsMember,new QueryWrapper<UmsMember>().eq("phone",phone));
-        return  true;
+        memberMapper.update(umsMember, new QueryWrapper<UmsMember>().eq("phone", phone));
+        return true;
     }
+
     @Override
     public CommonResult register(String phone, String password, String confim, String authCode, String invitecode) {
 
@@ -467,7 +468,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setBuyMoney(BigDecimal.ZERO);
         umsMember.setBlance(new BigDecimal(10000));
         umsMember.setIntegration(10000);
-        if (ValidatorUtils.notEmpty(user.getInvitecode()) ) {
+        if (ValidatorUtils.notEmpty(user.getInvitecode())) {
             umsMember.setInvitecode(user.getInvitecode());
         }
         String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
@@ -747,8 +748,9 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
 
     }
+
     @Override
-    public Object loginByWeixin2(AppletLoginnewParam req){
+    public Object loginByWeixin2(AppletLoginnewParam req) {
         try {
             SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
             if (null == appletSet) {
@@ -783,10 +785,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 throw new ApiMallPlusException("登录失败openid is empty");
             }
             //验证用户信息完整性
-          //  String sha1 = CommonUtil.getSha1(JsonUtils.toJsonStr(userInfos) + sessionData.getString("session_key"));
-          //  if (!signature.equals(sha1)) {
+            //  String sha1 = CommonUtil.getSha1(JsonUtils.toJsonStr(userInfos) + sessionData.getString("session_key"));
+            //  if (!signature.equals(sha1)) {
             //    throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
-          //  }
+            //  }
             UmsMember userVo = this.queryByOpenId(sessionData.getString("openid"));
             String token = null;
             if (null == userVo) {
@@ -846,6 +848,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
 
     }
+
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {

@@ -48,13 +48,13 @@ import java.util.Map;
 
 /**
  * <p>IJPay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
- *
+ * <p>
  * <p>不依赖任何第三方 mvc 框架，仅仅作为工具使用简单快速完成支付模块的开发，可轻松嵌入到任何系统里。 </p>
- *
+ * <p>
  * <p>IJPay 交流群: 723992875</p>
- *
+ * <p>
  * <p>Node.js 版: https://gitee.com/javen205/TNW</p>
- *
+ * <p>
  * <p>微信支付 Demo</p>
  *
  * @author Javen
@@ -169,7 +169,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                if (ValidatorUtils.isEmpty(orderInfo.getPid())|| orderInfo.getPid()<0){
+                if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 0) {
 
                 }
                 return new CommonResult().failed("订单已支付，请不要重复操作");
@@ -969,8 +969,8 @@ public class WxPayController extends AbstractWxPayApiController {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
-                if (ValidatorUtils.isEmpty(orderInfo.getPid())|| orderInfo.getPid()<1){
-                    orderService.update(orderInfo,new QueryWrapper<OmsOrder>().eq("pid",orderInfo.getId()));
+                if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
+                    orderService.update(orderInfo, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);

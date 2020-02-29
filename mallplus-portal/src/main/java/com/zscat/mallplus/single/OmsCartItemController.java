@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -87,7 +86,7 @@ public class OmsCartItemController {
             for (OmsCartItem cart : cartItemList) {
                 goodsCount += cart.getQuantity();
                 goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
-                if (cart.getChecked()==1) {
+                if (cart.getChecked() == 1) {
                     checkedGoodsCount += cart.getQuantity();
                     checkedGoodsAmount = checkedGoodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
                 }
@@ -171,7 +170,6 @@ public class OmsCartItemController {
      * <p>
      * 如果原来没有勾选，则设置勾选状态；如果商品已经勾选，则设置非勾选状态。
      *
-
      * @return 购物车信息
      */
     @PostMapping("checked")
@@ -183,28 +181,29 @@ public class OmsCartItemController {
         if (checkValue == null) {
             return new CommonResult().paramFailed();
         }
-        OmsCartItem item =new OmsCartItem();
+        OmsCartItem item = new OmsCartItem();
         item.setChecked(checkValue);
         item.setModifyDate(new Date());
-        cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).in("product_id",productIds));
+        cartItemService.update(item, new QueryWrapper<OmsCartItem>().eq("member_id", memberService.getNewCurrentMember().getId()).in("product_id", productIds));
         return list();
     }
 
     @PostMapping("singleChecked")
     public Object singleChecked(@RequestParam Integer checkValue,
-                          @RequestParam Integer productId) {
+                                @RequestParam Integer productId) {
         if (productId == null) {
             return new CommonResult().paramFailed();
         }
         if (checkValue == null) {
             return new CommonResult().paramFailed();
         }
-        OmsCartItem item =new OmsCartItem();
+        OmsCartItem item = new OmsCartItem();
         item.setChecked(checkValue);
         item.setModifyDate(new Date());
-        cartItemService.update(item,new QueryWrapper<OmsCartItem>().eq("member_id",memberService.getNewCurrentMember().getId()).eq("product_id",productId));
+        cartItemService.update(item, new QueryWrapper<OmsCartItem>().eq("member_id", memberService.getNewCurrentMember().getId()).eq("product_id", productId));
         return list();
     }
+
     @ApiOperation("修改购物车中某个商品的数量")
     @RequestMapping(value = "/getnumber", method = RequestMethod.GET)
     @ResponseBody

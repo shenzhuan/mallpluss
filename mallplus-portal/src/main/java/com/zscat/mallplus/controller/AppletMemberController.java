@@ -108,17 +108,19 @@ public class AppletMemberController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
     @PostMapping("login_by_weixin2")
-    public Object loginByWeixinNew2( AppletLoginParam param) {
+    public Object loginByWeixinNew2(AppletLoginParam param) {
         try {
             return memberService.loginByWeixin1(param);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")

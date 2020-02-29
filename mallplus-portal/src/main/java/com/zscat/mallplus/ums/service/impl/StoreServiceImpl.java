@@ -56,12 +56,13 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
     IPmsProductService productService;
-    @Autowired
-    private ISmsHomeAdvertiseService advertiseService;
     @Resource
     FenxiaoConfigMapper fenxiaoConfigMapper;
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
+    @Autowired
+    private ISmsHomeAdvertiseService advertiseService;
+
     @Override
     @Transactional
     public Object applyStore(SysStore entity) {
@@ -103,7 +104,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             umsMember.setStoreId(entity.getId());
             memberService.updateById(umsMember);
 
-            FenxiaoConfig config=new FenxiaoConfig();
+            FenxiaoConfig config = new FenxiaoConfig();
             config.setId(Long.valueOf(entity.getId()));
             config.setStoreId(entity.getId());
             config.setStatus(0);

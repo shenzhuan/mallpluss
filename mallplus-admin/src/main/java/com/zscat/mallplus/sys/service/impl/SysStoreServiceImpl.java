@@ -41,14 +41,14 @@ import java.util.Date;
 @Service
 public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> implements ISysStoreService {
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Resource
     private SysStoreMapper storeMapper;
     @Resource
     private SysUserMapper userMapper;
-
     @Resource
     private PasswordEncoder passwordEncoder;
-
     @Resource
     private BakCategoryMapper bakCategoryMapper;
     @Resource
@@ -63,8 +63,6 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     private PmsProductAttributeCategoryMapper pmsProductAttributeCategoryMapper;
     @Resource
     private PmsBrandMapper pmsBrandMapper;
-    @Autowired
-    OssAliyunUtil aliyunOSSUtil;
 
     @Transactional
     @Override

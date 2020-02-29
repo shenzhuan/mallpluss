@@ -117,5 +117,4 @@ public class SmsCoupon extends BaseEntity implements Serializable {
     private Integer memberLevel;
 
 
-
 }

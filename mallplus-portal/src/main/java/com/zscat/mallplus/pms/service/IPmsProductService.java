@@ -41,7 +41,9 @@ public interface IPmsProductService extends IService<PmsProduct> {
      * @return
      */
     GoodsDetailResult getGoodsRedisById(Long id);
+
     GoodsDetailResult getGoodsRedisById1(Long id);
+
     /**
      * 获取推荐品牌
      *

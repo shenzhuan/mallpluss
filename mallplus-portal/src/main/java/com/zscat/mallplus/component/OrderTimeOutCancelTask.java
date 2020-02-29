@@ -14,7 +14,6 @@ import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.DateUtil;
 import com.zscat.mallplus.utils.DateUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class OrderTimeOutCancelTask {
     @Scheduled(cron = "0 0 1 * * ?")
     private void memberlevelCalator1() {
         logger.info("佣金计算 计算前一天的订单 start....");
-        Long t1= System.currentTimeMillis();
+        Long t1 = System.currentTimeMillis();
         String yesteday = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, DateUtils.addDays(new Date(), -1));
         List<OmsOrder> orders = orderMapper.listByDate(yesteday, 1);
         // 获取订单为 待评价和已完成的
@@ -107,7 +106,7 @@ public class OrderTimeOutCancelTask {
             }
 
         }
-        logger.info("佣金计算 计算前一天的订单end..,耗时"+(System.currentTimeMillis()-t1)/1000+"秒");
+        logger.info("佣金计算 计算前一天的订单end..,耗时" + (System.currentTimeMillis() - t1) / 1000 + "秒");
     }
 
     /**

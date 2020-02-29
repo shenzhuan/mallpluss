@@ -28,7 +28,6 @@ import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
-import com.zscat.mallplus.vo.home.ServiceMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,20 +94,22 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().success(page);
     }
+
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
     @ApiOperation(value = "查询订单列表")
     @GetMapping(value = "/sampleOrderList")
     public Object sampleOrderList(OmsOrder order,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                  @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
         IPage<OmsOrder> page = null;
-            order.setMemberId(memberService.getNewCurrentMember().getId());
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+        order.setMemberId(memberService.getNewCurrentMember().getId());
+        page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
 
         return new CommonResult().success(page);
     }
+
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody

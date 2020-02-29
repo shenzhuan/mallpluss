@@ -106,7 +106,7 @@ public class OmsCartItemServiceImpl extends ServiceImpl<OmsCartItemMapper, OmsCa
         OmsCartItem example = new OmsCartItem();
         example.setMemberId(memberId);
         example.setDeleteStatus(0);
-       // example.
+        // example.
         if (ids != null && ids.size() > 0) {
             return cartItemMapper.selectList(new QueryWrapper<>(example).in("id", ids));
         }

@@ -21,7 +21,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-            appid, appsecret, mchid, paySignKey, certName, notifyUrl, templateId1, templateId2, templateId3, templateId4, templateId5, templateId6, store_id
-        </sql>
+        appid, appsecret, mchid, paySignKey, certName, notifyUrl, templateId1, templateId2, templateId3, templateId4,
+        templateId5, templateId6, store_id
+    </sql>
 
 </mapper>

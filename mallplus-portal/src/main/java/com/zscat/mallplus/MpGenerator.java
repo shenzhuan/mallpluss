@@ -28,7 +28,7 @@ public class MpGenerator {
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
         //gc.setOutputDir("/Users/java/gen");
-          gc.setOutputDir("F:\\home");
+        gc.setOutputDir("F:\\home");
         gc.setFileOverride(true);
         gc.setActiveRecord(false);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存

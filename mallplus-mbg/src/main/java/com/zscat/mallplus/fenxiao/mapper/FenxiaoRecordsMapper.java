@@ -3,7 +3,6 @@ package com.zscat.mallplus.fenxiao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoRecords;
-import com.zscat.mallplus.oms.vo.OrderStstic;
 
 import java.util.List;
 

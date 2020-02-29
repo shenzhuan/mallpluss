@@ -28,8 +28,7 @@ public class AllEnum {
         /**
          * 市价交易
          */
-        Min(2, "min"),
-        ;
+        Min(2, "min"),;
 
         private int code;
         private String value;
@@ -74,8 +73,7 @@ public class AllEnum {
         /**
          * 后台添加
          */
-        admin(4, "admin"),
-        ;
+        admin(4, "admin"),;
 
         private int code;
         private String value;
@@ -111,8 +109,7 @@ public class AllEnum {
         /**
          *
          */
-        ORDER(2, "order"),
-        ;
+        ORDER(2, "order"),;
 
         private int code;
         private String value;
@@ -161,8 +158,7 @@ public class AllEnum {
         /**
          * 秒杀订单
          */
-        SKILL(6, "skill"),
-        ;
+        SKILL(6, "skill"),;
 
         private int code;
         private String value;
@@ -239,8 +235,7 @@ public class AllEnum {
         /**
          * 礼品
          */
-        GIFT(2, "gift"),
-        ;
+        GIFT(2, "gift"),;
 
         private int code;
         private String value;
@@ -284,9 +279,7 @@ public class AllEnum {
 
         COMMISSION(5, "COMMISSION"),
 
-        MODIFY(6, "MODIFY"),
-
-        ;
+        MODIFY(6, "MODIFY"),;
 
         private int code;
         private String value;

@@ -192,6 +192,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         return param;
     }
+
     @Override
     public GoodsDetailResult getGoodsRedisById1(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -212,6 +213,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         return param;
     }
+
     /**
      * [
      * {
@@ -230,40 +232,21 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         List<VO> specificationVoList = new ArrayList<>();
         for (PmsProductAttributeValue goodsSpecification : goodsSpecificationList) {
             String specification = goodsSpecification.getName();
-            VO goodsSpecificationVo =  new VO();
-                goodsSpecificationVo.setName(specification);
-                List<PmsProductAttributeValue> valueList = new ArrayList<>();
-                for (String var : goodsSpecification.getValue().split(",")){
-                    PmsProductAttributeValue newSpecification = new PmsProductAttributeValue();
-                    BeanUtils.copyProperties(goodsSpecification,newSpecification);
-                    newSpecification.setValue(var);
-                    valueList.add(newSpecification);
-                }
-                goodsSpecificationVo.setValueList(valueList);
-                specificationVoList.add(goodsSpecificationVo);
+            VO goodsSpecificationVo = new VO();
+            goodsSpecificationVo.setName(specification);
+            List<PmsProductAttributeValue> valueList = new ArrayList<>();
+            for (String var : goodsSpecification.getValue().split(",")) {
+                PmsProductAttributeValue newSpecification = new PmsProductAttributeValue();
+                BeanUtils.copyProperties(goodsSpecification, newSpecification);
+                newSpecification.setValue(var);
+                valueList.add(newSpecification);
+            }
+            goodsSpecificationVo.setValueList(valueList);
+            specificationVoList.add(goodsSpecificationVo);
         }
         return specificationVoList;
     }
-    private class VO {
-        private String name;
-        private List<PmsProductAttributeValue> valueList;
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<PmsProductAttributeValue> getValueList() {
-            return valueList;
-        }
-
-        public void setValueList(List<PmsProductAttributeValue> valueList) {
-            this.valueList = valueList;
-        }
-    }
     @Override
     public List<PmsBrand> getRecommendBrandList(int pageNum, int pageSize) {
 
@@ -365,5 +348,26 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         log.setPic(memberService.getNewCurrentMember().getIcon());
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
+    }
+
+    private class VO {
+        private String name;
+        private List<PmsProductAttributeValue> valueList;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<PmsProductAttributeValue> getValueList() {
+            return valueList;
+        }
+
+        public void setValueList(List<PmsProductAttributeValue> valueList) {
+            this.valueList = valueList;
+        }
     }
 }

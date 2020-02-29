@@ -255,6 +255,7 @@ public class PmsProductController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("批量设为分销")
     @RequestMapping(value = "/update/isFenxiao", method = RequestMethod.POST)
     @ResponseBody
@@ -268,6 +269,7 @@ public class PmsProductController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation("批量修改删除状态")
     @RequestMapping(value = "/update/deleteStatus", method = RequestMethod.POST)
     @ResponseBody

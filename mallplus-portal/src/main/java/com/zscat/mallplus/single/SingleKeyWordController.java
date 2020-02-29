@@ -1,9 +1,6 @@
 package com.zscat.mallplus.single;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.sys.entity.MallplusKeyword;
 import com.zscat.mallplus.sys.entity.MallplusSearchHistory;
 import com.zscat.mallplus.sys.mapper.MallplusKeywordMapper;
@@ -11,9 +8,6 @@ import com.zscat.mallplus.sys.mapper.MallplusSearchHistoryMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +34,7 @@ public class SingleKeyWordController {
     private MallplusSearchHistoryMapper searchHistoryService;
     @Autowired
     private IUmsMemberService memberService;
+
     /**
      * 搜索页面信息
      * <p>
@@ -51,15 +46,15 @@ public class SingleKeyWordController {
     @GetMapping("index")
     public Object index() {
         //取出输入框默认的关键词
-        MallplusKeyword defaultKeyword = keywordsService.selectOne(new QueryWrapper<MallplusKeyword>().eq("is_default",true).eq("deleted",false));
+        MallplusKeyword defaultKeyword = keywordsService.selectOne(new QueryWrapper<MallplusKeyword>().eq("is_default", true).eq("deleted", false));
         //取出热闹关键词
-        List<MallplusKeyword> hotKeywordList = keywordsService.selectList(new QueryWrapper<MallplusKeyword>().eq("is_hot",true).eq("deleted",false));
+        List<MallplusKeyword> hotKeywordList = keywordsService.selectList(new QueryWrapper<MallplusKeyword>().eq("is_hot", true).eq("deleted", false));
 
         List<MallplusSearchHistory> historyList = null;
         UmsMember member = memberService.getNewCurrentMember();
-        if (member != null && member.getId()>0) {
+        if (member != null && member.getId() > 0) {
             //取出用户历史关键字
-            historyList = searchHistoryService.selectList(new QueryWrapper<MallplusSearchHistory>().eq("user_id",member.getId()));
+            historyList = searchHistoryService.selectList(new QueryWrapper<MallplusSearchHistory>().eq("user_id", member.getId()));
         } else {
             historyList = new ArrayList<>(0);
         }
@@ -101,8 +96,8 @@ public class SingleKeyWordController {
     @PostMapping("clearhistory")
     public Object clearhistory() {
         UmsMember member = memberService.getNewCurrentMember();
-        if (member != null && member.getId()>0) {
-            searchHistoryService.delete(new QueryWrapper<MallplusSearchHistory>().eq("user_id",member.getId()));
+        if (member != null && member.getId() > 0) {
+            searchHistoryService.delete(new QueryWrapper<MallplusSearchHistory>().eq("user_id", member.getId()));
             return new CommonResult().success();
         }
         return new CommonResult().fail(100);

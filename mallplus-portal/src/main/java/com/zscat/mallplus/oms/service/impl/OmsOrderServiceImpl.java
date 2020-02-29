@@ -81,6 +81,10 @@ import java.util.stream.Collectors;
 public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> implements IOmsOrderService {
 
     @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
+    @Resource
+    FenxiaoRecordsMapper fenxiaoRecordsMapper;
+    @Resource
     private ISmsGroupActivityService smsGroupActivityService;
     @Resource
     private RedisService redisService;
@@ -92,7 +96,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private IUmsMemberReceiveAddressService addressService;
     @Resource
     private IUmsMemberBlanceLogService memberBlanceLogService;
-
     @Resource
     private WechatApiService wechatApiService;
     @Resource
@@ -101,7 +104,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private ISmsGroupMemberService groupMemberService;
     @Resource
     private IOmsCartItemService cartItemService;
-
     @Resource
     private ISmsCouponService couponService;
     @Resource
@@ -138,8 +140,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private SysAppletSetMapper appletSetMapper;
     @Resource
     private UmsIntegrationChangeHistoryMapper integrationChangeHistoryMapper;
-
-
     @Autowired
     private ISmsBasicGiftsService basicGiftsService;
     @Autowired
@@ -150,10 +150,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     private IPmsGiftsService pmsGiftsService;
     @Resource
     private OmsOrderReturnApplyMapper orderReturnApplyMapper;
-    @Resource
-    FenxiaoConfigMapper fenxiaoConfigMapper;
-    @Resource
-    FenxiaoRecordsMapper fenxiaoRecordsMapper;
 
     @Override
     public int payOrder(TbThanks tbThanks) {
@@ -290,6 +286,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         return cartItems;
     }
+
     /**
      * @return
      */
@@ -770,7 +767,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         orderItemService.saveBatch(orderItemList);
         // 佣金计算
         for (OmsCartItem cartPromotionItem : newCartItemList) {
-            if (ValidatorUtils.notEmpty(cartPromotionItem.getIsFenxiao()) && cartPromotionItem.getIsFenxiao()==1){
+            if (ValidatorUtils.notEmpty(cartPromotionItem.getIsFenxiao()) && cartPromotionItem.getIsFenxiao() == 1) {
                 FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
                 if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
                     //  UmsMember member = memberService.getById(currentMember.getInvitecode());
@@ -1430,29 +1427,30 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             }
         }
     }
+
     @Override
-    public CommonResult autoDeliveryOrder(){
+    public CommonResult autoDeliveryOrder() {
         OmsOrderSetting orderSetting = orderSettingMapper.selectOne(new QueryWrapper<>());
         if (orderSetting != null) {
-            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status",OrderStatus.DELIVERED.getValue()));
-          for (OmsOrder order:list){
-              if (order.getPaymentTime().getTime()>(System.currentTimeMillis()+orderSetting.getConfirmOvertime()*3600)){
-                  OmsOrderOperateHistory history = updateOrderInfo(order.getId(), order, OrderStatus.TO_COMMENT);
-                  history.setNote("Task确认收货");
-                  orderOperateHistoryService.save(history);
-              }
-          }
+            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status", OrderStatus.DELIVERED.getValue()));
+            for (OmsOrder order : list) {
+                if (order.getPaymentTime().getTime() > (System.currentTimeMillis() + orderSetting.getConfirmOvertime() * 3600)) {
+                    OmsOrderOperateHistory history = updateOrderInfo(order.getId(), order, OrderStatus.TO_COMMENT);
+                    history.setNote("Task确认收货");
+                    orderOperateHistoryService.save(history);
+                }
+            }
         }
         return new CommonResult().success(null);
     }
 
     @Override
-    public CommonResult autoCommentOrder(){
+    public CommonResult autoCommentOrder() {
         OmsOrderSetting orderSetting = orderSettingMapper.selectOne(new QueryWrapper<>());
         if (orderSetting != null) {
-            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status",OrderStatus.TO_COMMENT.getValue()));
-            for (OmsOrder order:list){
-                if (order.getPaymentTime().getTime()>(System.currentTimeMillis()+orderSetting.getCommentOvertime()*3600)){
+            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status", OrderStatus.TO_COMMENT.getValue()));
+            for (OmsOrder order : list) {
+                if (order.getPaymentTime().getTime() > (System.currentTimeMillis() + orderSetting.getCommentOvertime() * 3600)) {
                     OmsOrderOperateHistory history = updateOrderInfo(order.getId(), order, OrderStatus.TRADE_SUCCESS);
                     history.setNote("Task自动好评");
                     orderOperateHistoryService.save(history);
@@ -1463,12 +1461,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     }
 
     @Override
-    public CommonResult autoSucessOrder(){
+    public CommonResult autoSucessOrder() {
         OmsOrderSetting orderSetting = orderSettingMapper.selectOne(new QueryWrapper<>());
         if (orderSetting != null) {
-            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status",OrderStatus.TRADE_SUCCESS.getValue()));
-            for (OmsOrder order:list){
-                if (order.getPaymentTime().getTime()>(System.currentTimeMillis()+orderSetting.getFinishOvertime()*3600)){
+            List<OmsOrder> list = orderService.list(new QueryWrapper<OmsOrder>().eq("status", OrderStatus.TRADE_SUCCESS.getValue()));
+            for (OmsOrder order : list) {
+                if (order.getPaymentTime().getTime() > (System.currentTimeMillis() + orderSetting.getFinishOvertime() * 3600)) {
                     OmsOrderOperateHistory history = updateOrderInfo(order.getId(), order, OrderStatus.TO_SHARE);
                     history.setNote("Task自动完成交易");
                     orderOperateHistoryService.save(history);
@@ -1477,6 +1475,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         return new CommonResult().success(null);
     }
+
     @Override
     public CommonResult cancelTimeOutOrder() {
         OmsOrderSetting orderSetting = orderSettingMapper.selectOne(new QueryWrapper<>());
@@ -1495,7 +1494,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             for (OmsOrderDetail timeOutOrder : timeOutOrders) {
                 //解除订单商品库存锁定
                 // orderMapper.releaseSkuStockLock(timeOutOrder.getOrderItemList());
-                  releaseStock(timeOutOrder);
+                releaseStock(timeOutOrder);
                 //修改优惠券使用状态
                 updateCouponStatus(timeOutOrder.getCouponId(), timeOutOrder.getMemberId(), 0);
                 //返还使用积分
@@ -2068,7 +2067,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         OmsCartItem cartItem = new OmsCartItem();
         PmsProduct pmsProduct = productService.getById(cartParam.getGoodsId());
-        if (ValidatorUtils.notEmpty(cartParam.getSkuId()) && cartParam.getSkuId()>0) {
+        if (ValidatorUtils.notEmpty(cartParam.getSkuId()) && cartParam.getSkuId() > 0) {
             PmsSkuStock pmsSkuStock = skuStockMapper.selectById(cartParam.getSkuId());
             checkGoods(pmsProduct, false, cartParam.getTotal());
             checkSkuGoods(pmsSkuStock, cartParam.getTotal());
@@ -2502,7 +2501,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
             // 佣金计算
             for (OmsCartItem cartPromotionItem : newCartItemList) {
-                if (ValidatorUtils.notEmpty(cartPromotionItem.getIsFenxiao()) && cartPromotionItem.getIsFenxiao()==1){
+                if (ValidatorUtils.notEmpty(cartPromotionItem.getIsFenxiao()) && cartPromotionItem.getIsFenxiao() == 1) {
                     FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(cartPromotionItem.getStoreId());
                     if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(currentMember.getInvitecode()) && fenxiaoConfig.getOnePercent() > 0) {
                         //  UmsMember member = memberService.getById(currentMember.getInvitecode());

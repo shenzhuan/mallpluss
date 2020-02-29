@@ -380,6 +380,7 @@ public class BHomeController {
         }
         return new CommonResult().success(menuList);
     }
+
     /**
      * 发送短信验证码
      *
