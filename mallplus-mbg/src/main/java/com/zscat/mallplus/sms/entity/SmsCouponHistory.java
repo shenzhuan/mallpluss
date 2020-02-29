@@ -30,6 +30,11 @@ public class SmsCouponHistory extends BaseEntity implements Serializable {
 
     @TableField("coupon_id")
     private Long couponId;
+    /**
+     * 使用门槛；0表示无门槛
+     */
+    @TableField("min_point")
+    private BigDecimal minPoint;
 
     @TableField("member_id")
     private Long memberId;

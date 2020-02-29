@@ -48,7 +48,8 @@ public class OmsCartItem extends BaseEntity implements Serializable {
      * 添加到购物车的价格
      */
     private BigDecimal price;
-
+    @TableField("is_fenxiao")
+    private Integer isFenxiao;
     /**
      * 销售属性1
      */

@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @TableName("fenxiao_records")
-public class FenxiaoRecords implements Serializable {
+public class FenxiaoRecords extends BaseEntity implements Serializable {
 
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -24,19 +26,21 @@ public class FenxiaoRecords implements Serializable {
 
 
     @TableField("order_id")
-    private Integer orderId;
+    private Long orderId;
 
 
     @TableField("member_id")
-    private Integer memberId;
-
+    private Long memberId;
+    @TableField("type")
+    private Integer type;
 
     @TableField("invite_id")
-    private Integer inviteId;
-
+    private Long inviteId;
+    @TableField("goods_id")
+    private Long goodsId;
 
     @TableField("money")
-    private String money;
+    private BigDecimal money;
 
 
     @TableField("level")

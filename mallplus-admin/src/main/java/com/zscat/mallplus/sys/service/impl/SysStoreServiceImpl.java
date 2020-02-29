@@ -1,15 +1,14 @@
 package com.zscat.mallplus.sys.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ApiContext;
-import com.zscat.mallplus.bill.entity.BakBrand;
-import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
-import com.zscat.mallplus.pms.entity.PmsBrand;
+import com.zscat.mallplus.component.OssAliyunUtil;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.entity.PmsProductCategory;
@@ -22,17 +21,18 @@ import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
+import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 
 /**
@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 @Service
 public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> implements ISysStoreService {
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Resource
     private SysStoreMapper storeMapper;
     @Resource
@@ -69,13 +71,27 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     private PmsProductAttributeCategoryMapper pmsProductAttributeCategoryMapper;
     @Resource
     private PmsBrandMapper pmsBrandMapper;
-
+    @Resource
+    private FenxiaoConfigMapper fenxiaoConfigMapper;
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {
         entity.setTryTime(new Date());
         entity.setCreateTime(new Date());
         storeMapper.insert(entity);
+        String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
+        //要添加到二维码下面的文字
+        String words = entity.getName() + "的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+        entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
+        storeMapper.updateById(entity);
+        FenxiaoConfig fenxiaoConfig= new FenxiaoConfig();
+        fenxiaoConfig.setId(Long.valueOf(entity.getId()));
+        fenxiaoConfig.setCreateTime(new Date());
+
+        fenxiaoConfigMapper.insert(fenxiaoConfig);
         SysUser user = new SysUser();
         user.setUsername(entity.getName());
         SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
@@ -91,9 +107,9 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setNickName(entity.getName());
         user.setStoreId(entity.getId());
         user.setEmail(entity.getSupportPhone());
-        apiContext.setCurrentProviderId(entity.getId());
+        apiContext.setCurrentProviderId(Long.valueOf(entity.getId()));
         //
-        if (entity.getType() != null) {
+       /* if (entity.getType() != null) {
             CompletableFuture.runAsync(() -> {
 
                 BakCategory category = bakCategoryMapper.selectById(entity.getType());
@@ -151,11 +167,11 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
                     }
                 }
             });
-        }
+        }*/
         return userMapper.insert(user) > 0;
     }
 
-    void createG(BakGoods gg, Long storeId) {
+    void createG(BakGoods gg, Integer storeId) {
         PmsProduct g = new PmsProduct();
 
         g.setName(gg.getName());

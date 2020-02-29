@@ -86,6 +86,8 @@ public class SingeCmsController extends ApiBaseAction {
     @Resource
     private CmsSubjectProductRelationMapper subjectProductRelationMapper;
 
+
+
     @IgnoreAuth
     @SysLog(MODULE = "cms", REMARK = "查询打赏列表")
     @ApiOperation(value = "查询打赏列表")

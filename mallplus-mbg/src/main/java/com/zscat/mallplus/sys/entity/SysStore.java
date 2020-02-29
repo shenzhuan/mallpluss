@@ -27,7 +27,7 @@ public class SysStore implements Serializable {
 
 
     private String name;
-
+    // 1 申请 2 拒绝 3 成功
     private Integer status;
 
     private Long uid;
@@ -54,7 +54,7 @@ public class SysStore implements Serializable {
     private String contactMobile;
 
     @TableField("address_province")
-    private Long addressProvince;
+    private String addressProvince;
 
     @TableField("address_lat")
     private String addressLat;
@@ -63,13 +63,13 @@ public class SysStore implements Serializable {
     private String addressDetail;
 
     @TableField("address_city")
-    private Long addressCity;
+    private String addressCity;
 
     @TableField("address_lng")
     private String addressLng;
 
     @TableField("address_area")
-    private Long addressArea;
+    private String addressArea;
 
     @TableField("buy_plan_times")
     private Long buyPlanTimes;
@@ -131,7 +131,7 @@ public class SysStore implements Serializable {
 
     private String description;
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     @TableField("industry_one")
     private Long industryOne;
@@ -142,6 +142,8 @@ public class SysStore implements Serializable {
     private Integer hit;
 
     private Integer collect;
+    @TableField("is_boutique")
+    private Integer isBoutique;
     @TableField(exist = false)
     private Integer goodsCount;
 

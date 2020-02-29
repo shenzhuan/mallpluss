@@ -26,6 +26,7 @@ public class BuildHomeResult {
     List<BuildAdv> advertiseList;
     BuildingCommunity community;
     List<BuildingFloor> floorList;
+    List<BuildingCommunity> communityList;
     //推荐品牌
     private List<SysStore> storeList;
     //推荐专题

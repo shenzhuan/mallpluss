@@ -218,6 +218,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     }
 
     @Override
+    public int updateisFenxiao(List<Long> ids, Integer newStatus) {
+        PmsProduct record = new PmsProduct();
+        record.setIsFenxiao(newStatus);
+        clerGoodsRedis(ids);
+        return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
+    }
+
+    @Override
     public int updatePublishStatus(List<Long> ids, Integer publishStatus) {
         PmsProduct record = new PmsProduct();
         record.setPublishStatus(publishStatus);

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
+import com.zscat.mallplus.vo.AppletLoginnewParam;
 import com.zscat.mallplus.vo.SmsCode;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,5 +134,9 @@ public interface IUmsMemberService extends IService<UmsMember> {
      * @return
      */
     String getWxPhone(String openid, String keyStr, String ivStr, String encDataStr);
+
+    Object resetPassword(String phone, String password, String confimpassword, String authCode);
+
+    Object loginByWeixin2(AppletLoginnewParam param);
 }
 

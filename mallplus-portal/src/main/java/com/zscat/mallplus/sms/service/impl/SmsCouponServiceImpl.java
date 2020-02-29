@@ -48,13 +48,21 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     private SmsBargainMemberMapper bargainMemberMapper;
 
     @Override
-    public List<SmsCoupon> selectNotRecive(Long memberId) {
-        return couponMapper.selectNotRecive(memberId);
+    public List<SmsCoupon> selectNotRecive(Integer pageSize) {
+        UmsMember currentMember = memberService.getNewCurrentMember();
+        if (currentMember != null && currentMember.getId() != null) {
+            return couponMapper.selectNotRecive(currentMember.getId(), pageSize);
+        }
+        return couponMapper.selectList(new QueryWrapper<SmsCoupon>().lt("start_time", new Date()).gt("end_time", new Date()).last("limit " + pageSize));
     }
 
     @Override
-    public List<SmsCoupon> selectRecive(Long memberId) {
-        return couponMapper.selectRecive(memberId);
+    public List<SmsCoupon> selectRecive(Integer pageSize) {
+        UmsMember currentMember = memberService.getNewCurrentMember();
+        if (currentMember != null && currentMember.getId() != null) {
+            return couponMapper.selectRecive(currentMember.getId(), pageSize);
+        }
+        return couponMapper.selectList(new QueryWrapper<SmsCoupon>().lt("start_time", new Date()).gt("end_time", new Date()));
     }
 
     @Override

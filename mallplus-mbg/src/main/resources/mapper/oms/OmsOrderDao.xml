@@ -87,7 +87,7 @@
         oms_order o
         LEFT JOIN oms_order_item ot ON o.id = ot.order_id
         WHERE
-        o.status = 0
+        o.status = 12
         AND date_add(NOW(), INTERVAL -#{minute} MINUTE)>o.create_time;
     </select>
     <select id="orderMonthStatic" resultType="Map">
@@ -220,7 +220,7 @@
     </select>
 
     <select id="listByDate" resultMap="BaseResultMap">
-        select pay_amount,status from oms_order where
+        select id, pay_amount,status from oms_order where
         <if test="type==1">
             date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
         </if>

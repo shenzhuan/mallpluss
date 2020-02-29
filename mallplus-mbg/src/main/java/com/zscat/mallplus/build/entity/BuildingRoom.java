@@ -108,7 +108,8 @@ public class BuildingRoom implements Serializable {
      */
     @TableField("status_cd")
     private String statusCd;
-
+    private String pic;
+    private String pics;
     /**
      * 房屋状态，如房屋出售等，请查看state 表
      */

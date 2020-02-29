@@ -46,6 +46,8 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     @TableField("nick_name")
     private String nickName;
+    @TableField("store_name")
+    private String storeName;
 
     /**
      * 备注信息
@@ -76,13 +78,6 @@ public class SysUser extends BaseEntity implements Serializable {
     private Long supplyId;
 
 
-    @TableField("store_id")
-    private Long storeId;
-
-    @TableField("store_name")
-    private String storeName;
-
-
     //角色
     @TableField(exist = false)
     private String roleIds;
@@ -92,4 +87,7 @@ public class SysUser extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private String code;
+
+    @TableField("store_id")
+    private Integer storeId;
 }

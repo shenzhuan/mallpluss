@@ -108,7 +108,19 @@ public class PmsProductController {
         }
 
     }
-
+    @ApiOperation("批量设为分销")
+    @RequestMapping(value = "/update/isFenxiao", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量设为分销")
+    public Object updateisFenxiao(@RequestParam("ids") List<Long> ids,
+                                  @RequestParam("newStatus") Integer newStatus) {
+        int count = IPmsProductService.updateisFenxiao(ids, newStatus);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
     @SysLog(MODULE = "pms", REMARK = "删除商品信息")
     @ApiOperation("删除商品信息")
     @GetMapping(value = "/delete/{id}")

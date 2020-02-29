@@ -9,6 +9,7 @@ import com.jfinal.kit.StrKit;
 import com.zscat.mallplus.core.enums.SignType;
 import com.zscat.mallplus.core.enums.TradeType;
 import com.zscat.mallplus.core.kit.*;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
@@ -25,6 +26,7 @@ import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.wxpay.WxPayApi;
 import com.zscat.mallplus.wxpay.WxPayApiConfig;
 import com.zscat.mallplus.wxpay.model.*;
@@ -965,6 +967,13 @@ public class WxPayController extends AbstractWxPayApiController {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
+                if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
+                    OmsOrder childOrder = new OmsOrder();
+                    childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
+                    childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
+                    childOrder.setPaymentTime(new Date());
+                    orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
+                }
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

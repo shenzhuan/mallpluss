@@ -25,6 +25,7 @@ public class GoodsDetailResult implements Serializable {
     private List<PmsSkuStock> skuStockList;
     @ApiModelProperty("商品参数及自定义规格属性")
     private List<PmsProductAttributeValue> productAttributeValueList;
+    private Object productAttributeNameValueList;
     @ApiModelProperty("专题和商品关系")
     private List<CmsSubjectProductRelation> subjectProductRelationList;
     @ApiModelProperty("优选专区和商品的关系")

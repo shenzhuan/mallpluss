@@ -17,9 +17,9 @@ import java.util.List;
  */
 public interface SmsCouponMapper extends BaseMapper<SmsCoupon> {
 
-    List<SmsCoupon> selectNotRecive(Long memberId);
+    List<SmsCoupon> selectNotRecive(@Param("memberId") Long memberId, @Param("limit") Integer limit);
 
-    List<SmsCoupon> selectRecive(Long memberId);
+    List<SmsCoupon> selectRecive(@Param("memberId") Long memberId, @Param("limit") Integer limit);
 
     SmsCouponParam getItem(@Param("id") Long id);
 }
