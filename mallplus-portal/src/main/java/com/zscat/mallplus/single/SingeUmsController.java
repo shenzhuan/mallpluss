@@ -257,15 +257,16 @@ public class SingeUmsController extends ApiBaseAction {
     @RequestMapping(value = "/getInviteData", method = RequestMethod.GET)
     public Object getInviteData() {
         UmsMember member = memberService.getNewCurrentMember();
+        UmsMember newMember = memberService.getById(member.getId());
         Integer count = memberService.count(new QueryWrapper<UmsMember>().eq("invitecode", member.getId()));
-        member.setBuyCount(count);
+        newMember.setBuyCount(count);
         List<FenxiaoRecords> recordss = fenxiaoRecordsMapper.selectList(new QueryWrapper<FenxiaoRecords>().eq("member_id", member.getId()));
         BigDecimal totalMoney = BigDecimal.ZERO;
         for (FenxiaoRecords fenxiaoRecords : recordss) {
             totalMoney = fenxiaoRecords.getMoney().add(totalMoney);
         }
-        member.setBuyMoney(totalMoney);
-        return new CommonResult().success(member);
+        newMember.setBuyMoney(totalMoney);
+        return new CommonResult().success(newMember);
     }
 
     @IgnoreAuth

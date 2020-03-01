@@ -17,7 +17,7 @@
         <module>mallplus-admin</module>
         <module>mallplus-search</module>
 
-        <module>mallplus-encrypt</module>
+
     </modules>
 
 </project>
