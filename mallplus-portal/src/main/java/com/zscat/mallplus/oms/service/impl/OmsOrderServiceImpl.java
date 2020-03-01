@@ -496,7 +496,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         BigDecimal totalPayAmount = BigDecimal.ZERO;
         Map<Integer, List<OmsCartItem>> map = list.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
-        if (map.size() > 1) {
+       // if (map.size() > 1) {
             for (Map.Entry<Integer, List<OmsCartItem>> entry : map.entrySet()) {
                 List<OmsCartItem> subList = entry.getValue();
                 List<OmsCartItem> newCartList = new ArrayList<>();
@@ -541,7 +541,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 }
 
             }
-        }
+     //   }
         confirmListOrderResult.setConfirmOrderResultList(confirmOrderResultList);
         //获取用户收货地址列表
         UmsMemberReceiveAddress queryU = new UmsMemberReceiveAddress();
@@ -1514,7 +1514,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 //返还使用积分
                 if (timeOutOrder.getUseIntegration() != null) {
                     UmsMember member = memberService.getById(timeOutOrder.getMemberId());
-                    memberService.updateIntegration(timeOutOrder.getMemberId(), member.getIntegration() + timeOutOrder.getUseIntegration());
+                //    memberService.updateIntegration(timeOutOrder.getMemberId(), member.getIntegration() + timeOutOrder.getUseIntegration());
                 }
             }
         }

@@ -228,7 +228,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return member;
                 }
             } else {
-                return new UmsMember();
+                return new CommonResult().fail(100);
             }
             return new CommonResult().fail(100);
         } catch (Exception e) {
