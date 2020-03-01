@@ -42,10 +42,8 @@ mall
 ├── mall-search -- 基于Elasticsearch的商品搜索系统
 ├── mallplus-portal -- 前台商城系统接口
 └── mall-demo -- 框架搭建时的测试代码
-├── 前端项目`mallplus-admin-web`  地址 请加群下载  
-├── h5前端项目`vue-js-master`地址 请加群下载  
-├── pc前端项目`Mall-Vue-master`地址 请加群下载  
-├── 小前端项目`wechatapp`地址 请加群下载
+├── 前端项目`mallplus-admin-web` 
+├── 小前端项目  uniapp 
 ```
 
 关注公众号
