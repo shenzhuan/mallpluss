@@ -19,7 +19,6 @@ import java.util.Map;
 public interface IPmsProductService extends IService<PmsProduct> {
 
 
-
     /**
      * 查询商品详情
      *
@@ -42,6 +41,8 @@ public interface IPmsProductService extends IService<PmsProduct> {
      * @return
      */
     GoodsDetailResult getGoodsRedisById(Long id);
+
+    GoodsDetailResult getGoodsRedisById1(Long id);
 
     /**
      * 获取推荐品牌

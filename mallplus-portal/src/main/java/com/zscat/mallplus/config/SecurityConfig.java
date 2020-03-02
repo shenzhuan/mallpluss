@@ -108,13 +108,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public MemberDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 try {
-                    UmsMember member = JsonUtils.jsonToPojo(redisService.get(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get( String.format(Rediskey.MEMBER, username)), UmsMember.class);
                     //   UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)),UmsMember.class);
                     if (member != null) {
                         return new MemberDetails(member);
                     } else {
                         member = memberService.getByUsername(username);
-                        if (member!=null){
+                        if (member != null) {
                             return new MemberDetails(member);
                         }
 

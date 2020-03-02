@@ -90,7 +90,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setNickName(entity.getName());
         //user.setStoreId(entity.getId());
         user.setEmail(entity.getSupportPhone());
-           apiContext.setCurrentProviderId(entity.getId());
+        apiContext.setCurrentProviderId(entity.getId());
         //
         if (entity.getType() != null) {
             CompletableFuture.runAsync(() -> {

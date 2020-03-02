@@ -2,8 +2,10 @@ package com.zscat.mallplus.single;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -90,10 +92,23 @@ public class SingelHomeController {
         if (umsMember != null && umsMember.getId() != null) {
             List<SmsCouponHistory> histories = couponHistoryMapper.selectList(new QueryWrapper<SmsCouponHistory>().eq("member_id", umsMember.getId()));
             detail.setHistories(histories);
-            detail.setMember(umsMember);
+            UmsMember newMember = memberService.getById(umsMember.getId());
+            detail.setMember(newMember);
             return new CommonResult().success(detail);
         }
         return new CommonResult().failed();
+    }
+
+    @IgnoreAuth
+    @ApiOperation("首页内容页信息展示")
+    @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
+    @RequestMapping(value = "/userSampleInfo", method = RequestMethod.GET)
+    public Object userSampleInfo() {
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            return new CommonResult().success(umsMember);
+        }
+        return new CommonResult().fail(100);
     }
 
     @IgnoreAuth
@@ -181,9 +196,19 @@ public class SingelHomeController {
     @ApiOperation("优惠券")
     @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
     @RequestMapping(value = "/couponList", method = RequestMethod.GET)
-    public Object couponList() {
-        List<SmsCoupon> contentResult = couponService.selectNotRecive();
-        return new CommonResult().success(contentResult);
+    public Object couponList(SmsCoupon entity,
+                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+
+        return new CommonResult().success(couponService.page(new Page<SmsCoupon>(pageNum, pageSize), new QueryWrapper<>(entity)));
+    }
+
+    @IgnoreAuth
+    @ApiOperation("优惠券")
+    @SysLog(MODULE = "home", REMARK = "首页秒杀活动")
+    @RequestMapping(value = "/selectNotRecive", method = RequestMethod.GET)
+    public Object selectNotRecive(@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        return new CommonResult().success(couponService.selectNotRecive(pageSize));
     }
 
     /**
@@ -194,9 +219,15 @@ public class SingelHomeController {
     @IgnoreAuth
     @SysLog(MODULE = "home", REMARK = "bannerList")
     @GetMapping("/bannerList")
-    public Object bannerList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
-        return new CommonResult().success(bannerList);
+    public Object bannerList(@RequestParam(value = "type", required = false) Integer type,
+                             @RequestParam(value = "storeId", required = false) Integer storeId) {
+        SmsHomeAdvertise advertise = new SmsHomeAdvertise();
+        advertise.setStatus(1);
+
+        if (ValidatorUtils.notEmpty(type)) {
+            advertise.setType(type);
+        }
+        return new CommonResult().success(advertiseService.list(new QueryWrapper<>(advertise)));
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询首页推荐品牌")
@@ -496,5 +527,15 @@ public class SingelHomeController {
 
         return new CommonResult().success(memberService.initMemberRedis());
 
+    }
+
+
+
+    @ApiOperation(value = "登出功能")
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public Object logout() {
+
+        return new CommonResult().success(null);
     }
 }

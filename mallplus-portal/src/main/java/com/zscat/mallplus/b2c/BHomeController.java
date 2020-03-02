@@ -131,7 +131,7 @@ public class BHomeController {
                 redisService.expire(key, 60);
             } else {
                 contentResult = JsonUtils.jsonToPojo(json, HomeContentResult.class);
-              //  contentResult = advertiseService.contentNew1();
+                //  contentResult = advertiseService.contentNew1();
             }
         } catch (Exception e) {
             log.error(e.getMessage());

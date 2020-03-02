@@ -1,18 +1,18 @@
 package com.zscat.mallplus.single;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.service.IOmsCartItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.CartMarkingVo;
 import com.zscat.mallplus.oms.vo.CartProduct;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.CartParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,10 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * 购物车管理Controller
@@ -72,14 +70,34 @@ public class OmsCartItemController {
         if (umsMember != null && umsMember.getId() != null) {
             List<OmsCartItem> cartItemList = cartItemService.list(umsMember.getId(), null);
             map.put("cartItemList", cartItemList);
-            CartMarkingVo vo = new CartMarkingVo();
+            /*CartMarkingVo vo = new CartMarkingVo();
             vo.setCartList(cartItemList);
             SmsBasicMarking marking = smsBasicMarkingService.matchOrderBasicMarking(vo);
             if (marking != null) {
                 map.put("promoteAmount", marking.getMinAmount());
             } else {
                 map.put("promoteAmount", 0);
+            }*/
+            map.put("promoteAmount", 0);
+            Integer goodsCount = 0;
+            BigDecimal goodsAmount = new BigDecimal(0.00);
+            Integer checkedGoodsCount = 0;
+            BigDecimal checkedGoodsAmount = new BigDecimal(0.00);
+            for (OmsCartItem cart : cartItemList) {
+                goodsCount += cart.getQuantity();
+                goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
+                if (cart.getChecked() == 1) {
+                    checkedGoodsCount += cart.getQuantity();
+                    checkedGoodsAmount = checkedGoodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getQuantity())));
+                }
             }
+            Map<String, Object> cartTotal = new HashMap<>();
+            cartTotal.put("goodsCount", goodsCount);
+            cartTotal.put("goodsAmount", goodsAmount);
+            cartTotal.put("checkedGoodsCount", checkedGoodsCount);
+            cartTotal.put("checkedGoodsAmount", checkedGoodsAmount);
+
+            map.put("cartTotal", cartTotal);
 
             return new CommonResult().success(map);
         }
@@ -131,7 +149,7 @@ public class OmsCartItemController {
         }
         int count = cartItemService.delete(memberService.getNewCurrentMember().getId(), resultList);
         if (count > 0) {
-            return new CommonResult().success(count);
+            return new CommonResult().success(list());
         }
         return new CommonResult().failed();
     }
@@ -147,5 +165,53 @@ public class OmsCartItemController {
         return new CommonResult().failed();
     }
 
+    /**
+     * 购物车商品货品勾选状态
+     * <p>
+     * 如果原来没有勾选，则设置勾选状态；如果商品已经勾选，则设置非勾选状态。
+     *
+     * @return 购物车信息
+     */
+    @PostMapping("checked")
+    public Object checked(@RequestParam Integer checkValue,
+                          @RequestParam List<Integer> productIds) {
+        if (productIds == null) {
+            return new CommonResult().paramFailed();
+        }
+        if (checkValue == null) {
+            return new CommonResult().paramFailed();
+        }
+        OmsCartItem item = new OmsCartItem();
+        item.setChecked(checkValue);
+        item.setModifyDate(new Date());
+        cartItemService.update(item, new QueryWrapper<OmsCartItem>().eq("member_id", memberService.getNewCurrentMember().getId()).in("product_id", productIds));
+        return list();
+    }
 
+    @PostMapping("singleChecked")
+    public Object singleChecked(@RequestParam Integer checkValue,
+                                @RequestParam Integer productId) {
+        if (productId == null) {
+            return new CommonResult().paramFailed();
+        }
+        if (checkValue == null) {
+            return new CommonResult().paramFailed();
+        }
+        OmsCartItem item = new OmsCartItem();
+        item.setChecked(checkValue);
+        item.setModifyDate(new Date());
+        cartItemService.update(item, new QueryWrapper<OmsCartItem>().eq("member_id", memberService.getNewCurrentMember().getId()).eq("product_id", productId));
+        return list();
+    }
+
+    @ApiOperation("修改购物车中某个商品的数量")
+    @RequestMapping(value = "/getnumber", method = RequestMethod.GET)
+    @ResponseBody
+    public Object getnumber() {
+        Integer count = cartItemService.countCart(memberService.getNewCurrentMember().getId());
+        if (ValidatorUtils.notEmpty(count) && count > 0) {
+            return new CommonResult().success(count);
+        }
+        return new CommonResult().success(0);
+    }
 }

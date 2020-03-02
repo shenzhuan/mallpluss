@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @Slf4j
 @RestController
-public class WechatController  {
+public class WechatController {
 
     /**
      * 微信公众号签名认证接口
+     *
+     * @throws
      * @Title: test
      * @Description: TODO
      * @param: @param signature
@@ -24,10 +26,9 @@ public class WechatController  {
      * @param: @param echostr
      * @param: @return
      * @return: String
-     * @throws
      */
     @RequestMapping("/wx")
-    public String test(String signature,String timestamp,String nonce,String echostr) {
+    public String test(String signature, String timestamp, String nonce, String echostr) {
 
         // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
         if (signature != null && WeixinCheckoutUtil.checkSignature(signature, timestamp, nonce)) {
@@ -36,7 +37,6 @@ public class WechatController  {
 
         return null;
     }
-
 
 
 }

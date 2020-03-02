@@ -26,6 +26,7 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,16 +82,31 @@ public class SingeOmsController extends ApiBaseAction {
 
         IPage<OmsOrder> page = null;
         if (order.getStatus() != null && order.getStatus() == 0) {
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id", memberService.getNewCurrentMember().getId()).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<OmsOrder>().eq("member_id", memberService.getNewCurrentMember().getId()).orderByDesc("create_time").select(ConstansValue.sampleOrderList));
         } else {
             order.setMemberId(memberService.getNewCurrentMember().getId());
-            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+            page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time").select(ConstansValue.sampleOrderList));
 
         }
         for (OmsOrder omsOrder : page.getRecords()) {
             List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
             omsOrder.setOrderItemList(itemList);
         }
+        return new CommonResult().success(page);
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "查询订单列表")
+    @ApiOperation(value = "查询订单列表")
+    @GetMapping(value = "/sampleOrderList")
+    public Object sampleOrderList(OmsOrder order,
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                  @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<OmsOrder> page = null;
+        order.setMemberId(memberService.getNewCurrentMember().getId());
+        page = orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(order).isNull("pid").orderByDesc("create_time").select(ConstansValue.sampleOrderList));
+
         return new CommonResult().success(page);
     }
 
@@ -109,12 +126,14 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().success(orderDetailResult);
     }
+
     @ApiOperation("获取订单详情:订单信息、商品信息、操作记录")
     @RequestMapping(value = "/itemDetail", method = RequestMethod.GET)
     @ResponseBody
     public Object itemDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         return new CommonResult().success(orderItemService.getById(id));
     }
+
     @SysLog(MODULE = "小程序订单管理", REMARK = "取消订单")
     @ApiOperation("关闭订单")
     @RequestMapping(value = "/closeOrder", method = RequestMethod.POST)
@@ -144,7 +163,7 @@ public class SingeOmsController extends ApiBaseAction {
         try {
             return orderService.confimDelivery(id);
         } catch (Exception e) {
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
     }
 
@@ -157,7 +176,7 @@ public class SingeOmsController extends ApiBaseAction {
             return orderService.applyRefund(id);
         } catch (Exception e) {
             log.error("订单确认收货：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
     }
 
@@ -176,6 +195,20 @@ public class SingeOmsController extends ApiBaseAction {
     public Object applyRe(@RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
         return orderService.applyRe(items);
     }
+
+    @ResponseBody
+    @GetMapping("/couponSelectList")
+    public Object couponHistoryDetailList(OrderParam orderParam) {
+        try {
+            return new CommonResult().success(orderService.couponHistoryDetailList(orderParam));
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @ResponseBody
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
@@ -215,6 +248,27 @@ public class SingeOmsController extends ApiBaseAction {
     public Object preGroupActivityOrder(OrderParam orderParam) {
         try {
             return orderService.preGroupActivityOrder(orderParam);
+        } catch (ApiMallPlusException e) {
+            return new CommonResult().failed(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * 提交订单
+     *
+     * @param orderParam
+     * @return
+     */
+    @ApiOperation("根据购物车信息生成订单")
+    @RequestMapping(value = "/generateStoreOrder")
+    @ResponseBody
+    public Object generateStoreOrder(OrderParam orderParam) {
+        try {
+            return orderService.generateStoreOrder(orderParam);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
         } catch (Exception e) {
@@ -270,6 +324,7 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     /**
      * 查看物流
      */
@@ -364,6 +419,77 @@ public class SingeOmsController extends ApiBaseAction {
             return new CommonResult().failed("获取物流信息失败，请稍后重试");
         }
 
+    }
+
+    @IgnoreAuth
+    @ApiOperation("获取订单不同状态的数量")
+    @SysLog(MODULE = "applet", REMARK = "获取订单不同状态的数量")
+    @GetMapping("/order.getorderstatusnum")
+    public Object getOrderStatusSum() {
+        Map<String, Object> objectMap = new HashMap<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        OrderStatusCount count = new OrderStatusCount();
+        if (umsMember != null && umsMember.getId() != null) {
+            OmsOrder param = new OmsOrder();
+            param.setMemberId(umsMember.getId());
+            List<OmsOrder> list = orderService.list(new QueryWrapper<>(param));
+            int status0 = 0;
+            int status1 = 0;
+            int status2 = 0;
+            int status3 = 0;
+            int status4 = 0;
+            int status5 = 0;
+            int status14 = 0;
+
+            int statusAll = 0;
+            BigDecimal payAmount = BigDecimal.ZERO;
+            for (OmsOrder consult : list) {
+                if (consult.getStatus() == OrderStatus.INIT.getValue()) {
+                    status0++;
+                }
+                if (consult.getStatus() == OrderStatus.REFUND.getValue()) {
+                    status14++;
+                }
+                if (consult.getStatus() == OrderStatus.TO_DELIVER.getValue()) {
+                    status1++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+                }
+                if (consult.getStatus() == OrderStatus.DELIVERED.getValue()) {
+                    status2++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.TO_COMMENT.getValue()) {
+                    status3++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.TRADE_SUCCESS.getValue()) {
+                    status4++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+                if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
+                    status5++;
+                    payAmount = payAmount.add(consult.getPayAmount());
+
+                }
+            }
+            statusAll = status1 + status2 + status3 + status4 + status5;
+            count.setPayAmount(payAmount);
+            count.setStatusAll(statusAll);
+            count.setStatus0(status0);
+            count.setStatus1(status1);
+            count.setStatus2(status2);
+            count.setStatus3(status3);
+            count.setStatus4(status4);
+            count.setStatus5(status5);
+            count.setStatus14(status14);
+        }
+        objectMap.put("user", umsMember);
+        objectMap.put("count", count);
+
+        return new CommonResult().success(objectMap);
     }
 
 }

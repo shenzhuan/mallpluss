@@ -98,7 +98,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         }
         if (ValidatorUtils.empty(product.getOriginalPrice())) {
             product.setOriginalPrice(product.getPrice());
-        }if (ValidatorUtils.empty(product.getUnit())) {
+        }
+        if (ValidatorUtils.empty(product.getUnit())) {
             product.setUnit("件");
         }
         productMapper.insert(product);

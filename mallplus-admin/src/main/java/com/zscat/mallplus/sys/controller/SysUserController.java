@@ -207,7 +207,7 @@ public class SysUserController extends ApiController {
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
         data.put("roles", new String[]{"TEST"});
-        if (umsAdmin!=null){
+        if (umsAdmin != null) {
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
             data.put("storeId", umsAdmin.getStoreId());

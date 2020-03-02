@@ -8,6 +8,8 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.cms.service.ISysSchoolService;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoRecords;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoRecordsMapper;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -18,7 +20,6 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysStore;
-import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
@@ -30,16 +31,20 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: shenzhuan
@@ -52,8 +57,9 @@ import java.util.*;
 public class SingeUmsController extends ApiBaseAction {
 
     @Resource
+    FenxiaoRecordsMapper fenxiaoRecordsMapper;
+    @Resource
     private SysUserMapper userMapper;
-
     @Resource
     private PasswordEncoder passwordEncoder;
     @Resource
@@ -89,6 +95,62 @@ public class SingeUmsController extends ApiBaseAction {
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         UmsMember member = memberService.getById(id);
         return new CommonResult().success(member);
+    }
+
+    @ApiOperation("获取会员详情")
+    @RequestMapping(value = "/currentMember", method = RequestMethod.GET)
+    @ResponseBody
+    public Object currentMember() {
+        UmsMember member = memberService.getById(memberService.getNewCurrentMember().getId());
+        return new CommonResult().success(member);
+    }
+
+    @ApiOperation("修改密码")
+    @RequestMapping(value = "/updateMember", method = RequestMethod.POST)
+    public Object updatePassword(
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "icon", required = false) String icon,
+            @RequestParam(value = "invitecode", required = false) String invitecode,
+            @RequestParam(value = "gender", required = false) Integer gender
+    ) {
+        UmsMember m = new UmsMember();
+        m.setId(memberService.getNewCurrentMember().getId());
+        if (ValidatorUtils.notEmpty(nickname)) {
+            m.setNickname(nickname);
+        }
+        if (ValidatorUtils.notEmpty(icon)) {
+            m.setIcon(icon);
+        }
+        if (ValidatorUtils.notEmpty(gender)) {
+            m.setGender(gender);
+        }
+        if (ValidatorUtils.notEmpty(invitecode)) {
+            if (memberService.getById(invitecode) != null) {
+                m.setInvitecode(invitecode);
+            } else {
+                return new CommonResult().failed();
+            }
+        }
+        return memberService.updateById(m);
+    }
+
+    @IgnoreAuth
+    @ApiOperation("注册")
+    @PostMapping(value = "/resetPassword")
+    public Object resetPassword(@RequestParam String phone,
+                                @RequestParam String password,
+                                @RequestParam String confimpassword,
+                                @RequestParam String authCode) {
+        if (phone == null || "".equals(phone)) {
+            return new CommonResult().validateFailed("用户名或密码错误");
+        }
+        if (password == null || "".equals(password)) {
+            return new CommonResult().validateFailed("用户名或密码错误");
+        }
+        if (confimpassword == null || "".equals(confimpassword)) {
+            return new CommonResult().validateFailed("用户名或密码错误");
+        }
+        return memberService.resetPassword(phone, password, confimpassword, authCode);
     }
 
     @IgnoreAuth
@@ -189,6 +251,43 @@ public class SingeUmsController extends ApiBaseAction {
         return new CommonResult().success(list);
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "ums", REMARK = "邀请好友数据")
+    @ApiOperation("邀请好友数据")
+    @RequestMapping(value = "/getInviteData", method = RequestMethod.GET)
+    public Object getInviteData() {
+        UmsMember member = memberService.getNewCurrentMember();
+        UmsMember newMember = memberService.getById(member.getId());
+        Integer count = memberService.count(new QueryWrapper<UmsMember>().eq("invitecode", member.getId()));
+        newMember.setBuyCount(count);
+        List<FenxiaoRecords> recordss = fenxiaoRecordsMapper.selectList(new QueryWrapper<FenxiaoRecords>().eq("member_id", member.getId()));
+        BigDecimal totalMoney = BigDecimal.ZERO;
+        for (FenxiaoRecords fenxiaoRecords : recordss) {
+            totalMoney = fenxiaoRecords.getMoney().add(totalMoney);
+        }
+        newMember.setBuyMoney(totalMoney);
+        return new CommonResult().success(newMember);
+    }
+
+    @IgnoreAuth
+    @ApiOperation(value = "邀请好友列表")
+    @GetMapping(value = "/inviteUser")
+    @SysLog(MODULE = "ums", REMARK = "邀请好友列表")
+    public Object inviteUser(SysSchool entity,
+                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(memberService.list(new QueryWrapper<UmsMember>().eq("invitecode", memberService.getNewCurrentMember().getId())));
+    }
+
+    @IgnoreAuth
+    @ApiOperation(value = "邀请好友佣金列表")
+    @GetMapping(value = "/inviteMoney")
+    @SysLog(MODULE = "ums", REMARK = "邀请好友佣金列表")
+    public Object inviteMoney(FenxiaoRecords entity,
+                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(fenxiaoRecordsMapper.selectList(new QueryWrapper<FenxiaoRecords>().eq("member_id", memberService.getNewCurrentMember().getId())));
+    }
 
     @ApiOperation("添加招聘")
     @SysLog(MODULE = "ums", REMARK = "添加招聘")
@@ -261,38 +360,7 @@ public class SingeUmsController extends ApiBaseAction {
         }
     }
 
-    @SysLog(MODULE = "sys", REMARK = "保存")
-    @ApiOperation("保存")
-    @PostMapping(value = "/applyStore")
-    @Transactional
-    public Object applyStore(SysStore entity) {
-        try {
-            entity.setTryTime(new Date());
-            entity.setCreateTime(new Date());
-            UmsMember umsMember = memberService.getNewCurrentMember();
-            if (storeMapper.insert(entity) > 0) {
-                SysUser user = new SysUser();
-                user.setUsername(umsMember.getUsername());
-                SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-                if (umsAdminList != null && umsAdminList.getId() != null) {
-                    return new CommonResult().failed("保存失败");
-                }
-                user.setStatus(1);
 
-                user.setPassword(umsMember.getPassword());
-                user.setCreateTime(new Date());
-                user.setIcon(entity.getLogo());
-                user.setNickName(entity.getName());
-                //user.setStoreId(entity.getId());
-                user.setEmail(entity.getSupportPhone());
-                userMapper.insert(user);
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            return new CommonResult().failed(e.getMessage());
-        }
-        return new CommonResult().failed("保存失败");
-    }
 
     /*@ApiOperation(value = "会员绑定区域")
     @PostMapping(value = "/bindArea")

@@ -145,6 +145,7 @@ public class BOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     @ResponseBody
     @PostMapping("/submitStorePreview")
     public Object submitStorePreview(OrderParam orderParam) {
@@ -197,7 +198,6 @@ public class BOmsController extends ApiBaseAction {
         }
         return new ArrayList<OmsCartItem>();
     }
-
 
 
     @ApiOperation("修改购物车中某个商品的数量")
@@ -691,6 +691,7 @@ public class BOmsController extends ApiBaseAction {
         }
         return null;
     }
+
     @ApiOperation("提交拼团")
     @RequestMapping(value = "/acceptGroup")
     @ResponseBody

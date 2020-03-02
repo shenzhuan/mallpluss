@@ -41,7 +41,7 @@ public class Rediskey {
 
 
     public static String GOODSDETAIL = "GOODSDETAIL:%s";
-
+    public static String GOODSDETAIL1 = "GOODSDETAIL1:%s";
     public static String GOODSHISTORY = "GOODSHISTORY:%s";
 
     public static String HOMEPAGE = "HomeJsshop";
@@ -58,6 +58,8 @@ public class Rediskey {
     public static String goodsCategorys = "goodsCategorys";
     public static String orderDetail = "orderDetail";
     public static String getorderstatusnum = "getorderstatusnum";
+
+    public static String STOREHOMEPAGEMOBILE = "STOREHOMEPAGEMOBILE:%s";
     /**
      * diypage.setStatus(1);
      * diypage.setType(2);

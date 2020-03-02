@@ -9,36 +9,6 @@ public class WxPhoneInfo {
     private String countryCode;
     private WaterMark watermark;
 
-
-    class WaterMark{
-        private long timestamp;
-        private String appid;
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public void setTimestamp(long timestamp) {
-            this.timestamp = timestamp;
-        }
-
-        public String getAppid() {
-            return appid;
-        }
-
-        public void setAppid(String appid) {
-            this.appid = appid;
-        }
-
-        @Override
-        public String toString() {
-            return "WaterMark{" +
-                    "timestamp=" + timestamp +
-                    ", appid='" + appid + '\'' +
-                    '}';
-        }
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -79,5 +49,34 @@ public class WxPhoneInfo {
                 ", countryCode='" + countryCode + '\'' +
                 ", watermark=" + watermark +
                 '}';
+    }
+
+    class WaterMark {
+        private long timestamp;
+        private String appid;
+
+        public long getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(long timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public String getAppid() {
+            return appid;
+        }
+
+        public void setAppid(String appid) {
+            this.appid = appid;
+        }
+
+        @Override
+        public String toString() {
+            return "WaterMark{" +
+                    "timestamp=" + timestamp +
+                    ", appid='" + appid + '\'' +
+                    '}';
+        }
     }
 }

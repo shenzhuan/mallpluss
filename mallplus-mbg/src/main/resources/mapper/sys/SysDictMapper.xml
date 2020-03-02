@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-            id, keyname, valuename, status, remark, type
-        </sql>
+        id, keyname, valuename, status, remark, type
+    </sql>
 
 </mapper>

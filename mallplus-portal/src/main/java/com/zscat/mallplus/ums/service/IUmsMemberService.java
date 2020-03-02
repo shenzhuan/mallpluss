@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
+import com.zscat.mallplus.vo.AppletLoginnewParam;
 import com.zscat.mallplus.vo.SmsCode;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     /**
      * 获取小程序openid
+     *
      * @param req
      * @return
      */
@@ -31,12 +33,14 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     /**
      * 小程序 登录注册
+     *
      * @param req
      * @return
      */
     Object loginByWeixin(AppletLoginParam req);
 
     Object loginByWeixin1(AppletLoginParam req);
+
     /**
      * 根据用户名获取会员
      */
@@ -117,17 +121,22 @@ public interface IUmsMemberService extends IService<UmsMember> {
      *
      * @return
      */
-    Object webLogin(String wxH5Appid,String wxH5Secret, String code);
+    Object webLogin(String wxH5Appid, String wxH5Secret, String code);
 
 
     /**
      * 小程序获取的手机加密信息进行解密
+     *
      * @param openid
      * @param keyStr
      * @param ivStr
      * @param encDataStr
      * @return
      */
-    String getWxPhone(String openid,String keyStr, String ivStr,String encDataStr);
+    String getWxPhone(String openid, String keyStr, String ivStr, String encDataStr);
+
+    Object resetPassword(String phone, String password, String confimpassword, String authCode);
+
+    Object loginByWeixin2(AppletLoginnewParam param);
 }
 

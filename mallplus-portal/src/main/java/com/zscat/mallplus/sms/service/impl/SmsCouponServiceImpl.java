@@ -3,12 +3,8 @@ package com.zscat.mallplus.sms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.sms.entity.SmsCoupon;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
-import com.zscat.mallplus.sms.entity.SmsCouponProductCategoryRelation;
-import com.zscat.mallplus.sms.entity.SmsCouponProductRelation;
-import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
-import com.zscat.mallplus.sms.mapper.SmsCouponMapper;
+import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.mapper.*;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -38,6 +34,12 @@ import java.util.stream.Collectors;
 public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon> implements ISmsCouponService {
 
     @Resource
+    private SmsBargainConfigMapper bargainConfigMapper;
+    @Resource
+    private SmsBargainRecordMapper bargainRecordMapper;
+
+
+    @Resource
     private IUmsMemberService memberService;
     @Resource
     private SmsCouponMapper couponMapper;
@@ -45,19 +47,27 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
     private SmsCouponHistoryMapper couponHistoryMapper;
 
     @Override
-    public List<SmsCoupon> selectNotRecive(Long memberId) {
-        return couponMapper.selectNotRecive(memberId);
+    public List<SmsCoupon> selectNotRecive(Integer pageSize) {
+        UmsMember currentMember = memberService.getNewCurrentMember();
+        if (currentMember != null && currentMember.getId() != null) {
+            return couponMapper.selectNotRecive(currentMember.getId(), pageSize);
+        }
+        return couponMapper.selectList(new QueryWrapper<SmsCoupon>().lt("start_time", new Date()).gt("end_time", new Date()).last("limit " + pageSize));
     }
 
     @Override
-    public List<SmsCoupon> selectRecive(Long memberId) {
-        return couponMapper.selectRecive(memberId);
+    public List<SmsCoupon> selectRecive(Integer pageSize) {
+        UmsMember currentMember = memberService.getNewCurrentMember();
+        if (currentMember != null && currentMember.getId() != null) {
+            return couponMapper.selectRecive(currentMember.getId(), pageSize);
+        }
+        return couponMapper.selectList(new QueryWrapper<SmsCoupon>().lt("start_time", new Date()).gt("end_time", new Date()));
     }
 
     @Override
     public List<SmsCoupon> selectNotRecive() {
         SmsCoupon coupon = new SmsCoupon();
-        List<SmsCoupon>   list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
+        List<SmsCoupon> list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
         return list;
 
     }
@@ -79,13 +89,14 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             list = couponMapper.selectList(new QueryWrapper<>(coupon).lt("start_time", new Date()).gt("end_time", new Date()));
 
         }
         return list;
 
     }
+
     @Override
     public List<SmsCouponHistory> listMemberCoupon(Integer useStatus) {
         UmsMember currentMember = memberService.getNewCurrentMember();
@@ -198,7 +209,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         couponHistory.setEndTime(coupon.getEndTime());
         couponHistory.setNote(coupon.getName() + ":满" + coupon.getMinPoint() + "减" + coupon.getAmount());
         couponHistory.setAmount(coupon.getAmount());
-
+        couponHistory.setMinPoint(coupon.getMinPoint());
         couponHistoryMapper.insert(couponHistory);
         //修改优惠券表的数量、领取数量
         coupon.setCount(coupon.getCount() - 1);
@@ -327,4 +338,6 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         }
         return total;
     }
+
+
 }

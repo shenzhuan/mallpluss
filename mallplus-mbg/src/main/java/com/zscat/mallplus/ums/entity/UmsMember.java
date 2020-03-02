@@ -113,6 +113,10 @@ public class UmsMember extends BaseEntity implements Serializable {
      */
     private Integer integration;
 
+    @TableField("room_nums")
+    private String roomNums;
+    @TableField("room_desc")
+    private String roomDesc;
     /**
      * 成长值
      */

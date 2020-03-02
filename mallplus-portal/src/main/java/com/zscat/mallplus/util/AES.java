@@ -26,9 +26,9 @@ public class AES {
      * 对称解密秘钥:key = Base64_Decode(session_key),aeskey是16字节<br/>
      * 对称解密算法初始向量:iv = Base64_Decode(iv),同样是16字节<br/>
      *
-     * @param encrypted 目标密文
+     * @param encrypted   目标密文
      * @param session_key 会话ID
-     * @param iv 加密算法的初始向量
+     * @param iv          加密算法的初始向量
      */
     public static String wxDecrypt(String encrypted, String session_key, String iv) {
         String json = null;

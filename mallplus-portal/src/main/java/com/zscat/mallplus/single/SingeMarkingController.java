@@ -73,7 +73,12 @@ public class SingeMarkingController extends ApiBaseAction {
     @ApiOperation("领取指定优惠券")
     @PostMapping(value = "/add")
     public Object add(@RequestParam(value = "couponId", required = true) Long couponId) {
-        return couponService.add(couponId);
+
+        try {
+            return couponService.add(couponId);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
     }
 
     @ApiOperation("获取用户优惠券列表")

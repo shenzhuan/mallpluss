@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-            id, addTime, type, obj_id, store_id, user_id, name, meno1, meno2, meno3
-        </sql>
+        id, addTime, type, obj_id, store_id, user_id, name, meno1, meno2, meno3
+    </sql>
 
 </mapper>

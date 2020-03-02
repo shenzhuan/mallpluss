@@ -31,6 +31,7 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +116,6 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private IUmsMemberService memberService;
 
 
-
     @Override
     public PmsProduct getUpdateInfo(Long id) {
         return productMapper.selectById(id);
@@ -171,27 +171,80 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         param.setProductLadderList(productLadderList);
 */
         List<PmsSkuStock> skuStockList = skuStockMapper.selectList(new QueryWrapper<PmsSkuStock>().eq("product_id", goods.getId()));
-
+        param.setSkuStockList(skuStockList);
         List<PmsProductAttributeValue> productAttributeValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 1));
-
-        List<CmsSubjectProductRelation> subjectProductRelationList = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("product_id", goods.getId()));
-
-        List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList = prefrenceAreaProductRelationMapper.selectList(new QueryWrapper<CmsPrefrenceAreaProductRelation>().eq("product_id", goods.getId()));
-
-        List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
-        param.setProductCanShuValueList(productCanShuValueList);
-
-        param.setPrefrenceAreaProductRelationList(prefrenceAreaProductRelationList);
         param.setProductAttributeValueList(productAttributeValueList);
 
-        param.setSkuStockList(skuStockList);
-        param.setSubjectProductRelationList(subjectProductRelationList);
+        // List<CmsSubjectProductRelation> subjectProductRelationList = subjectProductRelationMapper.selectList(new QueryWrapper<CmsSubjectProductRelation>().eq("product_id", goods.getId()));
 
-        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
-        param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
+        //   List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList = prefrenceAreaProductRelationMapper.selectList(new QueryWrapper<CmsPrefrenceAreaProductRelation>().eq("product_id", goods.getId()));
+
+        // List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
+        // param.setProductCanShuValueList(productCanShuValueList);
+
+        //  param.setPrefrenceAreaProductRelationList(prefrenceAreaProductRelationList);
+
+        //param.setSubjectProductRelationList(subjectProductRelationList);
+
+        //List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
+        //  param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
         redisService.set(String.format(Rediskey.GOODSDETAIL, goods.getId()), JsonUtils.objectToJson(param));
 
         return param;
+    }
+
+    @Override
+    public GoodsDetailResult getGoodsRedisById1(Long id) {
+        PmsProduct goods = productMapper.selectById(id);
+
+        GoodsDetailResult param = new GoodsDetailResult();
+        param.setGoods(goods);
+
+        List<PmsSkuStock> skuStockList = skuStockMapper.selectList(new QueryWrapper<PmsSkuStock>().eq("product_id", goods.getId()));
+        param.setSkuStockList(skuStockList);
+        List<PmsProductAttributeValue> productAttributeValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 1));
+        param.setProductAttributeNameValueList(getSpecificationVoList(productAttributeValueList));
+        List<PmsProductAttributeValue> productCanShuValueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()).eq("type", 2));
+        param.setProductCanShuValueList(productCanShuValueList);
+
+        List<PmsProduct> typeGoodsList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("product_attribute_category_id", goods.getProductAttributeCategoryId()).select(ConstansValue.sampleGoodsList));
+        param.setTypeGoodsList(typeGoodsList.subList(0, typeGoodsList.size() > 8 ? 8 : typeGoodsList.size()));
+        redisService.set(String.format(Rediskey.GOODSDETAIL1, goods.getId()), JsonUtils.objectToJson(param));
+
+        return param;
+    }
+
+    /**
+     * [
+     * {
+     * name: '',
+     * valueList: [ {}, {}]
+     * },
+     * {
+     * name: '',
+     * valueList: [ {}, {}]
+     * }
+     * ]
+     *
+     * @return
+     */
+    public Object getSpecificationVoList(List<PmsProductAttributeValue> goodsSpecificationList) {
+        List<VO> specificationVoList = new ArrayList<>();
+        for (PmsProductAttributeValue goodsSpecification : goodsSpecificationList) {
+            String specification = goodsSpecification.getName();
+            VO goodsSpecificationVo = new VO();
+            goodsSpecificationVo.setName(specification);
+            List<PmsProductAttributeValue> valueList = new ArrayList<>();
+            for (String var : goodsSpecification.getValue().split(",")) {
+                PmsProductAttributeValue newSpecification = new PmsProductAttributeValue();
+                BeanUtils.copyProperties(goodsSpecification, newSpecification);
+                newSpecification.setValue(var);
+                valueList.add(newSpecification);
+            }
+            goodsSpecificationVo.setValueList(valueList);
+            specificationVoList.add(goodsSpecificationVo);
+        }
+        return specificationVoList;
     }
 
     @Override
@@ -295,5 +348,26 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         log.setPic(memberService.getNewCurrentMember().getIcon());
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
+    }
+
+    private class VO {
+        private String name;
+        private List<PmsProductAttributeValue> valueList;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<PmsProductAttributeValue> getValueList() {
+            return valueList;
+        }
+
+        public void setValueList(List<PmsProductAttributeValue> valueList) {
+            this.valueList = valueList;
+        }
     }
 }

@@ -5,17 +5,16 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * 签名认证工具类
- * @ClassName:  WeixinCheckoutUtil
+ *
+ * @ClassName: WeixinCheckoutUtil
  * @Description:TODO
  * @author: jp
- * @date:   2019年6月13日 下午4:56:12
- *
+ * @date: 2019年6月13日 下午4:56:12
  * @Copyright: 2019 www.tydic.com Inc. All rights reserved.
- *
  */
 public class WeixinCheckoutUtil {
 
-	   // 与接口配置信息中的Token要一致
+    // 与接口配置信息中的Token要一致
     private static String token = "mallplus";
 
     /**
@@ -27,7 +26,7 @@ public class WeixinCheckoutUtil {
      * @return
      */
     public static boolean checkSignature(String signature, String timestamp, String nonce) {
-        String[] arr = new String[] { token, timestamp, nonce };
+        String[] arr = new String[]{token, timestamp, nonce};
         // 将token、timestamp、nonce三个参数进行字典序排序
         // Arrays.sort(arr);
         sort(arr);
@@ -73,13 +72,14 @@ public class WeixinCheckoutUtil {
      * @return
      */
     private static String byteToHexStr(byte mByte) {
-        char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        char[] Digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         char[] tempArr = new char[2];
         tempArr[0] = Digit[(mByte >>> 4) & 0X0F];
         tempArr[1] = Digit[mByte & 0X0F];
         String s = new String(tempArr);
         return s;
     }
+
     public static void sort(String a[]) {
         for (int i = 0; i < a.length - 1; i++) {
             for (int j = i + 1; j < a.length; j++) {

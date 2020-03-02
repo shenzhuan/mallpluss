@@ -10,48 +10,45 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2019-12-17
-投票项目
-*/
+ * @author mallplus
+ * @date 2019-12-17
+ * 投票项目
+ */
 @Data
 @TableName("toupiao_project")
 public class ToupiaoProject implements Serializable {
 
 
-            @TableId(value = "id", type = IdType.AUTO)
-        private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
 
-            @TableField( "type")
-        private Integer type;
+    @TableField("type")
+    private Integer type;
 
 
-            @TableField( "status")
-        private Integer status;
+    @TableField("status")
+    private Integer status;
 
 
-            @TableField( "name")
-        private String name;
+    @TableField("name")
+    private String name;
 
 
-            @TableField( "remark")
-        private String remark;
+    @TableField("remark")
+    private String remark;
 
 
-            @TableField( "start_time")
-        private Date startTime;
+    @TableField("start_time")
+    private Date startTime;
 
 
-            @TableField( "end_time")
-        private Date endTime;
+    @TableField("end_time")
+    private Date endTime;
 
 
-            @TableField( "create_time")
-        private Date createTime;
-
-
-
+    @TableField("create_time")
+    private Date createTime;
 
 
 }
