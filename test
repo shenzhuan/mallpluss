@@ -212,3 +212,16 @@ server {
         }
     }
 
+
+DELETE from pms_sku_stock ;
+DELETE from pms_product_attribute_value  ;
+DELETE from pms_product_attribute ;
+DELETE from pms_product_category_attribute_relation ;
+
+DELETE from pms_product_attribute_category ;
+
+
+DELETE from pms_product_full_reduction ;
+DELETE from pms_product_ladder ;
+DELETE from pms_product_operate_log ;
+DELETE from pms_product_vertify_record ;
