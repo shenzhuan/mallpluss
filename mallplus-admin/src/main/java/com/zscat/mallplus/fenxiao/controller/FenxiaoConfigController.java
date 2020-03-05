@@ -7,6 +7,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.service.IFenxiaoConfigService;
 import com.zscat.mallplus.util.EasyPoiUtils;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
@@ -111,8 +112,15 @@ public class FenxiaoConfigController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("分销配置id");
             }
-            FenxiaoConfig coupon = IFenxiaoConfigService.getOne(new QueryWrapper<>());
-            return new CommonResult().success(coupon);
+            FenxiaoConfig fenxiaoConfig = IFenxiaoConfigService.getOne(new QueryWrapper<>());
+            if (fenxiaoConfig==null){
+                fenxiaoConfig= new FenxiaoConfig();
+                fenxiaoConfig.setId(UserUtils.getCurrentMember().getId());
+                fenxiaoConfig.setCreateTime(new Date());
+
+                IFenxiaoConfigService.save(fenxiaoConfig);
+            }
+            return new CommonResult().success(fenxiaoConfig);
         } catch (Exception e) {
             log.error("查询分销配置明细：%s", e.getMessage(), e);
             return new CommonResult().failed();

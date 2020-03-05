@@ -87,11 +87,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
         entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
         storeMapper.updateById(entity);
-        FenxiaoConfig fenxiaoConfig= new FenxiaoConfig();
-        fenxiaoConfig.setId(Long.valueOf(entity.getId()));
-        fenxiaoConfig.setCreateTime(new Date());
 
-        fenxiaoConfigMapper.insert(fenxiaoConfig);
         SysUser user = new SysUser();
         user.setUsername(entity.getName());
         SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
