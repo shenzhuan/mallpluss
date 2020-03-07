@@ -331,7 +331,7 @@ public class SingePmsController extends ApiBaseAction {
         product.setSort(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            if (orderBy.equals("1")) {
+            if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
                 buildFenPrice(list);
             } else {
@@ -339,7 +339,7 @@ public class SingePmsController extends ApiBaseAction {
                 buildFenPrice(list);
             }
         } else {
-            if (orderBy.equals("1")) {
+            if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
                 buildFenPrice(list);
             } else {
