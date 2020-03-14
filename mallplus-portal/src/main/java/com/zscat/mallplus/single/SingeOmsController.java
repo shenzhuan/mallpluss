@@ -175,7 +175,7 @@ public class SingeOmsController extends ApiBaseAction {
         try {
             return orderService.applyRefund(id);
         } catch (Exception e) {
-            log.error("订单确认收货：%s", e.getMessage(), e);
+            log.error("订单申请退款：%s", e.getMessage(), e);
             return new CommonResult().failed(e.getMessage());
         }
     }
@@ -185,12 +185,11 @@ public class SingeOmsController extends ApiBaseAction {
     @PostMapping(value = "/orderevaluate")
     public Object addGoodsConsult(@RequestParam(value = "orderId", defaultValue = "1") Long orderId,
                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
-
         return orderService.orderComment(orderId, items);
     }
 
-    @SysLog(MODULE = "oms", REMARK = "申请售后")
-    @ApiOperation(value = "申请售后")
+    @SysLog(MODULE = "oms", REMARK = "订单退货申请")
+    @ApiOperation(value = "订单退货申请")
     @PostMapping(value = "/applyRe")
     public Object applyRe(@RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
         return orderService.applyRe(items);

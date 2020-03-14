@@ -39,7 +39,7 @@ public class SmsGroupRecord implements Serializable {
     private Long groupId;
 
     /**
-     * 状态
+     * 状态 1
      */
     private String status;
 

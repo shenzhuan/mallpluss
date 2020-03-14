@@ -530,6 +530,7 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(result);
     }
 
+    @Deprecated
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询团购商品列表")

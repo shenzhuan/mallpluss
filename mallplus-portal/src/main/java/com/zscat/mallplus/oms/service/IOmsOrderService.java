@@ -179,6 +179,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     CommonResult generateStoreOrder(OrderParam orderParam);
 
+    /**
+     * 订单退货申请
+     * @param items
+     * @return
+     */
     Object applyRe(String items);
 
 

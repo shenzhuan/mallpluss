@@ -225,3 +225,11 @@ DELETE from pms_product_full_reduction ;
 DELETE from pms_product_ladder ;
 DELETE from pms_product_operate_log ;
 DELETE from pms_product_vertify_record ;
+
+
+平台管理 git
+http://47.107.169.232:888/mpadmin/mallplus-manager
+商户管理vue git
+http://47.107.169.232:888/mpadmin/mallplus-web-admin
+用户applet h5 app的uniapp git ；切换到b1分支
+http://47.107.169.232:888/mpadmin/uniapp

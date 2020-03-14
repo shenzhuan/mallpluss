@@ -299,4 +299,79 @@ public class AllEnum {
             return value;
         }
     }
+
+    /**
+     * 订单退货申请：：0->待处理；1->退货中；2->已完成；3->已拒绝
+     *
+     * @author mallplus
+     */
+    public enum OmsOrderReturnApplyStatus implements BaseEnum<Integer> {
+
+        /**
+         *
+         */
+        INIT(0, "INIT"),
+
+        REFUNDING(1, "REFUNDING"),
+        REFUNDED(2, "REFUNDED"),
+        /**
+         *
+         */
+        REJECT(3, "REJECT"),;
+
+        private int code;
+        private String value;
+
+        OmsOrderReturnApplyStatus(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
+    /**
+     * 订单退货申请：1退钱 2退货3 退钱退货
+     *
+     * @author mallplus
+     */
+    public enum OmsOrderReturnApplyType implements BaseEnum<Integer> {
+
+        /**
+         *
+         */
+        RETURNMONEY(1, "RETURNMONEY"),
+
+        RETURNGOODS(2, "RETURNGOODS"),
+
+        /**
+         *
+         */
+        RETURNGOODSMONEY(3, "RETURNGOODSMONEY"),;
+
+        private int code;
+        private String value;
+
+        OmsOrderReturnApplyType(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
 }
