@@ -119,9 +119,24 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //添加商品参数,添加自定义商品规格
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
         //关联专题
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
+      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
         //关联优选
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+     //   relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+        //关联专题
+
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
+            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+                relation.setProductId(productId);
+                subjectProductRelationDao.save(relation);
+            }
+        }
+        //关联优选
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
+            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+                relation.setProductId(productId);
+                prefrenceAreaProductRelationDao.save(relation);
+            }
+        }
         count = 1;
         redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
@@ -144,7 +159,11 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
-            stock = stock + skuStock.getStock();
+            if (skuStock.getStock()!=null && skuStock.getStock()>0){
+                stock = stock + skuStock.getStock();
+
+            }
+
         }
         product.setStock(stock);
     }
@@ -186,14 +205,26 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         productAttributeValueMapper.delete(new QueryWrapper<>(new PmsProductAttributeValue()).eq("product_id", id));
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), id);
-        //关联专题
 
+        //关联专题
         subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
+            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+                relation.setProductId(id);
+                subjectProductRelationDao.save(relation);
+            }
+        }
         //关联优选
 
         prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+      //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
+            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+                relation.setProductId(id);
+                prefrenceAreaProductRelationDao.save(relation);
+            }
+        }
         count = 1;
 
         redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));

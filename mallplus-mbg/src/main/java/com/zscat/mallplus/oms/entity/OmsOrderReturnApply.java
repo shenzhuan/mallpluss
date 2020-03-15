@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -183,7 +184,9 @@ public class OmsOrderReturnApply extends BaseEntity implements Serializable {
     @TableField("receive_note")
     private String receiveNote;
 
-    // 1退钱 2退货3 退钱退货
+    //0换货 1退钱 2退货3 退钱退货
     private Integer type;
 
+    @TableField(exist = false)
+    private List<OmsOrderItem> orderItemList;
 }

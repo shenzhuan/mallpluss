@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.vo.*;
 import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.vo.ApplyRefundVo;
 import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -184,7 +185,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param items
      * @return
      */
-    Object applyRe(String items);
+    Object applyRe(ApplyRefundVo items);
 
 
     Object quitGroup(Long id);

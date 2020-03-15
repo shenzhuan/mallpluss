@@ -147,4 +147,6 @@ public class OmsOrderItem extends BaseEntity implements Serializable {
      * 1 普通商品 2 赠品
      */
     private Integer type;
+    @TableField("store_name")
+    private String storeName;
 }

@@ -1061,6 +1061,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         orderItem.setProductSkuId(cartPromotionItem.getProductSkuId());
         orderItem.setProductSkuCode(cartPromotionItem.getProductSkuCode());
         orderItem.setProductCategoryId(cartPromotionItem.getProductCategoryId());
+        orderItem.setStoreName(cartPromotionItem.getStoreName());
+        orderItem.setStatus(OrderStatus.TO_DELIVER.getValue());
            /* orderItem.setPromotionAmount(cartPromotionItem.getReduceAmount());
             orderItem.setPromotionName(cartPromotionItem.getPromotionMessage());
             orderItem.setGiftIntegration(cartPromotionItem.getIntegration());
@@ -1377,6 +1379,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             orderItem.setProductPrice(gifts.getPrice());
             orderItem.setProductQuantity(1);
             orderItem.setProductCategoryId(gifts.getCategoryId());
+            orderItem.setType(AllEnum.OrderItemType.GOODS.code());
             List<OmsOrderItem> omsOrderItemList = new ArrayList<>();
             omsOrderItemList.add(orderItem);
             OmsOrder order = new OmsOrder();
@@ -2308,39 +2311,58 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return new CommonResult().success("下单成功", result);
     }
 
+    @Transactional
     @Override
-    public Object applyRe(String items) {
-        ApplyRefundVo itemss = JsonUtils.fromJson(items, ApplyRefundVo.class);
+    public Object applyRe(ApplyRefundVo itemss) {
 
         try {
-            OmsOrderItem item = orderItemService.getById(itemss.getItemId());
-            OmsOrderReturnApply apply = new OmsOrderReturnApply();
-            UmsMember member = memberService.getNewCurrentMember();
-            apply.setStatus(AllEnum.OmsOrderReturnApplyStatus.INIT.code());
-            apply.setStatus(AllEnum.OmsOrderReturnApplyType.RETURNGOODS.code());
-            apply.setCreateTime(new Date());
-            apply.setReturnAmount(item.getRealAmount());
-            apply.setDescription(itemss.getDesc());
-            apply.setOrderId(item.getOrderId());
-            apply.setMemberUsername(member.getUsername());
-            apply.setProductAttr(item.getProductAttr());
-            apply.setProductCount(item.getProductQuantity());
-            apply.setProductId(item.getProductId());
-            apply.setProductName(item.getProductName());
-            apply.setProductPic(item.getProductPic());
-            apply.setProductPrice(item.getProductPrice());
-            apply.setProductRealPrice(item.getRealAmount());
-            apply.setProofPics(org.apache.commons.lang3.StringUtils.join(itemss.getImages(), ","));
-            apply.setReason(itemss.getDesc());
-            apply.setReturnPhone(member.getPhone());
-            apply.setReturnName(member.getNickname());
-            orderReturnApplyMapper.insert(apply);
-            /*OmsOrderOperateHistory history = updateOrderInfo(id, order, OrderStatus.REFUNDING);
-            history.setOrderStatus(OrderStatus.REFUNDING.getValue());
-            history.setNote("申请退款");
-            orderOperateHistoryService.save(history);*/
+            if (ValidatorUtils.empty(itemss.getItems()) ||itemss.getItems().split(",").length<1){
+                return new CommonResult().failed("添加失败");
+            }
+            for (String id : itemss.getItems().split(",")){
+                OmsOrderItem item = orderItemService.getById(id);
+                OmsOrderReturnApply apply = new OmsOrderReturnApply();
+                UmsMember member = memberService.getNewCurrentMember();
+                apply.setStatus(AllEnum.OmsOrderReturnApplyStatus.INIT.code());
+                apply.setCreateTime(new Date());
+                apply.setReturnAmount(itemss.getReturnAmount());
+                apply.setDescription(itemss.getDesc());
+                apply.setOrderId(item.getOrderId());
+                apply.setMemberUsername(member.getUsername());
+                apply.setProductAttr(item.getProductAttr());
+                apply.setProductCount(item.getProductQuantity());
+                apply.setProductId(item.getProductId());
+                apply.setProductName(item.getProductName());
+                apply.setProductPic(item.getProductPic());
+                apply.setProductPrice(item.getProductPrice());
+                apply.setProductRealPrice(item.getRealAmount());
+                apply.setProofPics(org.apache.commons.lang3.StringUtils.join(itemss.getImages(), ","));
+                apply.setReason(itemss.getDesc());
+                apply.setType(itemss.getType());
+                apply.setReturnPhone(member.getPhone());
+                apply.setReturnName(member.getNickname());
+                orderReturnApplyMapper.insert(apply);
+
+                OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+                history.setOrderId(item.getOrderId());
+                history.setCreateTime(new Date());
+                history.setOperateMan("shop");
+                //  //0换货 1退钱 2退货3 退钱退货
+             if (apply.getType()==0){
+                 history.setNote("换货");
+             }else  if (apply.getType()==1){
+                 history.setNote("申请退款");
+             }else  if (apply.getType()==2){
+                 history.setNote("申请退货");
+             }else  if (apply.getType()==3){
+                 history.setNote("申请退货退款");
+             }
+
+            orderOperateHistoryService.save(history);
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
+            return new CommonResult().failed("已经存在售后记录");
         }
 
         return new CommonResult().success();
@@ -2418,7 +2440,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     }
                     //生成下单商品信息
                     OmsOrderItem orderItem = createOrderItem(cartPromotionItem);
-                    orderItem.setStatus(OrderStatus.TO_DELIVER.getValue());
                     orderItem.setType(AllEnum.OrderItemType.GOODS.code());
                     orderItemList.add(orderItem);
                     if (isFirst == 1) {

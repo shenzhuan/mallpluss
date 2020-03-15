@@ -66,7 +66,7 @@ public class CommonResult {
      */
     public CommonResult failed() {
         this.code = FAILED;
-        this.msg = "操作失败,请登录";
+        this.msg = "操作失败";
         return this;
     }
 

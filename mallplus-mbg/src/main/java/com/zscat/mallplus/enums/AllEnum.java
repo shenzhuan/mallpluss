@@ -130,7 +130,38 @@ public class AllEnum {
         }
     }
 
+    /**
+     * 订单来源：
+     *
+     * @author dp
+     */
+    public enum OrderSource implements BaseEnum<Integer> {
 
+        weixinApplet(1, "weixinApplet"),
+        h5Source(2, "h5Source"),
+        pcSource(3, "pcSource"),
+        android(4, "android"),
+        ios(5, "ios"),
+        ;
+
+        private int code;
+        private String value;
+
+        OrderSource(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        @Override
+        public Integer code() {
+            return code;
+        }
+
+        @Override
+        public String desc() {
+            return value;
+        }
+    }
     /**
      * 订单类型：
      *
@@ -185,7 +216,7 @@ public class AllEnum {
     public enum OrderPayType implements BaseEnum<Integer> {
 
         /**
-         *
+         * 微信小程序
          */
         weixinAppletPay(1, "weixinAppletPay"),
         /**
@@ -338,12 +369,13 @@ public class AllEnum {
         }
     }
     /**
-     * 订单退货申请：1退钱 2退货3 退钱退货
+     * 订单退货申请：0换货，1退钱 2退货3 退钱退货
      *
      * @author mallplus
      */
     public enum OmsOrderReturnApplyType implements BaseEnum<Integer> {
 
+        CHANGEGOODS(0, "RETURNMONEY"),
         /**
          *
          */
