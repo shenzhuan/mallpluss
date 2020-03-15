@@ -158,6 +158,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     public GoodsDetailResult getGoodsRedisById(Long id) {
         PmsProduct goods = productMapper.selectById(id);
 
+        if (goods==null || goods.getId()<1){
+            return null;
+        }
         GoodsDetailResult param = new GoodsDetailResult();
         param.setGoods(goods);
 

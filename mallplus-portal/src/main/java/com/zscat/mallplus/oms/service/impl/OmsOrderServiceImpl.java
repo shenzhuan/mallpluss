@@ -838,6 +838,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setOrderStatus(OrderStatus.INIT.getValue());
         history.setNote("创建订单");
         orderOperateHistoryService.save(history);
+
+        memberService.addIntegration(currentMember.getId(),order.getPayAmount().intValue(), 1, "下单添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
+
         stopWatch.stop();
         //如使用积分需要扣除积分
         if (order.getUseIntegration() != null) {
@@ -2454,6 +2457,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 }
             }
             if (ValidatorUtils.empty(pid)) {
+                memberService.addIntegration(currentMember.getId(),order.getPayAmount().intValue(), 1, "下单添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
+
                 BigDecimal transFee1 = BigDecimal.ZERO;
                 Map<Integer, List<OmsCartItem>> map = cartPromotionItemList.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
 
@@ -2644,6 +2649,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 memberService.updateIntegration(currentMember.getId(), currentMember.getIntegration() - order.getUseIntegration());
             }
             if (pid == null) {
+                memberService.addIntegration(currentMember.getId(), order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(), 1, "余额支付添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
+
                 lockStockByOrder(orderItemList, orderParam.getType());
                 //删除购物车中的下单商品
                 deleteCartItemList(cartPromotionItemList, currentMember);

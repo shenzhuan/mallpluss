@@ -813,7 +813,7 @@ public class SingePmsController extends ApiBaseAction {
         pmsProductCategory.setNavStatus(1);
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>(pmsProductCategory));
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if (ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
                 relList.add(v);
             }
         }
@@ -842,7 +842,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if ( ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());

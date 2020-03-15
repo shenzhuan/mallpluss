@@ -135,7 +135,7 @@ public class SingeUmsController extends ApiBaseAction {
     }
 
     @IgnoreAuth
-    @ApiOperation("注册")
+    @ApiOperation("重置密码")
     @PostMapping(value = "/resetPassword")
     public Object resetPassword(@RequestParam String phone,
                                 @RequestParam String password,

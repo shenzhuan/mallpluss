@@ -970,6 +970,7 @@ public class WxPayController extends AbstractWxPayApiController {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
+
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
                     OmsOrder childOrder = new OmsOrder();
                     childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());

@@ -6,11 +6,13 @@ import com.google.gson.Gson;
 import com.zscat.mallplus.component.UserUtils;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
+import com.zscat.mallplus.jifen.entity.JifenDonateRule;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.mapper.SysAppletSetMapper;
+import com.zscat.mallplus.ums.mapper.UmsIntegrationConsumeSettingMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
 import com.zscat.mallplus.ums.service.*;
@@ -281,6 +283,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     }
 
+    UmsIntegrationConsumeSettingMapper integrationConsumeSettingMapper;
     /**
      * 添加积分记录 并更新用户积分
      *
@@ -289,9 +292,22 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
      */
     @Override
     public void addIntegration(Long id, Integer integration, int changeType, String note, int sourceType, String operateMan) {
-       /* UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
+        UmsIntegrationConsumeSetting setting = integrationConsumeSettingMapper.selectById(1);
+        if (setting==null){
+            return;
+        }
+        UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
         history.setMemberId(id);
-        history.setChangeCount(integration);
+        if (sourceType==AllEnum.ChangeSource.register.code()){
+            history.setChangeCount(setting.getRegister());
+        }else  if (sourceType==AllEnum.ChangeSource.login.code()){
+            history.setChangeCount(setting.getLogin());
+        } if (sourceType==AllEnum.ChangeSource.order.code()){
+            history.setChangeCount(setting.getOrders()*integration);
+        } if (sourceType==AllEnum.ChangeSource.sign.code()){
+            history.setChangeCount(setting.getSign());
+        }
+
         history.setCreateTime(new Date());
         history.setChangeType(changeType);
         history.setOperateNote(note);
@@ -305,7 +321,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         member.setIntegration(member.getIntegration() + integration);
         memberMapper.updateById(member);
         redisService.set( String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
-    */
+
     }
 
     @Override
@@ -593,10 +609,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             token = jwtTokenUtil.generateToken(umsMember.getUsername());
             resultObj.put("userId", umsMember.getId());
             resultObj.put("userInfo", umsMember);
-            addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+            addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
 
         } else {
-            addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+            addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
 
             token = jwtTokenUtil.generateToken(userVo.getUsername());
             resultObj.put("userId", userVo.getId());
@@ -694,12 +710,13 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
-                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+                addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+
 
             } else {
                 //  userVo = this.queryByOpenId(sessionData.getString("openid"));
                 if (ValidatorUtils.notEmpty(userVo.getWeixinOpenid())) {
-                    addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                    addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
                     token = jwtTokenUtil.generateToken(userVo.getUsername());
                     resultObj.put("userId", userVo.getId());
                     resultObj.put("userInfo", userVo);
@@ -821,10 +838,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
-                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+                addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
+
 
             } else {
-                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
                 token = jwtTokenUtil.generateToken(userVo.getUsername());
                 resultObj.put("userId", userVo.getId());
                 resultObj.put("userInfo", userVo);
@@ -921,10 +939,11 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
-                addIntegration(umsMember.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), umsMember.getUsername());
+                addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
 
             } else {
-                addIntegration(userVo.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), userVo.getUsername());
+                addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
+
                 token = jwtTokenUtil.generateToken(userVo.getUsername());
                 resultObj.put("userId", userVo.getId());
                 resultObj.put("userInfo", userVo);

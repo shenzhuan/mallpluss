@@ -69,6 +69,10 @@ public class AllEnum {
          * 注册
          */
         register(3, "register"),
+        /**
+         * 签到送积分
+         */
+        sign(5, "sign"),
 
         /**
          * 后台添加

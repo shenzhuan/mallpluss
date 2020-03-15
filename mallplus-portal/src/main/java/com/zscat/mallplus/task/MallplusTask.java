@@ -66,7 +66,7 @@ public class MallplusTask {
      * 自动收货
      * 发货后自动确认收货时间（天）
      */
-    @Scheduled(cron = "0 0/10 * ? * ?")
+    @Scheduled(cron = "0 0/15 * ? * ?")
     private void autoDeliveryOrder() {
         CommonResult result = portalOrderService.autoDeliveryOrder();
         logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
@@ -75,7 +75,7 @@ public class MallplusTask {
     /**
      * 自动完成交易时间，不能申请售后（天）
      */
-    @Scheduled(cron = "0 0/10 * ? * ?")
+    @Scheduled(cron = "0 0/18 * ? * ?")
     private void autoSucessOrder() {
         CommonResult result = portalOrderService.autoSucessOrder();
         logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
@@ -84,7 +84,7 @@ public class MallplusTask {
     /**
      * 订单完成后自动好评时间（天）
      */
-    @Scheduled(cron = "0 0/10 * ? * ?")
+    @Scheduled(cron = "0 0/13 * ? * ?")
     private void autoCommentOrder() {
         CommonResult result = portalOrderService.autoCommentOrder();
         logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
