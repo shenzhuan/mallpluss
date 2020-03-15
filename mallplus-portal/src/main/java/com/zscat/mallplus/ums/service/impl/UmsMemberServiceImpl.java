@@ -210,13 +210,14 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 return null;
             }
             UmsMember member = UserUtils.getCurrentMember();
-            if (member != null && member.getId() != null) {
-                return member;
-            }
             String storeId = request.getParameter("storeid");
             if (ValidatorUtils.empty(storeId)) {
                 storeId = request.getHeader("storeid");
             }
+            if (member != null && member.getId() != null ) {
+          //      return member;
+            }
+
             String tokenPre = "authorization" + storeId;
             String authHeader = request.getParameter(tokenPre);
             if (ValidatorUtils.empty(authHeader)) {
@@ -336,8 +337,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         }
         UmsMember umsMember = new UmsMember();
         umsMember.setPassword(passwordEncoder.encode(password));
-        memberMapper.update(umsMember, new QueryWrapper<UmsMember>().eq("phone", phone));
-        return true;
+       int count= memberMapper.update(umsMember, new QueryWrapper<UmsMember>().eq("phone", phone));
+        return count>0;
     }
 
     @Override

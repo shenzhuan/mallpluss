@@ -1,11 +1,11 @@
 package com.zscat.mallplus.notice;
 
-import com.kuding.anno.ExceptionListener;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-@ExceptionListener //异常通知的监控来自这个注解
+//@ExceptionListener //异常通知的监控来自这个注解
 @Async
 public class NoticeComponents {
 
