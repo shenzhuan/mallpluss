@@ -32,3 +32,8 @@ CREATE TABLE `mallplus_search_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='搜索历史表'
 
 alter table pms_product alter column is_fenxiao set default 0;
+
+alter table pms_product_attribute_category add column style set default 0;
+
+alter table pms_product_attribute_category add style int ;
+alter table pms_product_attribute_category add show_index int ;

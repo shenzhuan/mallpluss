@@ -25,6 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +115,17 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Resource
     private IUmsIntegrationChangeHistoryService umsIntegrationChangeHistoryService;
 
+    @Resource
+    UmsIntegrationConsumeSettingMapper integrationConsumeSettingMapper;
+
     private OkHttpClient okHttpClient = new OkHttpClient();
+
+    public final static String getPageOpenidUrl = "https://api.weixin.qq.com/sns/jscode2session";
+    public final static String GetPageAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+    //微信公众号获取用户信息
+    public final static String GetPageUserInfoUrl = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+    //微信小程序获取用户信息
+    public final static String GetPageUserInfoUrl_XCX = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 
     @Override
     public UmsMember getNewCurrentMember() {
@@ -283,7 +298,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     }
 
-    UmsIntegrationConsumeSettingMapper integrationConsumeSettingMapper;
+
     /**
      * 添加积分记录 并更新用户积分
      *
@@ -867,6 +882,20 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     }
 
+    /**
+     * 微信访问获取结果
+     * @param url
+     * @return
+     * @throws Exception
+     */
+    public static String httpClientSend(String url) throws Exception{
+        HttpClient client =  new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(url);
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        String response = client.execute(httpget, responseHandler);
+        return response;
+
+    }
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {
@@ -883,10 +912,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
             String signature = req.getSignature();
 
-            Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
-            if (null == me) {
-                throw new ApiMallPlusException("登录失败 userInfos is null");
-            }
+
+
 
             Map<String, Object> resultObj = new HashMap<String, Object>();
 
@@ -921,19 +948,53 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 umsMember.setIntegration(0);
                 umsMember.setMemberLevelId(4L);
                 umsMember.setAvatar(req.getCloudID());
-                umsMember.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
 
-                umsMember.setGender((Integer) me.get("gender"));
+                if (ValidatorUtils.empty(userInfos)) {
+                    //未查询到用户信息，通过微信获取用户tokey信息
+                    String requestUrl1 = GetPageAccessTokenUrl.replace("APPID", appletSet.getAppid()).replace("APPSECRET", appletSet.getAppsecret());
+                    String openidResponse = httpClientSend(requestUrl1);
+                    JSONObject OpenidJSONO = JSONObject.fromObject(openidResponse);
+                    String accessToken = String.valueOf(OpenidJSONO.get("access_token"));
+                    //获取用户数据信息
+                    String requestUserInfoUrl = GetPageUserInfoUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", appletSet.getAppid());
+                    String userresponse = httpClientSend(requestUserInfoUrl);
+                    JSONObject userJSON = JSONObject.fromObject(userresponse);
+                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"),"UTF-8");
+                    String avatarUrl = String.valueOf(userJSON.get("avatarUrl"));
+                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"),"UTF-8");
+                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"),"UTF-8");
+                    String gender = String.valueOf(userJSON.get("gender"));
+                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"),"UTF-8");
+                    String language = String.valueOf(userJSON.get("language"));
+
+                    umsMember.setCity(country + "-" + province + "-" + city);
+                    if (StringUtils.isEmpty(avatarUrl)) {
+                        //会员头像(默认头像)
+                        umsMember.setIcon("/upload/img/avatar/01.jpg");
+                    } else {
+                        umsMember.setIcon(avatarUrl);
+                    }
+                    // umsMember.setGender(Integer.parseInt(me.get("gender")));
+                    umsMember.setNickname(nickname);
+                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)){
+                        umsMember.setGender(Integer.valueOf(gender));
+                    }
+                }else {
+                    Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
+                    umsMember.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
+                    if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
+                        //会员头像(默认头像)
+                        umsMember.setIcon("/upload/img/avatar/01.jpg");
+                    } else {
+                        umsMember.setIcon(me.get("avatarUrl").toString());
+                    }
+                    // umsMember.setGender(Integer.parseInt(me.get("gender")));
+                    umsMember.setNickname(me.get("nickName").toString());
+                    umsMember.setGender((Integer) me.get("gender"));
+                }
+
                 umsMember.setHistoryIntegration(0);
                 umsMember.setWeixinOpenid(sessionData.getString("openid"));
-                if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
-                    //会员头像(默认头像)
-                    umsMember.setIcon("/upload/img/avatar/01.jpg");
-                } else {
-                    umsMember.setIcon(me.get("avatarUrl").toString());
-                }
-                // umsMember.setGender(Integer.parseInt(me.get("gender")));
-                umsMember.setNickname(me.get("nickName").toString());
 
                 memberMapper.insert(umsMember);
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());

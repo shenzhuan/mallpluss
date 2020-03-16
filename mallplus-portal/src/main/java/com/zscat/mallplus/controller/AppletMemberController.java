@@ -1,6 +1,7 @@
 package com.zscat.mallplus.controller;
 
 
+import cn.hutool.extra.emoji.EmojiUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
@@ -146,6 +147,18 @@ public class AppletMemberController extends ApiBaseAction {
         }
     }
 
+    @PutMapping("/setUserInfo")
+    @ApiOperation(value="设置用户信息", notes="设置用户信息")
+    public Object setUserInfo(@RequestBody AppletLoginParam userInfoParam) {
+        Long userId = memberService.getNewCurrentMember().getId();
+        UmsMember user = new UmsMember();
+        user.setId(userId);
+        user.setIcon(userInfoParam.getPhone());
+        user.setNickname(userInfoParam.getOpenid());
+        memberService.updateById(user);
+
+        return new CommonResult().success();
+    }
 
     @IgnoreAuth
     @ApiOperation("小程序绑定手机号解密")

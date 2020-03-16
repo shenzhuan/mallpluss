@@ -40,5 +40,10 @@ public class PmsProductAttributeCategory extends BaseEntity implements Serializa
     @TableField("param_count")
     private Integer paramCount;
 
-
+    /**
+     * 列表样式 一列1 2 3个
+     */
+    private Integer style;
+    @TableField("show_index")
+    private Integer showIndex;
 }

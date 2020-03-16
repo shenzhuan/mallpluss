@@ -8,6 +8,8 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.exception.Server;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.entity.PmsFavorite;
+import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -16,8 +18,10 @@ import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
+import com.zscat.mallplus.sys.entity.AdminSysNotice;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLocation;
+import com.zscat.mallplus.ums.service.IAdminSysNoticeService;
 import com.zscat.mallplus.ums.service.IUmsMemberLocationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -46,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +87,8 @@ public class SingelHomeController {
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
 
+    @Resource
+    private IAdminSysNoticeService sysNoticeService;
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
@@ -488,6 +495,24 @@ public class SingelHomeController {
         return null;
     }
 
+    @SysLog(MODULE = "pms", REMARK = "查询首页新品")
+    @IgnoreAuth
+    @ApiOperation(value = "查询首页新品")
+    @GetMapping(value = "/notice/list")
+    public Object getNoticeList(
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        return new CommonResult().success(sysNoticeService.page(new Page<AdminSysNotice>(pageNum, pageSize), new QueryWrapper<>(new AdminSysNotice())));
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @IgnoreAuth
+    @GetMapping(value = "/notice/detail")
+    @ApiOperation(value = "查询公告详情信息")
+    public Object giftDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        AdminSysNotice goods = sysNoticeService.getById(id);
+        return new CommonResult().success(goods);
+    }
 
     @IgnoreAuth
     @ApiOperation(value = "登录以后返回token")
