@@ -2,7 +2,7 @@ package com.zscat.mallplus.util;
 
 
 import org.apache.commons.codec.binary.Base64;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -49,7 +49,7 @@ public class AES {
      * 初始化密钥
      */
     public static void init() throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
+      //  Security.addProvider(new BouncyCastleProvider());
         KeyGenerator.getInstance(KEY_NAME).init(128);
     }
 

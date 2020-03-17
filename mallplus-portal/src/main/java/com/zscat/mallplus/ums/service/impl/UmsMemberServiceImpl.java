@@ -502,18 +502,22 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         if (ValidatorUtils.notEmpty(user.getInvitecode())) {
             umsMember.setInvitecode(user.getInvitecode());
         }
-        String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
-        umsMember.setIcon(defaultIcon);
-        //这是要生成二维码的url
-        String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
-        //要添加到二维码下面的文字
-        String words = user.getUsername() + "的二维码";
-        //调用刚才的工具类
-        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+        try {
+            String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+            umsMember.setIcon(defaultIcon);
+            //这是要生成二维码的url
+            String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+            //要添加到二维码下面的文字
+            String words = user.getUsername() + "的二维码";
+            //调用刚才的工具类
+            ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+            InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
 
+            umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+        }catch (Exception e){
 
-        umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+        }
+
         memberMapper.insert(umsMember);
 
         redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
@@ -720,7 +724,18 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(me.get("nickName").toString());
+                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                umsMember.setIcon(defaultIcon);
+                //这是要生成二维码的url
+                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
+                //要添加到二维码下面的文字
+                String words = umsMember.getUsername() + "的二维码";
+                //调用刚才的工具类
+                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
 
+
+                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
@@ -848,7 +863,18 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(userInfos.getNickName());
+                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                umsMember.setIcon(defaultIcon);
+                //这是要生成二维码的url
+                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
+                //要添加到二维码下面的文字
+                String words = umsMember.getUsername() + "的二维码";
+                //调用刚才的工具类
+                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
 
+
+                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
@@ -1047,12 +1073,15 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(phone);
 
-            UmsMember member = this.getByUsername(phone);
             //验证验证码
-            if (!verifyAuthCode(authCode, member.getPhone())) {
+            if (!verifyAuthCode(authCode, phone)) {
                 throw new ApiMallPlusException("验证码错误");
             }
+            UmsMember member = this.getByUsername(phone);
+if (member==null || member.getId()<1){
+    throw new ApiMallPlusException("用户不存在");
 
+}
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
