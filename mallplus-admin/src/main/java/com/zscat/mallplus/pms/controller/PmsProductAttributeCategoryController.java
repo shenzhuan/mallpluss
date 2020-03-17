@@ -53,10 +53,16 @@ public class PmsProductAttributeCategoryController {
     @ApiOperation("保存产品属性分类表")
     @PostMapping(value = "/create")
     @PreAuthorize("hasAuthority('pms:PmsProductAttributeCategory:create')")
-    public Object create(@RequestParam String name) {
+    public Object create(@RequestParam String name,
+                         @RequestParam(value = "pic", required = false) String pic,
+                         @RequestParam(value = "showIndex", required = false) Integer showIndex,
+                         @RequestParam(value = "style", required = false) Integer style) {
         try {
             PmsProductAttributeCategory productAttributeCategory = new PmsProductAttributeCategory();
             productAttributeCategory.setName(name);
+            productAttributeCategory.setShowIndex(showIndex);
+            productAttributeCategory.setStyle(style);
+            productAttributeCategory.setPic(pic);
             if (IPmsProductAttributeCategoryService.save(productAttributeCategory)) {
                 return new CommonResult().success();
             }
