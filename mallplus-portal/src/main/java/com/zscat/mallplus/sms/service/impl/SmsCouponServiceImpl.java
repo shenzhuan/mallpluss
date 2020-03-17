@@ -216,7 +216,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         coupon.setCount(coupon.getCount() - 1);
         coupon.setReceiveCount(coupon.getReceiveCount() == null ? 1 : coupon.getReceiveCount() + 1);
         couponMapper.updateById(coupon);
-        return new CommonResult().success("领取成功", null);
+        return new CommonResult().success("领取成功", "领取成功");
     }
 
     /**
