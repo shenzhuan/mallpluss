@@ -45,7 +45,7 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     private Long goodsId;
 
     /**
-     * 状态
+     * 状态 1
      */
     private Integer status;
 

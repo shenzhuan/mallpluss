@@ -107,8 +107,18 @@ public class AppletMemberController extends ApiBaseAction {
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
+    }
 
-
+    @IgnoreAuth
+    @ApiOperation("注册")
+    @SysLog(MODULE = "applet", REMARK = "小程序注册")
+    @PostMapping("login_by_weixin2")
+    public Object loginByWeixinNew2(AppletLoginParam param) {
+        try {
+            return memberService.loginByWeixin1(param);
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
     }
 
     @IgnoreAuth
@@ -136,6 +146,18 @@ public class AppletMemberController extends ApiBaseAction {
         }
     }
 
+    @PutMapping("/setUserInfo")
+    @ApiOperation(value="设置用户信息", notes="设置用户信息")
+    public Object setUserInfo(@RequestBody AppletLoginParam userInfoParam) {
+        Long userId = memberService.getNewCurrentMember().getId();
+        UmsMember user = new UmsMember();
+        user.setId(userId);
+        user.setIcon(userInfoParam.getPhone());
+        user.setNickname(userInfoParam.getOpenid());
+        memberService.updateById(user);
+
+        return new CommonResult().success();
+    }
 
     @IgnoreAuth
     @ApiOperation("小程序绑定手机号解密")

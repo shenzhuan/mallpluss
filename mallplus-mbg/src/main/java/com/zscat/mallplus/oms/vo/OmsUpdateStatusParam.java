@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class OmsUpdateStatusParam {
     @ApiModelProperty("服务单号")
     private Long id;
+    private Long orderId;
     @ApiModelProperty("收货地址关联id")
     private Long companyAddressId;
     @ApiModelProperty("确认退款金额")

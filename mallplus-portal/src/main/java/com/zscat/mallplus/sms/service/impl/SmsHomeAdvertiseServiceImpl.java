@@ -509,7 +509,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         HomeFlashPromotion homeFlashPromotion = null;
         SmsFlashPromotion queryS = new SmsFlashPromotion();
         queryS.setIsIndex(1);
-        SmsFlashPromotion indexFlashPromotion = smsFlashPromotionService.getOne(new QueryWrapper<>(queryS).last("limit 1"));
+        SmsFlashPromotion indexFlashPromotion = smsFlashPromotionService.getOne(new QueryWrapper<>(queryS));
         homeFlashPromotion = getHomeFlashPromotion(indexFlashPromotion);
         return homeFlashPromotion;
     }

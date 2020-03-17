@@ -55,7 +55,7 @@ public class UmsMemberReceiveAddressController {
         if (address.getDefaultStatus() == 1) {
             addressMapper.updateStatusByMember(address.getMemberId());
         }
-        if (address != null && address.getId() != null) {
+        if (address != null && address.getId() != null && address.getId() > 0) {
             count = memberReceiveAddressService.updateById(address);
         } else {
             count = memberReceiveAddressService.save(address);

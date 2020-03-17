@@ -6,6 +6,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
 import com.zscat.mallplus.oms.vo.OmsUpdateStatusParam;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -130,11 +131,21 @@ public class OmsOrderReturnApplyController {
         }
     }
 
-    @SysLog(MODULE = "oms", REMARK = "获取所有收货地址")
+    @SysLog(MODULE = "oms", REMARK = "修改申请状态")
     @ApiOperation("修改申请状态")
-    @RequestMapping(value = "/update/status/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/update/status", method = RequestMethod.POST)
     @ResponseBody
-    public Object updateStatus(@PathVariable Long id, @RequestBody OmsUpdateStatusParam statusParam) {
+    public Object updateStatus(@RequestParam("id") Long id,
+                               @RequestParam("status") Integer status,
+                               @RequestParam("orderId") Long orderId,
+                               @RequestParam("handleNote") String handleNote
+                               ) {
+        OmsUpdateStatusParam statusParam = new OmsUpdateStatusParam();
+        statusParam.setHandleMan(UserUtils.getCurrentMember().getNickName());
+        statusParam.setHandleNote(handleNote);
+        statusParam.setStatus(status);
+        statusParam.setId(id);
+        statusParam.setOrderId(orderId);
         int count = IOmsOrderReturnApplyService.updateStatus(id, statusParam);
         if (count > 0) {
             return new CommonResult().success(count);

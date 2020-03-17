@@ -217,7 +217,7 @@ public class SmsCouponServiceImpl extends ServiceImpl<SmsCouponMapper, SmsCoupon
         couponHistory.setEndTime(coupon.getEndTime());
         couponHistory.setNote(coupon.getName() + ":满" + coupon.getMinPoint() + "减" + coupon.getAmount());
         couponHistory.setAmount(coupon.getAmount());
-
+        couponHistory.setMinPoint(coupon.getMinPoint());
         couponHistoryMapper.insert(couponHistory);
         //修改优惠券表的数量、领取数量
         coupon.setCount(coupon.getCount() - 1);

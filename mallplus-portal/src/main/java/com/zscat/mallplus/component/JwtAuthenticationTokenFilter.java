@@ -120,7 +120,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } else {
             logger.info("no token" + request.getRequestURI());
         }
-        LOGGER.info("checking username:{}，storeId:{}", username, storeId);
+        LOGGER.info("checking username:{}，storeId:{},url:{}", username, storeId,request.getRequestURI());
         // }
 
         startTime = System.currentTimeMillis();

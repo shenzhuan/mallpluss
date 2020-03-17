@@ -12,7 +12,7 @@ public class CommonResult {
     //操作失败
     public static final int FAILED = 500;
     //参数校验失败
-    public static final int VALIDATE_FAILED = 404;
+    public static final int VALIDATE_FAILED = 101;
     //未认证
     public static final int UNAUTHORIZED = 401;
     //未授权
@@ -66,7 +66,7 @@ public class CommonResult {
      */
     public CommonResult failed() {
         this.code = FAILED;
-        this.msg = "操作失败,请登录";
+        this.msg = "操作失败";
         return this;
     }
 
