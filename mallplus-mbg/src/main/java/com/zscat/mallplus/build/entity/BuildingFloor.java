@@ -70,7 +70,7 @@ public class BuildingFloor implements Serializable {
     @Excel(name = "创建时间", exportFormat = "yyyy-MM-dd", orderNum = "7", width = 30)
     @TableField("create_time")
     private Date createTime;
-
+    private String pic;
 
     @TableField(exist = false)
     private List<BuildingRoom> children;

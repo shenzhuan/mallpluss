@@ -1,7 +1,6 @@
 package com.zscat.mallplus.config;
 
 
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
@@ -48,8 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

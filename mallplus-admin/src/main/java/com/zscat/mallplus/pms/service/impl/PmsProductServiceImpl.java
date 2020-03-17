@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;
@@ -102,26 +103,46 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         if (ValidatorUtils.empty(product.getUnit())) {
             product.setUnit("件");
         }
+
+        //product.setStoreId(user.getStoreId());
+        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
+            product.setAlbumPics(product.getPic());
+        }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();
         //会员价格
         //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
         //阶梯价格
-        relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
+        // relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
         //满减价格
-        relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
+        // relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
 
         //添加sku库存信息
         relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
         //添加商品参数,添加自定义商品规格
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
         //关联专题
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
+      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
         //关联优选
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+     //   relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+        //关联专题
+
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
+            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+                relation.setProductId(productId);
+                subjectProductRelationDao.save(relation);
+            }
+        }
+        //关联优选
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
+            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+                relation.setProductId(productId);
+                prefrenceAreaProductRelationDao.save(relation);
+            }
+        }
         count = 1;
-        //    redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
+        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
         return count;
     }
 
@@ -142,7 +163,11 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
-            stock = stock + skuStock.getStock();
+            if (skuStock.getStock()!=null && skuStock.getStock()>0){
+                stock = stock + skuStock.getStock();
+
+            }
+
         }
         product.setStock(stock);
     }
@@ -184,14 +209,26 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         productAttributeValueMapper.delete(new QueryWrapper<>(new PmsProductAttributeValue()).eq("product_id", id));
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), id);
-        //关联专题
 
+        //关联专题
         subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
+            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+                relation.setProductId(id);
+                subjectProductRelationDao.save(relation);
+            }
+        }
         //关联优选
 
         prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+      //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
+            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+                relation.setProductId(id);
+                prefrenceAreaProductRelationDao.save(relation);
+            }
+        }
         count = 1;
 
         redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
@@ -215,6 +252,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         productVertifyRecordMapper.insert(record);
         redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         return count;
+    }
+
+    @Override
+    public int updateisFenxiao(List<Long> ids, Integer newStatus) {
+        PmsProduct record = new PmsProduct();
+        record.setIsFenxiao(newStatus);
+        clerGoodsRedis(ids);
+        return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
     }
 
     @Override

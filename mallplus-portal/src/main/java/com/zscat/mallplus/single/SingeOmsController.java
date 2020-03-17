@@ -1,10 +1,13 @@
 package com.zscat.mallplus.single;
-
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.bill.entity.BillAftersales;
+import com.zscat.mallplus.bill.entity.BillAftersalesItems;
+import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.OrderStatus;
@@ -12,6 +15,8 @@ import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
+import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
+import com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
@@ -26,6 +31,7 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApplyRefundVo;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
@@ -36,6 +42,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -68,7 +75,10 @@ public class SingeOmsController extends ApiBaseAction {
     private IPmsProductConsultService pmsProductConsultService;
     @Autowired
     private IUmsMemberService memberService;
-
+    @Resource
+    private com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
+    @Resource
+    private com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -175,7 +185,7 @@ public class SingeOmsController extends ApiBaseAction {
         try {
             return orderService.applyRefund(id);
         } catch (Exception e) {
-            log.error("订单确认收货：%s", e.getMessage(), e);
+            log.error("订单申请退款：%s", e.getMessage(), e);
             return new CommonResult().failed(e.getMessage());
         }
     }
@@ -185,15 +195,15 @@ public class SingeOmsController extends ApiBaseAction {
     @PostMapping(value = "/orderevaluate")
     public Object addGoodsConsult(@RequestParam(value = "orderId", defaultValue = "1") Long orderId,
                                   @RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
-
         return orderService.orderComment(orderId, items);
     }
 
-    @SysLog(MODULE = "oms", REMARK = "申请售后")
-    @ApiOperation(value = "申请售后")
+    @SysLog(MODULE = "oms", REMARK = "订单退货申请")
+    @ApiOperation(value = "订单退货申请")
     @PostMapping(value = "/applyRe")
     public Object applyRe(@RequestParam(value = "items", defaultValue = "10") String items) throws Exception {
-        return orderService.applyRe(items);
+        ApplyRefundVo itemss = JsonUtils.fromJson(items, ApplyRefundVo.class);
+        return orderService.applyRe(itemss);
     }
 
     @ResponseBody
@@ -492,4 +502,77 @@ public class SingeOmsController extends ApiBaseAction {
         return new CommonResult().success(objectMap);
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单列表")
+    @ApiOperation(value = "售后单列表")
+    @GetMapping(value = "/order/aftersaleslist")
+    public Object afterSalesList(OmsOrderReturnApply order,
+                                 @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
+                                 @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+
+        IPage<OmsOrderReturnApply> page = IOmsOrderReturnApplyService.page(new Page<OmsOrderReturnApply>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time"));
+        for (OmsOrderReturnApply omsOrder : page.getRecords()) {
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getOrderId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+            omsOrder.setOrderItemList(itemList);
+        }
+        return new CommonResult().success(page);
+    }
+
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "售后单详情")
+    @ApiOperation(value = "售后单详情")
+    @GetMapping(value = "/order/aftersalesinfo")
+    public Object afterSalesInfo(@RequestParam Long id) {
+        OmsOrderReturnApply omsOrder = IOmsOrderReturnApplyService.getById(id);
+        List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+        omsOrder.setOrderItemList(itemList);
+        return new CommonResult().success(omsOrder);
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "订单售后状态")
+    @ApiOperation(value = "订单售后状态")
+    @GetMapping(value = "/order.aftersalesstatus")
+    public Object afterSalesStatus(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = memberService.getNewCurrentMember();
+
+        return null;
+    }
+
+
+
+    @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
+    @ApiOperation(value = "用户发送退货包裹")
+    @PostMapping(value = "/order.sendreship")
+    public Object sendShip(CmsSubject subject, BindingResult result) {
+        CommonResult commonResult;
+        UmsMember member = memberService.getNewCurrentMember();
+
+        return null;
+    }
+
+    @SysLog(MODULE = "cms", REMARK = "售后原因")
+    @ApiOperation(value = "售后原因")
+    @PostMapping(value = "/order/getRefundReason")
+    public Object getRefundReason() {
+        return new CommonResult().success(IOmsOrderReturnReasonService.list(new QueryWrapper<>()));
+    }
+
+    @SysLog(MODULE = "oms", REMARK = "保存订单售后申请")
+    @ApiOperation("保存订单售后申请")
+    @PostMapping(value = "/saveOmsOrderReturnApply")
+    public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
+                                          @RequestParam(value = "type") Integer type,
+                                            @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "returnAmount") BigDecimal returnAmount,
+                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+        ApplyRefundVo vo = new ApplyRefundVo();
+       try {
+           vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
+           return orderService.applyRe(vo);
+       }catch (Exception e){
+           return new CommonResult().failed();
+       }
+
+    }
 }

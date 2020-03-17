@@ -38,6 +38,6 @@ public class OrderParam {
     private Integer groupType;
     private Long mgId = 0l;
     private Long skillId = 0l; // 秒杀ID
-
+    private Long inviteMemberId = 0l; //分佣商品 链接带过来的会员编号
 
 }

@@ -120,8 +120,7 @@ public class BPmsController extends ApiBaseAction {
     @Resource
     private OmsOrderMapper omsOrderMapper;
 
-    @Autowired
-    private ApiContext apiContext;
+
     @Autowired
     private IPmsFavoriteService memberCollectionService;
     @Autowired

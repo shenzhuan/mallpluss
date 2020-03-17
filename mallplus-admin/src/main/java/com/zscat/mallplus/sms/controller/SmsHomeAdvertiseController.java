@@ -74,7 +74,6 @@ public class SmsHomeAdvertiseController {
     @SysLog(MODULE = "sms", REMARK = "更新首页轮播广告表")
     @ApiOperation("更新首页轮播广告表")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('sms:SmsHomeAdvertise:update')")
     public Object updateSmsHomeAdvertise(@RequestBody SmsHomeAdvertise entity) {
         try {
             if (ISmsHomeAdvertiseService.updateById(entity)) {

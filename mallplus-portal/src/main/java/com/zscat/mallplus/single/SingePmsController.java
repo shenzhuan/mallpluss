@@ -287,7 +287,7 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "schoolId", required = false) Long schoolId,
             @RequestParam(value = "productAttributeCategoryId", required = false) Long productAttributeCategoryId,
             @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
-
+            @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
             @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestParam(value = "sort", required = false) Integer sort,
             @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
@@ -302,6 +302,9 @@ public class SingePmsController extends ApiBaseAction {
 
         if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId > 0) {
             product.setProductCategoryId(productCategoryId);
+        }
+        if (ValidatorUtils.notEmpty(recommandStatus) && recommandStatus > 0) {
+            product.setRecommandStatus(1);
         }
         if (ValidatorUtils.notEmpty(brandId) && brandId > 0) {
             product.setBrandId(brandId);
@@ -331,7 +334,7 @@ public class SingePmsController extends ApiBaseAction {
         product.setSort(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            if (orderBy.equals("1")) {
+            if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
                 buildFenPrice(list);
             } else {
@@ -339,7 +342,7 @@ public class SingePmsController extends ApiBaseAction {
                 buildFenPrice(list);
             }
         } else {
-            if (orderBy.equals("1")) {
+            if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
                 buildFenPrice(list);
             } else {
@@ -372,7 +375,15 @@ public class SingePmsController extends ApiBaseAction {
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(productCategoryService.page(new Page<PmsProductCategory>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
     }
-
+    @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商品分类列表")
+    @GetMapping(value = "/productAttrCategory/list")
+    public Object productCategoryList(PmsProductAttributeCategory productCategory,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(productAttributeCategoryService.page(new Page<PmsProductAttributeCategory>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+    }
 
     @ApiOperation("创建商品")
     @SysLog(MODULE = "pms", REMARK = "创建商品")
@@ -812,7 +823,7 @@ public class SingePmsController extends ApiBaseAction {
         pmsProductCategory.setNavStatus(1);
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>(pmsProductCategory));
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if (ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
                 relList.add(v);
             }
         }
@@ -821,7 +832,7 @@ public class SingePmsController extends ApiBaseAction {
         for (int i = 0; i < relList.size(); i++) {
             list = new ArrayList<>();
             for (PmsProductCategory v : categories) {
-                if (v.getParentId().longValue() == relList.get(i).getId().longValue()) {
+                if ( ValidatorUtils.notEmpty(v.getParentId()) &&  v.getParentId().longValue() == relList.get(i).getId().longValue()) {
                     list.add(v);
                 }
             }
@@ -841,7 +852,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if ( ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());

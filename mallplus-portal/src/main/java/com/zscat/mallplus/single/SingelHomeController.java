@@ -8,6 +8,8 @@ import com.zscat.mallplus.annotation.SysLog;
 
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.entity.PmsFavorite;
+import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -46,6 +48,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

@@ -1,18 +1,12 @@
 package com.zscat.mallplus.sys.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zscat.mallplus.ApiContext;
-import com.zscat.mallplus.bill.entity.BakBrand;
-import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
-import com.zscat.mallplus.pms.entity.PmsBrand;
+import com.zscat.mallplus.component.OssAliyunUtil;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
-import com.zscat.mallplus.pms.entity.PmsProductCategory;
 import com.zscat.mallplus.pms.mapper.PmsBrandMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
@@ -22,17 +16,18 @@ import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
+import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 
 /**
@@ -46,15 +41,14 @@ import java.util.stream.Collectors;
 @Service
 public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> implements ISysStoreService {
 
+    @Autowired
+    OssAliyunUtil aliyunOSSUtil;
     @Resource
     private SysStoreMapper storeMapper;
     @Resource
     private SysUserMapper userMapper;
-
     @Resource
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ApiContext apiContext;
     @Resource
     private BakCategoryMapper bakCategoryMapper;
     @Resource
@@ -73,88 +67,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {
-        entity.setTryTime(new Date());
-        entity.setCreateTime(new Date());
-        storeMapper.insert(entity);
-        SysUser user = new SysUser();
-        user.setUsername(entity.getName());
-        SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-        if (umsAdminList != null) {
-            return false;
-        }
-        user.setStatus(1);
-        user.setSupplyId(1L);
-        user.setPassword(passwordEncoder.encode(entity.getSupportName()));
-        user.setCreateTime(new Date());
-        user.setIcon(entity.getLogo());
-        user.setNickName(entity.getName());
-        //user.setStoreId(entity.getId());
-        user.setEmail(entity.getSupportPhone());
-        apiContext.setCurrentProviderId(entity.getId());
-        //
-        if (entity.getType() != null) {
-            CompletableFuture.runAsync(() -> {
-
-                BakCategory category = bakCategoryMapper.selectById(entity.getType());
-                PmsProductCategory pmsProductCategory = new PmsProductCategory();
-                pmsProductCategory.setIcon(category.getIconUrl());
-                pmsProductCategory.setName(category.getName());
-                pmsProductCategory.setKeywords(category.getKeywords());
-                pmsProductCategory.setParentId(category.getPid().longValue());
-                pmsProductCategory.setLevel(Integer.parseInt(category.getLevel().substring(1)));
-                pmsProductCategoryMapper.insert(pmsProductCategory);
-
-
-                PmsProductAttributeCategory pmsProductAttributeCategory = new PmsProductAttributeCategory();
-                pmsProductAttributeCategory.setPic(category.getIconUrl());
-                pmsProductAttributeCategory.setName(category.getName());
-
-                pmsProductAttributeCategoryMapper.insert(pmsProductAttributeCategory);
-
-                List<BakCategory> categoryList = bakCategoryMapper.selectList(new QueryWrapper<BakCategory>().eq("pid", entity.getType()));
-                for (BakCategory bakCategory : categoryList) {
-
-                    PmsProductCategory pmsProductCategory1 = new PmsProductCategory();
-                    pmsProductCategory1.setIcon(bakCategory.getIconUrl());
-                    pmsProductCategory1.setName(bakCategory.getName());
-                    pmsProductCategory1.setKeywords(bakCategory.getKeywords());
-                    pmsProductCategory1.setParentId(bakCategory.getPid().longValue());
-                    pmsProductCategory1.setLevel(Integer.parseInt(bakCategory.getLevel().substring(1)));
-                    pmsProductCategoryMapper.insert(pmsProductCategory1);
-                }
-                List<Integer> ids = categoryList.stream()
-                        .map(BakCategory::getId)
-                        .collect(Collectors.toList());
-                if (ids != null) {
-                    List<BakGoods> goodsList = bakGoodsMapper.selectList(new QueryWrapper<BakGoods>().in("category_id", ids));
-                    for (BakGoods gg : goodsList) {
-                        createG(gg, entity.getId());
-                    }
-                    List<Integer> brands = goodsList.stream()
-                            .map(BakGoods::getBrandId)
-                            .collect(Collectors.toList());
-                    if (brands != null) {
-                        List<BakBrand> bakBrands = bakBrandMapper.selectBatchIds(brands);
-                        if (bakBrands != null && bakBrands.size() > 0) {
-                            for (BakBrand bakBrand : bakBrands) {
-                                PmsBrand brand = new PmsBrand();
-                                brand.setBigPic(bakBrand.getPicUrl());
-                                brand.setName(bakBrand.getName());
-                                brand.setShowStatus(1);
-                                brand.setFactoryStatus(1);
-                                brand.setLogo(bakBrand.getPicUrl());
-                                brand.setSort(bakBrand.getSortOrder());
-                                pmsBrandMapper.insert(brand);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        return userMapper.insert(user) > 0;
+       return true;
     }
 
-    void createG(BakGoods gg, Long storeId) {
+    void createG(BakGoods gg, Integer storeId) {
         PmsProduct g = new PmsProduct();
 
         g.setName(gg.getName());

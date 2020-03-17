@@ -96,6 +96,8 @@ public class BOmsController extends ApiBaseAction {
     private RedisService redisService;
     @Resource
     private IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
+    @Resource
+    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
     @Autowired
     private IOmsShipService omsShipService;
     @Autowired
@@ -104,8 +106,7 @@ public class BOmsController extends ApiBaseAction {
     private IBillAftersalesService billAftersalesService;
     @Resource
     private IBillAftersalesItemsService billAftersalesItemsService;
-    @Resource
-    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
+
 
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.store.add")
