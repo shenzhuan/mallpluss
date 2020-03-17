@@ -106,6 +106,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         SysUser user = UserUtils.getCurrentMember();
         product.setStoreName(user.getStoreName());
         //product.setStoreId(user.getStoreId());
+        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
+            product.setAlbumPics(product.getPic());
+        }
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();

@@ -1294,14 +1294,11 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
         order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
-        orderService.updateById(order);
-        if (ValidatorUtils.isEmpty(order.getPid()) || order.getPid() < 1) {
-            OmsOrder childOrder = new OmsOrder();
-            childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
-            childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
-            childOrder.setPaymentTime(new Date());
-            orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", order.getId()));
+        if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
+            order.setPayAmount(new BigDecimal("0.01"));
         }
+        orderService.updateById(order);
+
         if (ValidatorUtils.notEmpty(order.getGroupId())) {
             SmsGroupMember member = new SmsGroupMember();
             member.setId(order.getGroupId());
@@ -1320,9 +1317,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             }
 
         }
-        if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
-            order.setPayAmount(new BigDecimal("0.01"));
-        }
+
         userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
         memberService.updateById(userDO);
         UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
@@ -1355,23 +1350,18 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
         order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
-        orderService.updateById(order);
-        if (ValidatorUtils.isEmpty(order.getPid()) || order.getPid() < 1) {
-            OmsOrder childOrder = new OmsOrder();
-            childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
-            childOrder.setPayType(AllEnum.OrderPayType.balancePay.code());
-            childOrder.setPaymentTime(new Date());
-            orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", order.getId()));
+        if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
+            order.setPayAmount(new BigDecimal("0.01"));
         }
+        orderService.updateById(order);
+
         if (ValidatorUtils.notEmpty(order.getGroupId())) {
             SmsGroupMember member = new SmsGroupMember();
             member.setId(order.getGroupId());
             member.setStatus(2);
             groupMemberMapper.updateById(member);
         }
-        if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
-            order.setPayAmount(new BigDecimal("0.01"));
-        }
+
         userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
         memberService.updateById(userDO);
         UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
