@@ -2241,9 +2241,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItemMapper.insert(cartItem);
             } else {
                 if (memberRate>0){
-                    cartItem.setPrice(pmsProduct.getPrice().multiply(new BigDecimal(memberRate)).divide(BigDecimal.valueOf(10)));
+                    existCartItem.setPrice(pmsProduct.getPrice().multiply(new BigDecimal(memberRate)).divide(BigDecimal.valueOf(10)));
                 }else {
-                    cartItem.setPrice(pmsProduct.getPrice());
+                    existCartItem.setPrice(pmsProduct.getPrice());
                 }
                 existCartItem.setModifyDate(new Date());
                 existCartItem.setQuantity(existCartItem.getQuantity() + cartParam.getTotal());
