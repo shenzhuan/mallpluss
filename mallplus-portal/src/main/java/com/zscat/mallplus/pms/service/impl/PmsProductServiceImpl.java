@@ -1,10 +1,13 @@
 package com.zscat.mallplus.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
@@ -22,6 +25,8 @@ import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
@@ -37,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -154,15 +160,38 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         return 1;
     }
 
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
+
+    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            }
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+            }
+        }
+        return pmsProduct;
+    }
+
     @Override
     public GoodsDetailResult getGoodsRedisById(Long id) {
         PmsProduct goods = productMapper.selectById(id);
 
-        if (goods==null || goods.getId()<1){
+        if (goods == null || goods.getId() < 1) {
             return null;
         }
         GoodsDetailResult param = new GoodsDetailResult();
-        param.setGoods(goods);
+        param.setGoods(buildFenPrice(goods));
 
       /*  List<PmsProductLadder> productLadderList = productLadderMapper.selectList(new QueryWrapper<PmsProductLadder>().eq("product_id", goods.getId()));
 

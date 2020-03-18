@@ -118,7 +118,7 @@ public class OmsOrderItem extends BaseEntity implements Serializable {
     private BigDecimal integrationAmount;
 
     /**
-     * 该商品经过优惠后的分解金额
+     * vip折扣金额
      */
     @TableField("real_amount")
     private BigDecimal realAmount;

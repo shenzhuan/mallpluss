@@ -116,6 +116,7 @@ public class SingePmsController extends ApiBaseAction {
     @Autowired
     private IUmsMemberService memberService;
 
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/paimai/detail")
@@ -282,6 +283,8 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询商品列表")
     @GetMapping(value = "/goods/list")
     public Object goodsList(
+            @RequestParam(value = "isVip", required = false) Integer isVip,
+            @RequestParam(value = "isFenxiao", required = false) Integer isFenxiao,
             @RequestParam(value = "storeId", required = false) Integer storeId,
             @RequestParam(value = "areaId", required = false) Long areaId,
             @RequestParam(value = "schoolId", required = false) Long schoolId,
@@ -300,6 +303,16 @@ public class SingePmsController extends ApiBaseAction {
         product.setMemberId(null);
         product.setSort(sort);
 
+        if (ValidatorUtils.notEmpty(isVip) && isVip > 0) {
+            product.setIsVip(isVip);
+        }else {
+            product.setIsVip(0);
+        }
+        if (ValidatorUtils.notEmpty(isFenxiao) && isFenxiao > 0) {
+            product.setIsFenxiao(isFenxiao);
+        }else {
+            product.setIsFenxiao(0);
+        }
         if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId > 0) {
             product.setProductCategoryId(productCategoryId);
         }
@@ -336,33 +349,50 @@ public class SingePmsController extends ApiBaseAction {
         if (ValidatorUtils.notEmpty(keyword)) {
             if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list,product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list,product);
             }
         } else {
             if (orderBy==1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list,product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list,product);
             }
         }
         return new CommonResult().success(list);
     }
 
-    private void buildFenPrice(IPage<PmsProduct> list) {
+    private void buildFenPrice(IPage<PmsProduct> list,PmsProduct product) {
         if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
-            for (PmsProduct pmsProduct : list.getRecords()) {
-                if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
-                    FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
-                    if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
-                        pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            if (product.getIsFenxiao()==1){
+                for (PmsProduct pmsProduct : list.getRecords()) {
+                    if ( pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+                        FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+                        if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                            pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+                        }
+                    }
+
+                }
+            }
+            if (product.getIsVip()==1){
+                UmsMember member =memberService.getNewCurrentMember();
+                for (PmsProduct pmsProduct : list.getRecords()) {
+
+                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+                        UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+                        if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                            pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                            pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+                        }
                     }
                 }
             }
+
         }
     }
 
