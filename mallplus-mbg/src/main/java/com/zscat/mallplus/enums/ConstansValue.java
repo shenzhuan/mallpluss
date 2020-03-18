@@ -16,7 +16,7 @@ public class ConstansValue {
             "        delete_status, publish_status, new_status, recommand_status, verify_status, sort, sale, price, promotion_price,\n" +
             "        original_price, stock, low_stock, store_name,sub_title,store_id,unit,\n" +
             "        weight, preview_status, service_ids,is_fenxiao,  brand_name,\n" +
-            "        product_category_name, supply_id, create_time, school_id,area_id";
+            "        product_category_name, supply_id, create_time, school_id,area_id,is_vip";
 
     public static final String sampleOrderList = "id,member_id, order_sn, create_time, member_username, total_amount, pay_amount,status, order_type,pay_type,source_type,goods_id,goods_name";
 

@@ -89,9 +89,16 @@ public class PmsProduct extends BaseEntity implements Serializable {
     @TableField("verify_status")
     private Integer verifyStatus;
 
-
+    /**
+     * 是否分销商品
+     */
     @TableField("is_fenxiao")
     private Integer isFenxiao;
+    /**
+     * 是否会员商品
+     */
+    @TableField("is_vip")
+    private Integer isVip;
     /**
      * 排序
      */
@@ -270,6 +277,20 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private int qsType;
+    /**
+     * 会员价
+     */
+    @TableField(exist = false)
+    private BigDecimal vipPrice;
+
+    /**
+     * 会员折扣
+     */
+    @TableField(exist = false)
+    private Integer memberRate;
+    /**
+     * 分销价格
+     */
     @TableField(exist = false)
     private BigDecimal fenxiaoPrice;
     @TableField(exist = false)

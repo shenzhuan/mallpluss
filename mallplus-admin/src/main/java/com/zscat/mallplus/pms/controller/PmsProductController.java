@@ -270,6 +270,21 @@ public class PmsProductController {
         }
     }
 
+    @ApiOperation("批量设为会员商品")
+    @RequestMapping(value = "/update/isVip", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量设为会员商品")
+    public Object updateisVip(@RequestParam("ids") List<Long> ids,
+                                  @RequestParam("newStatus") Integer newStatus) {
+        int count = IPmsProductService.updateisVip(ids, newStatus);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+
+
     @ApiOperation("批量修改删除状态")
     @RequestMapping(value = "/update/deleteStatus", method = RequestMethod.POST)
     @ResponseBody

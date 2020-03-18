@@ -187,7 +187,10 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Object applyRe(ApplyRefundVo items);
 
-
+    /**
+     * 放弃拼团
+     * @return
+     */
     Object quitGroup(Long id);
 
     /**
@@ -197,7 +200,20 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     CommonResult autoDeliveryOrder();
 
+    /**
+     * 订单到期自动评论
+     * @return
+     */
     CommonResult autoCommentOrder();
-
+    /**
+     * 订单到期自动完成
+     * @return
+     */
     CommonResult autoSucessOrder();
+
+    /**
+     * 会员等级升级
+     * @return
+     */
+    Object applyMember( Long memberLevelId);
 }

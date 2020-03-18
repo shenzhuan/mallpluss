@@ -75,7 +75,7 @@ public class UmsMemberLevel extends BaseEntity implements Serializable {
     private Integer priviledgePromotion;
 
     /**
-     * 是否有会员价格特权
+     * 会员折扣
      */
     @TableField("priviledge_member_price")
     private Integer priviledgeMemberPrice;
