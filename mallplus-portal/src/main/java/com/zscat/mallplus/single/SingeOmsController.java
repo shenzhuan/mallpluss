@@ -526,6 +526,7 @@ public class SingeOmsController extends ApiBaseAction {
         OmsOrderReturnApply omsOrder = IOmsOrderReturnApplyService.getById(id);
         List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
         omsOrder.setOrderItemList(itemList);
+        omsOrder.setOrder(orderService.getById(omsOrder.getOrderId()));
         return new CommonResult().success(omsOrder);
     }
 
