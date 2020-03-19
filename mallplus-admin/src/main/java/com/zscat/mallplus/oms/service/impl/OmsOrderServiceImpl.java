@@ -206,14 +206,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Override
     public int updateMoneyInfo(OmsMoneyInfoParam moneyInfoParam) {
-        OmsOrder order = new OmsOrder();
-        order.setId(moneyInfoParam.getOrderId());
-        order.setFreightAmount(moneyInfoParam.getFreightAmount());
-        order.setDiscountAmount(moneyInfoParam.getDiscountAmount());
-        order.setModifyTime(new Date());
-        int count = orderMapper.updateById(order);
         //插入操作记录
         OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+        OmsOrder order = orderMapper.selectById(moneyInfoParam.getOrderId());
+        order.setId(moneyInfoParam.getOrderId());
+        if (ValidatorUtils.notEmpty(moneyInfoParam.getFreightAmount())){
+            history.setNote("修改费用信息freightAmount"+order.getFreightAmount()+"="+moneyInfoParam.getFreightAmount());
+            order.setFreightAmount(moneyInfoParam.getFreightAmount());
+        }
+        if (ValidatorUtils.notEmpty(moneyInfoParam.getDiscountAmount())) {
+            history.setNote("修改费用信息discountAmount"+order.getDiscountAmount()+"="+moneyInfoParam.getDiscountAmount());
+            order.setDiscountAmount(moneyInfoParam.getDiscountAmount());
+        }
+        if (ValidatorUtils.notEmpty(moneyInfoParam.getPayAmount())) {
+            history.setNote("修改费用信息payAmount"+order.getPayAmount()+"="+moneyInfoParam.getPayAmount());
+            order.setPayAmount(moneyInfoParam.getPayAmount());
+        }
+        order.setModifyTime(new Date());
+        int count = orderMapper.updateById(order);
+
         history.setOrderId(moneyInfoParam.getOrderId());
         history.setCreateTime(new Date());
         history.setOperateMan("后台管理员");

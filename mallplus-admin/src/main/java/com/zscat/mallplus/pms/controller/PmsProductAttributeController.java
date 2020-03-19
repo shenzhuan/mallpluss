@@ -73,8 +73,8 @@ public class PmsProductAttributeController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttribute:create')")
     public Object savePmsProductAttribute(@RequestBody PmsProductAttribute entity) {
         try {
-            if (entity.getType().equals(null)) {
-                entity.setType(0);
+            if (entity.getType()==null) {
+                return new CommonResult().failed("类别不能为空");
             }
             if (IPmsProductAttributeService.saveAndUpdate(entity)) {
                 return new CommonResult().success();
