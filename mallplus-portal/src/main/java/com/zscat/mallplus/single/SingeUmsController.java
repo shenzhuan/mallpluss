@@ -127,14 +127,14 @@ public class SingeUmsController extends ApiBaseAction {
             if (memberService.getById(invitecode) != null) {
                 m.setInvitecode(invitecode);
             } else {
-                return new CommonResult().failed("code is not eist");
+                return new CommonResult().failed();
             }
         }
         return memberService.updateById(m);
     }
 
     @IgnoreAuth
-    @ApiOperation("注册")
+    @ApiOperation("重置密码")
     @PostMapping(value = "/resetPassword")
     public Object resetPassword(@RequestParam String phone,
                                 @RequestParam String password,

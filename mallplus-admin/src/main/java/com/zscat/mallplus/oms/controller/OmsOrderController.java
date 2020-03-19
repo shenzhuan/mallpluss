@@ -93,9 +93,13 @@ public class OmsOrderController {
                 return new CommonResult().paramFailed("订单表id");
             }
             OmsOrder coupon = IOmsOrderService.getById(id);
-            coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", coupon.getId())));
-            coupon.setHistoryList(omsOrderOperateHistoryMapper.selectList(new QueryWrapper<OmsOrderOperateHistory>().eq("order_id", coupon.getId())));
-            return new CommonResult().success(coupon);
+            if(coupon!=null && coupon.getId()>0){
+                coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", coupon.getId())));
+                coupon.setHistoryList(omsOrderOperateHistoryMapper.selectList(new QueryWrapper<OmsOrderOperateHistory>().eq("order_id", coupon.getId())));
+                return new CommonResult().success(coupon);
+            }
+
+             return new CommonResult().failed("订单已删除");
         } catch (Exception e) {
             log.error("查询订单表明细：%s", e.getMessage(), e);
             return new CommonResult().failed();

@@ -8,6 +8,8 @@ import com.zscat.mallplus.annotation.SysLog;
 
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
+import com.zscat.mallplus.pms.entity.PmsFavorite;
+import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -16,8 +18,10 @@ import com.zscat.mallplus.sms.mapper.SmsCouponHistoryMapper;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.sms.vo.HomeFlashPromotion;
+
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLocation;
+
 import com.zscat.mallplus.ums.service.IUmsMemberLocationService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -97,7 +101,7 @@ public class SingelHomeController {
             detail.setMember(newMember);
             return new CommonResult().success(detail);
         }
-        return new CommonResult().failed();
+        return new CommonResult().success();
     }
 
     @IgnoreAuth
