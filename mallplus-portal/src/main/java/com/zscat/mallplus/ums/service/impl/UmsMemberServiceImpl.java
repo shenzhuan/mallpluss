@@ -506,7 +506,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             umsMember.setInvitecode(user.getInvitecode());
         }
         try {
-            String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+            String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
             umsMember.setIcon(defaultIcon);
             //这是要生成二维码的url
             String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
@@ -727,7 +727,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(me.get("nickName").toString());
-                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
                 umsMember.setIcon(defaultIcon);
                 //这是要生成二维码的url
                 String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
@@ -866,7 +866,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(userInfos.getNickName());
-                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
                 umsMember.setIcon(defaultIcon);
                 //这是要生成二维码的url
                 String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();

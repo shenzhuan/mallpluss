@@ -22,7 +22,7 @@ import java.util.Date;
  */
 @Data
 @TableName("ums_member")
-public class UmsMember extends BaseEntity implements Serializable {
+public class UmsMember  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -145,6 +145,8 @@ public class UmsMember extends BaseEntity implements Serializable {
     private Integer buyCount;
     @TableField("buy_money")
     private BigDecimal buyMoney;
+    @TableField("store_id")
+    private Integer storeId;
     /**
      * 余额
      */

@@ -39,7 +39,7 @@ public class SmsServiceImpl implements SmsService {
     @Resource
     private IAcsClient acsClient;
     //@Value("${aliyun.sms.sign.name:京怡君商贸}")
-    private String signName = "京怡君商贸";
+    private String signName = "捷讯联盟";
     @Value("${aliyun.sms.template.code:xxxxx}")
     private String templateCode;
 

@@ -39,7 +39,7 @@ send_timeout 45;
 
     server {
         listen       8090;
-        server_name  39.106.212.32;
+        server_name  localhost;
 	client_max_body_size 10M;
         #charset koi8-r;
 

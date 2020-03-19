@@ -115,7 +115,7 @@ public class UmsMemberRuleSettingController {
             UmsMemberRuleSetting coupon = IUmsMemberRuleSettingService.getById(id);
             if (coupon==null){
                 coupon.setId(1L);
-                coupon.setStoreId(UserUtils.getCurrentMember().getStoreId());
+
                 IUmsMemberRuleSettingService.save(coupon);
             }
             return new CommonResult().success(coupon);

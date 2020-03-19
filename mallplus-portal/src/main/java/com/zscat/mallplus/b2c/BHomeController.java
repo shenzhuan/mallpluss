@@ -175,7 +175,7 @@ public class BHomeController {
     @RequestMapping(value = "/share", method = RequestMethod.POST)
     public Object share() {
         Map<String, String> data = new HashedMap();
-        data.put("img", "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
+        data.put("img", "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
         data.put("title", "mallplus");
         data.put("synopsis", "mallplus");
         return new CommonResult().success(data);
