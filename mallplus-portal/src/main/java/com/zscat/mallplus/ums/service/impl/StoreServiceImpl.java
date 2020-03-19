@@ -110,7 +110,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             config.setStatus(0);
             fenxiaoConfigMapper.insert(config);
             SysUserRole userRole = new SysUserRole();
-            userRole.setRoleId(1L);
+            userRole.setRoleId(2L);
             userRole.setAdminId(user.getId());
             userRoleMapper.insert(userRole);
             return new CommonResult().success(entity);

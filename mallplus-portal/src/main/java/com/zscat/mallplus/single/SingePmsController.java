@@ -140,6 +140,23 @@ public class SingePmsController extends ApiBaseAction {
         }
     }
 
+    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            }
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+            }
+        }
+        return pmsProduct;
+    }
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/goods/detail")
@@ -156,6 +173,7 @@ public class SingePmsController extends ApiBaseAction {
             log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
         }
+        goods.setGoods(buildFenPrice(goods.getGoods()));
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
@@ -305,13 +323,9 @@ public class SingePmsController extends ApiBaseAction {
 
         if (ValidatorUtils.notEmpty(isVip) && isVip > 0) {
             product.setIsVip(isVip);
-        }else {
-            product.setIsVip(0);
         }
         if (ValidatorUtils.notEmpty(isFenxiao) && isFenxiao > 0) {
             product.setIsFenxiao(isFenxiao);
-        }else {
-            product.setIsFenxiao(0);
         }
         if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId > 0) {
             product.setProductCategoryId(productCategoryId);
@@ -368,7 +382,7 @@ public class SingePmsController extends ApiBaseAction {
 
     private void buildFenPrice(IPage<PmsProduct> list,PmsProduct product) {
         if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
-            if (product.getIsFenxiao()==1){
+            if (product.getIsFenxiao()!=null && product.getIsFenxiao()==1){
                 for (PmsProduct pmsProduct : list.getRecords()) {
                     if ( pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
                         FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
@@ -379,7 +393,7 @@ public class SingePmsController extends ApiBaseAction {
 
                 }
             }
-            if (product.getIsVip()==1){
+            if (product.getIsVip()!=null && product.getIsVip()==1){
                 UmsMember member =memberService.getNewCurrentMember();
                 for (PmsProduct pmsProduct : list.getRecords()) {
 

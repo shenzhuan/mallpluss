@@ -165,23 +165,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Resource
     private IUmsMemberLevelService memberLevelService;
 
-    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
-        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
-            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
-            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
-                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
-            }
-        }
-        UmsMember member = memberService.getNewCurrentMember();
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
-            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
-            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
-                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
-                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
-            }
-        }
-        return pmsProduct;
-    }
+
 
     @Override
     public GoodsDetailResult getGoodsRedisById(Long id) {
@@ -191,7 +175,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             return null;
         }
         GoodsDetailResult param = new GoodsDetailResult();
-        param.setGoods(buildFenPrice(goods));
+        param.setGoods(goods);
 
       /*  List<PmsProductLadder> productLadderList = productLadderMapper.selectList(new QueryWrapper<PmsProductLadder>().eq("product_id", goods.getId()));
 

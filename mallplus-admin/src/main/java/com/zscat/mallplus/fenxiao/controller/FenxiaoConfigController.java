@@ -7,6 +7,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.service.IFenxiaoConfigService;
 import com.zscat.mallplus.util.EasyPoiUtils;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.ApiOperation;
@@ -71,9 +72,10 @@ public class FenxiaoConfigController {
     @ApiOperation("更新分销配置")
     @PostMapping(value = "/update/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoConfig:update')")
-    public Object updateFenxiaoConfig(@RequestBody FenxiaoConfig entity) {
+    public Object updateFenxiaoConfig(@RequestBody FenxiaoConfig entity,@PathVariable Long id) {
         try {
-            if (IFenxiaoConfigService.updateById(entity)) {
+
+            if (IFenxiaoConfigService.update(entity,new QueryWrapper<FenxiaoConfig>().eq("store_id", UserUtils.getCurrentMember().getStoreId()))) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -112,6 +114,12 @@ public class FenxiaoConfigController {
                 return new CommonResult().paramFailed("分销配置id");
             }
             FenxiaoConfig coupon = IFenxiaoConfigService.getOne(new QueryWrapper<>());
+            if (coupon==null){
+                FenxiaoConfig config = new FenxiaoConfig();
+                config.setId(1L);
+                config.setCreateTime(new Date());
+                IFenxiaoConfigService.save(config);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询分销配置明细：%s", e.getMessage(), e);

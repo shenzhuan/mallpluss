@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.service.ISysAppletSetService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -70,6 +71,7 @@ public class SysAppletSetController {
     @PostMapping(value = "/update/{id}")
     public Object updateSysAppletSet(@RequestBody SysAppletSet entity) {
         try {
+
             if (ISysAppletSetService.update(entity, new QueryWrapper<>())) {
                 return new CommonResult().success();
             }
@@ -107,6 +109,10 @@ public class SysAppletSetController {
                 return new CommonResult().paramFailed("id");
             }
             SysAppletSet coupon = ISysAppletSetService.getOne(new QueryWrapper<>());
+            if (coupon==null){
+                coupon = new SysAppletSet();
+                ISysAppletSetService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询明细：%s", e.getMessage(), e);

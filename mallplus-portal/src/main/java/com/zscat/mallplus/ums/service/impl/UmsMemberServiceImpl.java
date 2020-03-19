@@ -224,10 +224,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if ("OPTIONS".equals(requestType)) {
                 return null;
             }
-            UmsMember member = UserUtils.getCurrentMember();
+           /* UmsMember member = UserUtils.getCurrentMember();
             if (member != null && member.getId() != null) {
                 return member;
-            }
+            }*/
 
             String tokenPre = "authorization";
             String authHeader = request.getParameter(tokenPre);
@@ -238,7 +238,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 String authToken = authHeader.substring("Bearer".length());
                 String username = jwtTokenUtil.getUserNameFromToken(authToken);
                 if (ValidatorUtils.notEmpty(username)) {
-                    member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                    UmsMember  member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)), UmsMember.class);
                     if (member == null || member.getId() == null) {
                         member = getByUsername(username);
                     }
@@ -307,7 +307,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
      */
     @Override
     public void addIntegration(Long id, Integer integration, int changeType, String note, int sourceType, String operateMan) {
-        UmsIntegrationConsumeSetting setting = integrationConsumeSettingMapper.selectById(1);
+        UmsIntegrationConsumeSetting setting = integrationConsumeSettingMapper.selectOne(new QueryWrapper<>());
         if (setting==null){
             return;
         }
@@ -330,13 +330,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateMan(operateMan);
         umsIntegrationChangeHistoryService.save(history);
         UmsMember member = memberMapper.selectById(id);
-        if (ValidatorUtils.empty(member.getIntegration())) {
+        if (member==null ) {
             member.setIntegration(0);
+        }else {
+            if (member!=null && ValidatorUtils.empty(member.getIntegration())) {
+                member.setIntegration(0);
+            }
+            member.setIntegration(member.getIntegration() + integration);
+            memberMapper.updateById(member);
+            redisService.set( String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
-        member.setIntegration(member.getIntegration() + integration);
-        memberMapper.updateById(member);
-        redisService.set( String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
-
     }
 
     @Override
@@ -486,8 +489,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         //没有该用户进行添加操作
 
         UmsMember umsMember = new UmsMember();
-        umsMember.setMemberLevelId(4L);
-        umsMember.setMemberLevelName("普通会员");
+        umsMember.setMemberLevelId(9999L);
+        umsMember.setMemberLevelName("未开通会员");
         umsMember.setUsername(user.getUsername());
         umsMember.setNickname(user.getUsername());
         umsMember.setSourceType(user.getSourceType());
@@ -497,8 +500,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         umsMember.setStatus(1);
         umsMember.setBuyCount(0);
         umsMember.setBuyMoney(BigDecimal.ZERO);
-        umsMember.setBlance(new BigDecimal(10000));
-        umsMember.setIntegration(10000);
+        umsMember.setBlance(new BigDecimal(0));
+        umsMember.setIntegration(0);
         if (ValidatorUtils.notEmpty(user.getInvitecode())) {
             umsMember.setInvitecode(user.getInvitecode());
         }
@@ -607,7 +610,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             umsMember.setPassword(passwordEncoder.encode("123456"));
             umsMember.setCreateTime(new Date());
             umsMember.setStatus(1);
-            umsMember.setBlance(new BigDecimal(10000));
+            umsMember.setBlance(new BigDecimal(0));
             umsMember.setIntegration(0);
             umsMember.setMemberLevelId(4L);
             umsMember.setCity(city);
@@ -707,7 +710,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 umsMember.setPassword(passwordEncoder.encode("123456"));
                 umsMember.setCreateTime(new Date());
                 umsMember.setStatus(1);
-                umsMember.setBlance(new BigDecimal(10000));
+                umsMember.setBlance(new BigDecimal(0));
                 umsMember.setIntegration(0);
                 umsMember.setMemberLevelId(4L);
                 umsMember.setAvatar(req.getCloudID());
@@ -754,7 +757,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     userVo.setPassword(passwordEncoder.encode("123456"));
                     userVo.setCreateTime(new Date());
                     userVo.setStatus(1);
-                    userVo.setBlance(new BigDecimal(10000));
+                    userVo.setBlance(new BigDecimal(0));
                     userVo.setIntegration(0);
                     userVo.setMemberLevelId(4L);
                     userVo.setAvatar(req.getCloudID());
@@ -845,7 +848,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 umsMember.setPassword(passwordEncoder.encode("123456"));
                 umsMember.setCreateTime(new Date());
                 umsMember.setStatus(1);
-                umsMember.setBlance(new BigDecimal(10000));
+                umsMember.setBlance(new BigDecimal(0));
                 umsMember.setIntegration(0);
                 umsMember.setMemberLevelId(4L);
                 umsMember.setAvatar(req.getCloudID());
@@ -970,7 +973,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 umsMember.setPassword(passwordEncoder.encode("123456"));
                 umsMember.setCreateTime(new Date());
                 umsMember.setStatus(1);
-                umsMember.setBlance(new BigDecimal(10000));
+                umsMember.setBlance(new BigDecimal(0));
                 umsMember.setIntegration(0);
                 umsMember.setMemberLevelId(4L);
                 umsMember.setAvatar(req.getCloudID());

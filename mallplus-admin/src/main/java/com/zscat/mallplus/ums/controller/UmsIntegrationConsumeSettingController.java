@@ -3,8 +3,10 @@ package com.zscat.mallplus.ums.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.ums.entity.UmsIntegrationConsumeSetting;
 import com.zscat.mallplus.ums.service.IUmsIntegrationConsumeSettingService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -71,7 +73,7 @@ public class UmsIntegrationConsumeSettingController {
     //  @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
     public Object updateUmsIntegrationConsumeSetting(@RequestBody UmsIntegrationConsumeSetting entity) {
         try {
-            if (IUmsIntegrationConsumeSettingService.updateById(entity)) {
+            if (IUmsIntegrationConsumeSettingService.update(entity,new QueryWrapper<UmsIntegrationConsumeSetting>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -110,6 +112,10 @@ public class UmsIntegrationConsumeSettingController {
                 return new CommonResult().paramFailed("积分消费设置id");
             }
             UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getOne(new QueryWrapper<>());
+            if (coupon==null){
+                coupon = new UmsIntegrationConsumeSetting();
+                IUmsIntegrationConsumeSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询积分消费设置明细：%s", e.getMessage(), e);
