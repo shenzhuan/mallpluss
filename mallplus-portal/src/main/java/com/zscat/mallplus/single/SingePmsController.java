@@ -9,6 +9,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
@@ -27,6 +28,7 @@ import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsFlashPromotionProductRelationService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
+import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
@@ -81,6 +83,8 @@ public class SingePmsController extends ApiBaseAction {
     @Resource
     private SmsGroupRecordMapper groupRecordMapper;
 
+    @Resource
+    private ISysAreaService areaService;
     @Resource
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
@@ -803,7 +807,42 @@ public class SingePmsController extends ApiBaseAction {
     public List<PromotionProduct> getPromotionProductList(@Param("ids") List<Long> ids) {
         return productMapper.getPromotionProductList(ids);
     }
+    @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商品类型")
+    @GetMapping(value = "/typeGoodsList1")
+    public Object typeGoodsList1(PmsProductCategory productCategory) throws Exception {
+        List<ProductTypeVo> relList = new ArrayList<>();
 
+        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<PmsProductCategory>());
+        for (PmsProductCategory v : categories) {
+            if (v.getLevel() == 0) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
+                relList.add(vo);
+            } else  if (v.getLevel() == 1){
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setPid(v.getParentId());
+                vo.setLevel(v.getLevel());
+                relList.add(vo);
+            }else  if (v.getLevel() == 2){
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
+                vo.setPid(v.getParentId());
+                vo.setPrice(BigDecimal.ONE);
+                vo.setPic(v.getIcon());
+                relList.add(vo);
+            }
+        }
+
+        return new CommonResult().success(relList);
+    }
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品类型下的商品列表")
@@ -819,7 +858,7 @@ public class SingePmsController extends ApiBaseAction {
 
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
-        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 100), new QueryWrapper<>(productQueryParam)).getRecords();
+        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("product_category_id",0).select(ConstansValue.sampleGoodsList1)).getRecords();
 
         for (PmsProduct l : list) {
             ProductTypeVo vo = new ProductTypeVo();
@@ -829,25 +868,78 @@ public class SingePmsController extends ApiBaseAction {
             vo.setName(l.getName());
             vo.setPrice(l.getPrice());
             vo.setPid(l.getProductCategoryId());
+            vo.setLevel(2);
             relList.add(vo);
         }
-        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);ids.add(0L);
+        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<PmsProductCategory>().in("level",ids));
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if (v.getLevel() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
+                vo.setLevel(v.getLevel());
                 vo.setId(v.getId());
                 relList.add(vo);
-            } else {
+            } else   if (v.getLevel() == 1){
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
                 vo.setPid(v.getParentId());
                 relList.add(vo);
             }
         }
         redisService.set(Rediskey.specialcategoryAndGoodsList, JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList, 2);
+        redisService.expire(Rediskey.specialcategoryAndGoodsList, 20);
+        return new CommonResult().success(relList);
+    }
+
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商品类型下的商品列表")
+    @GetMapping(value = "/areaGoodsList")
+    public Object areaGoodsList(PmsProductCategory productCategory) throws Exception {
+        List<ProductTypeVo> relList = new ArrayList<>();
+
+        PmsProduct productQueryParam = new PmsProduct();
+
+        productQueryParam.setPublishStatus(1);
+        productQueryParam.setVerifyStatus(1);
+        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("area_id",0).select(ConstansValue.sampleGoodsList1)).getRecords();
+
+        for (PmsProduct l : list) {
+            ProductTypeVo vo = new ProductTypeVo();
+            vo.setGoodsId(l.getId());
+            vo.setId(l.getId());
+            vo.setPic(l.getPic());
+            vo.setName(l.getName());
+            vo.setLevel(2);
+            vo.setPrice(l.getPrice());
+            vo.setPid(l.getAreaId());
+            relList.add(vo);
+        }
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);ids.add(0L);
+        List<SysArea> categories = areaService.list(new QueryWrapper<SysArea>().in("deep",ids));
+        for (SysArea v : categories) {
+            if (v.getDeep() == 0) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(0);
+                relList.add(vo);
+            } else {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setPid(v.getPid());
+                vo.setLevel(1);
+                relList.add(vo);
+            }
+        }
+
         return new CommonResult().success(relList);
     }
 

@@ -17,5 +17,6 @@ public class ProductTypeVo {
     private String pic;
     private String name;
     private BigDecimal price;
+    private Integer level;
 
 }
