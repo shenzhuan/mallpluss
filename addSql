@@ -43,3 +43,8 @@ alter table pms_product_attribute_category add show_index int ;
 alter table pms_product add is_vip int not null default 0; # 是否会员商品
 
 alter table oms_order add vip_amount DECIMAL not null default 0; # 会员优惠价格
+
+-- 20200321 商品分拥
+alter table oms_order_item add is_fenxiao int not null default 0; # 是否分拥
+
+alter table oms_order_item add invite_memberId int not null default 0; # 分佣商品 链接带过来的会员编号

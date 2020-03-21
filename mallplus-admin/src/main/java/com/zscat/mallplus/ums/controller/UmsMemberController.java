@@ -55,7 +55,6 @@ public class UmsMemberController {
     @SysLog(MODULE = "ums", REMARK = "根据条件查询所有会员表列表")
     @ApiOperation("根据条件查询所有会员表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('ums:UmsMember:read')")
     public Object getUmsMemberByPage(UmsMember entity,
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                      @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize

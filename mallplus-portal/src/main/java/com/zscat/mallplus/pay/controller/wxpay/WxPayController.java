@@ -13,6 +13,7 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
@@ -73,6 +74,9 @@ public class WxPayController extends AbstractWxPayApiController {
     private IOmsOrderItemService orderItemService;
     @Autowired
     private IOmsPaymentsService paymentsService;
+    @Resource
+    private IUmsMemberService memberService;
+
     @Resource
     private SysAppletSetMapper appletSetMapper;
     private String notifyUrl = "http://java.chengguo.link:8081/api";
@@ -978,6 +982,12 @@ public class WxPayController extends AbstractWxPayApiController {
                     childOrder.setPaymentTime(new Date());
                     orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
+                OmsOrderItem queryO = new OmsOrderItem();
+                queryO.setOrderId(orderInfo.getId());
+                queryO.setType(AllEnum.OrderItemType.GOODS.code());
+                List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
+                // 分拥计算
+                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

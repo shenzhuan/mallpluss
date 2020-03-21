@@ -2,11 +2,15 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.vo.*;
+import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.ApplyRefundVo;
 import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -216,4 +220,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return
      */
     Object applyMember( Long memberLevelId);
+
+    /**
+     * 分拥计算
+     * @param list
+     * @param currentMember
+     */
+    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember );
 }

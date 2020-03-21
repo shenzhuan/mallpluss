@@ -81,7 +81,7 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
         // 3 分配物业公司角色
         SysUserRole userRole = new SysUserRole();
         userRole.setAdminId(user.getId());
-        userRole.setRoleId(3L);
+        userRole.setRoleId(5L);
         userRoleMapper.insert(userRole);
         return true;
     }

@@ -103,7 +103,7 @@ public class SysUserController extends ApiController {
             log.error("保存用户：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
-        return new CommonResult().failed();
+        return new CommonResult().failed("用户名已存在");
     }
 
     @SysLog(MODULE = "sys", REMARK = "更新用户")
@@ -322,13 +322,13 @@ public class SysUserController extends ApiController {
     }
 
     @ApiOperation("修改展示状态")
-    @RequestMapping(value = "/update/updateShowStatus")
+    @RequestMapping(value = "/update/updateShowStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "sys", REMARK = "修改展示状态")
-    public Object updateShowStatus(@RequestParam("ids") Long ids,
+    public Object updateShowStatus(@RequestParam("ids")  List<Long> ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         SysUser role = new SysUser();
-        role.setId(ids);
+        role.setId(ids.get(0));
         role.setStatus(showStatus);
         sysUserService.updateById(role);
 
