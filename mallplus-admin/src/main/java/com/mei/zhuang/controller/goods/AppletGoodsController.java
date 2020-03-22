@@ -82,6 +82,7 @@ public class AppletGoodsController {
             @RequestParam(value = "storeId", required = false) Long storeId,
             @RequestParam(value = "sort", required = false) Integer sort,
             @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         EsShopGoods product = new EsShopGoods();
@@ -103,10 +104,18 @@ public class AppletGoodsController {
         }
         IPage<EsShopGoods> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).orderByDesc(orderColum));
+            if (orderBy==1) {
+                list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).orderByDesc(orderColum));
+            }else {
+                list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).orderByAsc(orderColum));
+            }
         } else {
-            list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).orderByDesc(orderColum));
-        }
+            if (orderBy==1) {
+                list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).orderByDesc(orderColum));
+            }else {
+                list = goodsService.page(new Page<EsShopGoods>(pageNum, pageSize), new QueryWrapper<>(product).orderByAsc(orderColum));
+            }
+            }
         return new CommonResult().success(list);
     }
 
