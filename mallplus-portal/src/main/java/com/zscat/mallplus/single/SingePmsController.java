@@ -1062,7 +1062,7 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(product.getPic());
     }
 
-    @ApiOperation("生成商品海报")
+    @ApiOperation("商品数量")
     @GetMapping(value = "/goodsCount")
     public Object goodsCount() {
         PmsProduct productQueryParam = new PmsProduct();
