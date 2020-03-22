@@ -177,7 +177,8 @@ public class ShareController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定分享助力编号");
             }
-            String img = ImgBase64Util.StringUtil(id, "add/shareHelp/index/index");
+            String img = null;
+                    //ImgBase64Util.StringUtil(id, "add/shareHelp/index/index");
             return new CommonResult().success(img);
         } catch (Exception e) {
             log.error("分享助力明细：%s", e.getMessage(), e);

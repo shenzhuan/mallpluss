@@ -61,7 +61,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-            <version>1.14.2</version>
+            <version>1.18.4</version>
         </dependency>
         <!--Swagger-UI API文档生产工具-->
         <dependency>

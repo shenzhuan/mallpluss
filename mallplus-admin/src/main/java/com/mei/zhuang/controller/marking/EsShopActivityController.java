@@ -152,7 +152,9 @@ public class EsShopActivityController {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().failed("请指定编号");
             }
-            String img = ImgBase64Util.StringUtil(id, "pages/goods/detail/index");
+            String img =  null;
+
+                    //ImgBase64Util.StringUtil(id, "pages/goods/detail/index");
 
             return new CommonResult().success("success", img);
         } catch (Exception e) {
