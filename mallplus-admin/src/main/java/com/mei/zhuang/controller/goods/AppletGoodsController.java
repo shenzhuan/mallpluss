@@ -234,7 +234,7 @@ public class AppletGoodsController {
             diypage.setType(2);
             // EsShopDiypage newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
             EsShopDiypage newDiy = (EsShopDiypage) JsonUtils.fromJson(redisRepository.get(String.format(RedisConstant.EsShopDiypage, 12)),EsShopDiypage.class);
-            if (ValidatorUtils.empty(newDiy)) {
+            if (true) {
                 newDiy = esShopDiypageService.getOne(new QueryWrapper<>(diypage));
                 redisRepository.set(String.format(RedisConstant.EsShopDiypage, 12), newDiy);
             }

@@ -88,7 +88,7 @@ public class EsShopDiypageController {
             //判断状态是否为禁用状态
             List<Long> idList = new ArrayList<>();
             EsShopDiypage div = diypageService.getById(id);
-            if (div.getStatus() != 0) {
+            if (div.getStatus()==null || div.getStatus() == 1) {
                 return new CommonResult().failed("分类未禁用不得删除");
             }
             idList.add(id);
