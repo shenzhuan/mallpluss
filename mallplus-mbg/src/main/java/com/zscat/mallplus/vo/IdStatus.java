@@ -8,5 +8,5 @@ import lombok.Setter;
 public class IdStatus {
     private Long id;
     private Integer status;
-
+    private Integer type;
 }

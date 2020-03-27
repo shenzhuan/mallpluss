@@ -104,7 +104,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         SysUser user = UserUtils.getCurrentMember();
         product.setStoreName(user.getStoreName());
         //product.setStoreId(user.getStoreId());
-        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
+        if (ValidatorUtils.empty(product.getAlbumPics()) ){
             product.setAlbumPics(product.getPic());
         }
         productMapper.insert(product);

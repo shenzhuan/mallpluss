@@ -52,9 +52,9 @@ public class MybatisPlusConfig {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
                 Integer storeId = UserUtils.getCurrentMember().getStoreId();
                 if (null == storeId) {
-                    // storeId = 1;
+                     storeId = 1;
                     System.out.println("#1129 getCurrentProviderId error.");
-                    throw new RuntimeException("#1129 getCurrentProviderId error.");
+                   // throw new RuntimeException("#1129 getCurrentProviderId error.");
                 }
                 return new LongValue(storeId);
             }

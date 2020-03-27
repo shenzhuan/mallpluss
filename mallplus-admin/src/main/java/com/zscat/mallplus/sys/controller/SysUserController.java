@@ -171,9 +171,10 @@ public class SysUserController extends ApiController {
         if (refreshToken == null) {
             return new CommonResult().failed();
         }
-        Map<String, String> tokenMap = new HashMap<>();
+        Map<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", tokenHead);
+        tokenMap.put("userInfo", UserUtils.getCurrentMember());
         return new CommonResult().success(tokenMap);
     }
 
@@ -210,7 +211,7 @@ public class SysUserController extends ApiController {
             Map<String, Object> tokenMap = new HashMap<>();
             tokenMap.put("token", token);
             tokenMap.put("tokenHead", tokenHead);
-            // tokenMap.put("userId", UserUtils.getCurrentMember().getId());
+            tokenMap.put("userInfo", UserUtils.getCurrentMember());
             return new CommonResult().success(tokenMap);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());

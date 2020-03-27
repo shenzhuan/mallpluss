@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.bo.Tree;
 import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysPermissionNode;
+import com.zscat.mallplus.sys.entity.SysRolePermission;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface ISysPermissionService extends IService<SysPermission> {
     List<SysPermissionNode> treeList();
 
     List<Tree<SysPermission>> getAllPermission();
+
+    List<SysRolePermission> leftMenu(Long userId);
 }
