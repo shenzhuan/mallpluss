@@ -716,7 +716,7 @@ public class EsShopGoodsServiceImpl extends ServiceImpl<EsShopGoodsMapper, EsSho
                 //查询商品分类
                 EsShopGoodsCateMap cateMap = new EsShopGoodsCateMap();
                 cateMap.setGoodsId(coupon.getId());
-                List<EsShopGoodsCateMap> listCateMap = esShopGoodsCateMapMapper.selectList(new QueryWrapper<>(cateMap));
+                List<EsShopGoodsCateMap> listCateMap = esShopGoodsCateMapMapper.selectList(new QueryWrapper<EsShopGoodsCateMap>().eq("goods_id",coupon.getId()));
                 if (listCateMap != null) {
                     for (EsShopGoodsCateMap map : listCateMap) {
                         EsShopGoodsCategory category = new EsShopGoodsCategory();
