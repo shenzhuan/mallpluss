@@ -22,4 +22,24 @@
         from sys_user_role ar left join sys_role r on ar.role_id = r.id
         where ar.admin_id = #{adminId}
     </select>
+    <select id="getRoleIdsByUserId" resultType="java.lang.Integer">
+        SELECT
+        role_id
+        FROM
+        sys_user_role
+        WHERE
+        admin_id = #{userId}
+    </select>
+
+    <select id="crmSysRoleMenu" resultType="com.zscat.mallplus.sys.entity.SysRolePermission">
+        SELECT
+        *
+        FROM
+        sys_role_permission
+        WHERE
+        role_id IN
+        <foreach collection="roleIds" index="index" item="i" open="(" separator="," close=")">
+            #{i}
+        </foreach>
+    </select>
 </mapper>

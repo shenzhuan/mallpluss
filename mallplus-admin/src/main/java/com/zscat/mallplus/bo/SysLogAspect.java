@@ -137,7 +137,7 @@ public class SysLogAspect {
             sysLog.setIp(IpAddressUtil.getIpAddr(request));
             //用户名
             SysUser sysUserEntity = UserUtils.getCurrentMember();
-            if (null != sysUserEntity) {
+            if (null != sysUserEntity && sysUserEntity.getId()>0) {
                 sysLog.setUserId(sysUserEntity.getId());
                 sysLog.setUserName(sysUserEntity.getUsername());
             }

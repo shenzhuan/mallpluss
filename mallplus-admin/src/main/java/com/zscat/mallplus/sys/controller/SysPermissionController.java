@@ -6,12 +6,14 @@ import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysPermissionNode;
 import com.zscat.mallplus.sys.service.ISysPermissionService;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -183,5 +185,11 @@ public class SysPermissionController extends BaseController {
         return new CommonResult().success(permissionNodeList);
     }
 
+    @SysLog(MODULE = "系统菜单", REMARK = "获取左侧菜单树结构数据")
+    @ApiOperation("获取左侧菜单树结构数据")
+    @RequestMapping(value = "/menus/left/{id}", method = RequestMethod.GET)
+    public Object leftMenu(@ApiParam("后台用户权限表id") @PathVariable Long id) {
+        return new CommonResult().success(ISysPermissionService.leftMenu(id));
+    }
 
 }

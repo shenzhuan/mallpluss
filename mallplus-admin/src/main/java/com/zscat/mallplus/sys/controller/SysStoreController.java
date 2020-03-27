@@ -182,6 +182,7 @@ public class SysStoreController {
     public Object storeDetail() {
         SysStore store = ISysStoreService.getById(1);
         List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", store.getId()));
+        List<PmsProductAttributeCategory> newlist = new ArrayList<>();
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
@@ -190,11 +191,12 @@ public class SysStoreController {
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(goodsList.getRecords());
+                newlist.add(gt);
             } else {
                 gt.setGoodsList(new ArrayList<>());
             }
         }
-        store.setList(list);
+        store.setList(newlist);
         store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id", store.getId())));
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.STORE_VIEWCOUNT_CODE + store.getId();

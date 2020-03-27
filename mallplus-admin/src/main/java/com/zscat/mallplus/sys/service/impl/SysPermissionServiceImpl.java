@@ -1,12 +1,17 @@
 package com.zscat.mallplus.sys.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.zscat.mallplus.bo.Tree;
 import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysPermissionNode;
+import com.zscat.mallplus.sys.entity.SysRolePermission;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.mapper.SysPermissionMapper;
+import com.zscat.mallplus.sys.mapper.SysRoleMapper;
+import com.zscat.mallplus.sys.mapper.SysRolePermissionMapper;
 import com.zscat.mallplus.sys.service.ISysPermissionService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -39,10 +44,12 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     private SysPermissionMapper permissionMapper;
     @Resource
     private ISysUserService userService;
-
+    @Resource
+    private SysRoleMapper roleMapper;
     @Resource
     private RedisService redisService;
-
+    @Resource
+    private SysRolePermissionMapper rolePermissionMapper;
     @Override
     public List<Tree<SysPermission>> getAllPermission() {
         List<Tree<SysPermission>> trees = Lists.newArrayList();
@@ -74,6 +81,24 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             return list;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<SysRolePermission> leftMenu(Long userId) {
+        SysUser user = userService.getById(userId);
+        if (user!=null  && user.getId()>0){
+            if("admin".equals(user.getUsername())){
+                return rolePermissionMapper.selectList(new QueryWrapper<>());
+            }
+            List<Integer> roleIdList = roleMapper.getRoleIdsByUserId(userId);
+            if (roleIdList!=null && roleIdList.size()>0){
+                List<SysRolePermission> menuList2 = roleMapper.crmSysRoleMenu(roleIdList);
+                return menuList2;
+            }
+        }
+
+        return new ArrayList<>();
+
     }
 
     @Override

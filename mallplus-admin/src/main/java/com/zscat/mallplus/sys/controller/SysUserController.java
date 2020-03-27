@@ -210,6 +210,7 @@ public class SysUserController extends ApiController {
             Map<String, Object> tokenMap = new HashMap<>();
             tokenMap.put("token", token);
             tokenMap.put("tokenHead", tokenHead);
+            tokenMap.put("userInfo", UserUtils.getCurrentMember());
             // tokenMap.put("userId", UserUtils.getCurrentMember().getId());
             return new CommonResult().success(tokenMap);
         } catch (Exception e) {

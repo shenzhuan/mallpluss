@@ -295,4 +295,10 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private BigDecimal fenxiaoPrice;
     @TableField(exist = false)
     private TimeSecound timeSecound;
+
+    /**
+     * 1 出售中 2 已售馨 3 仓库中 4 回收站
+     */
+    @TableField(exist = false)
+    private Integer status;
 }
