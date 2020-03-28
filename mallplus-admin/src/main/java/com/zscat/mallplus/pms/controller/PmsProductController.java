@@ -50,6 +50,9 @@ public class PmsProductController {
     ) {
         try {
             IPage<PmsProduct> page = null;
+            if (ValidatorUtils.empty(entity.getStatus())){
+                entity.setStatus(0);
+            }
             if (ValidatorUtils.notEmpty(entity.getKeyword())) {
                 if (entity.getStatus()==1){
                     entity.setPublishStatus(1);
@@ -345,6 +348,9 @@ public class PmsProductController {
     ) {
         try {
             IPage<PmsProduct> page = null;
+            if (ValidatorUtils.empty(entity.getStatus())){
+                entity.setStatus(0);
+            }
             if (ValidatorUtils.notEmpty(entity.getKeyword())) {
                 if (entity.getStatus()==1){
                     entity.setPublishStatus(1);

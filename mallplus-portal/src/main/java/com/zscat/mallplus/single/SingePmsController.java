@@ -621,7 +621,7 @@ public class SingePmsController extends ApiBaseAction {
         GoodsDetailResult goods = null;
         try {
             goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)) {
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
                 log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
             }

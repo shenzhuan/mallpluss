@@ -158,7 +158,7 @@ server {
 
             #后端端口(后端最终访问的端口)
 
-            proxy_pass   http://39.106.212.32:8081 ;
+            proxy_pass   http://47.244.191.12:8081 ;
 
         }
         location @router {
@@ -204,7 +204,7 @@ server {
 
             #后端端口(后端最终访问的端口)
 
-            proxy_pass   http://39.106.212.32:8081 ;
+            proxy_pass   http://47.244.191.12:8081 ;
 
         }
         location @router {

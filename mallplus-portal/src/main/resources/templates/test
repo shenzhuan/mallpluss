@@ -3,7 +3,7 @@ netstat -ntlp //查看当前所有tcp端口·
 netstat -ntulp |grep 80 //查看所有80端口使用情况·
 
 
-39.106.212.32
+47.244.191.12
 
 nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web1.log 2>&1 &
 
@@ -23,9 +23,9 @@ ps -ef|grep java
 
 
 nohup java -Dfile.encoding=UTF-8 -jar /root/jm/litemall-all-0.1.0-exec.jar >lite.log 2>&1 &
-    ssh root@39.106.212.32
+    ssh root@47.244.191.12
 
-sftp root@39.106.212.32
+sftp root@47.244.191.12
 
 
 
@@ -73,7 +73,7 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
 put -r /Users/java/test/git/crmbmall/h5bak1  /root/jm
 
-scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
+scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@47.244.191.12:/root/jm
 
 scp /path/filename username@servername:/path
 

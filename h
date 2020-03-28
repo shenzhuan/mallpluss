@@ -39,7 +39,7 @@ send_timeout 45;
 
     server {
         listen       8090;
-        server_name  39.106.212.32;
+        server_name  47.244.191.12;
 	client_max_body_size 10M;
         #charset koi8-r;
 
@@ -114,7 +114,7 @@ server {
         location /api {
             rewrite  ^/api/(.*)$ /$1 break;
             include  uwsgi_params;
-            proxy_pass   http://39.106.212.32:8081 ;
+            proxy_pass   http://47.244.191.12:8081 ;
         }
         location @router {
         rewrite ^.*$ /index.html last;
