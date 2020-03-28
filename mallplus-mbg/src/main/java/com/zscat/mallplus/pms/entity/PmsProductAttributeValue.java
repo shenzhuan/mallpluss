@@ -43,7 +43,7 @@ public class PmsProductAttributeValue extends BaseEntity implements Serializable
     // 1 规格 2 参数
     private Integer type;
 
-    private Integer sort;
+
     @TableField(exist = false)
     private List pics;
 
