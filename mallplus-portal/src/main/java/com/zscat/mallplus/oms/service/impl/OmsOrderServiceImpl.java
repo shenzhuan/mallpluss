@@ -1291,7 +1291,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     public OmsOrder blancePay(PayParam payParam) {
         OmsOrder order = orderMapper.selectById(payParam.getOrderId());
-        UmsMember userDO = memberService.getNewCurrentMember();
+        UmsMember userDO1 = memberService.getNewCurrentMember();
+        UmsMember userDO = memberService.getById(userDO1.getId());
         if (order.getPayAmount().compareTo(userDO.getBlance()) > 0) {
             throw new ApiMallPlusException("余额不足！");
         }
@@ -1357,7 +1358,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Transactional
     @Override
     public OmsOrder blancePay(OmsOrder order) {
-        UmsMember userDO = memberService.getNewCurrentMember();
+        UmsMember userDO1 = memberService.getNewCurrentMember();
+        UmsMember userDO = memberService.getById(userDO1.getId());
         if (order.getPayAmount().compareTo(userDO.getBlance()) > 0) {
             throw new ApiMallPlusException("余额不足！");
         }
@@ -2217,7 +2219,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItem.setProductSkuCode(pmsSkuStock.getSkuCode());
                 cartItem.setQuantity(cartParam.getTotal());
                 cartItem.setProductAttr(pmsSkuStock.getMeno());
-                cartItem.setProductPic(pmsSkuStock.getPic());
+                if (ValidatorUtils.empty(pmsSkuStock.getPic())){
+                    cartItem.setProductPic(pmsProduct.getPic());
+                }else {
+                    cartItem.setProductPic(pmsSkuStock.getPic());
+                }
+
                 cartItem.setSp1(pmsSkuStock.getSp1());
                 cartItem.setSp2(pmsSkuStock.getSp2());
                 cartItem.setSp3(pmsSkuStock.getSp3());

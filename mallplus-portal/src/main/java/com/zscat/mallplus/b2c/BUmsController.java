@@ -109,7 +109,7 @@ public class BUmsController {
             return new CommonResult().success();
         }
         entity.setMemberId(memberService.getNewCurrentMember().getId());
-        if (entity == null || entity.getType() == 0) {
+        if (entity == null || ValidatorUtils.empty(entity.getType())) {
             return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>()));
         }
         return new CommonResult().success(blanceLogService.page(new Page<UmsMemberBlanceLog>(pageNum, pageSize), new QueryWrapper<>(entity)));

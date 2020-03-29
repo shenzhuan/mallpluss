@@ -9,6 +9,7 @@ import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
 import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.mapper.PmsSmallNaviconCategoryMapper;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
@@ -26,6 +27,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -44,7 +46,8 @@ public class HomeController {
     private ISmsCouponService couponService;
     @Autowired
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
-
+    @Resource
+    private PmsSmallNaviconCategoryMapper smallNaviconCategoryMapper;
     @Autowired
     private IPmsProductService pmsProductService;
 
@@ -151,7 +154,7 @@ public class HomeController {
     @RequestMapping(value = "/navList", method = RequestMethod.GET)
     @ApiOperation(value = "获取导航栏")
     public Object getNavList() {
-        return new CommonResult().success(advertiseService.getNav());
+        return new CommonResult().success( smallNaviconCategoryMapper.selectList(new QueryWrapper<>()));
     }
 
 
