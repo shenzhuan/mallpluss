@@ -48,3 +48,14 @@ alter table oms_order add vip_amount DECIMAL not null default 0; # 会员优惠�
 alter table oms_order_item add is_fenxiao int not null default 0; # 是否分拥
 
 alter table oms_order_item add invite_memberId int not null default 0; # 分佣商品 链接带过来的会员编号
+
+
+-- 20200330 商品分拥
+alter table ums_member_blance_log add status int not null default 0; #  审核状态
+alter table ums_member_blance_log add with_draw_type int not null default 0; # 提现类型 1 银行卡 2 微信 3支付宝
+alter table ums_member_blance_log add obj_id int not null default 0; # 关联提现类型的编号
+alter table ums_member_blance_log add objname varchar(127) ; # 关联提现类型的编号
+
+alter table ums_member_receive_address add area_id varchar(12) ;
+
+

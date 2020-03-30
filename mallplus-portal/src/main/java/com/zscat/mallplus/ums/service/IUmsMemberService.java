@@ -2,12 +2,14 @@ package com.zscat.mallplus.ums.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.AppletLoginnewParam;
 import com.zscat.mallplus.vo.SmsCode;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -138,5 +140,11 @@ public interface IUmsMemberService extends IService<UmsMember> {
     Object resetPassword(String phone, String password, String confimpassword, String authCode);
 
     Object loginByWeixin2(AppletLoginnewParam param);
+
+    /**
+     * 用户提现
+     * @return
+     */
+    Object withDraw(UmsMemberBlanceLog blanceLog);
 }
 

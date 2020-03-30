@@ -336,11 +336,11 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         articleClassifyPa.setList(subjectCategoryService.list(new QueryWrapper<CmsSubjectCategory>().eq("show_status", 1)));
         PagesItems articleClassifyItems = new PagesItems(6, "articleClassify", "mobile_home", 6, 6, articleClassifyPa);
 */
-        Params couponPa = new Params();
+       /* Params couponPa = new Params();
         couponPa.setLimit(10);
         couponPa.setList(couponService.selectNotRecive());
         PagesItems couponItems = new PagesItems(7, "coupon", "mobile_home", 7, 7, couponPa);
-
+*/
         Params articlePa = new Params();
         articlePa.setLimit(10);
         articlePa.setList(getRecommendSubjectList(1, 10));
@@ -364,7 +364,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         pagesItemsList.add(pintuanItems);
       //  pagesItemsList.add(groupPurchaseItems);
       //  pagesItemsList.add(articleClassifyItems);
-        pagesItemsList.add(couponItems);
+       // pagesItemsList.add(couponItems);
         pagesItemsList.add(goodsItems);
         pagesItemsList.add(articleItems);
 

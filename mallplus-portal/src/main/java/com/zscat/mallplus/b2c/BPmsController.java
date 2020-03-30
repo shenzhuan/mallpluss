@@ -145,6 +145,7 @@ public class BPmsController extends ApiBaseAction {
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
+        goods.setGoods(buildFenPrice(goods.getGoods()));
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
@@ -166,6 +167,23 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
+    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            }
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+            }
+        }
+        return pmsProduct;
+    }
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品列表")
@@ -617,10 +635,10 @@ public class BPmsController extends ApiBaseAction {
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
+            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList1)));
         }
         redisService.set(Rediskey.categoryAndGoodsList, JsonUtils.objectToJson(productAttributeCategoryList));
-        redisService.expire(Rediskey.categoryAndGoodsList, 2);
+        redisService.expire(Rediskey.categoryAndGoodsList, 20);
         return new CommonResult().success(productAttributeCategoryList);
     }
 

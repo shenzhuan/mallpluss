@@ -443,7 +443,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //获取用户积分
 
         result.setBlance(currentMember.getBlance());
-
+        result.setOffline(2);
         //获取积分使用规则
         UmsIntegrationConsumeSetting integrationConsumeSetting = integrationConsumeSettingMapper.selectOne(new QueryWrapper<>());
 
@@ -495,7 +495,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         BigDecimal totalPayAmount = BigDecimal.ZERO;
         Map<Integer, List<OmsCartItem>> map = list.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
-       // if (map.size() > 1) {
+
             for (Map.Entry<Integer, List<OmsCartItem>> entry : map.entrySet()) {
                 List<OmsCartItem> subList = entry.getValue();
                 List<OmsCartItem> newCartList = new ArrayList<>();
@@ -526,7 +526,11 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 List<SmsBasicGifts> basicGiftsList = basicGiftsService.matchOrderBasicGifts(vo);
                 result.setBasicGiftsList(basicGiftsList);
                 result.setCartPromotionItemList(newCartList);
-
+                if (map.size() > 1) {
+                    result.setOffline(1);
+                }else {
+                    result.setOffline(2);
+                }
                 //获取用户可用优惠券列表
                 List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(newCartList, 1);
                 result.setCouponHistoryDetailList(couponHistoryDetailList);
@@ -565,7 +569,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         List<OmsCartItem> cartPromotionItemList = new ArrayList<>();
         StopWatch stopWatch = new StopWatch("下单orderType=" + orderParam.getOrderType());
         stopWatch.start("1. 获取购物车商品");
-        if (ValidatorUtils.empty(orderParam.getAddressId())) {
+        if (orderParam.getOrderType()!=7 && ValidatorUtils.empty(orderParam.getAddressId())) {
             return new CommonResult().failed("address is null");
         }
         //团购订单
@@ -659,8 +663,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                         totalAmount = totalAmount.add(skuStock.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
                         flag = true;
                         if (goods.getIsVip() != null && goods.getIsVip() == 1) {
-                            singVipPrice = goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)));
-                            vipPrice = vipPrice.add(goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))));
+                            singVipPrice = skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))).setScale(2);
+                            vipPrice = vipPrice.add(skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)))).setScale(2);
                         }
                     }
                 }
@@ -669,8 +673,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     totalAmount = totalAmount.add(goods.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
                     flag = true;
                     if (goods.getIsVip() != null && goods.getIsVip() == 1) {
-                        singVipPrice = goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)));
-                        vipPrice = vipPrice.add(goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))));
+                        singVipPrice = goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))).setScale(2);
+                        vipPrice = vipPrice.add(goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)))).setScale(2);
                     }
                 }
             }
@@ -704,10 +708,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             //   couponHistory = couponHistoryService.getById(orderParam.getMemberCouponId());
             coupon = couponService.getById(orderParam.getCouponId());
         }
-        UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
+
         //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
 
-        createOrderObj(order, orderParam, currentMember, orderItemList, address);
+        createOrderObj(order, orderParam, currentMember, orderItemList, orderParam.getAddressId());
         if (smsGroupActivity != null) {
             order.setTotalAmount(smsGroupActivity.getPrice());
         }
@@ -934,8 +938,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //进行库存锁定
         lockStock(list);
         //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
-        UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
-        createOrderObj(order, orderParam, currentMember, orderItemList, address);
+
+        createOrderObj(order, orderParam, currentMember, orderItemList, orderParam.getAddressId());
         order.setMemberId(currentMember.getId());
         SmsGroup group = groupMapper.getByGoodsId(orderParam.getGoodsId());
         Date endTime = DateUtils.convertStringToDate(DateUtils.addHours(group.getEndTime(), group.getHours()), "yyyy-MM-dd HH:mm:ss");
@@ -1100,7 +1104,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return orderItem;
     }
 
-    private OmsOrder createOrderObj(OmsOrder order, OrderParam orderParam, UmsMember currentMember, List<OmsOrderItem> orderItemList, UmsMemberReceiveAddress address) {
+    private OmsOrder createOrderObj(OmsOrder order, OrderParam orderParam, UmsMember currentMember, List<OmsOrderItem> orderItemList, Long addressId) {
         order.setIsComment(1);
         order.setTaxType(1);
         order.setDiscountAmount(new BigDecimal(0));
@@ -1129,16 +1133,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         //订单类型：0->正常订单；1->秒杀订单
         order.setOrderType(orderParam.getOrderType());
         //收货人信息：姓名、电话、邮编、地址
-        if (address != null) {
-            order.setReceiverId(address.getId());
-            order.setReceiverName(address.getName());
-            order.setReceiverPhone(address.getPhoneNumber());
-            order.setReceiverPostCode(address.getPostCode());
-            order.setReceiverProvince(address.getProvince());
-            order.setReceiverCity(address.getCity());
-            order.setReceiverRegion(address.getRegion());
-            order.setReceiverDetailAddress(address.getDetailAddress());
+
+        if (orderParam.getOrderType()==7){
+            order.setGrowth(orderParam.getShopId());
+            order.setReceiverName(orderParam.getLading_name());
+            order.setReceiverPhone(orderParam.getLading_mobile());
+        }else {
+            UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
+            if (address != null) {
+                order.setReceiverId(address.getId());
+                order.setReceiverName(address.getName());
+                order.setReceiverPhone(address.getPhoneNumber());
+                order.setReceiverPostCode(address.getPostCode());
+                order.setReceiverProvince(address.getProvince());
+                order.setReceiverCity(address.getCity());
+                order.setReceiverRegion(address.getRegion());
+                order.setReceiverDetailAddress(address.getDetailAddress());
+            }
         }
+
         //0->未确认；1->已确认
         order.setConfirmStatus(0);
         order.setDeleteStatus(0);
@@ -2540,8 +2553,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                         if (skuStock.getStock() > 0 && skuStock.getStock() >= cartPromotionItem.getQuantity()) {
                             flag = true;
                             if (goods.getIsVip() != null && goods.getIsVip() == 1) {
-                                vipPrice = vipPrice.add(skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))));
-                                singVipPrice = skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)));
+                                vipPrice = vipPrice.add(skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)))).setScale(2);
+                                singVipPrice = skuStock.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))).setScale(2);
                             }
                             totalAmount = totalAmount.add(skuStock.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
                         }
@@ -2550,8 +2563,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     if (goods != null && goods.getId() != null && goods.getStock() > 0 && goods.getStock() >= cartPromotionItem.getQuantity()) {
                         flag = true;
                         if (goods.getIsVip() != null && goods.getIsVip() == 1) {
-                            singVipPrice = goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)));
-                            vipPrice = vipPrice.add(goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))));
+                            singVipPrice = goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10))).setScale(2);
+                            vipPrice = vipPrice.add(goods.getPrice().multiply(new BigDecimal((10-memberRate)).divide(new BigDecimal(10)))).setScale(2);
                         }
                         totalAmount = totalAmount.add(goods.getPrice().multiply(new BigDecimal(cartPromotionItem.getQuantity())));
                     }
@@ -2607,10 +2620,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 couponHistory = couponHistoryService.getById(orderParam.getMemberCouponId());
                 coupon = couponService.getById(orderParam.getCouponId());
             }
-            UmsMemberReceiveAddress address = addressService.getById(orderParam.getAddressId());
+
             //根据商品合计、运费、活动优惠、优惠券、积分计算应付金额
 
-            createOrderObj(order, orderParam, currentMember, orderItemList, address);
+            createOrderObj(order, orderParam, currentMember, orderItemList, orderParam.getAddressId());
             if (orderParam.getOrderType() != 3) {
                 order.setFreightAmount(transFee);
             }

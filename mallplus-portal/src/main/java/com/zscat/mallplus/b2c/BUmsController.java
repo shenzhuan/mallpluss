@@ -1,16 +1,24 @@
 package com.zscat.mallplus.b2c;
 
 
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.sys.entity.SysArea;
+import com.zscat.mallplus.sys.entity.SysShop;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
+import com.zscat.mallplus.sys.mapper.SysShopMapper;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.*;
 import com.zscat.mallplus.ums.service.*;
+import com.zscat.mallplus.ums.vo.UserBankcardsVo;
+import com.zscat.mallplus.util.JsonUtils;
+import com.zscat.mallplus.utils.BankUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -23,6 +31,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +68,10 @@ public class BUmsController {
     @Resource
     private IUserBankcardsService bankcardsService;
 
+    @Resource
+    private SysShopMapper sysShopMapper;
+
+
     public static Object getObject(UmsMember member, IUmsMemberService memberService) {
         if (member == null) {
             return new CommonResult().paramFailed();
@@ -71,18 +84,7 @@ public class BUmsController {
         return new CommonResult().failed();
     }
 
-    public static Object getObject(boolean b, Long id, boolean b2, boolean save, UserBankcards address) {
-        boolean count;
-        if (b && id != null) {
-            count = b2;
-        } else {
-            count = save;
-        }
-        if (count) {
-            return new CommonResult().success(count);
-        }
-        return new CommonResult().failed();
-    }
+
 
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
@@ -184,7 +186,12 @@ public class BUmsController {
             bankcardsService.update(query, new QueryWrapper<UserBankcards>().eq("user_id", umsMember.getId()));
         }
         address.setUserId(umsMember.getId());
-        return getObject(address != null, address.getId(), bankcardsService.updateById(address), bankcardsService.save(address), address);
+        if (address.getId()!=null && address.getId()>0){
+            bankcardsService.updateById(address);
+        }else {
+            bankcardsService.save(address);
+        }
+        return new CommonResult().success();
     }
 
     @IgnoreAuth
@@ -208,14 +215,39 @@ public class BUmsController {
     public Object getbankcardinfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         return new CommonResult().success(bankcardsService.getById(id));
     }
+    @IgnoreAuth
+    @ApiOperation("获取银行卡组织信息")
+    @RequestMapping(value = "/user.getbankcardorganization", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getbankcardorganization(@RequestParam(value = "card_code", required = true) String card_code) {
+        try {
+            String json1 = HttpUtil.get("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo="+card_code+"&cardBinCheck=true");
+            // 转为 Json 对象
+            UserBankcardsVo vo = JsonUtils.fromJson(json1,UserBankcardsVo.class);
+            // 北京农村商业银行·凤凰卡
+            String cardName =  BankUtil.getNameOfBank(card_code);
+            vo.setName(cardName.split("·")[0]);
+            vo.setTypeName(cardName.split("·")[1]);
+            return new CommonResult().success(vo);
+        }catch (Exception e){
+            return new CommonResult().failed();
+        }
 
+    }
     @IgnoreAuth
     @ApiOperation("获取默认的银行卡")
     @RequestMapping(value = "/user.getdefaultbankcard", method = RequestMethod.POST)
     @ResponseBody
     public Object getItemDefautl() {
         UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id", memberService.getNewCurrentMember().getId()).eq("is_default", 1));
-        return new CommonResult().success(address);
+        if (address!=null && address.getId()>0){
+            return new CommonResult().success(address);
+        }
+        List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id", memberService.getNewCurrentMember().getId()));
+        if (addressList!=null && addressList.size()>0){
+            return new CommonResult().success(addressList.get(0));
+        }
+        return new CommonResult().success();
     }
 
 
@@ -235,6 +267,16 @@ public class BUmsController {
     }
 
 
+    @ApiOperation("申请用户提现")
+    @PostMapping(value = "/user.cash")
+    @ResponseBody
+    public Object cash(UmsMemberBlanceLog blanceLog) {
+       try {
+           return new CommonResult().success(memberService.withDraw(blanceLog));
+       }catch (Exception e){
+           return new CommonResult().failed(e.getMessage());
+       }
+    }
     @ApiOperation("用户推荐列表")
     @PostMapping(value = "/user.recommend")
     @ResponseBody
@@ -326,5 +368,24 @@ public class BUmsController {
     @ResponseBody
     public Object storeDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
         return new CommonResult().success(storeMapper.selectById(id));
+    }
+
+    @IgnoreAuth
+    @ApiOperation(value = "查询门店管理列表")
+    @PostMapping(value = "/user.shoplist")
+    @SysLog(MODULE = "ums", REMARK = "查询门店管理列表")
+    public Object shoplist(@RequestParam(value = "storeId", required = true) Long storeId) {
+        return new CommonResult().success(sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id",storeId)));
+    }
+
+    @ApiOperation("门店详情")
+    @PostMapping(value = "/shopDetail")
+    @ResponseBody
+    public Object shopDetail(@RequestParam(value = "storeId", required = true) Integer storeId) {
+       List<SysShop> list = sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id",storeId));
+       if (list!=null && list.size()>0){
+           return new CommonResult().success(list.get(0));
+       }
+        return new CommonResult().success();
     }
 }

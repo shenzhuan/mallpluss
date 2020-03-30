@@ -24,6 +24,10 @@ public class OrderParam {
     //支付方式
     private Integer payType = 1;
     private Integer offline;// 0 送货 1 自取
+    private String lading_mobile; //自取人电话
+    private String lading_name; //自取人姓名
+    private Integer shopId; //门店编号
+
     private String content;
     private String cartId;
     private String cartIds;

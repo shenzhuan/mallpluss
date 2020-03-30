@@ -155,7 +155,7 @@ public class BHomeController {
             if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.contentNew();
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 60);
+                redisService.expire(key, 360);
             } else {
                 contentResult = JsonUtils.jsonToPojo(json, Pages.class);
             }
@@ -163,7 +163,7 @@ public class BHomeController {
             log.error(e.getMessage());
             contentResult = advertiseService.contentNew();
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 60);
+            redisService.expire(key, 360);
         }
 
         return new CommonResult().success(contentResult);
@@ -458,7 +458,9 @@ public class BHomeController {
     @PostMapping("/api/upload")
     @ApiOperation("上传文件")
     public Object upload(@RequestParam("file") MultipartFile file) throws Exception {
-        return new CommonResult().success(aliyunOSSUtil.upload(file));
+        return new CommonResult().success("https://www.baidu.com/img/bd_logo1.png");
+
+       // return new CommonResult().success(aliyunOSSUtil.upload(file));
     }
 
     @IgnoreAuth

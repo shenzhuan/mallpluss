@@ -65,6 +65,8 @@ public class UmsMemberReceiveAddress extends BaseEntity implements Serializable 
      * 区
      */
     private String region;
+    @TableField("area_id")
+    private String areaId;
 
     /**
      * 详细地址(街道)

@@ -44,6 +44,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -78,6 +79,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     Integer logginJifen = 5;
     @Resource
     private SysAppletSetMapper appletSetMapper;
+    @Resource
+    private IUmsMemberBlanceLogService memberBlanceLogService;
     @Resource
     private UmsMemberMapper memberMapper;
     @Resource
@@ -245,7 +248,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return member;
                 }
             } else {
-                return new CommonResult().fail(100);
+                UmsMember member = UserUtils.getCurrentMember();
+                if (member != null && member.getId() != null) {
+                    return member;
+                }
             }
             return new CommonResult().fail(100);
         } catch (Exception e) {
@@ -1143,6 +1149,26 @@ if (member==null || member.getId()<1){
             redisService.set(String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
         return 1;
+    }
+
+    @Transactional
+    @Override
+    public Object withDraw(UmsMemberBlanceLog blanceLog){
+        UmsMember userDO1 = this.getNewCurrentMember();
+        UmsMember userDO = this.getById(userDO1.getId());
+        if (blanceLog.getMoney().compareTo(userDO.getBlance()) > 0) {
+            throw new ApiMallPlusException("余额不足！");
+        }
+
+       /* userDO.setBlance(userDO.getBlance().subtract(money));
+        this.updateById(userDO);*/
+
+        blanceLog.setMemberId(userDO.getId());
+        blanceLog.setCreateTime(new Date());
+        blanceLog.setNote("用户提现,余额="+userDO.getBlance());
+
+        memberBlanceLogService.save(blanceLog);
+        return new CommonResult().success();
     }
 
 }

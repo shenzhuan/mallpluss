@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.utils.BaseEntity;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ ${prefix}
 */
 @Data
 @TableName("${tableName}")
-public class ${className} implements Serializable {
+public class ${className} extends BaseEntity implements Serializable {
 <#if columns??>
     <#list columns as column>
 
