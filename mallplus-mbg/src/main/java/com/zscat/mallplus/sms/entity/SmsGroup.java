@@ -115,5 +115,5 @@ public class SmsGroup extends BaseEntity implements Serializable {
      * 2即将开团
      */
     @TableField(exist = false)
-    private Integer pintuan_start_status;
+    private Integer pintuan_start_status=1;
 }

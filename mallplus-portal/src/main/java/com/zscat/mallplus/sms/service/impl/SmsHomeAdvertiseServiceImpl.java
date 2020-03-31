@@ -403,9 +403,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         List<SmsGroup> groupList = groupService.list(new QueryWrapper<SmsGroup>().orderByDesc("create_time"));
         List<SmsGroup> result = new ArrayList<>();
         for (SmsGroup group : groupList) {
-            if (ValidatorUtils.empty(group.getHours())) {
-                continue;
-            }
+
             group.setPintuan_start_status(1);
             group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
             Long nowT = System.currentTimeMillis();
