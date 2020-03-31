@@ -121,11 +121,11 @@ public class WxPayController extends AbstractWxPayApiController {
         return apiConfig;
     }
 
-    public WxPayApiConfig getApiConfig1() {
+    public WxPayApiConfig getApiConfig1(Integer source) {
         WxPayApiConfig apiConfig = null;
 
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(source);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -159,7 +159,8 @@ public class WxPayController extends AbstractWxPayApiController {
      * 注意：必须再web页面中发起支付且域名已添加到开发配置中
      */
     @RequestMapping(value = "/wapPay", method = {RequestMethod.POST, RequestMethod.GET})
-    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws IOException {
+    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                         @RequestParam(value = "appIdsource", required = false) Integer appIdsource) throws IOException {
         try {
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
@@ -181,7 +182,7 @@ public class WxPayController extends AbstractWxPayApiController {
             }
 
             H5SceneInfo sceneInfo = new H5SceneInfo();
-            WxPayApiConfig wxPayApiConfig = this.getApiConfig1();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig1(appIdsource);
 
             H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
             h5_info.setType("Wap");
@@ -652,7 +653,8 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/miniAppPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
+    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
             UmsMember user = umsMemberService.getNewCurrentMember();
@@ -662,7 +664,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 ip = "127.0.0.1";
             }
 
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }

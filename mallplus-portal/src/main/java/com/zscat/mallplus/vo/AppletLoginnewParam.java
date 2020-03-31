@@ -19,6 +19,6 @@ public class AppletLoginnewParam {
 
     private UserInfo userInfo;
     private String cloudID;
-
+    private Integer appIdsource;
 
 }

@@ -145,11 +145,12 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "获取支付的请求参数")
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
-    public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
+    public Object payPrepay(@RequestParam(value = "orderId", required = true) Long orderId,
+                            @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         UmsMember user = memberService.getNewCurrentMember();
         //
         OmsOrder orderInfo = orderService.getById(orderId);
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");
         }
@@ -257,10 +258,11 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "查询订单状态")
     @ApiOperation(value = "查询订单状态")
     @PostMapping("query")
-    public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+    public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id,
+                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         UmsMember user = memberService.getNewCurrentMember();
         //
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");
         }

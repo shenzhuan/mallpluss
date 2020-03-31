@@ -315,7 +315,10 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
         Params navBarPa = new Params();
         navBarPa.setLimit(4);
-        navBarPa.setList(getNav());
+        // navBarPa.setList(getNav());
+        PmsProductAttributeCategory productCategory = new PmsProductAttributeCategory();
+        productCategory.setShowIndex(1);
+        navBarPa.setList(productAttributeCategoryService.page(new Page<PmsProductAttributeCategory>(0, 8), new QueryWrapper<>(productCategory)).getRecords());
         PagesItems navBarItems = new PagesItems(3, "navBar", "mobile_home", 3, 3, navBarPa);
 
 

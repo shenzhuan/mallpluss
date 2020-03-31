@@ -1526,7 +1526,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
      */
     public void push(UmsMember umsMember, OmsOrder order, String page, String formId, String name) {
         boolean flag = true;
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = memberService.getSysAppletSet(0);
         if (null == appletSet) {
             log.error("没有设置支付配置：userId=" + umsMember.getId() + ",orderId=" + order.getId() + ",formId=" + formId);
             flag = false;
@@ -1677,7 +1677,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     public void push(GroupAndOrderVo umsMember, OmsOrder order, String page, String formId) {
         log.info("发送模版消息：userId=" + umsMember.getMemberId() + ",orderId=" + order.getId() + ",formId=" + formId);
         boolean flag = true;
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = memberService.getSysAppletSet(0);
         if (null == appletSet) {
             log.error("没有设置支付配置：userId=" + umsMember.getId() + ",orderId=" + order.getId() + ",formId=" + formId);
             flag = false;
