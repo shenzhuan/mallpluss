@@ -142,7 +142,7 @@ public class PayController extends ApiBaseAction {
     @PostMapping("allPay")
     public Object allPay(PayParam payParam) {
         try {
-            OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+            Object order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
             return new CommonResult().success(order);
         }catch (Exception e){
             return new CommonResult().failed(e.getMessage());
@@ -159,7 +159,7 @@ public class PayController extends ApiBaseAction {
     public Object balancePay(PayParam payParam) {
 
         try {
-            OmsOrder order = orderService.blancePay(payParam);
+            Object order = orderService.blancePay(payParam);
             return new CommonResult().success(order);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());

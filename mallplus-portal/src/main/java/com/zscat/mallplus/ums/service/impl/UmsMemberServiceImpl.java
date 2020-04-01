@@ -251,6 +251,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 UmsMember member = UserUtils.getCurrentMember();
                 if (member != null && member.getId() != null) {
                     return member;
+                }else{
+                    return new UmsMember();
                 }
             }
             return new CommonResult().fail(100);
@@ -1191,7 +1193,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 throw new ApiMallPlusException("验证码错误");
             }
             UmsMember member = this.getByUsername(phone);
-if (member==null || member.getId()<1){
+if (member==null || member.getId()==null){
     throw new ApiMallPlusException("用户不存在");
 
 }

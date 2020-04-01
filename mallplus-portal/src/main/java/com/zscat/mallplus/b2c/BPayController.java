@@ -125,7 +125,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
     public Object balancePay(BalancePayParam payParam) {
-        OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+        Object order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
         return new CommonResult().success(order);
     }
 
@@ -147,8 +147,10 @@ public class BPayController extends ApiBaseAction {
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = true) Long orderId,
                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
-        UmsMember user = memberService.getNewCurrentMember();
-        //
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
+            return new CommonResult().fail(100);
+        }
         OmsOrder orderInfo = orderService.getById(orderId);
         SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
@@ -192,7 +194,7 @@ public class BPayController extends ApiBaseAction {
             // 交易类型APP
             parame.put("trade_type", tradeType);
             parame.put("spbill_create_ip", getClientIp());
-            parame.put("openid", user.getWeixinOpenid());
+            parame.put("openid", member.getWeixinOpenid());
             String sign = WechatUtil.arraySign(parame, appletSet.getPaySignKey());
             // 数字签证
             parame.put("sign", sign);
@@ -260,8 +262,11 @@ public class BPayController extends ApiBaseAction {
     @PostMapping("query")
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id,
                              @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
-        UmsMember user = memberService.getNewCurrentMember();
-        //
+
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
+            return new CommonResult().fail(100);
+        }
         SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");

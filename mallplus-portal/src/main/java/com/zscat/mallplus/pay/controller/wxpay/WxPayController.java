@@ -257,7 +257,10 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             String totalFee = "0.01";
             // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-            UmsMember member = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
             String openId = member.getWeixinOpenid();
             if (StrUtil.isEmpty(openId)) {
                 return new CommonResult().failed("openId is null");
@@ -657,7 +660,10 @@ public class WxPayController extends AbstractWxPayApiController {
                              @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
-            UmsMember user = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
 
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
@@ -697,7 +703,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .spbill_create_ip(ip)
                     .notify_url(notifyUrl)
                     .trade_type(TradeType.JSAPI.getTradeType())
-                    .openid(user.getWeixinOpenid())
+                    .openid(member.getWeixinOpenid())
                     .build()
                     .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 

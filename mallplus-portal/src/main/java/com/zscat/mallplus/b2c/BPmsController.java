@@ -168,14 +168,15 @@ public class BPmsController extends ApiBaseAction {
     }
 
     private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        UmsMember member =memberService.getNewCurrentMember();
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
             FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
             if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
                 pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
             }
         }
-        UmsMember member = memberService.getNewCurrentMember();
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+
+        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
             UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
             if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                 pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -284,7 +285,7 @@ public class BPmsController extends ApiBaseAction {
                 UmsMember member =memberService.getNewCurrentMember();
                 for (PmsProduct pmsProduct : list.getRecords()) {
 
-                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null & member.getMemberLevelId()>0) {
                         UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
                         if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                             pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -786,9 +787,11 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (memberService.getNewCurrentMember().getId() == null) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
             return new CommonResult().fail(100);
         }
+        productCollection.setMemberId(member.getId());
         int count = memberCollectionService.addProduct(productCollection);
         if (count > 0) {
             return new CommonResult().success(count);
