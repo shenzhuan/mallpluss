@@ -10,16 +10,28 @@ import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.sys.entity.SysUserVo;
+import com.zscat.mallplus.sys.mapper.SysUserMapper;
+import com.zscat.mallplus.sys.service.ISysUserService;
+import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +41,8 @@ import java.util.List;
 @MapperScan("com.zscat.mallplus.*.mapper*")
 public class MybatisPlusConfig {
     private static final List<String> IGNORE_TENANT_TABLES = ConstansValue.IGNORE_TENANT_TABLES;
-
-
+    @Autowired
+    private ISysUserService userMapper;
     /**
      * 分页插件
      */
@@ -51,11 +63,35 @@ public class MybatisPlusConfig {
             @Override
             public Expression getTenantId() {
                 // 从当前系统上下文中取出当前请求的服务商ID，通过解析器注入到SQL中。
+                System.out.println(UserUtils.getCurrentMember());
                 Integer storeId = UserUtils.getCurrentMember().getStoreId();
                 if (null == storeId) {
-                     storeId = 1;
-                    System.out.println("#1129 getCurrentProviderId error.");
-                   // throw new RuntimeException("#1129 getCurrentProviderId error.");
+                    JwtTokenUtil jwtTokenUtil =new JwtTokenUtil();
+                    RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+                    HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+                    String requestType = ((HttpServletRequest) request).getMethod();
+                    if ("OPTIONS".equals(requestType)) {
+                        return null;
+                    }
+                    String tokenPre = "Authorization";
+                    String authHeader = request.getParameter(tokenPre);
+                    if (ValidatorUtils.empty(authHeader)) {
+                        authHeader = request.getHeader(tokenPre);
+                    }
+                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                        String authToken = authHeader.substring("Bearer ".length());
+                        String username = jwtTokenUtil.getUserNameFromToken(authToken);
+                        if (ValidatorUtils.notEmpty(username)) {
+                            SysUser member = userMapper.selectByUserName(username);
+                            storeId = member.getStoreId();
+                        }
+                    }
+                    if (null == storeId) {
+                        //  storeId = 1;
+                        System.out.println("#1129 getCurrentProviderId error.");
+                        throw new RuntimeException("#1129 getCurrentProviderId error.");
+                    }
+
                 }
                 return new LongValue(storeId);
             }

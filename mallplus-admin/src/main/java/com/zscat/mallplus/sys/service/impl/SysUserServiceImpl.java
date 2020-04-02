@@ -384,6 +384,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         adminMapper.updateById(role);
     }
 
+    @Override
+    public SysUserVo selectByUserName(String username){
+        return adminMapper.selectByUserName(username);
+    }
     /**
      * 保存短信记录，并发送短信
      *

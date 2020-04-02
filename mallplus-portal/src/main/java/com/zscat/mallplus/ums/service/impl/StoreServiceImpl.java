@@ -71,14 +71,11 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
         entity.setStatus(1);
         entity.setTryTime(new Date());
         entity.setCreateTime(new Date());
-        UmsMember umsMember = memberService.getNewCurrentMember();
-        if (umsMember == null) {
-            return new CommonResult().fail(100);
-        }
+
         if (1 > 0) {
             SysUser user = new SysUser();
-            user.setUsername(umsMember.getUsername());
-            SysUser umsAdminList = userMapper.selectByUserName(umsMember.getUsername());
+            user.setUsername(entity.getName());
+            SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
             if (umsAdminList != null && umsAdminList.getId() != null) {
                 return new CommonResult().failed("你已申请");
             }
@@ -93,8 +90,8 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
             storeMapper.updateById(entity);
             user.setStatus(3);
-            user.setSupplyId(1L);
-            user.setPassword(umsMember.getPassword());
+            user.setSupplyId(0L);
+            user.setPassword("123456");
             user.setCreateTime(new Date());
             user.setIcon(entity.getLogo());
             user.setNickName(entity.getName());
@@ -102,8 +99,11 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             user.setEmail(entity.getSupportPhone());
             user.setStoreName(entity.getName());
             userMapper.insert(user);
-            umsMember.setStoreId(entity.getId());
-            memberService.updateById(umsMember);
+             UmsMember umsMember = memberService.getNewCurrentMember();
+            if (umsMember != null && umsMember.getId()!=null) {
+                umsMember.setStoreId(entity.getId());
+                memberService.updateById(umsMember);
+            }
 
             FenxiaoConfig config = new FenxiaoConfig();
             config.setId(Long.valueOf(entity.getId()));

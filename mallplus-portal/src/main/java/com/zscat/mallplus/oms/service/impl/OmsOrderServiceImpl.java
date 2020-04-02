@@ -2253,7 +2253,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         Integer memberRate = 0; // 会员折扣
         UmsMemberLevel memberLevel = new UmsMemberLevel();
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+        if ( pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
             memberLevel = memberLevelService.getById(currentMember.getMemberLevelId());
             if (memberLevel != null && memberLevel.getPriviledgeMemberPrice() > 0) {
                 memberRate = memberLevel.getPriviledgeMemberPrice();

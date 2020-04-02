@@ -36,7 +36,6 @@ public class UmsMemberLevelController {
     @SysLog(MODULE = "ums", REMARK = "根据条件查询所有会员等级表列表")
     @ApiOperation("根据条件查询所有会员等级表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('ums:UmsMemberLevel:read')")
     public Object getUmsMemberLevelByPage(UmsMemberLevel entity,
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
