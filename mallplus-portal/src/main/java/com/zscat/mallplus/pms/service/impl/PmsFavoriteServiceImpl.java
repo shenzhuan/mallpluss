@@ -46,7 +46,7 @@ public class PmsFavoriteServiceImpl extends ServiceImpl<PmsFavoriteMapper, PmsFa
         productCollection.setMemberId(memberService.getNewCurrentMember().getId());
         PmsFavorite query = new PmsFavorite();
         query.setObjId(productCollection.getObjId());
-        query.setMemberId(memberService.getNewCurrentMember().getId());
+        query.setMemberId(productCollection.getId());
         query.setType(productCollection.getType());
         PmsFavorite findCollection = productCollectionRepository.selectOne(new QueryWrapper<>(query));
         if (findCollection == null) {

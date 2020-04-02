@@ -60,7 +60,11 @@ public class UmsMemberController {
                                      @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
+            if (ValidatorUtils.empty(entity.getBuyCountss())){
+                return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
+            }
+            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).ge("buy_count",entity.getBuyCountss()).orderByDesc("create_time")));
+
         } catch (Exception e) {
             log.error("根据条件查询所有会员表列表：%s", e.getMessage(), e);
         }

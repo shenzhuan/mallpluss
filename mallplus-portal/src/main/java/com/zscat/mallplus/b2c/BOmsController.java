@@ -154,7 +154,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping("/submitStorePreview")
     public Object submitStorePreview(OrderParam orderParam) {
         try {
-            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
+            Object result = orderService.submitStorePreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
@@ -644,7 +644,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
         try {
-            ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            Object result = orderService.submitPreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());

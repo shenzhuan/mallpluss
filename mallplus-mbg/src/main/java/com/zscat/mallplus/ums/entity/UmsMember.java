@@ -103,7 +103,7 @@ public class UmsMember  implements Serializable {
     private String personalizedSignature;
 
     /**
-     * 用户来源 1 小程序 2 公众号 3 页面
+     * 用户来源 1 小程序 2 h5 3 app
      */
     @TableField("source_type")
     private Integer sourceType;
@@ -159,4 +159,7 @@ public class UmsMember  implements Serializable {
 
     @TableField(exist = false)
     private String phonecode;
+
+    @TableField(exist = false)
+    private Integer buyCountss;
 }

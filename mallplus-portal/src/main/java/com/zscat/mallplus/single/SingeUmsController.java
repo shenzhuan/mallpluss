@@ -305,7 +305,7 @@ public class SingeUmsController extends ApiBaseAction {
     @ApiOperation(value = "邀请好友列表")
     @GetMapping(value = "/inviteUser")
     @SysLog(MODULE = "ums", REMARK = "邀请好友列表")
-    public Object inviteUser(SysSchool entity,
+    public Object inviteUser(UmsMember entity,
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(memberService.list(new QueryWrapper<UmsMember>().eq("invitecode", memberService.getNewCurrentMember().getId())));

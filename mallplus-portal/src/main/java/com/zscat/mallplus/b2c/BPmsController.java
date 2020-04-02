@@ -168,14 +168,15 @@ public class BPmsController extends ApiBaseAction {
     }
 
     private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        UmsMember member =memberService.getNewCurrentMember();
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
             FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
             if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
                 pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
             }
         }
-        UmsMember member = memberService.getNewCurrentMember();
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+
+        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
             UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
             if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                 pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -284,7 +285,7 @@ public class BPmsController extends ApiBaseAction {
                 UmsMember member =memberService.getNewCurrentMember();
                 for (PmsProduct pmsProduct : list.getRecords()) {
 
-                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null & member.getMemberLevelId()>0) {
                         UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
                         if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                             pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -462,43 +463,26 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/pintuan.goodsinfo")
     @ApiOperation(value = "拼团商品详情")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        SmsGroup group = groupMapper.selectById(id);
-        Long goodsId = group.getGoodsId();
         //记录浏览量到redis,然后定时更新到数据库
-        String key = Rediskey.GOODS_VIEWCOUNT_CODE + goodsId;
-        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount = 0;
-        if (!viewCountItem.isEmpty()) {
-            if (viewCountItem.containsKey(key)) {
-                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
-            } else {
-                viewCount = 1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-            }
-        } else {
-            viewCount = 1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-        }
+
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodsId + "")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)) {
-                log.info("redis缓存失效：" + goodsId);
-                goods = pmsProductService.getGoodsRedisById(goodsId);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
+                log.info("redis缓存失效：" + id);
+                goods = pmsProductService.getGoodsRedisById(id);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效：" + goodsId);
-            goods = pmsProductService.getGoodsRedisById(goodsId);
+            log.info("redis缓存失效：" + id);
+            goods = pmsProductService.getGoodsRedisById(id);
             e.printStackTrace();
         }
-
+        SmsGroup group = groupMapper.getByGoodsId(id);
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
-            p.setHit(viewCount);
+            p.setHit(recordGoodsFoot(id));
             PmsFavorite query = new PmsFavorite();
             query.setObjId(p.getId());
             query.setMemberId(umsMember.getId());
@@ -803,9 +787,11 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (memberService.getNewCurrentMember().getId() == null) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
             return new CommonResult().fail(100);
         }
+        productCollection.setMemberId(member.getId());
         int count = memberCollectionService.addProduct(productCollection);
         if (count > 0) {
             return new CommonResult().success(count);

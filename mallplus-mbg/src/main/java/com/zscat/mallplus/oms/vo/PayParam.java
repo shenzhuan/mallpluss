@@ -14,7 +14,7 @@ public class PayParam {
     //"balancepay"
     String payment_code;
     //
-    PaymentParam params;
+
     private BigDecimal payAmount;
     private BigDecimal balance;
     private Integer payment_type;

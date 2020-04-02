@@ -147,7 +147,7 @@ public class SysLogAspect {
             //保存系统日志
             //    fopSystemOperationLogService.save(sysLog);
         } catch (Exception ex) {
-            logger.error("保存系统日志失败");
+            logger.error("保存系统日志失败"+ex.getMessage());
         }
 
     }

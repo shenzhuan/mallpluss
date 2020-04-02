@@ -1011,18 +1011,22 @@ public class SingePmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/addView")
     public Object addView(@RequestParam Long goodsId) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
+        }else {
+            String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
-        //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
+            //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
-        redisUtil.lRemove(key, 1, goodsId.toString());
-        //将value push 到该key下的list中
-        redisUtil.lLeftPush(key, goodsId.toString());
-        //使用ltrim将60个数据之后的数据剪切掉
-        redisUtil.lTrim(key, 0, 59);
-        //设置缓存时间为一个月
-        redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
+            redisUtil.lRemove(key, 1, goodsId.toString());
+            //将value push 到该key下的list中
+            redisUtil.lLeftPush(key, goodsId.toString());
+            //使用ltrim将60个数据之后的数据剪切掉
+            redisUtil.lTrim(key, 0, 59);
+            //设置缓存时间为一个月
+            redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
+        }
         return new CommonResult().success();
     }
 

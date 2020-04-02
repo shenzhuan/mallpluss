@@ -65,7 +65,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmOrderResult submitPreview(OrderParam orderParam);
+    Object submitPreview(OrderParam orderParam);
 
     /**
      * 多店铺预览订单
@@ -73,7 +73,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmListOrderResult submitStorePreview(OrderParam orderParam);
+    Object submitStorePreview(OrderParam orderParam);
 
     /**
      * pc 支付
@@ -153,9 +153,9 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param order
      * @return
      */
-    OmsOrder blancePay(OmsOrder order);
+    Object blancePay(OmsOrder order);
 
-    OmsOrder blancePay(PayParam payParam);
+    Object blancePay(PayParam payParam);
 
     /**
      * 团购商品订单预览

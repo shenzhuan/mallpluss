@@ -121,11 +121,11 @@ public class WxPayController extends AbstractWxPayApiController {
         return apiConfig;
     }
 
-    public WxPayApiConfig getApiConfig1() {
+    public WxPayApiConfig getApiConfig1(Integer source) {
         WxPayApiConfig apiConfig = null;
 
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(source);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -159,7 +159,8 @@ public class WxPayController extends AbstractWxPayApiController {
      * 注意：必须再web页面中发起支付且域名已添加到开发配置中
      */
     @RequestMapping(value = "/wapPay", method = {RequestMethod.POST, RequestMethod.GET})
-    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws IOException {
+    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                         @RequestParam(value = "appIdsource", required = false) Integer appIdsource) throws IOException {
         try {
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
@@ -181,7 +182,7 @@ public class WxPayController extends AbstractWxPayApiController {
             }
 
             H5SceneInfo sceneInfo = new H5SceneInfo();
-            WxPayApiConfig wxPayApiConfig = this.getApiConfig1();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig1(appIdsource);
 
             H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
             h5_info.setType("Wap");
@@ -256,7 +257,10 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             String totalFee = "0.01";
             // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-            UmsMember member = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
             String openId = member.getWeixinOpenid();
             if (StrUtil.isEmpty(openId)) {
                 return new CommonResult().failed("openId is null");
@@ -652,17 +656,21 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/miniAppPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
+    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
-            UmsMember user = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
 
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
                 ip = "127.0.0.1";
             }
 
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -695,7 +703,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .spbill_create_ip(ip)
                     .notify_url(notifyUrl)
                     .trade_type(TradeType.JSAPI.getTradeType())
-                    .openid(user.getWeixinOpenid())
+                    .openid(member.getWeixinOpenid())
                     .build()
                     .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.entity.BuildWuyeCompany;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -57,7 +58,7 @@ public class BuildWuyeCompanyController {
     @PreAuthorize("hasAuthority('build:wuyeCompany:create')")
     public Object saveBuildWuyeCompany(@RequestBody BuildWuyeCompany entity) {
         try {
-            entity.setStatus("3");
+            entity.setStatus(StatusEnum.AuditType.SUCESS.code());
             if (IBuildWuyeCompanyService.saveCompany(entity)) {
                 return new CommonResult().success();
             }

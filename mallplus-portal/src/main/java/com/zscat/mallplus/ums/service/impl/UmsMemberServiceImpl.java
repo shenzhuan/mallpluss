@@ -251,6 +251,8 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 UmsMember member = UserUtils.getCurrentMember();
                 if (member != null && member.getId() != null) {
                     return member;
+                }else{
+                    return new UmsMember();
                 }
             }
             return new CommonResult().fail(100);
@@ -656,7 +658,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     @Override
     public Object getAppletOpenId(AppletLoginParam req) {
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = getSysAppletSet(req.getAppIdsource());
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");
         }
@@ -676,16 +678,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
         String userInfos = req.getUserInfo();
 
-        String signature = req.getSignature();
+
         if (null == sessionData || StringUtils.isEmpty(sessionData.getString("openid"))) {
             throw new ApiMallPlusException("登录失败openid is empty");
         }
         //验证用户信息完整性
+        /*String signature = req.getSignature();
         String sha1 = CommonUtil.getSha1(userInfos + sessionData.getString("session_key"));
         if (!signature.equals(sha1)) {
             throw new ApiMallPlusException("登录失败,验证用户信息完整性 签名验证失败" + sha1 + "，" + signature);
-
-        }
+        }*/
         return new CommonResult().success(sessionData.getString("openid"));
     }
 
@@ -808,7 +810,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public Object loginByWeixin2(AppletLoginnewParam req) {
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = getSysAppletSet(req.getAppIdsource());
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -934,26 +936,17 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
-            if (null == appletSet) {
-                throw new ApiMallPlusException("没有设置支付配置");
-            }
+            SysAppletSet appletSet = getSysAppletSet(req.getAppIdsource());
+
             String code = req.getCode();
             if (StringUtils.isEmpty(code)) {
                 log.error("code ie empty");
                 throw new ApiMallPlusException("code ie empty");
             }
             String userInfos = req.getUserInfo();
-
             String signature = req.getSignature();
-
-
-
-
             Map<String, Object> resultObj = new HashMap<String, Object>();
-
             String webAccessTokenhttps = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-
             //获取openid
             String requestUrl = String.format(webAccessTokenhttps,
                     appletSet.getAppid(),
@@ -961,7 +954,6 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     code);
 
             JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
-
             if (null == sessionData || StringUtils.isEmpty(sessionData.getString("openid"))) {
                 throw new ApiMallPlusException("登录失败openid is empty");
             }
@@ -1001,7 +993,6 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     String gender = String.valueOf(userJSON.get("gender"));
                     String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"),"UTF-8");
                     String language = String.valueOf(userJSON.get("language"));
-
                     umsMember.setCity(country + "-" + province + "-" + city);
                     if (StringUtils.isEmpty(avatarUrl)) {
                         //会员头像(默认头像)
@@ -1027,32 +1018,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     umsMember.setNickname(me.get("nickName").toString());
                     umsMember.setGender((Integer) me.get("gender"));
                 }
-
                 umsMember.setHistoryIntegration(0);
                 umsMember.setWeixinOpenid(sessionData.getString("openid"));
-
                 memberMapper.insert(umsMember);
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
                 addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
-
             } else {
                 addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
-
                 token = jwtTokenUtil.generateToken(userVo.getUsername());
                 resultObj.put("userId", userVo.getId());
                 resultObj.put("userInfo", userVo);
             }
-
-
             if (StringUtils.isEmpty(token)) {
                 throw new ApiMallPlusException("登录失败");
             }
             resultObj.put("tokenHead", tokenHead);
             resultObj.put("token", token);
-
-
             return new CommonResult().success(resultObj);
         } catch (ApiMallPlusException e) {
             e.printStackTrace();
@@ -1061,7 +1044,130 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             e.printStackTrace();
             throw new ApiMallPlusException(e.getMessage());
         }
+    }
+    @Override
+    public Object loginByWeixin2(AppletLoginParam req) {
+        try {
+            SysAppletSet appletSet = getSysAppletSet(req.getAppIdsource());
+            if (StringUtils.isEmpty(req.getOpenid())) {
+                log.error("openid ie empty");
+                throw new ApiMallPlusException("openid ie empty");
+            }
+            String userInfos = req.getUserInfo();
+            String signature = req.getSignature();
+            Map<String, Object> resultObj = new HashMap<String, Object>();
 
+            UmsMember userVo = this.queryByOpenId(req.getOpenid());
+            String token = null;
+            if (null == userVo) {
+                UmsMember umsMember = new UmsMember();
+                umsMember.setUsername("wxapplet" + CharUtil.getRandomString(12));
+                umsMember.setSourceType(2);
+                umsMember.setPassword(passwordEncoder.encode("123456"));
+                umsMember.setCreateTime(new Date());
+                umsMember.setStatus(1);
+                umsMember.setBlance(new BigDecimal(0));
+                umsMember.setIntegration(0);
+                umsMember.setMemberLevelId(4L);
+                umsMember.setAvatar(req.getCloudID());
+
+                if (ValidatorUtils.empty(userInfos)) {
+                    //未查询到用户信息，通过微信获取用户tokey信息
+                    String requestUrl1 = GetPageAccessTokenUrl.replace("APPID", appletSet.getAppid()).replace("APPSECRET", appletSet.getAppsecret());
+                    String openidResponse = httpClientSend(requestUrl1);
+                    JSONObject OpenidJSONO = JSONObject.fromObject(openidResponse);
+                    String accessToken = String.valueOf(OpenidJSONO.get("access_token"));
+                    //获取用户数据信息
+                    String requestUserInfoUrl = GetPageUserInfoUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", appletSet.getAppid());
+                    String userresponse = httpClientSend(requestUserInfoUrl);
+                    JSONObject userJSON = JSONObject.fromObject(userresponse);
+                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"),"UTF-8");
+                    String avatarUrl = String.valueOf(userJSON.get("avatarUrl"));
+                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"),"UTF-8");
+                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"),"UTF-8");
+                    String gender = String.valueOf(userJSON.get("gender"));
+                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"),"UTF-8");
+                    String language = String.valueOf(userJSON.get("language"));
+                    umsMember.setCity(country + "-" + province + "-" + city);
+                    if (StringUtils.isEmpty(avatarUrl)) {
+                        //会员头像(默认头像)
+                        umsMember.setIcon("/upload/img/avatar/01.jpg");
+                    } else {
+                        umsMember.setIcon(avatarUrl);
+                    }
+                    // umsMember.setGender(Integer.parseInt(me.get("gender")));
+                    umsMember.setNickname(nickname);
+                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)){
+                        umsMember.setGender(Integer.valueOf(gender));
+                    }
+                }else {
+                    Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
+                    umsMember.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
+                    if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
+                        //会员头像(默认头像)
+                        umsMember.setIcon("/upload/img/avatar/01.jpg");
+                    } else {
+                        umsMember.setIcon(me.get("avatarUrl").toString());
+                    }
+                    // umsMember.setGender(Integer.parseInt(me.get("gender")));
+                    umsMember.setNickname(me.get("nickName").toString());
+                    umsMember.setGender((Integer) me.get("gender"));
+                }
+                umsMember.setHistoryIntegration(0);
+                umsMember.setWeixinOpenid(req.getOpenid());
+                memberMapper.insert(umsMember);
+                token = jwtTokenUtil.generateToken(umsMember.getUsername());
+                resultObj.put("userId", umsMember.getId());
+                resultObj.put("userInfo", umsMember);
+                addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
+            } else {
+                addIntegration(userVo.getId(), logginJifen, 1, "登录添加积分", AllEnum.ChangeSource.login.code(), userVo.getUsername());
+                token = jwtTokenUtil.generateToken(userVo.getUsername());
+                resultObj.put("userId", userVo.getId());
+                resultObj.put("userInfo", userVo);
+            }
+            if (StringUtils.isEmpty(token)) {
+                throw new ApiMallPlusException("登录失败");
+            }
+            resultObj.put("tokenHead", tokenHead);
+            resultObj.put("token", token);
+            return new CommonResult().success(resultObj);
+        } catch (ApiMallPlusException e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ApiMallPlusException(e.getMessage());
+        }
+    }
+
+    @Override
+    public SysAppletSet getSysAppletSet(Integer soruce) {
+        SysAppletSet appletSet = new SysAppletSet();
+        if (ValidatorUtils.notEmpty(soruce)){
+            if (soruce==1){ // kaka
+                appletSet.setAppid("wx0c1055c6158f7851");
+                appletSet.setAppsecret("baa79ed796ec18e932c547fe009d9af0");
+            }else if (soruce==2){ //mallplus商户端
+                appletSet.setAppid("wx1d852ffdcbedd005");
+                appletSet.setAppsecret("fb5c6eeee8b5d11c9dea0f0273f16c7c");
+            }else if (soruce==3){
+                appletSet.setAppid("");
+                appletSet.setAppsecret("");
+            }else if (soruce==4){
+                appletSet.setAppid("");
+                appletSet.setAppsecret("");
+            }else if (soruce==5){
+                appletSet.setAppid("");
+                appletSet.setAppsecret("");
+            }
+        }else {
+            appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            if (null == appletSet) {
+                throw new ApiMallPlusException("没有设置支付配置");
+            }
+        }
+        return appletSet;
     }
 
 
@@ -1087,7 +1193,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 throw new ApiMallPlusException("验证码错误");
             }
             UmsMember member = this.getByUsername(phone);
-if (member==null || member.getId()<1){
+if (member==null || member.getId()==null){
     throw new ApiMallPlusException("用户不存在");
 
 }
