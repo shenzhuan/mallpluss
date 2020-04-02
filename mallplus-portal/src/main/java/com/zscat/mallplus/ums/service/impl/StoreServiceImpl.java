@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
@@ -129,9 +130,9 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             result.setCategoryList(categoryList);
         }
         PmsProduct product = new PmsProduct();
-        product.setVerifyStatus(1);
-        product.setRecommandStatus(1);
-        product.setPublishStatus(1);
+        product.setVerifyStatus(StatusEnum.YesNoType.YES.code());
+        product.setRecommandStatus(StatusEnum.YesNoType.YES.code());
+        product.setPublishStatus(StatusEnum.YesNoType.YES.code());
         product.setStoreId(id);
         List<PmsProduct> recomList = productService.list(new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList));
         SmsHomeAdvertise advertise = new SmsHomeAdvertise();

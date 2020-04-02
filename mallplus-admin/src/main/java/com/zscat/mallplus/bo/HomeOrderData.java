@@ -24,4 +24,10 @@ public class HomeOrderData implements Serializable {
     int weekOrderCount = 0; // 本月订单
     BigDecimal weekOrderPay = new BigDecimal(0); //本月销售总额
     private OrderStatusCount orderStatusCount;
+
+    int yesToatlOrderCount = 0; // 昨日订单
+    BigDecimal yesTotalOrderPay = new BigDecimal(0); //日销售总额
+
+    int nowTotalOrderCount = 0; // 今日订单
+    BigDecimal nowToatlOrderPay = new BigDecimal(0); //今日销售总额
 }

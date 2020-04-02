@@ -52,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -706,8 +707,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     name = cartPromotionItem.getProductName();
                     order.setGoodsId(cartPromotionItem.getProductId());
                     order.setGoodsName(cartPromotionItem.getProductName());
+                    order.setStoreId(goods.getStoreId());
+                    order.setStoreName(goods.getStoreName());
                 }
-
+                isFirst++;
                 newCartItemList.add(cartPromotionItem);
             }
         }
@@ -874,6 +877,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     records1.setCreateTime(new Date());
                     records1.setStatus("1");
                     records1.setGoodsId(cartPromotionItem.getProductId());
+                    if (ValidatorUtils.empty(cartPromotionItem.getStoreId())){
+                        throw new ApiMallPlusException("商品编号不存在");
+                    }
                     records1.setStoreId(cartPromotionItem.getStoreId());
                     records1.setLevel("1");
                     records1.setType(fenxiaoConfig.getType());
@@ -2242,6 +2248,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         OmsCartItem cartItem = new OmsCartItem();
         PmsProduct pmsProduct = productService.getById(cartParam.getGoodsId());
+        if (ValidatorUtils.empty(pmsProduct.getStoreId())){
+            throw new ApiMallPlusException("商品编号不存在");
+        }
         Integer memberRate = 0; // 会员折扣
         UmsMemberLevel memberLevel = new UmsMemberLevel();
         if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
@@ -2409,32 +2418,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 if (cartPromotionItemList == null || cartPromotionItemList.size() < 1) {
                     throw new ApiMallPlusException("没有下单的商品！");
                 }
-
-                BookOrder bookOrder1 = new BookOrder(orderParam, currentMember, cartPromotionItemList, null, false).invoke();
-                if (bookOrder1.is())
-                    return new CommonResult().failed("没有下单的商品");
-
-                OmsOrder pidOrder = bookOrder1.order;
-                List<OmsOrderItem> orderItemList = bookOrder1.orderItemList;
-                Long pid = pidOrder.getId();
-                String name = bookOrder1.getName();
+                Map<Integer, List<OmsCartItem>> map = cartPromotionItemList.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
                 Map<String, Object> result = new HashMap<>();
 
-
-                if (ValidatorUtils.empty(orderParam.getFormId())) {
-                    push(currentMember, pidOrder, orderParam.getPage(), orderParam.getFormId(), name);
-                }
-                Map<Integer, List<OmsCartItem>> map = cartPromotionItemList.stream().collect(Collectors.groupingBy(OmsCartItem::getStoreId));
                 if (map.size() > 1) {
+                    BookOrder bookOrder1 = new BookOrder(orderParam, currentMember, cartPromotionItemList, null, false).invoke();
+                    if (bookOrder1.is())
+                        return new CommonResult().failed("没有下单的商品");
+                    OmsOrder pidOrder = bookOrder1.order;
+                    List<OmsOrderItem> orderItemList = bookOrder1.orderItemList;
+                    Long pid = pidOrder.getId();
                     for (Map.Entry<Integer, List<OmsCartItem>> entry : map.entrySet()) {
                         BookOrder bookOrder = new BookOrder(orderParam, currentMember, entry.getValue(), pid, true).invoke();
                         if (bookOrder.is())
                             return new CommonResult().failed("没有下单的商品");
                     }
+                    result.put("order", pidOrder);
+                    result.put("orderItemList", orderItemList);
+                    return new CommonResult().success("下单成功", result);
                 }
-                result.put("order", pidOrder);
-                result.put("orderItemList", orderItemList);
-                return new CommonResult().success("下单成功", result);
             } else if ("6".equals(type)) { // 秒杀
                 SmsFlashPromotionProductRelation relation = smsFlashPromotionProductRelationService.getById(orderParam.getSkillId());
                 PmsProduct product = productService.getById(relation.getProductId());
@@ -2455,7 +2457,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             }
         }
 
-        BookOrder bookOrder = new BookOrder(orderParam, currentMember, cartPromotionItemList, null, false).invoke();
+        BookOrder bookOrder = new BookOrder(orderParam, currentMember, cartPromotionItemList, null, true).invoke();
         if (bookOrder.is())
             return new CommonResult().failed("没有下单的商品");
         List<OmsOrderItem> orderItemList = bookOrder.getOrderItemList();
@@ -2632,7 +2634,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                         order.setGoodsId(cartPromotionItem.getProductId());
                         order.setGoodsName(cartPromotionItem.getProductName());
                     }
-
+                    isFirst++;
                     newCartItemList.add(cartPromotionItem);
                 }
             }
@@ -2739,6 +2741,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                     memberService.addIntegration(currentMember.getId(),order.getPayAmount().intValue(), 1, "下单添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
                 }
             if (flagStore) {
+                if (ValidatorUtils.empty(storeId)){
+                    throw new ApiMallPlusException("商品编号不存在");
+                }
                 order.setStoreId(storeId);
                 order.setStoreName(storeName);
             }

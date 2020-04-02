@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -62,7 +63,7 @@ public class SingeStoreController extends ApiBaseAction {
     public Object storeList(SysStore entity,
                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        entity.setStatus(3);
+        entity.setStatus(StatusEnum.AuditType.SUCESS.code());
         String orderColum = "create_time";
         if (ValidatorUtils.notEmpty(entity.getIsChecked())) {
             if (entity.getIsChecked() == 1) {
