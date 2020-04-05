@@ -54,4 +54,6 @@ public interface ISysUserService extends IService<SysUser> {
     void updatePassword(String password, String newPassword);
 
     SysUserVo selectByUserName(String username);
+
+    Object resetPwd(SysUser user);
 }

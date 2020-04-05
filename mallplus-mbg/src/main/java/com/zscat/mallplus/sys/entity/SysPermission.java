@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -48,6 +50,8 @@ public class SysPermission implements Serializable {
      */
     private String icon;
 
+    private String component;
+
     /**
      * 权限类型：0->目录；1->菜单；2->按钮（接口绑定权限）
      */
@@ -73,10 +77,21 @@ public class SysPermission implements Serializable {
      * 排序
      */
     private Integer sort;
-
+    @TableField(exist = false)
+    private Long parentId;
+    @TableField(exist = false)
+    private List<SysPermission> child = new ArrayList<SysPermission>();
 
     @TableField(exist = false)
     private String label;
+
+    public Long getParentId() {
+        return pid;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
 
     public String getLabel() {
         return name;

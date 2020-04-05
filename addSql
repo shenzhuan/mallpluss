@@ -59,3 +59,29 @@ alter table ums_member_blance_log add objname varchar(127) ; # 关联提现类�
 alter table ums_member_receive_address add area_id varchar(12) ;
 
 
+alter table sys_permission add component varchar(42) ;
+
+update sys_permission set component ='Layout' where pid=0;
+
+update sys_permission set component = concat('pms','/',uri,'/index')  where type=1 and pid=1;
+
+update sys_permission set component = concat('sys','/',uri,'/index')  where type=1 and pid=19;
+
+update sys_permission set component = concat('oms','/',uri,'/index')  where type=1 and pid=23;
+
+update sys_permission set component = concat('sms','/',uri,'/index')  where type=1 and pid=31;
+
+update sys_permission set component = concat('marking','/',uri,'/index')  where type=1 and pid=350;
+
+
+update sys_permission set component = concat('cms','/',uri,'/index')  where type=1 and pid=47;
+update sys_permission set component = concat('build','/',uri,'/index')  where type=1 and pid=230;
+update sys_permission set component = concat('fenxiao','/',uri,'/index')  where type=1 and pid=314;
+update sys_permission set component = concat('jifen','/',uri,'/index')  where type=1 and pid=313;
+
+update sys_permission set component = concat('setting','/',uri,'/index')  where type=1 and pid=500;
+
+update sys_permission set component = concat('tool','/',uri,'/index')  where type=1 and pid=351;
+
+update sys_permission set component = concat('ums','/',uri,'/index')  where type=1 and pid=43;
+

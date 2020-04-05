@@ -16,16 +16,14 @@ import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.BuildTree;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.util.StringUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +66,52 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         return new ArrayList<>();
 
     }
+
+    @Override
+    public Set<String> getMenuPermission(SysUser user) {
+        Set<String> perms = new HashSet<String>();
+        // 管理员拥有所有权限
+        if (user.getSupplyId()==1)
+        {
+            perms.add("*:*:*");
+        }
+        else
+        {
+            perms.addAll(this.selectMenuPermsByUserId(user.getId()));
+        }
+        return perms;
+    }
+    @Override
+    public Set<String> selectMenuPermsByUserId(Long userId)
+    {
+        List<String> perms = permissionMapper.selectMenuPermsByUserId(userId);
+        Set<String> permsSet = new HashSet<>();
+        for (String perm : perms)
+        {
+            if (StringUtils.isNotEmpty(perm))
+            {
+                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+            }
+        }
+        return permsSet;
+    }
+
+    @Override
+    public Set<String> getRolePermission(SysUser user) {
+        Set<String> roles = new HashSet<String>();
+        // 管理员拥有所有权限
+        if (user.getSupplyId()==1)
+        {
+            roles.add("admin");
+        }
+        else
+        {
+            roles.add("admin");
+         //   roles.addAll(roleService.selectRolePermissionByUserId(user.getId()));
+        }
+        return roles;
+    }
+
     @Override
     public List<Tree<SysPermission>> getAllPermission() {
         List<Tree<SysPermission>> trees = Lists.newArrayList();
@@ -88,9 +132,13 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
                 }
 
                 tree.setTitle(sysMenuDO.getName());
+                tree.setName(sysMenuDO.getUri());
+                tree.setPath(sysMenuDO.getUri());
+                tree.setComponent(sysMenuDO.getComponent());
                 Map<String, Object> attributes = new HashMap<>(16);
                 attributes.put("url", sysMenuDO.getUri());
                 attributes.put("icon", sysMenuDO.getIcon());
+                attributes.put("title", sysMenuDO.getName());
                 tree.setMeta(attributes);
                 trees.add(tree);
             }
@@ -110,9 +158,13 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             tree.setId(sysMenuDO.getId().toString());
             tree.setParentId(sysMenuDO.getPid().toString());
             tree.setTitle(sysMenuDO.getName());
+            tree.setName(sysMenuDO.getUri());
+            tree.setPath(sysMenuDO.getUri());
+            tree.setComponent(sysMenuDO.getComponent());
             Map<String, Object> attributes = new HashMap<>(16);
             attributes.put("url", sysMenuDO.getUri());
             attributes.put("icon", sysMenuDO.getIcon());
+            attributes.put("title", sysMenuDO.getName());
             tree.setMeta(attributes);
             trees.add(tree);
         }

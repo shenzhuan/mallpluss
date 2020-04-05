@@ -56,4 +56,13 @@
 
     </select>
 
+    <select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+        select distinct
+        `value`
+        from sys_permission m
+        left
+        join sys_role_permission rm on m.id = rm.permission_id left join
+        sys_user_role ur
+        on rm.role_id =ur.role_id where ur.admin_id = #{id} and m.status=1
+    </select>
 </mapper>

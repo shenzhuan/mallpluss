@@ -23,6 +23,7 @@
         where ar.admin_id = #{adminId}
     </select>
 
+
     <select id="getRoleIdsByUserId" resultType="java.lang.Integer">
         SELECT
         role_id

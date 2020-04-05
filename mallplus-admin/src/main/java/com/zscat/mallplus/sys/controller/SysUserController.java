@@ -37,10 +37,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -235,8 +232,12 @@ public class SysUserController extends ApiController {
         SysUser umsAdmin = sysUserService.getOne(new QueryWrapper<>(queryU));
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
-        data.put("roles", new String[]{"TEST"});
+
         if (umsAdmin != null) {
+            Set<String> roles = permissionService.getRolePermission(umsAdmin);
+            Set<String> permissions = permissionService.getMenuPermission(umsAdmin);
+            data.put("permissions", permissions);
+            data.put("roles", roles);
             data.put("sysUser", umsAdmin);
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
@@ -405,5 +406,11 @@ public class SysUserController extends ApiController {
         }
         return new CommonResult().success(newList);
     }
+    @PutMapping("/resetPwd")
+    public Object resetPwd(@RequestBody SysUser user)
+    {
+        return sysUserService.resetPwd(user);
+    }
+
 }
 

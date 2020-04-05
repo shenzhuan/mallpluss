@@ -26,4 +26,5 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
     List<SysRolePermission> crmSysRoleMenu(@Param("roleIds") List<Integer> roleIdList);
 
+    List<SysRole> selectRolePermissionByUserId(Long userId);
 }
