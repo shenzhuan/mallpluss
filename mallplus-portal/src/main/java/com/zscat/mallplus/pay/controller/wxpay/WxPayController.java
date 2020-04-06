@@ -13,6 +13,7 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
@@ -74,6 +75,9 @@ public class WxPayController extends AbstractWxPayApiController {
     @Autowired
     private IOmsPaymentsService paymentsService;
     @Resource
+    private IUmsMemberService memberService;
+
+    @Resource
     private SysAppletSetMapper appletSetMapper;
     private String notifyUrl = "http://java.chengguo.link:8081/api";
     private String refundNotifyUrl;
@@ -83,9 +87,9 @@ public class WxPayController extends AbstractWxPayApiController {
         WxPayApiConfig apiConfig = null;
 
         try {
-            OmsPayments payments = paymentsService.getById(1);
+            OmsPayments payments = paymentsService.getOne(new QueryWrapper<OmsPayments>().eq("code","wechatpay").eq("status",1));
             if (payments != null) {
-                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParams(), WxPayBean.class);
+                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParamss(), WxPayBean.class);
                 apiConfig = WxPayApiConfig.builder()
                         .appId(wxPayBean.getAppId())
                         .mchId(wxPayBean.getMchId())
@@ -117,11 +121,11 @@ public class WxPayController extends AbstractWxPayApiController {
         return apiConfig;
     }
 
-    public WxPayApiConfig getApiConfig1() {
+    public WxPayApiConfig getApiConfig1(Integer source) {
         WxPayApiConfig apiConfig = null;
 
         try {
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(source);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -155,7 +159,8 @@ public class WxPayController extends AbstractWxPayApiController {
      * 注意：必须再web页面中发起支付且域名已添加到开发配置中
      */
     @RequestMapping(value = "/wapPay", method = {RequestMethod.POST, RequestMethod.GET})
-    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws IOException {
+    public Object wapPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                         @RequestParam(value = "appIdsource", required = false) Integer appIdsource) throws IOException {
         try {
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
@@ -170,11 +175,14 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
+                if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 0) {
+
+                }
                 return new CommonResult().failed("订单已支付，请不要重复操作");
             }
 
             H5SceneInfo sceneInfo = new H5SceneInfo();
-            WxPayApiConfig wxPayApiConfig = this.getApiConfig1();
+            WxPayApiConfig wxPayApiConfig = this.getApiConfig1(appIdsource);
 
             H5SceneInfo.H5 h5_info = new H5SceneInfo.H5();
             h5_info.setType("Wap");
@@ -249,7 +257,10 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             String totalFee = "0.01";
             // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-            UmsMember member = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
             String openId = member.getWeixinOpenid();
             if (StrUtil.isEmpty(openId)) {
                 return new CommonResult().failed("openId is null");
@@ -645,17 +656,21 @@ public class WxPayController extends AbstractWxPayApiController {
      */
     @RequestMapping(value = "/miniAppPay", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
+    public Object miniAppPay(HttpServletRequest request, @RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId,
+                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
-            UmsMember user = umsMemberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member==null || member.getId()==null){
+                return new CommonResult().fail(100);
+            }
 
             String ip = IpKit.getRealIp(request);
             if (StrKit.isBlank(ip)) {
                 ip = "127.0.0.1";
             }
 
-            SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+            SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
             }
@@ -688,7 +703,7 @@ public class WxPayController extends AbstractWxPayApiController {
                     .spbill_create_ip(ip)
                     .notify_url(notifyUrl)
                     .trade_type(TradeType.JSAPI.getTradeType())
-                    .openid(user.getWeixinOpenid())
+                    .openid(member.getWeixinOpenid())
                     .build()
                     .createSign(wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
@@ -967,6 +982,7 @@ public class WxPayController extends AbstractWxPayApiController {
             if (WxPayKit.codeIsOk(returnCode)) {
                 // 更新订单信息
                 orderService.updateById(orderInfo);
+
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
                     OmsOrder childOrder = new OmsOrder();
                     childOrder.setStatus(OrderStatus.TO_DELIVER.getValue());
@@ -974,6 +990,12 @@ public class WxPayController extends AbstractWxPayApiController {
                     childOrder.setPaymentTime(new Date());
                     orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
+                OmsOrderItem queryO = new OmsOrderItem();
+                queryO.setOrderId(orderInfo.getId());
+                queryO.setType(AllEnum.OrderItemType.GOODS.code());
+                List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
+                // 分拥计算
+                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

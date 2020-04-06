@@ -2,6 +2,7 @@ package com.zscat.mallplus.sys.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zscat.mallplus.sys.entity.SysRole;
+import com.zscat.mallplus.sys.entity.SysRolePermission;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

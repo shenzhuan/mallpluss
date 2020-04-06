@@ -109,6 +109,8 @@ public class SysAppletSetController {
             SysAppletSet coupon = ISysAppletSetService.getOne(new QueryWrapper<>());
             if (coupon==null){
                 coupon = new SysAppletSet();
+                coupon.setAppid("0");
+                coupon.setTemplateid1("123");
                 ISysAppletSetService.save(coupon);
             }
             return new CommonResult().success(coupon);

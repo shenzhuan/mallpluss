@@ -114,10 +114,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             SysUserVo admin = userMapper.selectByUserName(username);
             //  apiContext.setCurrentProviderId(admin.getStoreId());
             if (admin != null) {
-                if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {
-                    List<SysPermission> permissionList = sysUserService.listPerms();
-                    return new AdminUserDetails(admin, permissionList);
-                }
                 SysStore store = storeMapper.selectById(admin.getStoreId());
                 if (store==null ){
                     throw new UsernameNotFoundException("商户不存在");
@@ -128,6 +124,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         throw new UsernameNotFoundException("商户审核中");
                     }
                 }
+                if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {
+                    List<SysPermission> permissionList = sysUserService.listPerms();
+                    return new AdminUserDetails(admin, permissionList);
+                }
+
                 List<SysPermission> permissionList = sysUserService.listUserPerms(admin.getId());
                 return new AdminUserDetails(admin, permissionList);
             }

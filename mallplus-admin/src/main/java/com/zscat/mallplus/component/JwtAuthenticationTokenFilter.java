@@ -90,6 +90,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         String username = null;
         String authHeader = request.getHeader(this.tokenHeader);
+        if (ValidatorUtils.empty(authHeader)) {
+            authHeader = request.getParameter(this.tokenHeader);
+        }
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);

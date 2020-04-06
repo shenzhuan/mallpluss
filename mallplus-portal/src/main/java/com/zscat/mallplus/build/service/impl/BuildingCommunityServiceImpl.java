@@ -1,6 +1,7 @@
 package com.zscat.mallplus.build.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.build.BuildHomeResult;
 import com.zscat.mallplus.build.CommunityTree;
@@ -80,7 +81,7 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
         // 3 分配物业公司角色
         SysUserRole userRole = new SysUserRole();
         userRole.setAdminId(user.getId());
-        userRole.setRoleId(3L);
+        userRole.setRoleId(5L);
         userRoleMapper.insert(userRole);
         return true;
     }
@@ -146,26 +147,29 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
     }
 
     @Override
-    public BuildHomeResult singleContent(Long id) {
+    public BuildHomeResult singleContent(Long communityId) {
         BuildHomeResult result = new BuildHomeResult();
         List<BuildAdv> buildAdvs = new ArrayList<>();
         List<BuildNotice> buildNotices = new ArrayList<>();
         BuildingCommunity community = new BuildingCommunity();
-        if (ValidatorUtils.notEmpty(id) && id > 0) {
-            community = communityMapper.selectById(id);
+        if (ValidatorUtils.notEmpty(communityId) && communityId > 0) {
+            community = communityMapper.selectById(communityId);
         } else {
             UmsMember member = memberService.getNewCurrentMember();
             if (member == null) {
                 throw new ApiMallPlusException("100");
             }
-            String[] split = member.getRoomNums().split(",");
-            community = communityMapper.selectById(split[0]);
+            if (ValidatorUtils.notEmpty(member.getRoomNums())) {
+                String[] split = member.getRoomNums().split(",");
+                community = communityMapper.selectById(split[0]);
+            }
+
         }
         buildAdvs = advMapper.selectList(new QueryWrapper<BuildAdv>().eq("community_id", community.getId()));
         buildNotices = noticeMapper.selectList(new QueryWrapper<BuildNotice>().eq("community_id", community.getId()));
-        List<BuildingFloor> floorList = buildingFloorMapper.selectList(new QueryWrapper<BuildingFloor>().eq("community_id", community.getId()));
+        List<BuildingCommunity> communityList = this.page(new Page<BuildingCommunity>(0, 10), new QueryWrapper<>()).getRecords();
+        result.setCommunityList(communityList);
         result.setCommunity(community);
-        result.setFloorList(floorList);
         result.setActivityList(getActivityList());
         result.setSubjectList(buildNotices);
         result.setAdvertiseList(buildAdvs);

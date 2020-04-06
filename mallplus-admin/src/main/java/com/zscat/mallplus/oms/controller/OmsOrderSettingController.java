@@ -106,7 +106,7 @@ public class OmsOrderSettingController {
             OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
             if (coupon==null){
                 coupon = new OmsOrderSetting();
-                coupon.setId(1L);
+                coupon.setId(1L);coupon.setCommentOvertime(0);
                 IOmsOrderSettingService.save(coupon);
             }
             return new CommonResult().success(coupon);

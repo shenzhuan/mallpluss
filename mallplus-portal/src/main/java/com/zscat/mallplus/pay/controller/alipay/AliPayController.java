@@ -81,9 +81,9 @@ public class AliPayController extends AbstractAliPayApiController {
         AliPayApiConfig aliPayApiConfig = null;
         try {
             //aliPayApiConfig = AliPayApiConfigKit.getApiConfig(aliPayBean.getAppId());
-            OmsPayments payments = paymentsService.getById(2);
+            OmsPayments payments = paymentsService.getOne(new QueryWrapper<OmsPayments>().eq("code","alipay").eq("status",1));
             if (payments != null) {
-                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParams(), AliPayBean.class);
+                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParamss(), AliPayBean.class);
                 aliPayApiConfig = AliPayApiConfig.builder()
                         .setAppId(aliPayBean.getAppId())
                         .setAliPayPublicKey(aliPayBean.getPublicKey())

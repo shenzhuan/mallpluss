@@ -174,7 +174,7 @@ public class BPmsController extends ApiBaseAction {
         pmsProduct.setMemberRate(10);
         UmsMember member =memberService.getNewCurrentMember();
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
-            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectOne(new QueryWrapper<>());
             if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
                 pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
             }
@@ -275,7 +275,7 @@ public class BPmsController extends ApiBaseAction {
             if (product.getIsFenxiao()!=null && product.getIsFenxiao()==1){
                 for (PmsProduct pmsProduct : list.getRecords()) {
                     if ( pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
-                        FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+                        FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectOne(new QueryWrapper<>());
                         if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
                             pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
                         }

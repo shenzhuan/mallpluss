@@ -560,7 +560,7 @@ public class BHomeController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
-        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
+        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type,0);
         List<PmsProduct> list = new ArrayList<>();
         if (type == 1) {
             list = pmsProductService.getHotProductList(1, 100);

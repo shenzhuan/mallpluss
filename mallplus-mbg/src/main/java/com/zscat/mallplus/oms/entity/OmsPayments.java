@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @TableName("oms_payments")
-public class OmsPayments implements Serializable {
+public class OmsPayments extends BaseEntity  {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,7 +47,7 @@ public class OmsPayments implements Serializable {
     /**
      * 参数
      */
-    private String params;
+    private String paramss;
 
     /**
      * 排序

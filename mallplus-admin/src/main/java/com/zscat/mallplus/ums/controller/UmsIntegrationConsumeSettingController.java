@@ -112,6 +112,7 @@ public class UmsIntegrationConsumeSettingController {
             UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getOne(new QueryWrapper<>());
             if (coupon==null){
                 coupon = new UmsIntegrationConsumeSetting();
+                coupon.setUseUnit(1);
                 IUmsIntegrationConsumeSettingService.save(coupon);
             }
             return new CommonResult().success(coupon);

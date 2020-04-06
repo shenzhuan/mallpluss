@@ -8,6 +8,8 @@ import lombok.Data;
  */
 @Data
 public class OrderParam {
+    long bargainId;
+    long bargainRecordId ;
     String page;
     String formId;
     String platform = "2";

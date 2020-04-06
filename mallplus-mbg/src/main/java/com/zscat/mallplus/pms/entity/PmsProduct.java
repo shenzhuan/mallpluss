@@ -281,7 +281,7 @@ public class PmsProduct extends BaseEntity implements Serializable {
      * 会员价
      */
     @TableField(exist = false)
-    private BigDecimal vipPrice;
+    private BigDecimal vipPrice=BigDecimal.ZERO;
 
     /**
      * 会员折扣
@@ -292,7 +292,7 @@ public class PmsProduct extends BaseEntity implements Serializable {
      * 分销价格
      */
     @TableField(exist = false)
-    private BigDecimal fenxiaoPrice;
+    private BigDecimal fenxiaoPrice =BigDecimal.ZERO;
     @TableField(exist = false)
     private TimeSecound timeSecound;
     /**
