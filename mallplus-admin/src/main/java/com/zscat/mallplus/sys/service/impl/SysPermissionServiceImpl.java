@@ -71,7 +71,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     public Set<String> getMenuPermission(SysUser user) {
         Set<String> perms = new HashSet<String>();
         // 管理员拥有所有权限
-        if (user.getSupplyId()==1)
+        if (user.getSupplyId() != null &&user.getSupplyId()==1)
         {
             perms.add("*:*:*");
         }
@@ -100,7 +100,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     public Set<String> getRolePermission(SysUser user) {
         Set<String> roles = new HashSet<String>();
         // 管理员拥有所有权限
-        if (user.getSupplyId()==1)
+        if (user.getSupplyId()!=null && user.getSupplyId()==1)
         {
             roles.add("admin");
         }

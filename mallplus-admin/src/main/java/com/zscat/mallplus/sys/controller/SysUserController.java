@@ -233,7 +233,7 @@ public class SysUserController extends ApiController {
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
 
-        if (umsAdmin != null) {
+        if (umsAdmin != null && umsAdmin.getId()!=null) {
             Set<String> roles = permissionService.getRolePermission(umsAdmin);
             Set<String> permissions = permissionService.getMenuPermission(umsAdmin);
             data.put("permissions", permissions);

@@ -1,5 +1,5 @@
 
-#user  nobody;
+user  root;
 worker_processes  1;
 
 #error_log  logs/error.log;
@@ -40,28 +40,39 @@ send_timeout 45;
     server {
         listen       8090;
         server_name  localhost;
-	client_max_body_size 10M;
+	    client_max_body_size 10M;
         #charset koi8-r;
 
         #access_log  logs/host.access.log  main;
         location / {
-  root /root/jm/dist;
-  index index.html;
-}
-
-
+          root /root/jm/dist;
+          index index.html;
+        }
         #error_page  404              /404.html;
-
         # redirect server error pages to the static page /50x.html
         #
         error_page   500 502 503 504  /50x.html;
         location = /50x.html {
             root   html;
         }
-
-
     }
-server {
+    server {
+            listen       8016;
+            server_name  localhost;
+
+    		location / {
+                root /root/jm/ruoyi;
+    			try_files $uri $uri/ /index.html;
+                index  index.html index.htm;
+                proxy_pass http://localhost:8085/;
+            }
+
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   html;
+            }
+        }
+    server {
         listen 80;
         server_name www.yjlive.cn;
 
@@ -115,7 +126,7 @@ try_files $uri $uri/ /index.html;
 server {
     listen 8086;
     server_name _;
-    root /root/jm/h5bak;
+    root /root/jm/ecshop;
     index index.html;
 try_files $uri $uri/ /index.html;
 }

@@ -345,7 +345,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
         //获取用户可用优惠券列表
         List<SmsCouponHistoryDetail> couponHistoryDetailList = couponService.listCart(list, 1);
-        return new CommonResult().success(couponHistoryDetailList);
+        return couponHistoryDetailList;
     }
 
     /**

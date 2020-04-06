@@ -26,6 +26,7 @@ import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -67,56 +68,54 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     @Override
     @Transactional
     public Object applyStore(SysStore entity) {
-
-        entity.setStatus(1);
+        entity.setStatus(StatusEnum.AuditType.INIT.code());
         entity.setTryTime(new Date());
         entity.setCreateTime(new Date());
-
-        if (1 > 0) {
-            SysUser user = new SysUser();
-            user.setUsername(entity.getName());
-            SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
-            if (umsAdminList != null && umsAdminList.getId() != null) {
-                return new CommonResult().failed("你已申请");
-            }
-
-            storeMapper.insert(entity);
-            String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
-            //要添加到二维码下面的文字
-            String words = entity.getName() + "的二维码";
-            //调用刚才的工具类
-            ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-            InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-            entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
-            storeMapper.updateById(entity);
-            user.setStatus(3);
-            user.setSupplyId(0L);
-            user.setPassword("123456");
-            user.setCreateTime(new Date());
-            user.setIcon(entity.getLogo());
-            user.setNickName(entity.getName());
-            user.setStoreId(entity.getId());
-            user.setEmail(entity.getSupportPhone());
-            user.setStoreName(entity.getName());
-            userMapper.insert(user);
-             UmsMember umsMember = memberService.getNewCurrentMember();
-            if (umsMember != null && umsMember.getId()!=null) {
-                umsMember.setStoreId(entity.getId());
-                memberService.updateById(umsMember);
-            }
-
-            FenxiaoConfig config = new FenxiaoConfig();
-            config.setId(Long.valueOf(entity.getId()));
-            config.setStoreId(entity.getId());
-            config.setStatus(0);
-            fenxiaoConfigMapper.insert(config);
-            SysUserRole userRole = new SysUserRole();
-            userRole.setRoleId(3L);
-            userRole.setAdminId(user.getId());
-            userRoleMapper.insert(userRole);
-            return new CommonResult().success(entity);
+        SysUser user = new SysUser();
+        if (ValidatorUtils.empty(entity.getName())) {
+            return new CommonResult().failed("请输入店铺名称");
         }
-        return new CommonResult().failed("");
+        user.setUsername(entity.getName());
+        SysUser umsAdminList = userMapper.selectByUserName(entity.getName());
+        if (umsAdminList != null && umsAdminList.getId() != null) {
+            return new CommonResult().failed("你已申请");
+        }
+        storeMapper.insert(entity);
+        String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
+        //要添加到二维码下面的文字
+        String words = entity.getName() + "的二维码";
+        //调用刚才的工具类
+        ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+        InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+        entity.setContactQrcode(aliyunOSSUtil.upload("png", inputStream));
+        storeMapper.updateById(entity);
+        user.setStatus(3);
+        user.setSupplyId(0L);
+        user.setPassword("123456");
+        user.setCreateTime(new Date());
+        user.setIcon(entity.getLogo());
+        user.setNickName(entity.getName());
+        user.setStoreId(entity.getId());
+        user.setEmail(entity.getSupportPhone());
+        user.setStoreName(entity.getName());
+        userMapper.insert(user);
+        UmsMember umsMember = memberService.getNewCurrentMember();
+        if (umsMember != null && umsMember.getId() != null) {
+            umsMember.setStoreId(entity.getId());
+            memberService.updateById(umsMember);
+        }
+
+        FenxiaoConfig config = new FenxiaoConfig();
+        config.setId(Long.valueOf(entity.getId()));
+        config.setStoreId(entity.getId());
+        config.setStatus(0);
+        fenxiaoConfigMapper.insert(config);
+        SysUserRole userRole = new SysUserRole();
+        userRole.setRoleId(3L);
+        userRole.setAdminId(user.getId());
+        userRoleMapper.insert(userRole);
+        return new CommonResult().success(entity);
+
     }
 
     @Override
