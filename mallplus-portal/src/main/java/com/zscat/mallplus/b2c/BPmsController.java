@@ -168,6 +168,7 @@ public class BPmsController extends ApiBaseAction {
     }
 
     private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        pmsProduct.setMemberRate(10);
         UmsMember member =memberService.getNewCurrentMember();
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
             FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
@@ -176,7 +177,7 @@ public class BPmsController extends ApiBaseAction {
             }
         }
 
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
+        if (member!=null && member.getId()!=null &&  pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
             UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
             if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                 pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -281,10 +282,9 @@ public class BPmsController extends ApiBaseAction {
 
                 }
             }
-            if (product.getIsVip()!=null && product.getIsVip()==1){
-                UmsMember member =memberService.getNewCurrentMember();
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member!=null && member.getId()!=null && product.getIsVip()!=null && product.getIsVip()==1){
                 for (PmsProduct pmsProduct : list.getRecords()) {
-
                     if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null & member.getMemberLevelId()>0) {
                         UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
                         if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {

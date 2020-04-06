@@ -5,6 +5,7 @@ import com.zscat.mallplus.build.entity.UserCommunityRelate;
 import com.zscat.mallplus.sys.entity.SysPermission;
 import com.zscat.mallplus.sys.entity.SysRole;
 import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.sys.entity.SysUserVo;
 
 import java.util.List;
 
@@ -51,4 +52,8 @@ public interface ISysUserService extends IService<SysUser> {
     Object userCommunityRelate(UserCommunityRelate entity);
 
     void updatePassword(String password, String newPassword);
+
+    SysUserVo selectByUserName(String username);
+
+    Object resetPwd(SysUser user);
 }

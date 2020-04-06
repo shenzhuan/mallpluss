@@ -23,6 +23,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.EasyPoiUtils;
+import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.OrderStatusCount;
@@ -31,9 +32,13 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
@@ -90,7 +95,8 @@ public class HomeController extends BaseController {
         }
         return new CommonResult().success(orderService.orderMonthStatic(date));
     }
-
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
     /**
      * 订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单
      *
@@ -100,6 +106,7 @@ public class HomeController extends BaseController {
     @SysLog(MODULE = "home", REMARK = "首页订单统计")
     @RequestMapping(value = "/orderStatic", method = RequestMethod.GET)
     public Object orderStatic() throws Exception {
+
         HomeOrderData data = new HomeOrderData();
         List<OmsOrder> orderList = orderService.list(new QueryWrapper<>());
         int nowOrderCount = 0; // 今日订单 一支付

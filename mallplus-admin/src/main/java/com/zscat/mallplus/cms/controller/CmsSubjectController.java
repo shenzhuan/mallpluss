@@ -37,7 +37,6 @@ public class CmsSubjectController {
     @SysLog(MODULE = "cms", REMARK = "根据条件查询所有专题表列表")
     @ApiOperation("根据条件查询所有专题表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('cms:CmsSubject:read')")
     public Object getCmsSubjectByPage(CmsSubject entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize

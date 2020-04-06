@@ -79,3 +79,29 @@ CREATE TABLE `sys_shop` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
+alter table sys_permission add component varchar(42) ;
+
+update sys_permission set component ='Layout' where pid=0;
+
+update sys_permission set component = concat('pms','/',uri,'/index')  where type=1 and pid=1;
+
+update sys_permission set component = concat('sys','/',uri,'/index')  where type=1 and pid=19;
+
+update sys_permission set component = concat('oms','/',uri,'/index')  where type=1 and pid=23;
+
+update sys_permission set component = concat('sms','/',uri,'/index')  where type=1 and pid=31;
+
+update sys_permission set component = concat('marking','/',uri,'/index')  where type=1 and pid=350;
+
+
+update sys_permission set component = concat('cms','/',uri,'/index')  where type=1 and pid=47;
+update sys_permission set component = concat('build','/',uri,'/index')  where type=1 and pid=230;
+update sys_permission set component = concat('fenxiao','/',uri,'/index')  where type=1 and pid=314;
+update sys_permission set component = concat('jifen','/',uri,'/index')  where type=1 and pid=313;
+
+update sys_permission set component = concat('setting','/',uri,'/index')  where type=1 and pid=500;
+
+update sys_permission set component = concat('tool','/',uri,'/index')  where type=1 and pid=351;
+
+update sys_permission set component = concat('ums','/',uri,'/index')  where type=1 and pid=43;
+

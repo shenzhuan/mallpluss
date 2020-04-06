@@ -384,6 +384,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         adminMapper.updateById(role);
     }
 
+    @Override
+    public SysUserVo selectByUserName(String username){
+        return adminMapper.selectByUserName(username);
+    }
     /**
      * 保存短信记录，并发送短信
      *
@@ -473,5 +477,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             }
             adminRoleRelationService.saveBatch(list);
         }
+    }
+
+    @Override
+    public  Object resetPwd(SysUser user){
+        if(ValidatorUtils.empty(user.getPassword())){
+            return new CommonResult().paramFailed("请输入密码");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return new CommonResult().success(adminMapper.updateById(user));
     }
 }

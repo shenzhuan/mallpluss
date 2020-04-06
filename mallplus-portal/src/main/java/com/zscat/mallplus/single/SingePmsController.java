@@ -145,6 +145,7 @@ public class SingePmsController extends ApiBaseAction {
     }
 
     private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        pmsProduct.setMemberRate(10);
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
             FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
             if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
@@ -152,7 +153,7 @@ public class SingePmsController extends ApiBaseAction {
             }
         }
         UmsMember member = memberService.getNewCurrentMember();
-        if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+        if (member!=null && member.getId()!=null && pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
             UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
             if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                 pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -385,6 +386,7 @@ public class SingePmsController extends ApiBaseAction {
     }
 
     private void buildFenPrice(IPage<PmsProduct> list,PmsProduct product) {
+        product.setMemberRate(10);
         if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
             if (product.getIsFenxiao()!=null && product.getIsFenxiao()==1){
                 for (PmsProduct pmsProduct : list.getRecords()) {
@@ -401,7 +403,7 @@ public class SingePmsController extends ApiBaseAction {
                 UmsMember member =memberService.getNewCurrentMember();
                 for (PmsProduct pmsProduct : list.getRecords()) {
 
-                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+                    if (member!=null && member.getId()!=null &&  pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
                         UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
                         if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                             pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());

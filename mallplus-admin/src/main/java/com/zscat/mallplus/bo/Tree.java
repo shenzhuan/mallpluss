@@ -38,10 +38,16 @@ public class Tree<T> {
      */
     private List<Tree<T>> children = new ArrayList<Tree<T>>();
 
+    private String component;
+
     /**
      * 父ID
      */
     private String parentId;
+
+    private String path;
+
+    private String name;
     /**
      * 是否有父节点
      */
@@ -63,6 +69,30 @@ public class Tree<T> {
         this.hasParent = isParent;
         this.hasChildren = isChildren;
         this.parentId = parentID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public Tree() {

@@ -18,6 +18,7 @@ import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -29,14 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -217,19 +218,26 @@ public class SysUserController extends ApiController {
             return new CommonResult().failed(e.getMessage());
         }
     }
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
     @SysLog(MODULE = "sys", REMARK = "获取当前登录用户信息")
     @ApiOperation(value = "获取当前登录用户信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
     public Object getAdminInfo(Principal principal) {
+
         String username = principal.getName();
         SysUser queryU = new SysUser();
         queryU.setUsername(username);
         SysUser umsAdmin = sysUserService.getOne(new QueryWrapper<>(queryU));
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
-        data.put("roles", new String[]{"TEST"});
-        if (umsAdmin != null) {
+
+        if (umsAdmin != null && umsAdmin.getId()!=null) {
+            Set<String> roles = permissionService.getRolePermission(umsAdmin);
+            Set<String> permissions = permissionService.getMenuPermission(umsAdmin);
+            data.put("permissions", permissions);
+            data.put("roles", roles);
             data.put("sysUser", umsAdmin);
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
@@ -398,5 +406,11 @@ public class SysUserController extends ApiController {
         }
         return new CommonResult().success(newList);
     }
+    @PutMapping("/resetPwd")
+    public Object resetPwd(@RequestBody SysUser user)
+    {
+        return sysUserService.resetPwd(user);
+    }
+
 }
 
