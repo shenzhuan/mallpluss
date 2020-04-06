@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class mallplus PayConfigurer extends WebMvcConfigurationSupport {
+public class IJPayConfigurer extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
        /* registry.addInterceptor(new AliPayInterceptor()).addPathPatterns("/api/aliPay/**");
