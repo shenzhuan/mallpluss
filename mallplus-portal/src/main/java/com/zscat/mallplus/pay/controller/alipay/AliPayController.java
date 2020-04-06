@@ -45,11 +45,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>IJPay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
+ * <p>mallplus Pay 让支付触手可及，封装了微信支付、支付宝支付、银联支付常用的支付方式以及各种常用的接口。</p>
  * <p>
  * <p>不依赖任何第三方 mvc 框架，仅仅作为工具使用简单快速完成支付模块的开发，可轻松嵌入到任何系统里。 </p>
  * <p>
- * <p>IJPay 交流群: 723992875</p>
+ * <p>mallplus Pay 交流群: 320860169</p>
  * <p>
  * <p>Node.js 版: https://gitee.com/javen205/TNW</p>
  * <p>
@@ -125,7 +125,7 @@ public class AliPayController extends AbstractAliPayApiController {
     @RequestMapping("")
     @ResponseBody
     public String index() {
-        return "欢迎使用 IJPay 中的支付宝支付 -By Javen  <br/><br>  交流群：723992875";
+        return "欢迎使用 mallplus Pay 中的支付宝支付 -By Javen  <br/><br>  交流群：320860169";
     }
 
     @RequestMapping("/test")
@@ -201,7 +201,7 @@ public class AliPayController extends AbstractAliPayApiController {
 
             Map<String, String> bizMap = new HashMap<>();
             bizMap.put("body", "mallplus 聚合支付-H5");
-            bizMap.put("subject", "IJPay 让支付触手可及");
+            bizMap.put("subject", "mallplus Pay 让支付触手可及");
             bizMap.put("out_trade_no", StringUtils.getOutTradeNo());
             bizMap.put("total_amount", orderInfo.getPayAmount().toString());
             bizMap.put("product_code", "QUICK_WAP_WAY");
@@ -289,7 +289,7 @@ public class AliPayController extends AbstractAliPayApiController {
             model.setProductCode("FAST_INSTANT_TRADE_PAY");
             model.setTotalAmount(orderInfo.getPayAmount().floatValue() + "");
             model.setSubject("Javen PC支付测试");
-            model.setBody("Javen IJPay PC支付测试");
+            model.setBody("Javen mallplus Pay PC支付测试");
             model.setPassbackParams("passback_params");
             /**
              * 花呗分期相关的设置,测试环境不支持花呗分期的测试
@@ -410,7 +410,7 @@ public class AliPayController extends AbstractAliPayApiController {
             model.setOutRequestNo(StringUtils.getOutTradeNo());
             model.setAuthCode(authCode);
             model.setAuthCodeType("bar_code");
-            model.setOrderTitle("资金授权冻结-By IJPay");
+            model.setOrderTitle("资金授权冻结-By mallplus Pay");
             model.setAmount("36");
             model.setProductCode("PRE_AUTH");
 
@@ -433,7 +433,7 @@ public class AliPayController extends AbstractAliPayApiController {
             AlipayFundCouponOrderAgreementPayModel model = new AlipayFundCouponOrderAgreementPayModel();
             model.setOutOrderNo(StringUtils.getOutTradeNo());
             model.setOutRequestNo(StringUtils.getOutTradeNo());
-            model.setOrderTitle("红包协议支付接口-By IJPay");
+            model.setOrderTitle("红包协议支付接口-By mallplus Pay");
             model.setAmount("36");
             model.setPayerUserId("2088102180432465");
 
