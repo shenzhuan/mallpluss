@@ -3,8 +3,12 @@ package com.zscat.mallplus.pms.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.pms.entity.EsShopGoodsGroupMap;
+import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
+import com.zscat.mallplus.pms.mapper.PmsGoodsGroupMapMapper;
 import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
+import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.vo.PmsProductAttributeCategoryItem;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -16,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +38,11 @@ import java.util.List;
 public class PmsProductAttributeCategoryController {
     @Resource
     private IPmsProductAttributeCategoryService IPmsProductAttributeCategoryService;
+    @Resource
+    private PmsGoodsGroupMapMapper shopGoodsGroupMapMapper;
 
+    @Resource
+    private IPmsProductService pmsProductService;
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有产品属性分类表列表")
     @ApiOperation("根据条件查询所有产品属性分类表列表")
     @GetMapping(value = "/list")
@@ -72,7 +81,21 @@ public class PmsProductAttributeCategoryController {
         }
         return new CommonResult().failed();
     }
-
+    @SysLog(MODULE = "pms", REMARK = "保存产品属性分类表")
+    @ApiOperation("保存产品属性分类表")
+    @PostMapping(value = "/createSingle")
+    @PreAuthorize("hasAuthority('pms:PmsProductAttributeCategory:create')")
+    public Object createSingle(@RequestBody PmsProductAttributeCategory productAttributeCategory) {
+        try {
+            if (IPmsProductAttributeCategoryService.save(productAttributeCategory)) {
+                return new CommonResult().success();
+            }
+        } catch (Exception e) {
+            log.error("保存产品属性分类表：%s", e.getMessage(), e);
+            return new CommonResult().failed();
+        }
+        return new CommonResult().failed();
+    }
     @SysLog(MODULE = "pms", REMARK = "更新产品属性分类表")
     @ApiOperation("更新产品属性分类表")
     @PostMapping(value = "/update/{id}")
@@ -120,6 +143,18 @@ public class PmsProductAttributeCategoryController {
                 return new CommonResult().paramFailed("产品属性分类表id");
             }
             PmsProductAttributeCategory coupon = IPmsProductAttributeCategoryService.getById(id);
+            if (coupon != null) {
+                List<EsShopGoodsGroupMap> list = shopGoodsGroupMapMapper.selEsShopGoodsGroupMap(coupon.getId());
+                List<PmsProduct> lists = new ArrayList<PmsProduct>();
+                for (EsShopGoodsGroupMap lis : list) {
+                    //根据商品ID查询商品名称、商品图片、商品虚拟库存
+                    PmsProduct es = pmsProductService.getById(lis.getGoodsId());
+                    if (es != null) {
+                        lists.add(es);
+                    }
+                }
+                coupon.setListGoods(lists);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询产品属性分类表明细：%s", e.getMessage(), e);

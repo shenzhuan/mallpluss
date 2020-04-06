@@ -125,7 +125,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
     public Object balancePay(BalancePayParam payParam) {
-        OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+        Object order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
         return new CommonResult().success(order);
     }
 
@@ -145,11 +145,14 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "获取支付的请求参数")
     @ApiOperation(value = "获取支付的请求参数")
     @PostMapping("weixinAppletPay")
-    public Object payPrepay(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) {
-        UmsMember user = memberService.getNewCurrentMember();
-        //
+    public Object payPrepay(@RequestParam(value = "orderId", required = true) Long orderId,
+                            @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
+            return new CommonResult().fail(100);
+        }
         OmsOrder orderInfo = orderService.getById(orderId);
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+        SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");
         }
@@ -191,7 +194,7 @@ public class BPayController extends ApiBaseAction {
             // 交易类型APP
             parame.put("trade_type", tradeType);
             parame.put("spbill_create_ip", getClientIp());
-            parame.put("openid", user.getWeixinOpenid());
+            parame.put("openid", member.getWeixinOpenid());
             String sign = WechatUtil.arraySign(parame, appletSet.getPaySignKey());
             // 数字签证
             parame.put("sign", sign);
@@ -257,10 +260,14 @@ public class BPayController extends ApiBaseAction {
     @SysLog(MODULE = "pay", REMARK = "查询订单状态")
     @ApiOperation(value = "查询订单状态")
     @PostMapping("query")
-    public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        UmsMember user = memberService.getNewCurrentMember();
-        //
-        SysAppletSet appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
+    public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id,
+                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
+
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
+            return new CommonResult().fail(100);
+        }
+        SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);
         if (null == appletSet) {
             throw new ApiMallPlusException("没有设置支付配置");
         }

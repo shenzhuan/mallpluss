@@ -191,6 +191,10 @@ public class AllEnum {
         KNAN_JIA(4, "kanjia"),
         JIFEN(5, "jifen"),
         /**
+         * 门店自取
+         */
+        SHOP(7, "shop"),
+        /**
          * 秒杀订单
          */
         SKILL(6, "skill"),;

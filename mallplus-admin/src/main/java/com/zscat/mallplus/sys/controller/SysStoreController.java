@@ -8,6 +8,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
@@ -22,7 +23,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -185,19 +185,21 @@ public class SysStoreController {
     public Object storeDetail() {
         SysStore store = ISysStoreService.getById(1);
         List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", store.getId()));
+        List<PmsProductAttributeCategory> newlist = new ArrayList<>();
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
-            productQueryParam.setPublishStatus(1);
-            productQueryParam.setVerifyStatus(1);
+            productQueryParam.setPublishStatus(StatusEnum.YesNoType.YES.code());
+            productQueryParam.setVerifyStatus(StatusEnum.YesNoType.YES.code());
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(goodsList.getRecords());
+                newlist.add(gt);
             } else {
                 gt.setGoodsList(new ArrayList<>());
             }
         }
-        store.setList(list);
+        store.setList(newlist);
         store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id", store.getId())));
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.STORE_VIEWCOUNT_CODE + store.getId();

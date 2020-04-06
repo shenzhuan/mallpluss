@@ -74,7 +74,7 @@ public class PmsProductAttributeController {
     public Object savePmsProductAttribute(@RequestBody PmsProductAttribute entity) {
         try {
             if (entity.getType()==null) {
-                return new CommonResult().failed("类别不能为空");
+                return new CommonResult().failed("请选择类型");
             }
             if (IPmsProductAttributeService.saveAndUpdate(entity)) {
                 return new CommonResult().success();

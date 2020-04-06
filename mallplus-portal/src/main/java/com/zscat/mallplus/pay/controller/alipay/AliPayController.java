@@ -18,6 +18,7 @@ import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsPayments;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
@@ -762,6 +763,12 @@ public class AliPayController extends AbstractAliPayApiController {
                     childOrder.setPaymentTime(new Date());
                     orderService.update(childOrder, new QueryWrapper<OmsOrder>().eq("pid", orderInfo.getId()));
                 }
+                OmsOrderItem queryO = new OmsOrderItem();
+                queryO.setOrderId(orderInfo.getId());
+                queryO.setType(AllEnum.OrderItemType.GOODS.code());
+                List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
+                // 分拥计算
+                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");
                 return new CommonResult().success();

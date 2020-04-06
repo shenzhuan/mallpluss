@@ -23,6 +23,7 @@ import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.single.ApiBaseAction;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
+import com.zscat.mallplus.sys.mapper.SysShopMapper;
 import com.zscat.mallplus.ums.entity.OmsShip;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
@@ -37,6 +38,7 @@ import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.HttpUtils;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.ApplyRefundVo;
 import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import com.zscat.mallplus.vo.Rediskey;
@@ -96,6 +98,8 @@ public class BOmsController extends ApiBaseAction {
     private RedisService redisService;
     @Resource
     private IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
+    @Resource
+    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
     @Autowired
     private IOmsShipService omsShipService;
     @Autowired
@@ -105,7 +109,7 @@ public class BOmsController extends ApiBaseAction {
     @Resource
     private IBillAftersalesItemsService billAftersalesItemsService;
     @Resource
-    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
+    private SysShopMapper sysShopMapper;
 
     @ApiOperation("添加商品到购物车")
     @RequestMapping(value = "/cart.store.add")
@@ -150,7 +154,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping("/submitStorePreview")
     public Object submitStorePreview(OrderParam orderParam) {
         try {
-            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
+            Object result = orderService.submitStorePreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
@@ -433,6 +437,13 @@ public class BOmsController extends ApiBaseAction {
         if (member != null) {
             orderDetailResult.setBlance(member.getBlance());
         }
+        if (ValidatorUtils.notEmpty(orderDetailResult.getGrowth())){
+            orderDetailResult.setShop(sysShopMapper.selectById(orderDetailResult.getGrowth()));
+        }
+        OmsOrderReturnApply apply =  IOmsOrderReturnApplyService.getOne(new QueryWrapper<OmsOrderReturnApply>().eq("order_id",id));
+        if (apply!=null && apply.getId()>0){
+            orderDetailResult.setAfterbillId(apply.getId());
+        }
         redisService.set(key, JsonUtils.objectToJson(orderDetailResult));
         redisService.expire(key, 60);
         return new CommonResult().success(orderDetailResult);
@@ -633,7 +644,7 @@ public class BOmsController extends ApiBaseAction {
     @PostMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
         try {
-            ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            Object result = orderService.submitPreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
@@ -791,20 +802,7 @@ public class BOmsController extends ApiBaseAction {
         }
         objectMap.put("user", umsMember);
         objectMap.put("count", count);
-
-        redisService.set(key, JsonUtils.objectToJson(objectMap));
-        redisService.expire(key, 60);
-        return new CommonResult().success(objectMap);
-    }
-
-    @IgnoreAuth
-    @SysLog(MODULE = "oms", REMARK = "服务菜单")
-    @ApiOperation(value = "服务菜单")
-    @PostMapping(value = "/menuList")
-    public Object menuList() {
         List<ServiceMenu> menuList = new ArrayList<>();
-        UmsMember umsMember = memberService.getNewCurrentMember();
-
         menuList.add(new ServiceMenu("会员中心", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9934a7c.png", "/pages/user_vip/index", "/user/vip"));
         menuList.add(new ServiceMenu("砍价记录", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9918091.png", "/pages/activity/user_goods_bargain_list/index", "/activity/bargain/record"));
         menuList.add(new ServiceMenu("我的推广", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9943575.png", "/pages/user_spread_user/index", "/user/user_promotion"));
@@ -813,28 +811,24 @@ public class BOmsController extends ApiBaseAction {
         menuList.add(new ServiceMenu("我的收藏", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99269d1.png", "/pages/user_goods_collection/index", "/collection"));
         menuList.add(new ServiceMenu("优惠券", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc991f394.png", "/pages/user_coupon/index", "/user/user_coupon"));
         menuList.add(new ServiceMenu("联系客服", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/customer/list"));
-        if (umsMember != null && umsMember.getId() != null) {
-            if (ValidatorUtils.empty(umsMember.getRoomNums())) {
-                menuList.add(new ServiceMenu("绑定社区", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/BindingCommunity"));
-            } else {
-                menuList.add(new ServiceMenu(umsMember.getRoomDesc(), "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/index"));
-            }
-        }
-        return new CommonResult().success(menuList);
+        objectMap.put("menuList", menuList);
+        redisService.set(key, JsonUtils.objectToJson(objectMap));
+        redisService.expire(key, 60);
+        return new CommonResult().success(objectMap);
     }
 
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "售后单列表")
     @ApiOperation(value = "售后单列表")
-    @PostMapping(value = "/order.aftersaleslist")
-    public Object afterSalesList(BillAftersales order,
+    @GetMapping(value = "/order.aftersaleslist")
+    public Object afterSalesList(OmsOrderReturnApply order,
                                  @RequestParam(value = "pageSize", required = false, defaultValue = "100") Integer pageSize,
                                  @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
 
-        IPage<BillAftersales> page = billAftersalesService.page(new Page<BillAftersales>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("ctime"));
-        for (BillAftersales omsOrder : page.getRecords()) {
-            List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id", omsOrder.getAftersalesId()));
-            omsOrder.setItemList(itemList);
+        IPage<OmsOrderReturnApply> page = IOmsOrderReturnApplyService.page(new Page<OmsOrderReturnApply>(pageNum, pageSize), new QueryWrapper<>(order).orderByDesc("create_time"));
+        for (OmsOrderReturnApply omsOrder : page.getRecords()) {
+            List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getOrderId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+            omsOrder.setOrderItemList(itemList);
         }
         return new CommonResult().success(page);
     }
@@ -844,12 +838,12 @@ public class BOmsController extends ApiBaseAction {
     @ApiOperation(value = "售后单详情")
     @PostMapping(value = "/order.aftersalesinfo")
     public Object afterSalesInfo(@RequestParam Long id) {
-        BillAftersales aftersales = billAftersalesService.getById(id);
-        List<BillAftersalesItems> itemList = billAftersalesItemsService.list(new QueryWrapper<BillAftersalesItems>().eq("aftersales_id", aftersales.getAftersalesId()));
-        aftersales.setItemList(itemList);
-        return new CommonResult().success(aftersales);
+        OmsOrderReturnApply omsOrder = IOmsOrderReturnApplyService.getById(id);
+        List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
+        omsOrder.setOrderItemList(itemList);
+        omsOrder.setOrder(orderService.getById(omsOrder.getOrderId()));
+        return new CommonResult().success(omsOrder);
     }
-
     @SysLog(MODULE = "cms", REMARK = "订单售后状态")
     @ApiOperation(value = "订单售后状态")
     @PostMapping(value = "/order.aftersalesstatus")
@@ -860,14 +854,24 @@ public class BOmsController extends ApiBaseAction {
         return null;
     }
 
-    @SysLog(MODULE = "cms", REMARK = "添加售后单")
-    @ApiOperation(value = "添加售后单")
-    @PostMapping(value = "/order.addaftersales")
-    public Object addAfterSales(BillAftersales aftersales, BindingResult result) {
-        UmsMember member = memberService.getNewCurrentMember();
-        aftersales.setUserId(member.getId());
 
-        return new CommonResult().success(billAftersalesService.save(aftersales));
+
+    @SysLog(MODULE = "oms", REMARK = "保存订单售后申请")
+    @ApiOperation("保存订单售后申请")
+    @PostMapping(value = "/order.addaftersales")
+    public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
+                                          @RequestParam(value = "type") Integer type,
+                                          @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "returnAmount") BigDecimal returnAmount,
+                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+        ApplyRefundVo vo = new ApplyRefundVo();
+        try {
+            vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
+            return orderService.applyRe(vo);
+        }catch (Exception e){
+            return new CommonResult().failed();
+        }
+
     }
 
     @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")

@@ -8,7 +8,7 @@ package com.zscat.mallplus.enums;
 public enum OrderStatus {
 
 
-    //   订单状态：12->待付款；2->待发货；3->已发货；4->已完成；5->售后订单 6->已关闭；
+    //   订单状态：12->待付款；2->待发货；3->待收货；4->待评价；5->已完成 ；
     INIT(12),//待付款
     PayNotNotice(1),//支付成功，没有回掉
     TO_DELIVER(2),//待发货

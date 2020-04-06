@@ -14,9 +14,7 @@ import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
-import com.zscat.mallplus.util.DateUtils;
-import com.zscat.mallplus.utils.CommonResult;
-
+import com.zscat.mallplus.utils.DateUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,41 +53,13 @@ public class OrderTimeOutCancelTask {
     /**
      * cron表达式：Seconds Minutes Hours DayofMonth Month DayofWeek [Year]
      * 每10分钟扫描一次，扫描设定超时时间之前下的订单，如果没支付则取消该订单
-     * 正常订单超时时间(分)
      */
     @Scheduled(cron = "0 0/10 * ? * ?")
     private void cancelTimeOutOrder() {
-        CommonResult result = portalOrderService.cancelTimeOutOrder();
-        logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
+//        CommonResult result = portalOrderService.cancelTimeOutOrder();
+        //      logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
     }
 
-    /**
-     * 自动收货
-     * 发货后自动确认收货时间（天）
-     */
-    @Scheduled(cron = "0 0/15 * ? * ?")
-    private void autoDeliveryOrder() {
-        CommonResult result = portalOrderService.autoDeliveryOrder();
-        logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
-    }
-
-    /**
-     * 自动完成交易时间，不能申请售后（天）
-     */
-    @Scheduled(cron = "0 0/18 * ? * ?")
-    private void autoSucessOrder() {
-        CommonResult result = portalOrderService.autoSucessOrder();
-        logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
-    }
-
-    /**
-     * 订单完成后自动好评时间（天）
-     */
-    @Scheduled(cron = "0 0/13 * ? * ?")
-    private void autoCommentOrder() {
-        CommonResult result = portalOrderService.autoCommentOrder();
-        logger.info("取消订单，并根据sku编号释放锁定库存:{}", result);
-    }
 
     /**
      * 会员等级计算
@@ -107,7 +77,7 @@ public class OrderTimeOutCancelTask {
     private void memberlevelCalator1() {
         logger.info("佣金计算 计算前一天的订单 start....");
         Long t1 = System.currentTimeMillis();
-        String yesteday = DateUtils.format( DateUtils.convertStringToDate(DateUtils.addHours(new Date(), -24)),DateUtils.DATE_PATTERN);
+        String yesteday = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, DateUtils.addDays(new Date(), -1));
         List<OmsOrder> orders = orderMapper.listByDate(yesteday, 1);
         // 获取订单为 待评价和已完成的
         List<Long> ids = new ArrayList<>();

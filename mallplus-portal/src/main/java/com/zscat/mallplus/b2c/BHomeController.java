@@ -33,6 +33,7 @@ import com.zscat.mallplus.vo.SmsCode;
 import com.zscat.mallplus.vo.UmsMemberInfoDetail;
 import com.zscat.mallplus.vo.home.Configs;
 import com.zscat.mallplus.vo.home.Pages;
+import com.zscat.mallplus.vo.home.ServiceMenu;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -154,7 +155,7 @@ public class BHomeController {
             if (ValidatorUtils.empty(json)) {
                 contentResult = advertiseService.contentNew();
                 redisService.set(key, JsonUtils.objectToJson(contentResult));
-                redisService.expire(key, 60);
+                redisService.expire(key, 360);
             } else {
                 contentResult = JsonUtils.jsonToPojo(json, Pages.class);
             }
@@ -162,7 +163,7 @@ public class BHomeController {
             log.error(e.getMessage());
             contentResult = advertiseService.contentNew();
             redisService.set(key, JsonUtils.objectToJson(contentResult));
-            redisService.expire(key, 60);
+            redisService.expire(key, 360);
         }
 
         return new CommonResult().success(contentResult);
@@ -174,7 +175,7 @@ public class BHomeController {
     @RequestMapping(value = "/share", method = RequestMethod.POST)
     public Object share() {
         Map<String, String> data = new HashedMap();
-        data.put("img", "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
+        data.put("img", "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190807/QQ%E5%9B%BE%E7%89%8720190807191952.jpg");
         data.put("title", "mallplus");
         data.put("synopsis", "mallplus");
         return new CommonResult().success(data);
@@ -354,6 +355,32 @@ public class BHomeController {
         return new CommonResult().success();
     }
 
+    @IgnoreAuth
+    @SysLog(MODULE = "oms", REMARK = "服务菜单")
+    @ApiOperation(value = "服务菜单")
+    @PostMapping(value = "/menuList")
+    public Object menuList() {
+        List<ServiceMenu> menuList = new ArrayList<>();
+        UmsMember umsMember = memberService.getNewCurrentMember();
+
+        menuList.add(new ServiceMenu("会员中心", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9934a7c.png", "/pages/user_vip/index", "/user/vip"));
+        menuList.add(new ServiceMenu("砍价记录", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9918091.png", "/pages/activity/user_goods_bargain_list/index", "/activity/bargain/record"));
+        menuList.add(new ServiceMenu("我的推广", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc9943575.png", "/pages/user_spread_user/index", "/user/user_promotion"));
+        menuList.add(new ServiceMenu("我的余额", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc992db31.png", "/pages/user_money/index", "/user/account"));
+        menuList.add(new ServiceMenu("地址信息", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99101a8.png", "/pages/user_address_list/index", "/user/add_manage"));
+        menuList.add(new ServiceMenu("我的收藏", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc99269d1.png", "/pages/user_goods_collection/index", "/collection"));
+        menuList.add(new ServiceMenu("优惠券", "http://datong.crmeb.net/public/uploads/attach/2019/03/28/5c9ccc991f394.png", "/pages/user_coupon/index", "/user/user_coupon"));
+        menuList.add(new ServiceMenu("联系客服", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/customer/list"));
+        if (umsMember != null && umsMember.getId() != null) {
+            if (ValidatorUtils.empty(umsMember.getRoomNums())) {
+                menuList.add(new ServiceMenu("绑定社区", "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/BindingCommunity"));
+            } else {
+                menuList.add(new ServiceMenu(umsMember.getRoomDesc(), "http://kaifa.crmeb.net/uploads/attach/2019/07/20190730/0ded3d3f72d654fb33c8c9f30a268c97.png", "/pages/service/index", "/build/index"));
+            }
+        }
+        return new CommonResult().success(menuList);
+    }
+
     /**
      * 发送短信验证码
      *
@@ -399,7 +426,7 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "获取广告")
     @PostMapping("/advert.getcarousellists")
     public Object advList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
+        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(type,0);
         return new CommonResult().success(bannerList);
     }
 
@@ -431,7 +458,9 @@ public class BHomeController {
     @PostMapping("/api/upload")
     @ApiOperation("上传文件")
     public Object upload(@RequestParam("file") MultipartFile file) throws Exception {
-        return new CommonResult().success(aliyunOSSUtil.upload(file));
+        return new CommonResult().success("https://www.baidu.com/img/bd_logo1.png");
+
+       // return new CommonResult().success(aliyunOSSUtil.upload(file));
     }
 
     @IgnoreAuth

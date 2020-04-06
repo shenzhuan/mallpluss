@@ -110,6 +110,10 @@ public class UmsIntegrationConsumeSettingController {
                 return new CommonResult().paramFailed("积分消费设置id");
             }
             UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getOne(new QueryWrapper<>());
+            if (coupon==null){
+                coupon = new UmsIntegrationConsumeSetting();
+                IUmsIntegrationConsumeSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询积分消费设置明细：%s", e.getMessage(), e);

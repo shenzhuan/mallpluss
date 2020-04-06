@@ -7,11 +7,7 @@ import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
 import com.zscat.mallplus.component.OssAliyunUtil;
-import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
-import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
-import com.zscat.mallplus.pms.entity.PmsProductCategory;
 import com.zscat.mallplus.pms.mapper.PmsBrandMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
@@ -71,8 +67,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     private PmsProductAttributeCategoryMapper pmsProductAttributeCategoryMapper;
     @Resource
     private PmsBrandMapper pmsBrandMapper;
-    @Resource
-    private FenxiaoConfigMapper fenxiaoConfigMapper;
+
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {

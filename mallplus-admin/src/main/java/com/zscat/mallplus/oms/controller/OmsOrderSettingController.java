@@ -104,6 +104,11 @@ public class OmsOrderSettingController {
         try {
 
             OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
+            if (coupon==null){
+                coupon = new OmsOrderSetting();
+                coupon.setId(1L);
+                IOmsOrderSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询订单设置表明细：%s", e.getMessage(), e);

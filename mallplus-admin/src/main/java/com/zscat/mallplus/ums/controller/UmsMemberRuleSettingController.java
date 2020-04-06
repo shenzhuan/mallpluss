@@ -110,6 +110,11 @@ public class UmsMemberRuleSettingController {
                 return new CommonResult().paramFailed("会员积分成长规则表id");
             }
             UmsMemberRuleSetting coupon = IUmsMemberRuleSettingService.getById(id);
+            if (coupon==null){
+                coupon.setId(1L);
+
+                IUmsMemberRuleSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询会员积分成长规则表明细：%s", e.getMessage(), e);

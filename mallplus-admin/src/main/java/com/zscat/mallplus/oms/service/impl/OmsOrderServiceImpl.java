@@ -3,6 +3,7 @@ package com.zscat.mallplus.oms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.enums.OrderStatus;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -136,10 +137,10 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         int noStock = 0;
 
         for (PmsProduct goods : products) {
-            if (goods.getPublishStatus() == 1) { // 上架状态：0->下架；1->上架
+            if (goods.getPublishStatus() == StatusEnum.YesNoType.YES.code()) { // 上架状态：0->下架；1->上架
                 onCount++;
             }
-            if (goods.getPublishStatus() == 0) { // 上架状态：0->下架；1->上架
+            if (goods.getPublishStatus() == StatusEnum.YesNoType.NO.code()) { // 上架状态：0->下架；1->上架
                 offCount++;
             }
             if (ValidatorUtils.empty(goods.getStock()) || goods.getStock() < 1) { // 上架状态：0->下架；1->上架
@@ -165,14 +166,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Override
     public int close(List<Long> ids, String note) {
         OmsOrder record = new OmsOrder();
-        record.setStatus(4);
+        record.setStatus(OrderStatus.CLOSED.getValue());
         int count = orderMapper.update(record, new QueryWrapper<OmsOrder>().eq("delete_status", 0).in("id", ids));
         List<OmsOrderOperateHistory> historyList = ids.stream().map(orderId -> {
             OmsOrderOperateHistory history = new OmsOrderOperateHistory();
             history.setOrderId(orderId);
             history.setCreateTime(new Date());
             history.setOperateMan("后台管理员");
-            history.setOrderStatus(4);
+            history.setOrderStatus(OrderStatus.CLOSED.getValue());
             history.setNote("订单关闭:" + note);
             return history;
         }).collect(Collectors.toList());

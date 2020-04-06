@@ -28,7 +28,7 @@ public class SmsHomeAdvertise extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 轮播位置：0->PC首页轮播；1->app首页轮播
+     * 轮播位置：1->PC首页轮播；2->android首页轮播；3->ios首页轮播；4->h5首页轮播；5->pc首页轮播
      */
     private Integer type;
 

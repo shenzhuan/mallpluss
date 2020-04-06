@@ -183,5 +183,10 @@ public class SysPermissionController extends BaseController {
         return new CommonResult().success(permissionNodeList);
     }
 
-
+    @SysLog(MODULE = "系统菜单", REMARK = "获取左侧菜单树结构数据")
+    @ApiOperation("获取左侧菜单树结构数据")
+    @RequestMapping(value = "/menus/left/{id}", method = RequestMethod.GET)
+    public Object leftMenu(@ApiParam("后台用户权限表id") @PathVariable Long id) {
+        return new CommonResult().success(ISysPermissionService.leftMenu(id));
+    }
 }

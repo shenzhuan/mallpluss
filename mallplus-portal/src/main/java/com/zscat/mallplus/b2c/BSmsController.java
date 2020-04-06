@@ -36,7 +36,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -58,9 +57,8 @@ import java.util.stream.Collectors;
 @Api(tags = "SingeMarkingController", description = "营销管理")
 public class BSmsController extends ApiBaseAction {
 
+
     private static Lock lock = new ReentrantLock(false);
-    @Value("${file.path}")
-    private String path;
     @Resource
     private ISmsBasicGiftsService basicGiftsService;
     @Resource

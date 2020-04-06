@@ -20,4 +20,10 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      * 获取用于所有角色
      */
     List<SysRole> getRoleListByUserId(@Param("adminId") Long adminId);
+
+    List<Integer> getRoleIdsByUserId(@Param("userId") Long userId);
+
+    List<SysRolePermission> crmSysRoleMenu(@Param("roleIds") List<Integer> roleIdList);
+
+    List<SysRole> selectRolePermissionByUserId(Long userId);
 }

@@ -14,6 +14,8 @@ import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
@@ -119,6 +121,8 @@ public class BPmsController extends ApiBaseAction {
     private SysStoreMapper storeMapper;
     @Resource
     private OmsOrderMapper omsOrderMapper;
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
 
     @Autowired
     private ApiContext apiContext;
@@ -144,6 +148,7 @@ public class BPmsController extends ApiBaseAction {
             goods = pmsProductService.getGoodsRedisById(id);
         }
         Map<String, Object> map = new HashMap<>();
+        goods.setGoods(buildFenPrice(goods.getGoods()));
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
@@ -165,23 +170,133 @@ public class BPmsController extends ApiBaseAction {
         return new CommonResult().success(map);
     }
 
+    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        pmsProduct.setMemberRate(10);
+        UmsMember member =memberService.getNewCurrentMember();
+        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            }
+        }
+
+        if (member!=null && member.getId()!=null &&  pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
+            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+            }
+        }
+        return pmsProduct;
+    }
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品列表")
     @PostMapping(value = "/goods.getlist")
-    public Object goodsList(PmsProduct product,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+    public Object goodsList( @RequestParam(value = "isVip", required = false) Integer isVip,
+                             @RequestParam(value = "isFenxiao", required = false) Integer isFenxiao,
+                             @RequestParam(value = "storeId", required = false) Integer storeId,
+                             @RequestParam(value = "areaId", required = false) Long areaId,
+                             @RequestParam(value = "schoolId", required = false) Long schoolId,
+                             @RequestParam(value = "productAttributeCategoryId", required = false) Long productAttributeCategoryId,
+                             @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
+                             @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
+                             @RequestParam(value = "brandId", required = false) Long brandId,
+                             @RequestParam(value = "sort", required = false) Integer sort,
+                             @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
+                             @RequestParam(value = "keyword", required = false) String keyword,
+                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
         product.setVerifyStatus(1);
         product.setMemberId(null);
+        product.setSort(sort);
+
+        if (ValidatorUtils.notEmpty(isVip) && isVip > 0) {
+            product.setIsVip(isVip);
+        }
+        if (ValidatorUtils.notEmpty(isFenxiao) && isFenxiao > 0) {
+            product.setIsFenxiao(isFenxiao);
+        }
+        if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId > 0) {
+            product.setProductCategoryId(productCategoryId);
+        }
+        if (ValidatorUtils.notEmpty(recommandStatus) && recommandStatus > 0) {
+            product.setRecommandStatus(1);
+        }
+        if (ValidatorUtils.notEmpty(brandId) && brandId > 0) {
+            product.setBrandId(brandId);
+        }
+        if (ValidatorUtils.notEmpty(productAttributeCategoryId) && productAttributeCategoryId > 0) {
+            product.setProductAttributeCategoryId(productAttributeCategoryId);
+        }
+
+        if (ValidatorUtils.notEmpty(areaId) && areaId > 0) {
+            product.setAreaId(areaId);
+        }
+        if (ValidatorUtils.notEmpty(schoolId) && schoolId > 0) {
+            product.setSchoolId(schoolId);
+        }
+        String orderColum = "create_time";
+        if (ValidatorUtils.notEmpty(product.getSort())) {
+            if (product.getSort() == 1) {
+                orderColum = "sale";
+            } else if (product.getSort() == 2) {
+                orderColum = "price";
+            } else if (product.getSort() == 3) {
+
+            }
+        }
+        product.setSort(null);
         IPage<PmsProduct> list;
-        if (ValidatorUtils.notEmpty(product.getKeyword())) {
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", product.getKeyword()));
+        if (ValidatorUtils.notEmpty(keyword)) {
+            if (orderBy==1) {
+                list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
+                buildFenPrice(list,product);
+            } else {
+                list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
+                buildFenPrice(list,product);
+            }
         } else {
-            list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product));
+            if (orderBy==1) {
+                list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
+                buildFenPrice(list,product);
+            } else {
+                list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
+                buildFenPrice(list,product);
+            }
         }
         return new CommonResult().success(list);
+    }
+
+    private void buildFenPrice(IPage<PmsProduct> list,PmsProduct product) {
+        if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
+            if (product.getIsFenxiao()!=null && product.getIsFenxiao()==1){
+                for (PmsProduct pmsProduct : list.getRecords()) {
+                    if ( pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+                        FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
+                        if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                            pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+                        }
+                    }
+
+                }
+            }
+            UmsMember member =memberService.getNewCurrentMember();
+            if (member!=null && member.getId()!=null && product.getIsVip()!=null && product.getIsVip()==1){
+                for (PmsProduct pmsProduct : list.getRecords()) {
+                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null & member.getMemberLevelId()>0) {
+                        UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+                        if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                            pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                            pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
@@ -338,7 +453,7 @@ public class BPmsController extends ApiBaseAction {
             product.setPublishStatus(1);
             product.setVerifyStatus(1);
             product.setMemberId(null);
-            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids).select(ConstansValue.sampleGoodsList));
+            IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
             return new CommonResult().success(list);
         }
         return new CommonResult().success(new ArrayList<>());
@@ -349,43 +464,26 @@ public class BPmsController extends ApiBaseAction {
     @PostMapping(value = "/pintuan.goodsinfo")
     @ApiOperation(value = "拼团商品详情")
     public Object groupGoodsDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
-        SmsGroup group = groupMapper.selectById(id);
-        Long goodsId = group.getGoodsId();
         //记录浏览量到redis,然后定时更新到数据库
-        String key = Rediskey.GOODS_VIEWCOUNT_CODE + goodsId;
-        //找到redis中该篇文章的点赞数，如果不存在则向redis中添加一条
-        Map<Object, Object> viewCountItem = redisUtil.hGetAll(Rediskey.GOODS_VIEWCOUNT_KEY);
-        Integer viewCount = 0;
-        if (!viewCountItem.isEmpty()) {
-            if (viewCountItem.containsKey(key)) {
-                viewCount = Integer.parseInt(viewCountItem.get(key).toString()) + 1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, viewCount + "");
-            } else {
-                viewCount = 1;
-                redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-            }
-        } else {
-            viewCount = 1;
-            redisUtil.hPut(Rediskey.GOODS_VIEWCOUNT_KEY, key, 1 + "");
-        }
+
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, goodsId + "")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)) {
-                log.info("redis缓存失效：" + goodsId);
-                goods = pmsProductService.getGoodsRedisById(goodsId);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
+                log.info("redis缓存失效：" + id);
+                goods = pmsProductService.getGoodsRedisById(id);
             }
         } catch (Exception e) {
-            log.info("redis缓存失效：" + goodsId);
-            goods = pmsProductService.getGoodsRedisById(goodsId);
+            log.info("redis缓存失效：" + id);
+            goods = pmsProductService.getGoodsRedisById(id);
             e.printStackTrace();
         }
-
+        SmsGroup group = groupMapper.getByGoodsId(id);
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             PmsProduct p = goods.getGoods();
-            p.setHit(viewCount);
+            p.setHit(recordGoodsFoot(id));
             PmsFavorite query = new PmsFavorite();
             query.setObjId(p.getId());
             query.setMemberId(umsMember.getId());
@@ -522,7 +620,7 @@ public class BPmsController extends ApiBaseAction {
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
+            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList1)));
         }
         redisService.set(Rediskey.categoryAndGoodsList + apiContext.getCurrentProviderId(), JsonUtils.objectToJson(productAttributeCategoryList));
         redisService.expire(Rediskey.categoryAndGoodsList + apiContext.getCurrentProviderId(), 2);
@@ -690,9 +788,11 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        if (memberService.getNewCurrentMember().getId() == null) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
             return new CommonResult().fail(100);
         }
+        productCollection.setMemberId(member.getId());
         int count = memberCollectionService.addProduct(productCollection);
         if (count > 0) {
             return new CommonResult().success(count);

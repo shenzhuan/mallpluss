@@ -36,7 +36,6 @@ public class CmsPrefrenceAreaController {
     @SysLog(MODULE = "cms", REMARK = "根据条件查询所有优选专区列表")
     @ApiOperation("根据条件查询所有优选专区列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('cms:CmsPrefrenceArea:read')")
     public Object getCmsPrefrenceAreaByPage(CmsPrefrenceArea entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize

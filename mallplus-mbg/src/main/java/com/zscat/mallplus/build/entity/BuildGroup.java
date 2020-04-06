@@ -30,67 +30,55 @@ public class BuildGroup implements Serializable {
     PmsProduct goods;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
     @TableField("goods_id")
     private Long goodsId;
-
     /**
      * 商品
      */
     @TableField("goods_name")
     private String goodsName;
-
     /**
      * 商品价格
      */
     @TableField("origin_price")
     private BigDecimal originPrice;
-
     /**
      * 拼团价格
      */
     @TableField("group_price")
     private BigDecimal groupPrice;
-
     /**
      * 开始时间
      */
     @TableField("start_time")
     private Date startTime;
-
     /**
      * 结束时间
      */
     @TableField("end_time")
     private Date endTime;
-
     /**
      * 成团人数
      */
     private Integer peoples;
-
     /**
      * 状态
      */
     private Integer status;
-
     /**
      * 创建时间
      */
     @TableField("create_time")
     private Date createTime;
-
     /**
      * 拼团总人数
      */
     @TableField("max_people")
     private Integer maxPeople;
-
     /**
      * 所属店铺
      */
     @TableField("community_id")
     private Long communityId;
-
 
 }

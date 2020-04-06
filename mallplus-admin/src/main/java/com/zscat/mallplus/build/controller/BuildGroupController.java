@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.entity.BuildGroup;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -57,7 +58,7 @@ public class BuildGroupController {
     @PreAuthorize("hasAuthority('build:group:create')")
     public Object saveBuildGroup(@RequestBody BuildGroup entity) {
         try {
-            entity.setStatus(1);
+            entity.setStatus(StatusEnum.AuditType.INIT.code());
             if (IBuildGroupService.save(entity)) {
                 return new CommonResult().success();
             }

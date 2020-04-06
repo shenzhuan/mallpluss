@@ -106,7 +106,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         SysUser user = UserUtils.getCurrentMember();
         product.setStoreName(user.getStoreName());
         //product.setStoreId(user.getStoreId());
-        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
+        if (ValidatorUtils.empty(product.getAlbumPics()) ){
             product.setAlbumPics(product.getPic());
         }
         productMapper.insert(product);
@@ -210,14 +210,26 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         productAttributeValueMapper.delete(new QueryWrapper<>(new PmsProductAttributeValue()).eq("product_id", id));
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), id);
-        //关联专题
 
+        //关联专题
         subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
+            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+                relation.setProductId(id);
+                subjectProductRelationDao.save(relation);
+            }
+        }
         //关联优选
 
         prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+      //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
+            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+                relation.setProductId(id);
+                prefrenceAreaProductRelationDao.save(relation);
+            }
+        }
         count = 1;
 
         redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
@@ -247,6 +259,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     public int updateisFenxiao(List<Long> ids, Integer newStatus) {
         PmsProduct record = new PmsProduct();
         record.setIsFenxiao(newStatus);
+        clerGoodsRedis(ids);
+        return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
+    }
+
+    @Override
+    public int updateisVip(List<Long> ids, Integer newStatus) {
+        PmsProduct record = new PmsProduct();
+        record.setIsVip(newStatus);
         clerGoodsRedis(ids);
         return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
     }

@@ -100,13 +100,20 @@ public class HomeController extends BaseController {
     @SysLog(MODULE = "home", REMARK = "首页订单统计")
     @RequestMapping(value = "/orderStatic", method = RequestMethod.GET)
     public Object orderStatic() throws Exception {
+
         HomeOrderData data = new HomeOrderData();
         List<OmsOrder> orderList = orderService.list(new QueryWrapper<>());
-        int nowOrderCount = 0; // 今日订单
+        int nowOrderCount = 0; // 今日订单 一支付
         BigDecimal nowOrderPay = new BigDecimal(0); //今日销售总额
+
+        int nowTotalOrderCount = 0; // 今日订单
+        BigDecimal nowToatlOrderPay = new BigDecimal(0); //今日销售总额
 
         int yesOrderCount = 0; // 昨日订单
         BigDecimal yesOrderPay = new BigDecimal(0); //日销售总额
+
+        int yesToatlOrderCount = 0; // 昨日订单
+        BigDecimal yesTotalOrderPay = new BigDecimal(0); //日销售总额
 
         int qiOrderCount = 0; // 7日订单
         BigDecimal qiOrderPay = new BigDecimal(0); //7日销售总额
@@ -127,15 +134,22 @@ public class HomeController extends BaseController {
         OrderStatusCount count = new OrderStatusCount();
 
         for (OmsOrder order : orderList) {
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))
-                    && (order.getStatus() < 9)) {
-                nowOrderCount++;
-                nowOrderPay = nowOrderPay.add(order.getPayAmount());
+            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))) {
+                if (order.getStatus() < 9){
+                    nowOrderCount++;
+                    nowOrderPay = nowOrderPay.add(order.getPayAmount());
+                }
+                nowTotalOrderCount++;
+                nowToatlOrderPay = nowToatlOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))
-                    && (order.getStatus() < 9)) {
-                yesOrderCount++;
-                yesOrderPay = yesOrderPay.add(order.getPayAmount());
+                    ) {
+                if (order.getStatus() < 9){
+                    yesOrderCount++;
+                    yesOrderPay = yesOrderPay.add(order.getPayAmount());
+                }
+                yesToatlOrderCount++;
+                yesTotalOrderPay = yesTotalOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.calculateDaysNew(order.getCreateTime(), new Date()) >= 7
                     && (order.getStatus() < 9)) {
@@ -175,6 +189,7 @@ public class HomeController extends BaseController {
             }
 
         }
+        count.setStatusAll(orderList.size());
         count.setStatus0(status0);
         count.setStatus1(status1);
         count.setStatus2(status2);
@@ -183,6 +198,10 @@ public class HomeController extends BaseController {
         count.setStatus5(status5);
         count.setStatus14(status6);
 
+        data.setYesToatlOrderCount(yesToatlOrderCount);
+        data.setYesTotalOrderPay(yesTotalOrderPay);
+        data.setNowToatlOrderPay(nowToatlOrderPay);
+        data.setNowTotalOrderCount(nowTotalOrderCount);
         data.setNowOrderCount(nowOrderCount);
         data.setNowOrderPay(nowOrderPay);
         data.setYesOrderCount(yesOrderCount);

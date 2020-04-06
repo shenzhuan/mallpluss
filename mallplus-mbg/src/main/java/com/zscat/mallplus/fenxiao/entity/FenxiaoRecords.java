@@ -47,6 +47,7 @@ public class FenxiaoRecords extends BaseEntity implements Serializable {
     private String level;
 
 
+    // 1 支付成功 2 结算成功
     @TableField("status")
     private String status;
 

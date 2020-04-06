@@ -39,6 +39,7 @@ public class ConfirmOrderResult {
      * 余额
      */
     private BigDecimal blance;
+    private Integer offline=1;// １ 送货 ２ 自取
     //计算的金额
     private CalcAmount calcAmount;
     private PmsProduct goods;

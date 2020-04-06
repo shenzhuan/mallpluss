@@ -5,8 +5,11 @@ import com.zscat.mallplus.bo.AdminUserDetails;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.sys.entity.SysPermission;
+import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysUserVo;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private ISysUserService sysUserService;
     @Resource
     private SysUserMapper userMapper;
+    @Resource
+    private SysStoreMapper storeMapper;
     @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
@@ -112,6 +117,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {
                     List<SysPermission> permissionList = sysUserService.listPerms();
                     return new AdminUserDetails(admin, permissionList);
+                }
+                SysStore store = storeMapper.selectById(admin.getStoreId());
+                if (store==null ){
+                    throw new UsernameNotFoundException("商户不存在");
+                }else {
+                    if( store.getStatus()== StatusEnum.AuditType.FAIL.code()){
+                        throw new UsernameNotFoundException("商户审核失败");
+                    }else if( store.getStatus()== StatusEnum.AuditType.INIT.code()){
+                        throw new UsernameNotFoundException("商户审核中");
+                    }
                 }
                 List<SysPermission> permissionList = sysUserService.listUserPerms(admin.getId());
                 return new AdminUserDetails(admin, permissionList);

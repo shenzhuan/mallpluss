@@ -63,7 +63,7 @@ public class BuildWuyeCompanyServiceImpl extends ServiceImpl<BuildWuyeCompanyMap
         // 3 分配物业公司角色
         SysUserRole userRole = new SysUserRole();
         userRole.setAdminId(user.getId());
-        userRole.setRoleId(2L);
+        userRole.setRoleId(5L);
         userRoleMapper.insert(userRole);
         return true;
     }
