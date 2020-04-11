@@ -147,8 +147,8 @@ public class BPayController extends ApiBaseAction {
     @PostMapping("weixinAppletPay")
     public Object payPrepay(@RequestParam(value = "orderId", required = true) Long orderId,
                             @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
-        UmsMember member =memberService.getNewCurrentMember();
-        if (member==null || member.getId()==null){
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
             return new CommonResult().fail(100);
         }
         OmsOrder orderInfo = orderService.getById(orderId);
@@ -263,8 +263,8 @@ public class BPayController extends ApiBaseAction {
     public Object orderQuery(@RequestParam(value = "id", required = false, defaultValue = "0") Long id,
                              @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
 
-        UmsMember member =memberService.getNewCurrentMember();
-        if (member==null || member.getId()==null){
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
             return new CommonResult().fail(100);
         }
         SysAppletSet appletSet = memberService.getSysAppletSet(appIdsource);

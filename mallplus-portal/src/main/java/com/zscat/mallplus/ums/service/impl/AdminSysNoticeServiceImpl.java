@@ -1,9 +1,8 @@
 package com.zscat.mallplus.ums.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.sys.entity.AdminSysNotice;
 import com.zscat.mallplus.sys.mapper.AdminSysNoticeMapper;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.ums.service.IAdminSysNoticeService;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,6 @@ package com.zscat.mallplus.sys.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.bill.entity.BakBrand;
 import com.zscat.mallplus.bill.entity.BakCategory;
@@ -88,7 +87,9 @@ public class SysTestController {
             pmsProductCategory.setParentId(category.getPid().longValue());
             pmsProductCategory.setLevel(0);
             pmsProductCategory.setSort(category.getSortOrder());
-            pmsProductCategory.setNavStatus(1);pmsProductCategory.setIndexStatus(1);pmsProductCategory.setShowStatus(1);
+            pmsProductCategory.setNavStatus(1);
+            pmsProductCategory.setIndexStatus(1);
+            pmsProductCategory.setShowStatus(1);
             pmsProductCategoryMapper.insert(pmsProductCategory);
 
 
@@ -112,7 +113,9 @@ public class SysTestController {
                 pmsProductCategory1.setKeywords(bakCategory.getKeywords());
                 pmsProductCategory1.setParentId(bakCategory.getPid().longValue());
                 pmsProductCategory1.setLevel(1);
-                pmsProductCategory1.setNavStatus(1);pmsProductCategory1.setIndexStatus(1);pmsProductCategory1.setShowStatus(1);
+                pmsProductCategory1.setNavStatus(1);
+                pmsProductCategory1.setIndexStatus(1);
+                pmsProductCategory1.setShowStatus(1);
                 pmsProductCategory.setDescription(category.getDescs());
                 pmsProductCategoryMapper.insert(pmsProductCategory1);
             }
@@ -122,7 +125,7 @@ public class SysTestController {
             if (ids != null) {
                 List<BakGoods> goodsList = bakGoodsMapper.selectList(new QueryWrapper<BakGoods>().in("category_id", ids));
                 for (BakGoods gg : goodsList) {
-                    createG(gg, 1,pmsProductAttributeCategory);
+                    createG(gg, 1, pmsProductAttributeCategory);
                 }
                 List<Integer> brands = goodsList.stream()
                         .map(BakGoods::getBrandId)
@@ -138,7 +141,7 @@ public class SysTestController {
                             brand.setName(bakBrand.getName());
                             brand.setShowStatus(1);
                             brand.setFactoryStatus(1);
-                            brand.setFirstLetter(bakBrand.getName().substring(0,1));
+                            brand.setFirstLetter(bakBrand.getName().substring(0, 1));
                             brand.setLogo(bakBrand.getPicUrl());
                             brand.setSort(bakBrand.getSortOrder());
                             pmsBrandMapper.insert(brand);
@@ -154,7 +157,7 @@ public class SysTestController {
         return new CommonResult().failed();
     }
 
-    void createG(BakGoods gg, Integer storeId,PmsProductAttributeCategory pmsProductAttributeCategory) {
+    void createG(BakGoods gg, Integer storeId, PmsProductAttributeCategory pmsProductAttributeCategory) {
         PmsProduct g = new PmsProduct();
 
         g.setName(gg.getName());
@@ -164,7 +167,8 @@ public class SysTestController {
         g.setDetailMobileHtml(gg.getDetail());
         g.setDetailTitle(gg.getBrief());
         g.setDetailDesc(gg.getBrief());
-g.setAreaId(1301L);g.setAreaName("石家庄");
+        g.setAreaId(1301L);
+        g.setAreaName("石家庄");
         g.setPic(gg.getPicUrl());
 
         g.setAlbumPics(gg.getPicUrl());
@@ -196,10 +200,11 @@ g.setAreaId(1301L);g.setAreaName("石家庄");
         g.setBrandId(gg.getBrandId().longValue());
 
         g.setProductCategoryId(gg.getCategoryId().longValue());
-g.setUnit(gg.getUnit());
+        g.setUnit(gg.getUnit());
         g.setProductAttributeCategoryId(pmsProductAttributeCategory.getId());
         productService.save(g);
     }
+
     @SysLog(MODULE = "sys", REMARK = "保存测试")
     @ApiOperation("保存测试")
     @PostMapping(value = "/create")

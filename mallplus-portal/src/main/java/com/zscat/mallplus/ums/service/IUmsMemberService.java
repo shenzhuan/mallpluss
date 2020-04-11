@@ -10,7 +10,6 @@ import com.zscat.mallplus.vo.AppletLoginnewParam;
 import com.zscat.mallplus.vo.SmsCode;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -147,6 +146,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     /**
      * 用户提现
+     *
      * @return
      */
     Object withDraw(UmsMemberBlanceLog blanceLog);

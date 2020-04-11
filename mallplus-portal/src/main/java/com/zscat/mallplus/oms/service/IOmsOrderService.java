@@ -3,7 +3,9 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
-import com.zscat.mallplus.oms.vo.*;
+import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.oms.vo.PayParam;
+import com.zscat.mallplus.oms.vo.TbThanks;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.ApplyRefundVo;
@@ -186,6 +188,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 订单退货申请
+     *
      * @param items
      * @return
      */
@@ -193,6 +196,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 放弃拼团
+     *
      * @return
      */
     Object quitGroup(Long id);
@@ -206,25 +210,30 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 订单到期自动评论
+     *
      * @return
      */
     CommonResult autoCommentOrder();
+
     /**
      * 订单到期自动完成
+     *
      * @return
      */
     CommonResult autoSucessOrder();
 
     /**
      * 会员等级升级
+     *
      * @return
      */
-    Object applyMember( Long memberLevelId);
+    Object applyMember(Long memberLevelId);
 
     /**
      * 分拥计算
+     *
      * @param list
      * @param currentMember
      */
-    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember );
+    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember);
 }

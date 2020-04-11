@@ -8,8 +8,6 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.exception.Server;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -51,7 +49,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +87,7 @@ public class SingelHomeController {
 
     @Resource
     private IAdminSysNoticeService sysNoticeService;
+
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
@@ -506,6 +504,7 @@ public class SingelHomeController {
 
         return new CommonResult().success(sysNoticeService.page(new Page<AdminSysNotice>(pageNum, pageSize), new QueryWrapper<>(new AdminSysNotice())));
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/notice/detail")

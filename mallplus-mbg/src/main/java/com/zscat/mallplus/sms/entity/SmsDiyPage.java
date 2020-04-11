@@ -8,7 +8,6 @@ import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**

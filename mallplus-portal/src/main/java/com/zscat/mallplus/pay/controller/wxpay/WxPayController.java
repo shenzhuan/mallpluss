@@ -257,8 +257,8 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             String totalFee = "0.01";
             // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-            UmsMember member =memberService.getNewCurrentMember();
-            if (member==null || member.getId()==null){
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member == null || member.getId() == null) {
                 return new CommonResult().fail(100);
             }
             String openId = member.getWeixinOpenid();
@@ -660,8 +660,8 @@ public class WxPayController extends AbstractWxPayApiController {
                              @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
-            UmsMember member =memberService.getNewCurrentMember();
-            if (member==null || member.getId()==null){
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member == null || member.getId() == null) {
                 return new CommonResult().fail(100);
             }
 
@@ -995,7 +995,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 queryO.setType(AllEnum.OrderItemType.GOODS.code());
                 List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
                 // 分拥计算
-                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
+                orderService.recordFenxiaoMoney(omsOrderItems, memberService.getById(orderInfo.getMemberId()));
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

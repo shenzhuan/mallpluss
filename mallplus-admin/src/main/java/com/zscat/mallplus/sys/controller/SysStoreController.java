@@ -80,7 +80,7 @@ public class SysStoreController {
     ) {
         try {
             SysUser user = UserUtils.getCurrentMember();
-            if (user.getSupplyId()!=null && user.getSupplyId()==1){
+            if (user.getSupplyId() != null && user.getSupplyId() == 1) {
                 return new CommonResult().success(ISysStoreService.page(new Page<SysStore>(pageNum, pageSize), new QueryWrapper<>(entity)));
             }
             entity.setId(user.getStoreId());
@@ -155,6 +155,7 @@ public class SysStoreController {
             return new CommonResult().failed();
         }
     }
+
     @SysLog(MODULE = "sys", REMARK = "给分配")
     @ApiOperation("查询明细")
     @GetMapping(value = "/getCurrentStore")
@@ -171,6 +172,7 @@ public class SysStoreController {
             return new CommonResult().failed();
         }
     }
+
     @ApiOperation(value = "批量删除")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
@@ -262,7 +264,7 @@ public class SysStoreController {
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
     public Object audit(@RequestParam("ids") List<Long> ids,
-                                   @RequestParam("showStatus") Integer showStatus) {
+                        @RequestParam("showStatus") Integer showStatus) {
         int count = ISysStoreService.audit(ids, showStatus);
         if (count > 0) {
             return new CommonResult().success(count);

@@ -1,80 +1,77 @@
 package com.zscat.mallplus.sys.entity;
 
-import lombok.Data;
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
-import java.util.Date;
-import lombok.Getter;
-import lombok.Setter;
-    import java.math.BigDecimal;
+import lombok.Data;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
-* @author mallplus
-* @date 2020-04-10
-门店管理
-*/
+ * @author mallplus
+ * @date 2020-04-10
+ * 门店管理
+ */
 @Data
 @TableName("sys_store_deposit_log")
 public class SysStoreDepositLog extends BaseEntity implements Serializable {
 
 
-            @TableId(value = "id", type = IdType.AUTO)
-        private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
 
-            /**
-            
-            **/
-            @TableField( "create_time")
-        private Date createTime;
+    /**
+     *
+     **/
+    @TableField("create_time")
+    private Date createTime;
 
 
-            /**
-            
-            **/
-            @TableField( "update_time")
-        private Date updateTime;
+    /**
+     *
+     **/
+    @TableField("update_time")
+    private Date updateTime;
 
 
-            /**
-             当前余额
-            **/
-            @TableField( "balance")
-        private BigDecimal balance;
+    /**
+     * 当前余额
+     **/
+    @TableField("balance")
+    private BigDecimal balance;
 
 
-            /**
-             收入金额
-            **/
-            @TableField( "credit")
-        private BigDecimal credit;
+    /**
+     * 收入金额
+     **/
+    @TableField("credit")
+    private BigDecimal credit;
 
 
-            /**
-             支出金额
-            **/
-            @TableField( "debit")
-        private BigDecimal debit;
+    /**
+     * 支出金额
+     **/
+    @TableField("debit")
+    private BigDecimal debit;
 
 
-            /**
-            
-            **/
-            @TableField( "memo")
-        private String memo;
+    /**
+     *
+     **/
+    @TableField("memo")
+    private String memo;
 
 
-            /**
-            
-            **/
-            @TableField( "type")
-        private Integer type;
+    /**
+     *
+     **/
+    @TableField("type")
+    private Integer type;
 
 
     /**

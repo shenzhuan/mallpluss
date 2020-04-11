@@ -37,8 +37,8 @@ public class MemberCollectionController {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("favoriteSave")
     public Object favoriteSave(PmsFavorite productCollection) {
-        UmsMember member =memberService.getNewCurrentMember();
-        if (member==null || member.getId()==null){
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
             return new CommonResult().fail(100);
         }
         productCollection.setMemberId(member.getId());

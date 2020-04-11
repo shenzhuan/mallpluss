@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class ApplyRefundVo {
+    BigDecimal returnAmount;
     private Long itemId;
     private String items;
     private Integer type;
     private String desc;
     private String[] images;
-    BigDecimal returnAmount;
 }

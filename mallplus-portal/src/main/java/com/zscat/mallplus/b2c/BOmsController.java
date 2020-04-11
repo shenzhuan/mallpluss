@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.bill.entity.BillAftersales;
-import com.zscat.mallplus.bill.entity.BillAftersalesItems;
 import com.zscat.mallplus.bill.service.IBillAftersalesItemsService;
 import com.zscat.mallplus.bill.service.IBillAftersalesService;
 import com.zscat.mallplus.cms.entity.CmsSubject;
@@ -16,8 +14,6 @@ import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.*;
 import com.zscat.mallplus.oms.service.*;
-import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
@@ -437,11 +433,11 @@ public class BOmsController extends ApiBaseAction {
         if (member != null) {
             orderDetailResult.setBlance(member.getBlance());
         }
-        if (ValidatorUtils.notEmpty(orderDetailResult.getGrowth())){
+        if (ValidatorUtils.notEmpty(orderDetailResult.getGrowth())) {
             orderDetailResult.setShop(sysShopMapper.selectById(orderDetailResult.getGrowth()));
         }
-        OmsOrderReturnApply apply =  IOmsOrderReturnApplyService.getOne(new QueryWrapper<OmsOrderReturnApply>().eq("order_id",id));
-        if (apply!=null && apply.getId()>0){
+        OmsOrderReturnApply apply = IOmsOrderReturnApplyService.getOne(new QueryWrapper<OmsOrderReturnApply>().eq("order_id", id));
+        if (apply != null && apply.getId() > 0) {
             orderDetailResult.setAfterbillId(apply.getId());
         }
         redisService.set(key, JsonUtils.objectToJson(orderDetailResult));
@@ -844,6 +840,7 @@ public class BOmsController extends ApiBaseAction {
         omsOrder.setOrder(orderService.getById(omsOrder.getOrderId()));
         return new CommonResult().success(omsOrder);
     }
+
     @SysLog(MODULE = "cms", REMARK = "订单售后状态")
     @ApiOperation(value = "订单售后状态")
     @PostMapping(value = "/order.aftersalesstatus")
@@ -855,20 +852,23 @@ public class BOmsController extends ApiBaseAction {
     }
 
 
-
     @SysLog(MODULE = "oms", REMARK = "保存订单售后申请")
     @ApiOperation("保存订单售后申请")
     @PostMapping(value = "/order.addaftersales")
     public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
                                           @RequestParam(value = "type") Integer type,
-                                          @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "images", required = false) String[] images,
                                           @RequestParam(value = "returnAmount") BigDecimal returnAmount,
-                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+                                          @RequestParam(value = "desc", required = false) String desc) throws Exception {
         ApplyRefundVo vo = new ApplyRefundVo();
         try {
-            vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
+            vo.setDesc(desc);
+            vo.setItems(items);
+            vo.setReturnAmount(returnAmount);
+            vo.setType(type);
+            vo.setImages(images);
             return orderService.applyRe(vo);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new CommonResult().failed();
         }
 

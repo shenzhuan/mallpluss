@@ -1,7 +1,6 @@
 package com.zscat.mallplus.config;
 
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
@@ -11,8 +10,6 @@ import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.sys.entity.SysUser;
-import com.zscat.mallplus.sys.entity.SysUserVo;
-import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
@@ -30,7 +27,6 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +39,7 @@ public class MybatisPlusConfig {
     private static final List<String> IGNORE_TENANT_TABLES = ConstansValue.IGNORE_TENANT_TABLES;
     @Autowired
     private ISysUserService userMapper;
+
     /**
      * 分页插件
      */
@@ -66,7 +63,7 @@ public class MybatisPlusConfig {
                 System.out.println(UserUtils.getCurrentMember());
                 Integer storeId = UserUtils.getCurrentMember().getStoreId();
                 if (null == storeId) {
-                    JwtTokenUtil jwtTokenUtil =new JwtTokenUtil();
+                    JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
                     RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
                     HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
                     String requestType = ((HttpServletRequest) request).getMethod();

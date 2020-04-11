@@ -20,8 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author mallplus
@@ -153,6 +153,7 @@ public class SysStoreDepositLogController {
         List<SysStoreDepositLog> personList = EasyPoiUtils.importExcel(file, SysStoreDepositLog.class);
         ISysStoreDepositLogService.saveBatch(personList);
     }
+
     @SysLog(MODULE = "sys", REMARK = "预存款充值")
     @ApiOperation("预存款充值")
     @PostMapping(value = "/addStoreMoney")
@@ -180,6 +181,7 @@ public class SysStoreDepositLogController {
         }
 
     }
+
     @SysLog(MODULE = "sys", REMARK = "预存款提现审核")
     @ApiOperation("预存款提现审核")
     @PostMapping(value = "/auditStoreMoney")
@@ -188,8 +190,9 @@ public class SysStoreDepositLogController {
                                   @RequestParam("showStatus") Integer showStatus,
                                   @RequestParam("amount") BigDecimal amount) {
         try {
-            SysStoreCash entity  =new SysStoreCash();
-            entity.setStatus(showStatus);entity.setAmount(amount);
+            SysStoreCash entity = new SysStoreCash();
+            entity.setStatus(showStatus);
+            entity.setAmount(amount);
             entity.setId(id);
             return new CommonResult().success(ISysStoreDepositLogService.auditStoreMoney(entity));
         } catch (Exception e) {

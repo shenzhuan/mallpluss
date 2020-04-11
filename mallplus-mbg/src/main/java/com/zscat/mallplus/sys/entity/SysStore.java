@@ -152,7 +152,6 @@ public class SysStore implements Serializable {
     private Integer goodsCount;
 
 
-
     /**
      * 支付订单数
      */

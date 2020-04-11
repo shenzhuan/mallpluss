@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.entity.CmsSubject;
-import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
@@ -140,7 +139,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Callable<List> recomBrandCallable = () -> this.getRecommendBrandList(0, 4);
         Callable<HomeFlashPromotion> homeFlashCallable = () -> getHomeFlashPromotion();
         Callable<List> cateProductCallable = () -> getPmsProductAttributeCategories();
-        Callable<List> advListCallable  = () -> this.getHomeAdvertiseList(0,0);
+        Callable<List> advListCallable = () -> this.getHomeAdvertiseList(0, 0);
 
         FutureTask<List> recomBrandTask = new FutureTask<>(recomBrandCallable);
         FutureTask<HomeFlashPromotion> homeFlashTask = new FutureTask<>(homeFlashCallable);
@@ -194,7 +193,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     public HomeContentResult singelmobileContent() {
         HomeContentResult result = new HomeContentResult();
         result.setNavList(getNav());
-        result.setAdvertiseList(getHomeAdvertiseList(0,0));
+        result.setAdvertiseList(getHomeAdvertiseList(0, 0));
         return result;
     }
 
@@ -206,7 +205,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Callable<List> newGoodsListCallable = () -> this.getNewProductList(0, 4);
         Callable<List> newHotListCallable = () -> this.getHotProductList(0, 4);
         Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
-        Callable<List> advListCallable = () ->  this.getHomeAdvertiseList(0,0);
+        Callable<List> advListCallable = () -> this.getHomeAdvertiseList(0, 0);
 
         FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
         FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
@@ -265,7 +264,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             stopWatch.stop();
             stopWatch.start("2单条循环处理");
             //获取首页广告
-            result.setAdvertiseList(getHomeAdvertiseList(0,0));
+            result.setAdvertiseList(getHomeAdvertiseList(0, 0));
             stopWatch.stop();
             stopWatch.start("3单条循环处理");
             //获取新品推荐
@@ -310,7 +309,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
         Params imgSlidePa = new Params();
         imgSlidePa.setDuration(2500);
-        imgSlidePa.setList(getHomeAdvertiseList(0,0));
+        imgSlidePa.setList(getHomeAdvertiseList(0, 0));
         PagesItems imgSlideItems = new PagesItems(2, "imgSlide", "mobile_home", 2, 2, imgSlidePa);
 
         Params navBarPa = new Params();
@@ -365,9 +364,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         pagesItemsList.add(imgSlideItems);
         pagesItemsList.add(navBarItems);
         pagesItemsList.add(pintuanItems);
-      //  pagesItemsList.add(groupPurchaseItems);
-      //  pagesItemsList.add(articleClassifyItems);
-       // pagesItemsList.add(couponItems);
+        //  pagesItemsList.add(groupPurchaseItems);
+        //  pagesItemsList.add(articleClassifyItems);
+        // pagesItemsList.add(couponItems);
         pagesItemsList.add(goodsItems);
         pagesItemsList.add(articleItems);
 
@@ -588,17 +587,16 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     }
 
 
-
     @Override
-    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type,int storeId) {
+    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type, int storeId) {
         SmsHomeAdvertise advertise = new SmsHomeAdvertise();
         advertise.setStatus(1);
-        if (ValidatorUtils.notEmpty(type)){
+        if (ValidatorUtils.notEmpty(type)) {
             advertise.setType(type);
         }
-        if (ValidatorUtils.notEmpty(storeId)){
+        if (ValidatorUtils.notEmpty(storeId)) {
             advertise.setStoreId(storeId);
-        }else {
+        } else {
             advertise.setStoreId(0);
         }
         return advertiseService.list(new QueryWrapper<>(advertise));

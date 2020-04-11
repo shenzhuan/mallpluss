@@ -1,12 +1,10 @@
 package com.zscat.mallplus.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.enums.ConstansValue;
-import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.*;
@@ -25,7 +23,6 @@ import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -42,7 +39,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +54,8 @@ import java.util.stream.Collectors;
 @Service
 public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements IPmsProductService {
 
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
     @Resource
     private IPmsBrandService brandService;
     @Resource
@@ -96,13 +94,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private ICmsPrefrenceAreaProductRelationService prefrenceAreaProductRelationDao;
     @Resource
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
-
     @Resource
     private PmsProductVertifyRecordMapper productVertifyRecordDao;
-
     @Resource
     private PmsProductVertifyRecordMapper productVertifyRecordMapper;
-
     @Resource
     private SmsGroupMapper groupMapper;
     @Resource
@@ -115,12 +110,12 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private RedisUtil redisUtil;
     @Autowired
     private IPmsFavoriteService favoriteService;
-
     @Resource
     private SmsPaimaiLogMapper paimaiLogMapper;
     @Autowired
     private IUmsMemberService memberService;
-
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
 
     @Override
     public PmsProduct getUpdateInfo(Long id) {
@@ -160,13 +155,6 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         return 1;
     }
 
-    @Resource
-    FenxiaoConfigMapper fenxiaoConfigMapper;
-    @Resource
-    private IUmsMemberLevelService memberLevelService;
-
-
-
     @Override
     public GoodsDetailResult getGoodsRedisById(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -182,13 +170,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         List<PmsProductAttributeValue> valueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()));
         List<PmsProductAttributeValue> productAttributeValueList = new ArrayList<>();
         List<PmsProductAttributeValue> attributeValueList = new ArrayList<>();
-       for (PmsProductAttributeValue attributeValue :valueList){
-           if (attributeValue.getType()==1){
-               productAttributeValueList.add(attributeValue);
-           }else {
-               attributeValueList.add(attributeValue);
-           }
-       }
+        for (PmsProductAttributeValue attributeValue : valueList) {
+            if (attributeValue.getType() == 1) {
+                productAttributeValueList.add(attributeValue);
+            } else {
+                attributeValueList.add(attributeValue);
+            }
+        }
         param.setProductAttributeValueList(productAttributeValueList);
         param.setProductCanShuValueList(attributeValueList);
 
@@ -209,10 +197,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         List<PmsProductAttributeValue> valueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()));
         List<PmsProductAttributeValue> productAttributeValueList = new ArrayList<>();
         List<PmsProductAttributeValue> attributeValueList = new ArrayList<>();
-        for (PmsProductAttributeValue attributeValue :valueList){
-            if (attributeValue.getType()==1){
+        for (PmsProductAttributeValue attributeValue : valueList) {
+            if (attributeValue.getType() == 1) {
                 productAttributeValueList.add(attributeValue);
-            }else {
+            } else {
                 attributeValueList.add(attributeValue);
             }
         }

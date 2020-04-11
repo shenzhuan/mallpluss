@@ -72,10 +72,10 @@ public class FenxiaoConfigController {
     @ApiOperation("更新分销配置")
     @PostMapping(value = "/update/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoConfig:update')")
-    public Object updateFenxiaoConfig(@RequestBody FenxiaoConfig entity,@PathVariable Long id) {
+    public Object updateFenxiaoConfig(@RequestBody FenxiaoConfig entity, @PathVariable Long id) {
         try {
 
-            if (IFenxiaoConfigService.update(entity,new QueryWrapper<FenxiaoConfig>().eq("store_id", UserUtils.getCurrentMember().getStoreId()))) {
+            if (IFenxiaoConfigService.update(entity, new QueryWrapper<FenxiaoConfig>().eq("store_id", UserUtils.getCurrentMember().getStoreId()))) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class FenxiaoConfigController {
                 return new CommonResult().paramFailed("分销配置id");
             }
             FenxiaoConfig coupon = IFenxiaoConfigService.getOne(new QueryWrapper<>());
-            if (coupon==null){
+            if (coupon == null) {
                 FenxiaoConfig config = new FenxiaoConfig();
                 config.setId(1L);
                 config.setCreateTime(new Date());

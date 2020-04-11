@@ -19,7 +19,6 @@
     </resultMap>
 
 
-
     <delete id="deleteAdminDayStaticsByDate" parameterType="String">
         delete from admin_day_statics where date_format(create_time,'%y%m%d') &lt;= date_format(#{createTime},'%y%m%d')
     </delete>
@@ -33,8 +32,9 @@
 
 
     <select id="selectAdminDayStaticsGroupBySId" parameterType="Long" resultMap="AdminDayStaticsResult">
-       SELECT store_id,sum(goods_count) goods_count, sum(pay_order_count) pay_order_count,sum(article_count) article_count,sum(pay_amount) pay_amount,sum(member_count) member_count
-from admin_day_statics  where date_format(create_time,'%y%m%d') = date_format(now(),'%y%m%d') GROUP BY store_id
+        SELECT store_id,sum(goods_count) goods_count, sum(pay_order_count) pay_order_count,sum(article_count)
+        article_count,sum(pay_amount) pay_amount,sum(member_count) member_count
+        from admin_day_statics where date_format(create_time,'%y%m%d') = date_format(now(),'%y%m%d') GROUP BY store_id
     </select>
 
 </mapper>

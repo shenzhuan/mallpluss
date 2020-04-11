@@ -76,7 +76,7 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object diyDetail(@RequestParam(value = "storeId", required = true) Long storeId,
                             @RequestParam(value = "type", required = true) Integer type) {
         return new CommonResult().success(diyPageMapper.selectOne(
-                new QueryWrapper<SmsDiyPage>().eq("status",1).eq("type",type).eq("store_id",storeId)));
+                new QueryWrapper<SmsDiyPage>().eq("status", 1).eq("type", type).eq("store_id", storeId)));
     }
 
 

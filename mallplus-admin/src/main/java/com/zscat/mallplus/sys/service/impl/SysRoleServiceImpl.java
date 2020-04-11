@@ -54,15 +54,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     }
 
     @Override
-    public Set<String> selectRolePermissionByUserId(Long userId)
-    {
+    public Set<String> selectRolePermissionByUserId(Long userId) {
         List<SysRole> perms = roleMapper.selectRolePermissionByUserId(userId);
         Set<String> permsSet = new HashSet<>();
-        for (SysRole perm : perms)
-        {
-            if (perm!=null)
-            {
-              //  permsSet.addAll(Arrays.asList(perm.getRoleKey().trim().split(",")));
+        for (SysRole perm : perms) {
+            if (perm != null) {
+                //  permsSet.addAll(Arrays.asList(perm.getRoleKey().trim().split(",")));
             }
         }
         return permsSet;

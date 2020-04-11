@@ -40,7 +40,7 @@ public class OssAliyunUtil {
             url = upload(defaultOssAliyunField, getKey(defaultOssAliyunField.getPrefix(), FileUtils.getSuffix(file)),
                     file.getInputStream());
         } catch (IOException e) {
-           return e.getMessage();
+            return e.getMessage();
         }
         return url;
     }

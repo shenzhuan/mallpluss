@@ -768,7 +768,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 queryO.setType(AllEnum.OrderItemType.GOODS.code());
                 List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
                 // 分拥计算
-                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
+                orderService.recordFenxiaoMoney(omsOrderItems, memberService.getById(orderInfo.getMemberId()));
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");
                 return new CommonResult().success();

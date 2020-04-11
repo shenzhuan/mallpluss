@@ -71,6 +71,8 @@ import java.util.stream.Collectors;
 public class BPmsController extends ApiBaseAction {
 
     @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
+    @Resource
     private IUmsMemberService memberService;
     @Resource
     private RedisUtil redisUtil;
@@ -120,9 +122,6 @@ public class BPmsController extends ApiBaseAction {
     private SysStoreMapper storeMapper;
     @Resource
     private OmsOrderMapper omsOrderMapper;
-    @Resource
-    FenxiaoConfigMapper fenxiaoConfigMapper;
-
     @Autowired
     private IPmsFavoriteService memberCollectionService;
     @Autowired
@@ -169,7 +168,7 @@ public class BPmsController extends ApiBaseAction {
 
     private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
         pmsProduct.setMemberRate(10);
-        UmsMember member =memberService.getNewCurrentMember();
+        UmsMember member = memberService.getNewCurrentMember();
         if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
             FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
             if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
@@ -177,7 +176,7 @@ public class BPmsController extends ApiBaseAction {
             }
         }
 
-        if (member!=null && member.getId()!=null &&  pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null && member.getMemberLevelId()>0) {
+        if (member != null && member.getId() != null && pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member != null && member.getMemberLevelId() > 0) {
             UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
             if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                 pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
@@ -186,24 +185,25 @@ public class BPmsController extends ApiBaseAction {
         }
         return pmsProduct;
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品列表")
     @PostMapping(value = "/goods.getlist")
-    public Object goodsList( @RequestParam(value = "isVip", required = false) Integer isVip,
-                             @RequestParam(value = "isFenxiao", required = false) Integer isFenxiao,
-                             @RequestParam(value = "storeId", required = false) Integer storeId,
-                             @RequestParam(value = "areaId", required = false) Long areaId,
-                             @RequestParam(value = "schoolId", required = false) Long schoolId,
-                             @RequestParam(value = "productAttributeCategoryId", required = false) Long productAttributeCategoryId,
-                             @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
-                             @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
-                             @RequestParam(value = "brandId", required = false) Long brandId,
-                             @RequestParam(value = "sort", required = false) Integer sort,
-                             @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
-                             @RequestParam(value = "keyword", required = false) String keyword,
-                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+    public Object goodsList(@RequestParam(value = "isVip", required = false) Integer isVip,
+                            @RequestParam(value = "isFenxiao", required = false) Integer isFenxiao,
+                            @RequestParam(value = "storeId", required = false) Integer storeId,
+                            @RequestParam(value = "areaId", required = false) Long areaId,
+                            @RequestParam(value = "schoolId", required = false) Long schoolId,
+                            @RequestParam(value = "productAttributeCategoryId", required = false) Long productAttributeCategoryId,
+                            @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
+                            @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
+                            @RequestParam(value = "brandId", required = false) Long brandId,
+                            @RequestParam(value = "sort", required = false) Integer sort,
+                            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
+                            @RequestParam(value = "keyword", required = false) String keyword,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
         product.setVerifyStatus(1);
@@ -250,30 +250,30 @@ public class BPmsController extends ApiBaseAction {
         product.setSort(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            if (orderBy==1) {
+            if (orderBy == 1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list,product);
+                buildFenPrice(list, product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list,product);
+                buildFenPrice(list, product);
             }
         } else {
-            if (orderBy==1) {
+            if (orderBy == 1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list,product);
+                buildFenPrice(list, product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list,product);
+                buildFenPrice(list, product);
             }
         }
         return new CommonResult().success(list);
     }
 
-    private void buildFenPrice(IPage<PmsProduct> list,PmsProduct product) {
+    private void buildFenPrice(IPage<PmsProduct> list, PmsProduct product) {
         if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
-            if (product.getIsFenxiao()!=null && product.getIsFenxiao()==1){
+            if (product.getIsFenxiao() != null && product.getIsFenxiao() == 1) {
                 for (PmsProduct pmsProduct : list.getRecords()) {
-                    if ( pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+                    if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
                         FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
                         if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
                             pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
@@ -282,12 +282,12 @@ public class BPmsController extends ApiBaseAction {
 
                 }
             }
-            UmsMember member =memberService.getNewCurrentMember();
-            if (member!=null && member.getId()!=null && product.getIsVip()!=null && product.getIsVip()==1){
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member != null && member.getId() != null && product.getIsVip() != null && product.getIsVip() == 1) {
                 for (PmsProduct pmsProduct : list.getRecords()) {
-                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member!=null & member.getMemberLevelId()>0) {
+                    if (pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1 && member != null & member.getMemberLevelId() > 0) {
                         UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
-                        if (fenxiaoConfig != null  && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                        if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
                             pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
                             pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
                         }
@@ -787,8 +787,8 @@ public class BPmsController extends ApiBaseAction {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("user.goodscollection")
     public Object favoriteSave(PmsFavorite productCollection) {
-        UmsMember member =memberService.getNewCurrentMember();
-        if (member==null || member.getId()==null){
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
             return new CommonResult().fail(100);
         }
         productCollection.setMemberId(member.getId());

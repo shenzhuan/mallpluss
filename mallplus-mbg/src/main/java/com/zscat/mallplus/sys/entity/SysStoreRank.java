@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,12 +12,12 @@ import java.util.Date;
 
 /**
  * @author mallplus
- * @date 2020-04-10
- * 门店管理
+ * @date 2020-04-11
+ * 商户等级
  */
 @Data
-@TableName("sys_store_cash")
-public class SysStoreCash extends BaseEntity implements Serializable {
+@TableName("sys_store_rank")
+public class SysStoreRank implements Serializable {
 
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -35,38 +34,36 @@ public class SysStoreCash extends BaseEntity implements Serializable {
     /**
      *
      **/
-    @TableField("update_time")
-    private Date updateTime;
-
-
-    /**
-     * 收款账号
-     **/
-    @TableField("account")
-    private String account;
-
-
-    /**
-     * 获取金额
-     **/
-    @TableField("amount")
-    private BigDecimal amount;
-
-
-    /**
-     * 收款银行
-     **/
-    @TableField("bank")
-    private String bank;
+    @TableField("sort")
+    private Integer sort;
 
 
     /**
      *
      **/
-    @TableField("status")
-    private Integer status;
+    @TableField("memo")
+    private String memo;
 
 
-    private BigDecimal balance;
+    /**
+     *
+     **/
+    @TableField("name")
+    private String name;
+
+
+    /**
+     *
+     **/
+    @TableField("quantity")
+    private Long quantity;
+
+
+    /**
+     *
+     **/
+    @TableField("service_fee")
+    private BigDecimal serviceFee;
+
 
 }

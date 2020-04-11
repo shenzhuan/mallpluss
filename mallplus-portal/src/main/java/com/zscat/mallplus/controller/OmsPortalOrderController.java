@@ -7,7 +7,6 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OmsOrderDetail;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.TbThanks;

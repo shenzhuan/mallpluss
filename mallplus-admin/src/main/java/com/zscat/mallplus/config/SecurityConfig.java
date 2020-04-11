@@ -123,12 +123,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     return new AdminUserDetails(admin, permissionList);
                 }
                 SysStore store = storeMapper.selectById(admin.getStoreId());
-                if (store==null ){
+                if (store == null) {
                     throw new UsernameNotFoundException("商户不存在");
-                }else {
-                    if( store.getStatus()== StatusEnum.AuditType.FAIL.code()){
+                } else {
+                    if (store.getStatus() == StatusEnum.AuditType.FAIL.code()) {
                         throw new UsernameNotFoundException("商户审核失败");
-                    }else if( store.getStatus()== StatusEnum.AuditType.INIT.code()){
+                    } else if (store.getStatus() == StatusEnum.AuditType.INIT.code()) {
                         throw new UsernameNotFoundException("商户审核中");
                     }
                 }

@@ -2,8 +2,6 @@ package com.zscat.mallplus.b2c;
 
 
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
@@ -14,7 +12,6 @@ import com.zscat.mallplus.fenxiao.mapper.FenxiaoRecordsMapper;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.sys.entity.SysArea;
-import com.zscat.mallplus.sys.entity.SysSchool;
 import com.zscat.mallplus.sys.entity.SysShop;
 import com.zscat.mallplus.sys.mapper.SysAreaMapper;
 import com.zscat.mallplus.sys.mapper.SysShopMapper;
@@ -37,7 +34,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -49,16 +48,16 @@ import java.util.stream.Collectors;
 @Api(tags = "HomeController", description = "首页内容管理")
 public class BUmsController {
 
+    @Resource
+    FenxiaoRecordsMapper fenxiaoRecordsMapper;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
     @Resource
     private RedisService redisService;
     @Autowired
     private IUmsMemberService memberService;
-
     @Resource
     private IUmsMemberLevelService memberLevelService;
     @Resource
@@ -71,7 +70,6 @@ public class BUmsController {
     private SysStoreMapper storeMapper;
     @Resource
     private IUserBankcardsService bankcardsService;
-
     @Resource
     private SysShopMapper sysShopMapper;
     @Resource
@@ -89,8 +87,6 @@ public class BUmsController {
         return new CommonResult().failed();
     }
 
-
-
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/userInfo")
@@ -101,10 +97,10 @@ public class BUmsController {
     @ApiOperation("更新会员信息")
     @SysLog(MODULE = "ums", REMARK = "更新会员信息")
     @PostMapping(value = "/user.editinfo")
-    public Object updateMember( @RequestParam(value = "nickname", required = false) String nickname,
-                                @RequestParam(value = "icon", required = false) String icon,
-                                @RequestParam(value = "invitecode", required = false) String invitecode,
-                                @RequestParam(value = "gender", required = false) Integer gender
+    public Object updateMember(@RequestParam(value = "nickname", required = false) String nickname,
+                               @RequestParam(value = "icon", required = false) String icon,
+                               @RequestParam(value = "invitecode", required = false) String invitecode,
+                               @RequestParam(value = "gender", required = false) Integer gender
     ) {
         UmsMember m = new UmsMember();
         m.setId(memberService.getNewCurrentMember().getId());
@@ -213,9 +209,9 @@ public class BUmsController {
             bankcardsService.update(query, new QueryWrapper<UserBankcards>().eq("user_id", umsMember.getId()));
         }
         address.setUserId(umsMember.getId());
-        if (address.getId()!=null && address.getId()>0){
+        if (address.getId() != null && address.getId() > 0) {
             bankcardsService.updateById(address);
-        }else {
+        } else {
             bankcardsService.save(address);
         }
         return new CommonResult().success();
@@ -234,7 +230,6 @@ public class BUmsController {
         return new ArrayList<UmsMemberReceiveAddress>();
     }
 
-
     @IgnoreAuth
     @ApiOperation("获取银行卡信息")
     @RequestMapping(value = "/user.getbankcardinfo", method = RequestMethod.POST)
@@ -242,41 +237,42 @@ public class BUmsController {
     public Object getbankcardinfo(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         return new CommonResult().success(bankcardsService.getById(id));
     }
+
     @IgnoreAuth
     @ApiOperation("获取银行卡组织信息")
     @RequestMapping(value = "/user.getbankcardorganization", method = RequestMethod.POST)
     @ResponseBody
     public Object getbankcardorganization(@RequestParam(value = "card_code", required = true) String card_code) {
         try {
-            String json1 = HttpUtil.get("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo="+card_code+"&cardBinCheck=true");
+            String json1 = HttpUtil.get("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=" + card_code + "&cardBinCheck=true");
             // 转为 Json 对象
-            UserBankcardsVo vo = JsonUtils.fromJson(json1,UserBankcardsVo.class);
+            UserBankcardsVo vo = JsonUtils.fromJson(json1, UserBankcardsVo.class);
             // 北京农村商业银行·凤凰卡
-            String cardName =  BankUtil.getNameOfBank(card_code);
+            String cardName = BankUtil.getNameOfBank(card_code);
             vo.setName(cardName.split("·")[0]);
             vo.setTypeName(cardName.split("·")[1]);
             return new CommonResult().success(vo);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new CommonResult().failed();
         }
 
     }
+
     @IgnoreAuth
     @ApiOperation("获取默认的银行卡")
     @RequestMapping(value = "/user.getdefaultbankcard", method = RequestMethod.POST)
     @ResponseBody
     public Object getItemDefautl() {
         UserBankcards address = bankcardsService.getOne(new QueryWrapper<UserBankcards>().eq("user_id", memberService.getNewCurrentMember().getId()).eq("is_default", 1));
-        if (address!=null && address.getId()>0){
+        if (address != null && address.getId() > 0) {
             return new CommonResult().success(address);
         }
         List<UserBankcards> addressList = bankcardsService.list(new QueryWrapper<UserBankcards>().eq("user_id", memberService.getNewCurrentMember().getId()));
-        if (addressList!=null && addressList.size()>0){
+        if (addressList != null && addressList.size() > 0) {
             return new CommonResult().success(addressList.get(0));
         }
         return new CommonResult().success();
     }
-
 
     /**
      * @param id
@@ -293,19 +289,16 @@ public class BUmsController {
         return new CommonResult().failed();
     }
 
-
     @ApiOperation("申请用户提现")
     @PostMapping(value = "/user.cash")
     @ResponseBody
     public Object cash(UmsMemberBlanceLog blanceLog) {
-       try {
-           return new CommonResult().success(memberService.withDraw(blanceLog));
-       }catch (Exception e){
-           return new CommonResult().failed(e.getMessage());
-       }
+        try {
+            return new CommonResult().success(memberService.withDraw(blanceLog));
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
     }
-
-
 
     @ApiOperation("用户推荐列表")
     @PostMapping(value = "/user.recommend")
@@ -313,7 +306,7 @@ public class BUmsController {
     public Object inviteUser(UmsMember entity,
                              @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(memberService.page(new Page<UmsMember>(pageNum, pageSize),new QueryWrapper<UmsMember>().eq("invitecode", memberService.getNewCurrentMember().getId())));
+        return new CommonResult().success(memberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<UmsMember>().eq("invitecode", memberService.getNewCurrentMember().getId())));
     }
 
     @ApiOperation("邀请码")
@@ -326,9 +319,6 @@ public class BUmsController {
         }
         return new CommonResult().failed();
     }
-
-    @Resource
-    FenxiaoRecordsMapper fenxiaoRecordsMapper;
 
     @ApiOperation("获取分销商进度状态")
     @PostMapping(value = "/distribution_center-api-info")
@@ -343,7 +333,7 @@ public class BUmsController {
         BigDecimal sucessMoney = BigDecimal.ZERO; // 结算
         for (FenxiaoRecords fenxiaoRecords : recordss) {
             totalMoney = fenxiaoRecords.getMoney().add(totalMoney);
-            if ("2".equals(fenxiaoRecords.getStatus())){
+            if ("2".equals(fenxiaoRecords.getStatus())) {
                 sucessMoney = fenxiaoRecords.getMoney().add(sucessMoney);
             }
         }
@@ -388,8 +378,8 @@ public class BUmsController {
     @ApiOperation("我的分销订单")
     @PostMapping(value = "/distribution_center-api-myorder")
     @ResponseBody
-    public Object getDistributionOrder( @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+    public Object getDistributionOrder(@RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         UmsMember member = memberService.getNewCurrentMember();
         UmsMember newMember = memberService.getById(member.getId());
         Integer count = memberService.count(new QueryWrapper<UmsMember>().eq("invitecode", member.getId()));
@@ -398,8 +388,8 @@ public class BUmsController {
         List<Integer> ids = recordss.stream()
                 .map(FenxiaoRecords::getId)
                 .collect(Collectors.toList());
-        if (ids!=null && ids.size()>0){
-            return new CommonResult().success(orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(new OmsOrder()).in("id",ids)));
+        if (ids != null && ids.size() > 0) {
+            return new CommonResult().success(orderService.page(new Page<OmsOrder>(pageNum, pageSize), new QueryWrapper<>(new OmsOrder()).in("id", ids)));
         }
         return new CommonResult().success();
     }
@@ -425,17 +415,17 @@ public class BUmsController {
     @PostMapping(value = "/user.shoplist")
     @SysLog(MODULE = "ums", REMARK = "查询门店管理列表")
     public Object shoplist(@RequestParam(value = "storeId", required = true) Long storeId) {
-        return new CommonResult().success(sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id",storeId)));
+        return new CommonResult().success(sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id", storeId)));
     }
 
     @ApiOperation("门店详情")
     @PostMapping(value = "/shopDetail")
     @ResponseBody
     public Object shopDetail(@RequestParam(value = "storeId", required = true) Integer storeId) {
-       List<SysShop> list = sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id",storeId));
-       if (list!=null && list.size()>0){
-           return new CommonResult().success(list.get(0));
-       }
+        List<SysShop> list = sysShopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id", storeId));
+        if (list != null && list.size() > 0) {
+            return new CommonResult().success(list.get(0));
+        }
         return new CommonResult().success();
     }
 }

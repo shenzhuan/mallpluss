@@ -426,7 +426,7 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "获取广告")
     @PostMapping("/advert.getcarousellists")
     public Object advList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(type,0);
+        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(type, 0);
         return new CommonResult().success(bannerList);
     }
 
@@ -460,7 +460,7 @@ public class BHomeController {
     public Object upload(@RequestParam("file") MultipartFile file) throws Exception {
         return new CommonResult().success("https://www.baidu.com/img/bd_logo1.png");
 
-       // return new CommonResult().success(aliyunOSSUtil.upload(file));
+        // return new CommonResult().success(aliyunOSSUtil.upload(file));
     }
 
     @IgnoreAuth
@@ -561,7 +561,7 @@ public class BHomeController {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "storeId", required = false) Integer storeId,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
-        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type,storeId);
+        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type, storeId);
         List<PmsProduct> list = new ArrayList<>();
         if (type == 1) {
             list = pmsProductService.getHotProductList(1, 100);

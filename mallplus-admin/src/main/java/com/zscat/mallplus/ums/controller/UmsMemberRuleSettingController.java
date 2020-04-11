@@ -3,7 +3,6 @@ package com.zscat.mallplus.ums.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.ums.entity.UmsMemberRuleSetting;
 import com.zscat.mallplus.ums.service.IUmsMemberRuleSettingService;
 import com.zscat.mallplus.util.UserUtils;
@@ -74,7 +73,7 @@ public class UmsMemberRuleSettingController {
     public Object updateUmsMemberRuleSetting(@RequestBody UmsMemberRuleSetting entity) {
         try {
             entity.setId(1L);
-            if (IUmsMemberRuleSettingService.update(entity,new QueryWrapper<UmsMemberRuleSetting>().eq("store_id", UserUtils.getCurrentMember().getStoreId()))) {
+            if (IUmsMemberRuleSettingService.update(entity, new QueryWrapper<UmsMemberRuleSetting>().eq("store_id", UserUtils.getCurrentMember().getStoreId()))) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -113,7 +112,7 @@ public class UmsMemberRuleSettingController {
                 return new CommonResult().paramFailed("会员积分成长规则表id");
             }
             UmsMemberRuleSetting coupon = IUmsMemberRuleSettingService.getById(id);
-            if (coupon==null){
+            if (coupon == null) {
                 coupon.setId(1L);
 
                 IUmsMemberRuleSettingService.save(coupon);

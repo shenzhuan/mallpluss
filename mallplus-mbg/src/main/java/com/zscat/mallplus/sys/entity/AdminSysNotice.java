@@ -1,11 +1,12 @@
 package com.zscat.mallplus.sys.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -162,16 +163,16 @@ public class AdminSysNotice implements Serializable {
     @Override
     public String toString() {
         return "AdminSysNotice{" +
-        ", noticeId=" + noticeId +
-        ", noticeTitle=" + noticeTitle +
-        ", noticeType=" + noticeType +
-        ", noticeContent=" + noticeContent +
-        ", status=" + status +
-        ", createBy=" + createBy +
-        ", createTime=" + createTime +
-        ", updateBy=" + updateBy +
-        ", updateTime=" + updateTime +
-        ", remark=" + remark +
-        "}";
+                ", noticeId=" + noticeId +
+                ", noticeTitle=" + noticeTitle +
+                ", noticeType=" + noticeType +
+                ", noticeContent=" + noticeContent +
+                ", status=" + status +
+                ", createBy=" + createBy +
+                ", createTime=" + createTime +
+                ", updateBy=" + updateBy +
+                ", updateTime=" + updateTime +
+                ", remark=" + remark +
+                "}";
     }
 }

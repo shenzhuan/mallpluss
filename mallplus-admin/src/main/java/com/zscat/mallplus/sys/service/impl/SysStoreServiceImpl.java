@@ -8,9 +8,7 @@ import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
 import com.zscat.mallplus.component.OssAliyunUtil;
 import com.zscat.mallplus.enums.StatusEnum;
-import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
-import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsBrandMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
@@ -23,7 +21,6 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.mapper.SysUserRoleMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
-import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +50,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
     @Resource
+    SysUserRoleMapper userRoleMapper;
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
+    @Resource
     private SysStoreMapper storeMapper;
     @Resource
     private SysUserMapper userMapper;
@@ -72,10 +73,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     private PmsProductAttributeCategoryMapper pmsProductAttributeCategoryMapper;
     @Resource
     private PmsBrandMapper pmsBrandMapper;
-    @Resource
-    SysUserRoleMapper userRoleMapper;
-    @Resource
-    FenxiaoConfigMapper fenxiaoConfigMapper;
+
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {
@@ -110,7 +108,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         user.setStoreName(entity.getName());
         user.setEmail(entity.getSupportPhone());
 
-        userMapper.insert(user) ;
+        userMapper.insert(user);
 
         SysUserRole userRole = new SysUserRole();
         userRole.setRoleId(3L);
@@ -186,12 +184,14 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         pmsBrand.setIsBoutique(showStatus);
         return storeMapper.update(pmsBrand, new QueryWrapper<SysStore>().in("id", ids));
     }
+
     @Override
     public int audit(List<Long> ids, Integer showStatus) {
         SysStore pmsBrand = new SysStore();
         pmsBrand.setStatus(showStatus);
         return storeMapper.update(pmsBrand, new QueryWrapper<SysStore>().in("id", ids));
     }
+
     void createG(BakGoods gg, Integer storeId) {
         PmsProduct g = new PmsProduct();
 
