@@ -11,12 +11,19 @@ import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.sys.entity.AdminDayStatics;
+import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.sys.entity.SysStoreDepositLog;
+import com.zscat.mallplus.sys.mapper.AdminDayStaticsMapper;
+import com.zscat.mallplus.sys.mapper.SysStoreDepositLogMapper;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.DateUtils;
 import com.zscat.mallplus.vo.Rediskey;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +31,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * https://github.com/shenzhuan/mallplus on 2018/8/24.
  * 订单超时取消并解锁库存的定时器
  */
+@Slf4j
 @Component
 public class MallplusTask {
     private Logger logger = LoggerFactory.getLogger(MallplusTask.class);
@@ -50,6 +56,12 @@ public class MallplusTask {
     private IUmsMemberService IUmsMemberService;
     @Resource
     private FenxiaoRecordsMapper fenxiaoRecordsMapper;
+    @Resource
+    private SysStoreMapper storeMapper;
+    @Resource
+    private AdminDayStaticsMapper dayStaticsMapper;
+    @Resource
+    private SysStoreDepositLogMapper sysStoreDepositLogMapper;
 
     /**
      * cron表达式：Seconds Minutes Hours DayofMonth Month DayofWeek [Year]
@@ -207,4 +219,109 @@ public class MallplusTask {
         }
         logger.info("结束保存点赞数 、浏览数");
     }
+    /**
+     * 商户数据日统计 凌晨1点  0 0 1 * * ?
+     */
+    @Scheduled(cron = "0 1 1 * * ?")
+    //@Scheduled(cron = "0 0/5 * ? * ?")
+    public void storeDayStatics() throws InterruptedException {
+
+        List<SysStore> storeList = storeMapper.selectList(new QueryWrapper<SysStore>().eq("status",3));
+        log.info("商户数据日统计：{}，共{}个商户需要需要同步", DateUtils.getNowDate(), storeList.size());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        String endTime =DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, calendar.getTime());
+        calendar.set(Calendar.HOUR_OF_DAY, -24);
+        String startTime =DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, calendar.getTime());
+
+        //  dayStaticsService.deleteAdminDayStaticsByDate(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD, calendar.getTime()));
+
+        System.out.println(startTime+","+endTime);
+        Thread.sleep(3*1000);
+        for (SysStore store : storeList) {
+         //   List<UmsMember> memberList = IUmsMemberService.list(new QueryWrapper<UmsMember>().eq("store_id",store.getId()));
+            List<PmsProduct> productList = productMapper.selectList(new QueryWrapper<PmsProduct>().eq("store_id",store.getId()).between("create_time",startTime,endTime));
+            List<OmsOrder> orderList = orderMapper.selectList(new QueryWrapper<OmsOrder>().eq("store_id",store.getId()).between("create_time",startTime,endTime));
+
+            AdminDayStatics dayStatics = new AdminDayStatics();
+            dayStatics.setGoodsCount(productList.size());
+          //  dayStatics.setMemberCount(memberList.size());
+
+            Integer payOrderCount = 0;
+            BigDecimal payAmount = BigDecimal.ZERO;
+            Integer notPayOrderCount = 0;
+            BigDecimal notPayAmount = BigDecimal.ZERO;
+            for (OmsOrder omsOrder : orderList) {
+                if (omsOrder.getPayAmount() != null) {
+                    if (omsOrder.getStatus() < 9) {
+                        payOrderCount++;
+                        payAmount = payAmount.add(omsOrder.getPayAmount());
+                    } else {
+                        notPayOrderCount++;
+                        notPayAmount = notPayAmount.add(omsOrder.getPayAmount());
+                    }
+                }
+            }
+            dayStatics.setPayAmount(payAmount);
+            dayStatics.setPayOrderCount(payOrderCount);
+            dayStatics.setNotPayAmount(notPayAmount);
+            dayStatics.setNotPayOrderCount(notPayOrderCount);
+            dayStatics.setStoreId(store.getId());
+            dayStatics.setStoreName(store.getName());
+            dayStatics.setCreateTime(new Date());
+
+            if (dayStatics.getPayOrderCount()>0 ||dayStatics.getNotPayOrderCount()>0 ||
+                    dayStatics.getGoodsCount()>0  ){
+                dayStaticsMapper.insert(dayStatics);
+            }
+            log.info("商户数据日统计end====：{}，商户ID={},商户名称={}", DateUtils.getNowDate(), store.getId(), store.getName());
+        }
+        log.info("商户数据日统计end====：{}", DateUtils.getNowDate());
+    }
+
+    /**
+     * 商户统计 凌晨2点  0 0 2 * * ?
+     */
+     @Scheduled(cron = "0 32 9 * * ?")
+  //  @Scheduled(cron = "0 0/10 * ? * ?")
+    public void storeStatics() throws InterruptedException {
+        List<AdminDayStatics> dayStatics = dayStaticsMapper.selectAdminDayStaticsGroupBySId();
+        log.info("商户统计：{}，共{}个商户需要需要同步", DateUtils.getNowDate(), dayStatics.size());
+        for (AdminDayStatics dayStatics1 : dayStatics){
+            SysStore store = new SysStore();
+            store.setMemberCount(dayStatics1.getMemberCount());
+            store.setId(dayStatics1.getStoreId());
+            store.setGoodsCount(dayStatics1.getGoodsCount());
+            store.setArticleCount(dayStatics1.getArticleCount());
+            store.setOrderCount(dayStatics1.getPayOrderCount());
+            store.setPayAmount(dayStatics1.getPayAmount());
+            if (dayStatics1.getPayOrderCount()>0){
+                SysStore sysStore =storeMapper.selectById(dayStatics1.getStoreId());
+                if (sysStore!=null){
+                    SysStoreDepositLog entity = new SysStoreDepositLog();
+                    if (sysStore.getAmount()==null || sysStore.getAmount().compareTo(BigDecimal.ZERO)==0){
+                        entity.setBalance(dayStatics1.getPayAmount());
+                        store.setAmount(dayStatics1.getPayAmount());
+                    }else {
+                        entity.setBalance(sysStore.getAmount().add(dayStatics1.getPayAmount()));
+                        store.setAmount(sysStore.getAmount().add(dayStatics1.getPayAmount()));
+                    }
+                    entity.setCredit(dayStatics1.getPayAmount());
+                    entity.setStoreId(dayStatics1.getStoreId());
+                    entity.setCreateTime(new Date());
+                    entity.setUpdateTime(new Date());
+                    entity.setType(6);
+                    sysStoreDepositLogMapper.insert(entity);
+                }
+
+            }
+            storeMapper.updateById(store);
+        }
+        log.info("商户统计end====：{}", DateUtils.getNowDate());
+    }
+
 }

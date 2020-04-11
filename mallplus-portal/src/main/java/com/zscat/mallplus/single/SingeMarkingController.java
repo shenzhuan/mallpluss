@@ -11,10 +11,8 @@ import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.sms.entity.SmsBasicGifts;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
-import com.zscat.mallplus.sms.entity.SmsGroupActivity;
+import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.mapper.SmsDiyPageMapper;
 import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
 import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
 import com.zscat.mallplus.sms.service.ISmsCouponService;
@@ -68,6 +66,18 @@ public class SingeMarkingController extends ApiBaseAction {
     private IPmsFavoriteService favoriteService;
     @Autowired
     private IUmsMemberService memberService;
+    @Resource
+    private SmsDiyPageMapper diyPageMapper;
+
+
+    @ApiOperation("获取单个商品得优惠详情")
+    @RequestMapping(value = "/diyDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public Object diyDetail(@RequestParam(value = "storeId", required = true) Long storeId,
+                            @RequestParam(value = "type", required = true) Integer type) {
+        return new CommonResult().success(diyPageMapper.selectOne(
+                new QueryWrapper<SmsDiyPage>().eq("status",1).eq("type",type).eq("store_id",storeId)));
+    }
 
 
     @ApiOperation("领取指定优惠券")

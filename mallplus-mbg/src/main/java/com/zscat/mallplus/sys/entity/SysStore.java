@@ -8,6 +8,7 @@ import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -141,10 +142,38 @@ public class SysStore implements Serializable {
 
     private Integer hit;
 
+    private BigDecimal amount;
+    @TableField("freez_amount")
+    private BigDecimal freezAmount;
     private Integer collect;
     @TableField("is_boutique")
     private Integer isBoutique;
-    @TableField(exist = false)
+    @TableField("goods_count")
     private Integer goodsCount;
 
+
+
+    /**
+     * 支付订单数
+     */
+    @TableField("order_count")
+    private Integer orderCount;
+
+    /**
+     * 文章数
+     */
+    @TableField("article_count")
+    private Integer articleCount;
+
+    /**
+     * 支付金额
+     */
+    @TableField("pay_amount")
+    private BigDecimal payAmount;
+
+    /**
+     * 添加会员数
+     */
+    @TableField("member_count")
+    private Integer memberCount;
 }
