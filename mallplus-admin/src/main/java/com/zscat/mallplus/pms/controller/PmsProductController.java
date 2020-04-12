@@ -71,43 +71,7 @@ public class PmsProductController {
         return new CommonResult().success(productList);
     }
 
-    @SysLog(MODULE = "pms", REMARK = "保存商品信息")
-    @ApiOperation("保存商品信息")
-    @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('pms:PmsProduct:create')")
-    public Object savePmsProduct(@RequestBody PmsProductParam productParam) {
-        try {
-            int count = IPmsProductService.create(productParam);
-            if (count > 0) {
-                return new CommonResult().success(count);
-            } else {
-                return new CommonResult().failed();
-            }
-        } catch (Exception e) {
-            log.error("保存商品信息：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
 
-    }
-
-    @SysLog(MODULE = "pms", REMARK = "更新商品信息")
-    @ApiOperation("更新商品信息")
-    @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProduct:update')")
-    public Object updatePmsProduct(@PathVariable Long id, @RequestBody PmsProductParam productParam) {
-        try {
-            int count = IPmsProductService.update(id, productParam);
-            if (count > 0) {
-                return new CommonResult().success(count);
-            } else {
-                return new CommonResult().failed();
-            }
-        } catch (Exception e) {
-            log.error("更新商品信息：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-
-    }
 
     @SysLog(MODULE = "pms", REMARK = "删除商品信息")
     @ApiOperation("删除商品信息")

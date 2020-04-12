@@ -85,65 +85,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Override
     public int create(PmsProductParam productParam) {
         int count;
-        //创建商品
-        PmsProduct product = productParam;
-        product.setCreateTime(new Date());
-        product.setId(null);
-        //处理sku的编码
-        handleSkuStockCode(productParam.getSkuStockList(), product);
-        if (ValidatorUtils.isEmpty(product.getProductSn())) {
-            product.setProductSn(IdWorker.getId() + "");
-        }
-        if (ValidatorUtils.empty(product.getExpireTime())) {
-            product.setExpireTime(DateUtils.strToDate(DateUtils.addDay(new Date(), 5)));
-        }
-        if (ValidatorUtils.empty(product.getOriginalPrice())) {
-            product.setOriginalPrice(product.getPrice());
-        }
-        if (ValidatorUtils.empty(product.getUnit())) {
-            product.setUnit("件");
-        }
 
-        //product.setStoreId(user.getStoreId());
-        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
-            product.setAlbumPics(product.getPic());
-        }
-        productMapper.insert(product);
-        //根据促销类型设置价格：、阶梯价格、满减价格
-        Long productId = product.getId();
-        //会员价格
-        //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
-        //阶梯价格
-        // relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
-        //满减价格
-        // relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
-
-        //添加sku库存信息
-        relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
-        //添加商品参数,添加自定义商品规格
-        relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
-        //关联专题
-      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
-        //关联优选
-     //   relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
-        //关联专题
-
-        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
-            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
-                relation.setProductId(productId);
-                subjectProductRelationDao.save(relation);
-            }
-        }
-        //关联优选
-        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
-            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
-                relation.setProductId(productId);
-                prefrenceAreaProductRelationDao.save(relation);
-            }
-        }
-        count = 1;
-        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
-        return count;
+        return 0;
     }
 
     private void handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
@@ -180,59 +123,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Override
     public int update(Long id, PmsProductParam productParam) {
 
-        int count;
-        //更新商品信息
-        PmsProduct product = productParam;
-        product.setId(id);
-        if (ValidatorUtils.isEmpty(product.getProductSn())) {
-            product.setProductSn(IdWorker.getId() + "");
-        }
-        handleSkuStockCode(productParam.getSkuStockList(), product);
-        productMapper.updateById(product);
-        redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
-        //会员价格
-        //  memberPriceMapper.delete(new QueryWrapper<>(new PmsMemberPrice()).eq("product_id", id));
-        //  relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), id);
-        //阶梯价格
-
-        productLadderMapper.delete(new QueryWrapper<>(new PmsProductLadder()).eq("product_id", id));
-        relateAndInsertList(productLadderDao, productParam.getProductLadderList(), id);
-        //满减价格
-
-        productFullReductionMapper.delete(new QueryWrapper<>(new PmsProductFullReduction()).eq("product_id", id));
-        relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), id);
-        //修改sku库存信息
-        skuStockMapper.delete(new QueryWrapper<>(new PmsSkuStock()).eq("product_id", id));
-
-        relateAndInsertList(skuStockDao, productParam.getSkuStockList(), id);
-        //修改商品参数,添加自定义商品规格
-
-        productAttributeValueMapper.delete(new QueryWrapper<>(new PmsProductAttributeValue()).eq("product_id", id));
-        relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), id);
-
-        //关联专题
-        subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
-        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
-            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
-                relation.setProductId(id);
-                subjectProductRelationDao.save(relation);
-            }
-        }
-        //关联优选
-
-        prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-      //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
-        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
-            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
-                relation.setProductId(id);
-                prefrenceAreaProductRelationDao.save(relation);
-            }
-        }
-        count = 1;
-
-        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
-        return count;
+        return 1;
     }
 
 
