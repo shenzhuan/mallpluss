@@ -253,14 +253,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public List<SysPermission> listPerms() {
-        if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
-            List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
-            String key = String.format(Rediskey.allMenuList, "admin");
-            redisService.set(key, JsonUtil.objectToJson(list));
-            return list;
-        } else {
-            return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
-        }
+       try {
+           if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
+               List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
+               String key = String.format(Rediskey.allMenuList, "admin");
+               redisService.set(key, JsonUtil.objectToJson(list));
+               return list;
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+        return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
     }
 
     @Override
