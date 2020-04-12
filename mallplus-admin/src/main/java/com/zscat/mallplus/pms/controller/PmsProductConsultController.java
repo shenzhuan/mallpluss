@@ -39,7 +39,7 @@ public class PmsProductConsultController {
     @PreAuthorize("hasAuthority('pms:PmsProductConsult:read')")
     public Object getPmsProductConsultByPage(PmsProductConsult entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductConsultService.page(new Page<PmsProductConsult>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -49,42 +49,10 @@ public class PmsProductConsultController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "pms", REMARK = "保存产品咨询表")
-    @ApiOperation("保存产品咨询表")
-    @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('pms:PmsProductConsult:create')")
-    public Object savePmsProductConsult(@RequestBody PmsProductConsult entity) {
-        try {
-            if (IPmsProductConsultService.save(entity)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("保存产品咨询表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
-
-    @SysLog(MODULE = "pms", REMARK = "更新产品咨询表")
-    @ApiOperation("更新产品咨询表")
-    @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductConsult:update')")
-    public Object updatePmsProductConsult(@RequestBody PmsProductConsult entity) {
-        try {
-            if (IPmsProductConsultService.updateById(entity)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("更新产品咨询表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
 
     @SysLog(MODULE = "pms", REMARK = "删除产品咨询表")
     @ApiOperation("删除产品咨询表")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductConsult:delete')")
     public Object deletePmsProductConsult(@ApiParam("产品咨询表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -103,7 +71,6 @@ public class PmsProductConsultController {
     @SysLog(MODULE = "pms", REMARK = "给产品咨询表分配产品咨询表")
     @ApiOperation("查询产品咨询表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductConsult:read')")
     public Object getPmsProductConsultById(@ApiParam("产品咨询表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -122,7 +89,6 @@ public class PmsProductConsultController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除产品咨询表")
-    @PreAuthorize("hasAuthority('pms:PmsProductConsult:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IPmsProductConsultService.removeByIds(ids);
         if (count) {

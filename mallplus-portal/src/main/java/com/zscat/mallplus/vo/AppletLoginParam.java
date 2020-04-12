@@ -20,5 +20,6 @@ public class AppletLoginParam {
     private String userInfo;
     private String cloudID;
 
-
+    private String phone;
+    private String openid;
 }

@@ -1,11 +1,11 @@
 package com.zscat.mallplus.ums.service;
 
-import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

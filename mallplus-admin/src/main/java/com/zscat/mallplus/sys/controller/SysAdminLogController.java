@@ -54,7 +54,7 @@ public class SysAdminLogController {
     @PreAuthorize("hasAuthority('sys:SysAdminLog:read')")
     public Object getRoleByPage(SysAdminLog entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysAdminLogService.page(new Page<SysAdminLog>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -1,126 +1,64 @@
 package com.zscat.mallplus.sys.controller;
 
 
-import com.alibaba.fastjson.JSON;
+import cn.hutool.core.util.PageUtil;
+import com.zscat.mallplus.bo.ColumnInfo;
+import com.zscat.mallplus.sys.entity.GenConfig;
+import com.zscat.mallplus.sys.mapper.GeneratorConfigMapper;
 import com.zscat.mallplus.sys.service.GeneratorService;
-import com.zscat.mallplus.util.GenUtils;
 import com.zscat.mallplus.utils.CommonResult;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
+import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/gen")
-@Controller
+@RestController
 public class GeneratorController {
-    String prefix = "common/generator";
-    @Autowired
-    GeneratorService generatorService;
 
-    @GetMapping()
-    String generator() {
-        return prefix + "/list";
+    @Resource
+    private GeneratorService generatorService;
+
+
+    @Resource
+    private GeneratorConfigMapper generatorConfigMapper;
+
+
+    @ApiOperation("查询数据库元数据")
+    @GetMapping(value = "/tables")
+    public Object getTables(@RequestParam(defaultValue = "") String name,
+                            @RequestParam(defaultValue = "0") Integer page,
+                            @RequestParam(defaultValue = "10") Integer size) {
+        int[] startEnd = PageUtil.transToStartEnd(page + 1, size);
+        return new CommonResult().success(generatorService.getTables(name, startEnd));
     }
 
-    @ResponseBody
-    @GetMapping("/list")
-    Object list() {
-        List<Map<String, Object>> list = generatorService.list();
-        return new CommonResult().success(list);
+    @ApiOperation("查询表内元数据")
+    @GetMapping(value = "/columns")
+    public Object getTables(@RequestParam String tableName) {
+        return new CommonResult().success(generatorService.getColumns(tableName));
     }
 
-    ;
+    @ApiOperation("生成代码")
+    @PostMapping
+    public Object generator(@RequestBody List<ColumnInfo> columnInfos, @RequestParam String tableName) {
 
-
-    @RequestMapping(value = "/code/{tableName}")
-    @ResponseBody
-    public Object code(@PathVariable String tableName, HttpServletResponse response) throws IOException {
-        String[] tableNames = new String[]{tableName};
-        byte[] data = generatorService.generatorCode(tableNames);
-        response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=\"mall.zip\"");
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,token");
-        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        IOUtils.write(data, response.getOutputStream());
-        return CommonResult.SUCCESS;
-
+        generatorService.generator(columnInfos, generatorConfigMapper.selectById(1), tableName);
+        return new CommonResult().success();
     }
 
-    @RequestMapping(value = "/code1/{tableName}")
-    public void code1(@PathVariable String tableName, HttpServletResponse response) throws IOException {
-        String[] tableNames = new String[]{tableName};
-        byte[] data = generatorService.generatorCode(tableNames);
-        response.reset();
-        response.setHeader("Content-Disposition", "attachment; filename=\"mall.zip\"");
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,token");
-        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        IOUtils.write(data, response.getOutputStream());
-
-
+    @ApiOperation("查询")
+    @GetMapping(value = "/get")
+    public Object get() {
+        return new CommonResult().success(generatorConfigMapper.selectById(1));
     }
 
-    @RequestMapping("/batchCode")
-    public void batchCode(HttpServletRequest request, HttpServletResponse response, String tables) throws IOException {
-        String[] tableNames = new String[]{};
-        tableNames = JSON.parseArray(tables).toArray(tableNames);
-        byte[] data = generatorService.generatorCode(tableNames);
-        response.reset();
-
-        response.setHeader("Content-Disposition", "attachment; filename=\"mall.zip\"");
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type,token");
-        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-
-        IOUtils.write(data, response.getOutputStream());
-    }
-
-    @GetMapping("/edit")
-    public String edit(Model model) {
-        Configuration conf = GenUtils.getConfig();
-        Map<String, Object> property = new HashMap<>(16);
-        property.put("author", conf.getProperty("author"));
-        property.put("email", conf.getProperty("email"));
-        property.put("package", conf.getProperty("package"));
-        property.put("autoRemovePre", conf.getProperty("autoRemovePre"));
-        property.put("tablePrefix", conf.getProperty("tablePrefix"));
-        model.addAttribute("property", property);
-        return prefix + "/edit";
-    }
-
-    @ResponseBody
-    @PostMapping("/update")
-    Object update(@RequestParam Map<String, Object> map) {
-        try {
-            PropertiesConfiguration conf = new PropertiesConfiguration("generator.properties");
-            conf.setProperty("author", map.get("author"));
-            conf.setProperty("email", map.get("email"));
-            conf.setProperty("package", map.get("package"));
-            conf.setProperty("autoRemovePre", map.get("autoRemovePre"));
-            conf.setProperty("tablePrefix", map.get("tablePrefix"));
-            conf.save();
-        } catch (Exception e) {
-            return CommonResult.FAILED;
-        }
-        return CommonResult.SUCCESS;
+    @ApiOperation("修改")
+    @PostMapping(value = "/update")
+    public Object emailConfig(@Validated @RequestBody GenConfig genConfig) {
+        genConfig.setId(1L);
+        return new CommonResult().success(generatorConfigMapper.updateById(genConfig));
     }
 }

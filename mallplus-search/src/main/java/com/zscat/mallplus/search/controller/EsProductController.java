@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
  * 搜索商品管理Controller
  * Created by mallplus on 2018/6/19.
  */
-@Controller
+@RestController
 @Api(tags = "EsProductController", description = "搜索商品管理")
 @RequestMapping("/esProduct")
 public class EsProductController {
@@ -66,8 +65,8 @@ public class EsProductController {
     @RequestMapping(value = "/search/simple", method = RequestMethod.GET)
     @ResponseBody
     public Object search(@RequestParam(required = false) String keyword,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer pageNum,
-                                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+                         @RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                         @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         Page<EsProduct> esProductPage = esProductService.search(keyword, pageNum, pageSize);
         return new CommonResult().success(esProductPage);
     }
@@ -78,11 +77,11 @@ public class EsProductController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
     public Object search(@RequestParam(required = false) String keyword,
-                                                      @RequestParam(required = false) Long brandId,
-                                                      @RequestParam(required = false) Long productCategoryId,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer pageNum,
-                                                      @RequestParam(required = false, defaultValue = "5") Integer pageSize,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer sort) {
+                         @RequestParam(required = false) Long brandId,
+                         @RequestParam(required = false) Long productCategoryId,
+                         @RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                         @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                         @RequestParam(required = false, defaultValue = "0") Integer sort) {
         Page<EsProduct> esProductPage = esProductService.search(keyword, brandId, productCategoryId, pageNum, pageSize, sort);
         return new CommonResult().success(esProductPage);
     }
@@ -91,10 +90,10 @@ public class EsProductController {
     @RequestMapping(value = "/recommend/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Object recommend(@PathVariable Long id,
-                                                         @RequestParam(required = false, defaultValue = "0") Integer pageNum,
-                                                         @RequestParam(required = false, defaultValue = "5") Integer pageSize) {
+                            @RequestParam(required = false, defaultValue = "0") Integer pageNum,
+                            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         Page<EsProduct> esProductPage = esProductService.recommend(id, pageNum, pageSize);
-        return new  CommonResult().success(esProductPage);
+        return new CommonResult().success(esProductPage);
     }
 
     @ApiOperation(value = "获取搜索的相关品牌、分类及筛选属性")

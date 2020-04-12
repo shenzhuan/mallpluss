@@ -3,6 +3,8 @@ package com.zscat.mallplus.oms.vo;
 
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.sms.entity.SmsBasicGifts;
+import com.zscat.mallplus.sms.entity.SmsGroupActivity;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
 import com.zscat.mallplus.ums.entity.UmsIntegrationConsumeSetting;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
@@ -18,6 +20,9 @@ import java.util.List;
 @Data
 public class ConfirmOrderResult {
 
+    // 赠品营销
+    List<SmsBasicGifts> basicGiftsList;
+    SmsGroupActivity groupActivity;
     private UmsMemberReceiveAddress address;
     //包含优惠信息的购物车信息
     private List<OmsCartItem> cartPromotionItemList;
@@ -27,13 +32,18 @@ public class ConfirmOrderResult {
     private List<SmsCouponHistoryDetail> couponHistoryDetailList;
     //积分使用规则
     private UmsIntegrationConsumeSetting integrationConsumeSetting;
-    //会员持有的积分
+    //会员此次订单可以使用的积分
     private Integer memberIntegration;
+    private BigDecimal integrationAmount;
+    /**
+     * 余额
+     */
+    private BigDecimal blance;
     //计算的金额
     private CalcAmount calcAmount;
     private PmsProduct goods;
     private GroupAndOrderVo groupAndOrderVo;
-
+    private String storeName;
 
     public static class CalcAmount {
         //订单商品总金额

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.*;
 import com.zscat.mallplus.pms.mapper.PmsCommentMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeMapper;
@@ -17,7 +18,6 @@ import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
-import com.zscat.mallplus.util.GoodsUtils;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
@@ -100,7 +100,7 @@ public class PmsGoodsController {
 
             productQueryParam.setPublishStatus(1);
             productQueryParam.setVerifyStatus(1);
-            gt.setGoodsList(GoodsUtils.sampleGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam))));
+            gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
         return new CommonResult().success(productAttributeCategoryList);
     }
@@ -135,7 +135,7 @@ public class PmsGoodsController {
         productResult.setPmsProductAttrList(attrList);
         productResult.setPmsComments(pmsCommentList);
 
-//        UmsMember umsMember = memberService.getCurrentMember();与用户关联再议
+//        UmsMember umsMember = memberService.getNewCurrentMember();与用户关联再议
         /*if (umsMember != null && umsMember.getId() != null && productResult != null) {
             MemberProductCollection findCollection = productCollectionRepository.findByMemberIdAndProductId(
                     umsMember.getId(), id);
@@ -153,7 +153,7 @@ public class PmsGoodsController {
     @GetMapping(value = "/attr/list")
     public Object getList(@RequestParam(value = "cid", required = false, defaultValue = "0") Long cid,
                           @RequestParam(value = "type") Integer type,
-                          @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProductAttribute q = new PmsProductAttribute();
         q.setType(type);
@@ -168,7 +168,7 @@ public class PmsGoodsController {
     @ResponseBody
     public Object list(@RequestParam(value = "goodsId", required = false, defaultValue = "0") Long goodsId,
                        @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                       @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
 
         PmsProductConsult productConsult = new PmsProductConsult();
         productConsult.setGoodsId(goodsId);

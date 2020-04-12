@@ -5,12 +5,8 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -31,7 +27,8 @@ public class MpGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("F:\\config\\gencode");
+        gc.setOutputDir("/Users/java/gen");
+        //  gc.setOutputDir("F:\\home");
         gc.setFileOverride(true);
         gc.setActiveRecord(false);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存
@@ -62,7 +59,7 @@ public class MpGenerator {
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("root@123");
-        dsc.setUrl("jdbc:mysql://39.116.222.32:3306/mallplus");
+        dsc.setUrl("jdbc:mysql://39.106.212.32:3306/mallplus1");
         mpg.setDataSource(dsc);
 
         // 自定义配置
@@ -72,27 +69,6 @@ public class MpGenerator {
                 // to do nothing
             }
         };
-        List<FileOutConfig> focList = new ArrayList<>();
-        // 调整 xml 生成目录演示
-        focList.add(new FileOutConfig("/templates/mapper.xml.vm") {
-            @Override
-            public String outputFile(TableInfo tableInfo) {
-                return "/Users/shenzhuan/gen/" + tableInfo.getEntityName() + "Mapper.xml";
-            }
-        });
-
-        cfg.setFileOutConfigList(focList);
-        mpg.setCfg(cfg);
-
-        focList.add(new FileOutConfig("/templates/controller.java.vm") {
-            @Override
-            public String outputFile(TableInfo tableInfo) {
-                return "/Users/shenzhuan/gen/" + tableInfo.getEntityName() + "Controller.java";
-            }
-        });
-
-        cfg.setFileOutConfigList(focList);
-        mpg.setCfg(cfg);
 
         //  mpg.setTemplate(new TemplateConfig().setXml(null));
         // 策略配置
@@ -132,7 +108,8 @@ public class MpGenerator {
 //                    "ums_member_member_tag_relation","ums_member_product_category_relation",
 //                    "ums_member_receive_address", "ums_member_rule_setting","ums_member_statistics_info","ums_member_tag",
 //            "ums_member_task","ums_growth_change_history","ums_integration_change_history","ums_integration_consume_setting"}); // 需要生成的表
-        strategy.setInclude(new String[]{"pms_gifts","pms_gifts_category"});        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
+        strategy.setInclude(new String[]{"sms_group_record"});
+        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
         // 自定义实体，公共字段

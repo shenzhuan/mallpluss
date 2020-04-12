@@ -12,6 +12,7 @@ import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.BuildTree;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         List<SysPermission> menuDOs;
         if (!redisService.exists(String.format(Rediskey.allTreesList, "admin"))) {
             List<Long> types = Lists.newArrayList(1L, 0L);
-            menuDOs = permissionMapper.selectList(new QueryWrapper<SysPermission>().in("type", types).orderByAsc("sort"));
+            menuDOs = permissionMapper.selectList(new QueryWrapper<SysPermission>().eq("status", 1).in("type", types).orderByAsc("sort"));
             redisService.set(String.format(Rediskey.allTreesList, "admin"), JsonUtil.objectToJson(menuDOs));
         } else {
             menuDOs = JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allTreesList, "admin")), SysPermission.class);
@@ -57,7 +58,10 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
             for (SysPermission sysMenuDO : menuDOs) {
                 Tree<SysPermission> tree = new Tree<SysPermission>();
                 tree.setId(sysMenuDO.getId().toString());
-                tree.setParentId(sysMenuDO.getPid().toString());
+                if (ValidatorUtils.notEmpty(sysMenuDO.getPid())) {
+                    tree.setParentId(sysMenuDO.getPid().toString());
+                }
+
                 tree.setTitle(sysMenuDO.getName());
                 Map<String, Object> attributes = new HashMap<>(16);
                 attributes.put("url", sysMenuDO.getUri());

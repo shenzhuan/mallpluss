@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
  * @author zscat
  * @since 2019-04-19
  */
+@Data
 @TableName("pms_feight_template")
 public class PmsFeightTemplate extends BaseEntity implements Serializable {
 
@@ -55,83 +58,6 @@ public class PmsFeightTemplate extends BaseEntity implements Serializable {
      * 目的地（省、市）
      */
     private String dest;
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getChargeType() {
-        return chargeType;
-    }
-
-    public void setChargeType(Integer chargeType) {
-        this.chargeType = chargeType;
-    }
-
-    public BigDecimal getFirstWeight() {
-        return firstWeight;
-    }
-
-    public void setFirstWeight(BigDecimal firstWeight) {
-        this.firstWeight = firstWeight;
-    }
-
-    public BigDecimal getFirstFee() {
-        return firstFee;
-    }
-
-    public void setFirstFee(BigDecimal firstFee) {
-        this.firstFee = firstFee;
-    }
-
-    public BigDecimal getContinueWeight() {
-        return continueWeight;
-    }
-
-    public void setContinueWeight(BigDecimal continueWeight) {
-        this.continueWeight = continueWeight;
-    }
-
-    public BigDecimal getContinmeFee() {
-        return continmeFee;
-    }
-
-    public void setContinmeFee(BigDecimal continmeFee) {
-        this.continmeFee = continmeFee;
-    }
-
-    public String getDest() {
-        return dest;
-    }
-
-    public void setDest(String dest) {
-        this.dest = dest;
-    }
-
-    @Override
-    public String toString() {
-        return "PmsFeightTemplate{" +
-                ", id=" + id +
-                ", name=" + name +
-                ", chargeType=" + chargeType +
-                ", firstWeight=" + firstWeight +
-                ", firstFee=" + firstFee +
-                ", continueWeight=" + continueWeight +
-                ", continmeFee=" + continmeFee +
-                ", dest=" + dest +
-                "}";
-    }
+    @TableField("create_time")
+    private Date createTime;
 }

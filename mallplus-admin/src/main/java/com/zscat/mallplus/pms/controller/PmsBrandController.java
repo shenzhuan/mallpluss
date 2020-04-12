@@ -38,9 +38,12 @@ public class PmsBrandController {
     @GetMapping(value = "/list")
     public Object getPmsBrandByPage(PmsBrand entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+            if (ValidatorUtils.notEmpty(entity.getName())) {
+                return new CommonResult().success(IPmsBrandService.page(new Page<PmsBrand>(pageNum, pageSize), new QueryWrapper<PmsBrand>(new PmsBrand()).like("name", entity.getName())));
+            }
             return new CommonResult().success(IPmsBrandService.page(new Page<PmsBrand>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
             log.error("根据条件查询所有品牌表列表：%s", e.getMessage(), e);
@@ -67,7 +70,6 @@ public class PmsBrandController {
     @SysLog(MODULE = "pms", REMARK = "更新品牌表")
     @ApiOperation("更新品牌表")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsBrand:update')")
     public Object updatePmsBrand(@RequestBody PmsBrand entity) {
         try {
             if (IPmsBrandService.updateById(entity)) {
@@ -102,7 +104,6 @@ public class PmsBrandController {
     @SysLog(MODULE = "pms", REMARK = "给品牌表分配品牌表")
     @ApiOperation("查询品牌表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsBrand:read')")
     public Object getPmsBrandById(@ApiParam("品牌表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -135,7 +136,6 @@ public class PmsBrandController {
     @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
-    @PreAuthorize("hasAuthority('pms:brand:update')")
     public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         int count = IPmsBrandService.updateShowStatus(ids, showStatus);
@@ -150,7 +150,6 @@ public class PmsBrandController {
     @RequestMapping(value = "/update/factoryStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量更新厂家制造商状态")
-    @PreAuthorize("hasAuthority('pms:brand:update')")
     public Object updateFactoryStatus(@RequestParam("ids") List<Long> ids,
                                       @RequestParam("factoryStatus") Integer factoryStatus) {
         int count = IPmsBrandService.updateFactoryStatus(ids, factoryStatus);

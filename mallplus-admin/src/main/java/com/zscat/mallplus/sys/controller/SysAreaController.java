@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.service.ISysAreaService;
+import com.zscat.mallplus.sys.vo.AreaWithChildrenItem;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -39,7 +40,7 @@ public class SysAreaController {
     @PreAuthorize("hasAuthority('sys:SysArea:read')")
     public Object getRoleByPage(SysArea entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysAreaService.page(new Page<SysArea>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -132,4 +133,11 @@ public class SysAreaController {
         }
     }
 
+    @ApiOperation("查询所有一级分类及子分类")
+    @RequestMapping(value = "/list/withChildren", method = RequestMethod.GET)
+    @ResponseBody
+    public Object listWithChildren() {
+        List<AreaWithChildrenItem> list = ISysAreaService.listWithChildren();
+        return new CommonResult().success(list);
+    }
 }

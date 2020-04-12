@@ -5,8 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -16,6 +19,8 @@ import java.io.Serializable;
  * @author zscat
  * @since 2019-04-19
  */
+@Setter
+@Getter
 @TableName("pms_album_pic")
 public class PmsAlbumPic extends BaseEntity implements Serializable {
 
@@ -23,43 +28,22 @@ public class PmsAlbumPic extends BaseEntity implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+    @TableField("user_id")
+    private Long userId;
 
     @TableField("album_id")
     private Long albumId;
 
     private String pic;
 
+    private String type;
 
-    public Long getId() {
-        return id;
-    }
+    private String name;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    /**
+     * 创建时间
+     */
+    @TableField("create_time")
+    private Date createTime;
 
-    public Long getAlbumId() {
-        return albumId;
-    }
-
-    public void setAlbumId(Long albumId) {
-        this.albumId = albumId;
-    }
-
-    public String getPic() {
-        return pic;
-    }
-
-    public void setPic(String pic) {
-        this.pic = pic;
-    }
-
-    @Override
-    public String toString() {
-        return "PmsAlbumPic{" +
-                ", id=" + id +
-                ", albumId=" + albumId +
-                ", pic=" + pic +
-                "}";
-    }
 }

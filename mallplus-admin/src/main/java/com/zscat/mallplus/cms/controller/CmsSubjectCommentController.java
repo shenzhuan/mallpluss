@@ -39,7 +39,7 @@ public class CmsSubjectCommentController {
     @PreAuthorize("hasAuthority('cms:CmsSubjectComment:read')")
     public Object getCmsSubjectCommentByPage(CmsSubjectComment entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ICmsSubjectCommentService.page(new Page<CmsSubjectComment>(pageNum, pageSize), new QueryWrapper<>(entity)));

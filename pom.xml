@@ -5,16 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.zscat.mallplus</groupId>
-    <artifactId>mall</artifactId>
+    <artifactId>mallplus</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>mallplus-mbg</module>
-        <module>mallplus-encrypt</module>
+        <module>mallplus-pay</module>
+        <module>mallplus-wechat</module>
+        <module>mallplus-portal</module>
         <module>mallplus-admin</module>
         <module>mallplus-search</module>
-        <module>mallplus-portal</module>
     </modules>
 
 </project>

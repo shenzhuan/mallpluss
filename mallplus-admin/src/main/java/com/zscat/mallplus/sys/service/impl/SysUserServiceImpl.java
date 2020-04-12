@@ -1,7 +1,11 @@
 package com.zscat.mallplus.sys.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.build.entity.UserCommunityRelate;
+import com.zscat.mallplus.build.mapper.UserCommunityRelateMapper;
+import com.zscat.mallplus.exception.BusinessMallException;
 import com.zscat.mallplus.sys.entity.*;
 import com.zscat.mallplus.sys.mapper.*;
 import com.zscat.mallplus.sys.service.ISysRolePermissionService;
@@ -14,7 +18,6 @@ import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
-import com.zscat.mallplus.vo.ApiContext;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -62,7 +65,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Resource
     private JwtTokenUtil jwtTokenUtil;
     @Resource
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
     @Resource
@@ -90,8 +93,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private Integer expireMinute;
     @Value("${aliyun.sms.day-count:30}")
     private Integer dayCount;
-    @Autowired
-    private ApiContext apiContext;
+
+    @Resource
+    private UserCommunityRelateMapper userCommunityRelateMapper;
+
     @Override
     public String refreshToken(String oldToken) {
         String token = oldToken.substring(tokenHead.length());
@@ -105,7 +110,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public String login(String username, String password) {
         String token = null;
         //密码需要客户端加密后传递
-       try {
+        try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("密码不正确");
@@ -114,7 +119,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
-
+            System.out.println(JSONObject.toJSONString(UserUtils.getCurrentMember()));
+            log.info(JSONObject.toJSONString(UserUtils.getCurrentMember()));
             this.removePermissRedis(UserUtils.getCurrentMember().getId());
         } catch (AuthenticationException e) {
             log.warn("登录异常:{}", e.getMessage());
@@ -202,8 +208,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         umsAdmin.setStatus(1);
         //查询是否有相同用户名的用户
 
-        List<SysUser> umsAdminList = adminMapper.selectList(new QueryWrapper<SysUser>().eq("username", umsAdmin.getUsername()));
-        if (umsAdminList.size() > 0) {
+        SysUser umsAdminList = adminMapper.selectByUserName(umsAdmin.getUsername());
+        if (umsAdminList != null) {
             return false;
         }
         //将密码进行加密操作
@@ -212,7 +218,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         String md5Password = passwordEncoder.encode(umsAdmin.getPassword());
         umsAdmin.setPassword(md5Password);
-      //  umsAdmin.setStoreId(UserUtils.getCurrentMember().getStoreId());
+        //  umsAdmin.setStoreId(UserUtils.getCurrentMember().getStoreId());
         adminMapper.insert(umsAdmin);
         updateRole(umsAdmin.getId(), umsAdmin.getRoleIds());
 
@@ -282,8 +288,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         umsAdmin.setStatus(1);
         //查询是否有相同用户名的用户
 
-        List<SysUser> umsAdminList = adminMapper.selectList(new QueryWrapper<SysUser>().eq("username", umsAdmin.getUsername()));
-        if (umsAdminList.size() > 0) {
+        SysUser umsAdminList = adminMapper.selectByUserName(umsAdmin.getUsername());
+        if (umsAdminList != null) {
             return new CommonResult().failed("手机号已注册");
         }
         //将密码进行加密操作
@@ -298,15 +304,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         roleRelation.setRoleId(5l);
         adminRoleRelationMapper.insert(roleRelation);
         return new CommonResult().failed("注册成功");
-    }
-
-    //对输入的验证码进行校验
-    public boolean verifyAuthCode(String authCode, String telephone) {
-        if (StringUtils.isEmpty(authCode)) {
-            return false;
-        }
-        String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE + telephone);
-        return authCode.equals(realAuthCode);
     }
 //    @Override
 //    public SmsCode generateCode(String phone) {
@@ -333,12 +330,56 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 //        return smsCode;
 //    }
 
+    //对输入的验证码进行校验
+    public boolean verifyAuthCode(String authCode, String telephone) {
+        if (StringUtils.isEmpty(authCode)) {
+            return false;
+        }
+        String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE + telephone);
+        return authCode.equals(realAuthCode);
+    }
+
     @Override
     public int updateShowStatus(List<Long> ids, Integer showStatus) {
         SysUser productCategory = new SysUser();
         productCategory.setStatus(showStatus);
         return adminMapper.update(productCategory, new QueryWrapper<SysUser>().in("id", ids));
 
+    }
+
+    @Transactional
+    @Override
+    public Object userCommunityRelate(UserCommunityRelate entity) {
+        //先删除原有关系
+        userCommunityRelateMapper.delete(new QueryWrapper<UserCommunityRelate>().eq("user_id", entity.getUserId()));
+        //批量插入新关系
+        //  List<UserCommunityRelate> relationList = new ArrayList<>();
+        if (!StringUtils.isEmpty(entity.getCommunityIds())) {
+            String[] mids = entity.getCommunityIds().split(",");
+            for (String permissionId : mids) {
+                UserCommunityRelate relation = new UserCommunityRelate();
+                relation.setUserId(entity.getUserId());
+                relation.setCommunityId(Long.valueOf(permissionId));
+                //  relationList.add(relation);
+                userCommunityRelateMapper.insert(relation);
+            }
+
+        }
+        return 1;
+    }
+
+    @Override
+    public void updatePassword(String password, String newPassword) {
+        SysUser oldUser = UserUtils.getCurrentMember();
+        log.info("旧密码=" + passwordEncoder.encode(password));
+        if (!passwordEncoder.matches(password, oldUser.getPassword())) {
+            //   if (!oldUser.getPassword().equals(passwordEncoder.encode(password))){
+            throw new BusinessMallException("旧密码错误");
+        }
+        SysUser role = new SysUser();
+        role.setId(oldUser.getId());
+        role.setPassword(passwordEncoder.encode(newPassword));
+        adminMapper.updateById(role);
     }
 
     /**

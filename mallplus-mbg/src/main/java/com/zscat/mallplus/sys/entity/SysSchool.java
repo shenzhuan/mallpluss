@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
+import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
@@ -81,8 +81,8 @@ public class SysSchool extends BaseEntity implements Serializable {
 
 
     @TableField(exist = false)
-    private List<SamplePmsProduct> goodsList;
+    private List<PmsProduct> goodsList;
 
     @TableField(exist = false)
-    private Integer  goodsCount;
+    private Integer goodsCount;
 }

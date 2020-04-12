@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface SysAdminLogMapper extends BaseMapper<SysAdminLog> {
 
-   List<LogStatisc> getLogStatisc(LogParam entity);
+    List<LogStatisc> getLogStatisc(LogParam entity);
 
 
 }

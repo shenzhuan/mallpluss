@@ -1,27 +1,25 @@
 package com.zscat.mallplus.sms.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.entity.PmsProductCategory;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.sms.vo.BasicRuls;
 import com.zscat.mallplus.sms.vo.BeanKv;
-import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  * 基本营销
+ *
  * @author zscat
  * @since 2019-07-07
  */
@@ -37,7 +35,7 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 1 有效 0 无效
+     * 0 有效 1 无效
      */
     private Integer status;
 
@@ -48,7 +46,7 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
     private Integer activiUser;
 
     /**
-     * 活动商品  1 按类别  2 部分商品
+     * 活动商品  1 按类别  2 部分商品 0 全部
      */
     @TableField("activi_goods")
     private Integer activiGoods;
@@ -111,7 +109,11 @@ public class SmsBasicMarking extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List<BeanKv> memberLevelList;
 
+    @TableField(exist = false)
+    private BigDecimal minAmount;
 
+    @TableField(exist = false)
+    private BasicRuls selectRule;
 
 
 }

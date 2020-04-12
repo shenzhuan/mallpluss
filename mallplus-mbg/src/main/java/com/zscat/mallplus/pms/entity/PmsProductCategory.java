@@ -81,6 +81,7 @@ public class PmsProductCategory extends BaseEntity implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty("产品相关筛选属性集合")
     private List<Long> productAttributeIdList;
-
+    @TableField(exist = false)
+    private List<PmsProductCategory> childList;
 
 }

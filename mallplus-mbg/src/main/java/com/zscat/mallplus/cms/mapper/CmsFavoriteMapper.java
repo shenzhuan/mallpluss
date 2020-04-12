@@ -2,11 +2,10 @@ package com.zscat.mallplus.cms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zscat.mallplus.cms.entity.CmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zscat

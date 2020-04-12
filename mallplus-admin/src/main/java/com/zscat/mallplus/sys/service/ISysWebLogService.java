@@ -17,5 +17,5 @@ import java.util.List;
  */
 public interface ISysWebLogService extends IService<SysWebLog> {
 
-     List<LogStatisc> selectPageExt(LogParam entity);
+    List<LogStatisc> selectPageExt(LogParam entity);
 }

@@ -11,7 +11,9 @@ import com.zscat.mallplus.sys.mapper.SysRolePermissionMapper;
 import com.zscat.mallplus.sys.service.ISysRolePermissionService;
 import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
+import com.zscat.mallplus.util.UserUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -53,6 +55,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return rolePermissionMapper.selectList(new QueryWrapper<SysRolePermission>().eq("role_id", roleId));
     }
 
+    @Transactional
     @Override
     public boolean saves(SysRole role) {
         role.setCreateTime(new Date());
@@ -64,6 +67,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return true;
     }
 
+    @Transactional
     @Override
     public boolean updates(SysRole role) {
         role.setId(role.getId());
@@ -88,6 +92,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             }
             rolePermissionRelationDao.saveBatch(relationList);
         }
-
+        userService.removePermissRedis(UserUtils.getCurrentMember().getId());
     }
 }

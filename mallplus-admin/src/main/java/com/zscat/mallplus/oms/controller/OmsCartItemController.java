@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsCartItemController", description = "购物车表管理")
+@Api(tags = "oms", description = "购物车表管理")
 @RequestMapping("/oms/OmsCartItem")
 public class OmsCartItemController {
     @Resource
@@ -39,7 +39,7 @@ public class OmsCartItemController {
     @PreAuthorize("hasAuthority('oms:OmsCartItem:read')")
     public Object getOmsCartItemByPage(OmsCartItem entity,
                                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsCartItemService.page(new Page<OmsCartItem>(pageNum, pageSize), new QueryWrapper<>(entity)));

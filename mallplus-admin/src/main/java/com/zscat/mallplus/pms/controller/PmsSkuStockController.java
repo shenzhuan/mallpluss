@@ -39,7 +39,7 @@ public class PmsSkuStockController {
     @PreAuthorize("hasAuthority('pms:PmsSkuStock:read')")
     public Object getPmsSkuStockByPage(PmsSkuStock entity,
                                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsSkuStockService.page(new Page<PmsSkuStock>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -104,13 +104,12 @@ public class PmsSkuStockController {
     @ApiOperation("查询sku的库存明细")
     @GetMapping(value = "select/{id}")
     @PreAuthorize("hasAuthority('pms:PmsSkuStock:read')")
-    public Object getPmsSkuStockById(@ApiParam("sku的库存id") @PathVariable Long id) {
+    public Object getPmsSkuStockById(@ApiParam("sku的库存id") @PathVariable Long id, @RequestParam(value = "keyword", required = false) String keyword) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("sku的库存id");
             }
-            PmsSkuStock coupon = IPmsSkuStockService.getById(id);
-            return new CommonResult().success(coupon);
+            return new CommonResult().success(IPmsSkuStockService.getList(id, keyword));
         } catch (Exception e) {
             log.error("查询sku的库存明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -143,7 +142,7 @@ public class PmsSkuStockController {
 
     @SysLog(MODULE = "pms", REMARK = "批量更新库存信息")
     @ApiOperation("批量更新库存信息")
-    @RequestMapping(value = "/update/{pid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePid/{pid}", method = RequestMethod.POST)
     @ResponseBody
     public Object update(@PathVariable Long pid, @RequestBody List<PmsSkuStock> skuStockList) {
         int count = IPmsSkuStockService.update(pid, skuStockList);

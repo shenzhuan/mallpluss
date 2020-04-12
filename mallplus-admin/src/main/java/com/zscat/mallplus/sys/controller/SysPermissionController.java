@@ -44,11 +44,13 @@ public class SysPermissionController extends BaseController {
     @PreAuthorize("hasAuthority('sys:SysPermission:read')")
     public Object getRoleByPage(SysPermission entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            Object data = ISysPermissionService.list(new QueryWrapper<>(entity));
-            return new CommonResult().success(data);
+            if (ValidatorUtils.notEmpty(entity.getName())) {
+                return new CommonResult().success(ISysPermissionService.list(new QueryWrapper<SysPermission>(new SysPermission()).like("name", entity.getName()).orderByAsc("sort")));
+            }
+            return new CommonResult().success(ISysPermissionService.list(new QueryWrapper<>(entity).orderByAsc("sort")));
         } catch (Exception e) {
             log.error("根据条件查询所有后台用户权限表列表：%s", e.getMessage(), e);
         }
@@ -166,7 +168,7 @@ public class SysPermissionController extends BaseController {
     @ResponseBody
     public Object findPermissions() {
         Long userId = getCurrentUser().getId();
-        if (getCurrentUser().getSupplyId()!=null && getCurrentUser().getSupplyId() == 1L) {
+        if (getCurrentUser().getSupplyId() != null && getCurrentUser().getSupplyId() == 1L) {
             return new CommonResult().success(ISysPermissionService.getAllPermission());
         }
         return new CommonResult().success(ISysPermissionService.getPermissionsByUserId(userId));
@@ -180,4 +182,6 @@ public class SysPermissionController extends BaseController {
         List<SysPermissionNode> permissionNodeList = ISysPermissionService.treeList();
         return new CommonResult().success(permissionNodeList);
     }
+
+
 }

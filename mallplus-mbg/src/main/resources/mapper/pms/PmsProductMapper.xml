@@ -48,7 +48,11 @@
         <result column="product_category_name" property="productCategoryName"/>
         <result column="supply_id" property="supplyId"/>
         <result column="create_time" property="createTime"/>
+        <result column="school_name" property="schoolName"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area_name" property="areaName"/>
         <result column="school_id" property="schoolId"/>
+        <result column="transfee" property="transfee"/>
     </resultMap>
 
     <resultMap id="cartProductMap" type="com.zscat.mallplus.oms.vo.CartProduct" autoMapping="true">
@@ -129,6 +133,17 @@
             resultMap="com.zscat.mallplus.pms.mapper.CmsPrefrenceAreaProductRelationMapper.BaseResultMap">
         select * from cms_prefrence_area_product_relation where product_id=#{productId}
     </select>
+
+    <select id="listByDate" resultMap="BaseResultMap">
+        select publish_status,stock from pms_product where
+        <if test="type==1">
+            date_format(create_time,'%y%m%d') = date_format(#{date},'%y%m%d')
+        </if>
+        <if test="type==2">
+            date_format(create_time,'%y%m') = date_format(#{date},'%y%m')
+        </if>
+    </select>
+
     <select id="getCartProduct" resultMap="cartProductMap">
         SELECT
         p.id id,
@@ -197,7 +212,7 @@
         product_category_name, supply_id, create_time, school_id
     </sql>
 
-    <select id="countGoodsByToday"  resultType="java.lang.Integer">
+    <select id="countGoodsByToday" resultType="java.lang.Integer">
         select count(*) from pms_product where member_id = #{id}
         and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
 

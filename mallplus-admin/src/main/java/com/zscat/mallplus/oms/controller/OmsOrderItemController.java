@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderItemController", description = "订单中所包含的商品管理")
+@Api(tags = "oms", description = "订单中所包含的商品管理")
 @RequestMapping("/oms/OmsOrderItem")
 public class OmsOrderItemController {
     @Resource
@@ -39,7 +39,7 @@ public class OmsOrderItemController {
     @PreAuthorize("hasAuthority('oms:OmsOrderItem:read')")
     public Object getOmsOrderItemByPage(OmsOrderItem entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderItemService.page(new Page<OmsOrderItem>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -3,22 +3,17 @@ package com.zscat.mallplus.controller;
 
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.single.ApiBaseAction;
-import com.zscat.mallplus.sms.entity.UserFormId;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +21,7 @@ import java.util.Map;
  * 会员登录注册管理Controller
  * https://github.com/shenzhuan/mallplus on 2018/8/3.
  */
-@Controller
+@RestController
 @Api(tags = "UmsMemberController", description = "会员管理系统")
 @RequestMapping("/api/member")
 public class UmsMemberController extends ApiBaseAction {
@@ -89,7 +84,7 @@ public class UmsMemberController extends ApiBaseAction {
     @GetMapping("/user")
     @ResponseBody
     public Object user() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
             return new CommonResult().success(umsMember);
         }
@@ -121,42 +116,4 @@ public class UmsMemberController extends ApiBaseAction {
     }
 
 
-    /**
-     * 提交小程序推送formid
-     *
-     * @param request
-     * @param response
-     * @param formId   小程序推送formId
-     * @param source   @see com.fittime.health.market.model.PushUserFormIdRecord.source
-     * @return
-     */
-    @RequestMapping(value = "submitFormId")
-    @ApiOperation(value = "提交小程序推送formid")
-    @ResponseBody
-    public Object submitFormId(HttpServletRequest request, HttpServletResponse response, String formId, Integer source) {
-
-        UserFormId entity = new UserFormId();
-
-        if (ValidatorUtils.empty(formId)) {
-            return new CommonResult().validateFailed("前置参数错误，formId不能为空");
-        }
-
-        if (ValidatorUtils.empty(source)) {
-            return new CommonResult().validateFailed("前置参数错误，source不能为空");
-        }
-
-        //校验formId是否已经存在
-        /*if(memberService.exists(formId)) {
-            return new CommonResult().validateFailed("前置参数错误，formId已经存在 formId：" + formId);
-        }
-
-        entity.setUserId(this.getCurrentMember().getId());
-        entity.setFormId(formId);
-        entity.setSource(source);
-        entity.setStatus(1);
-
-        memberService.insert(entity);*/
-
-        return new CommonResult().success("添加成功");
-    }
 }

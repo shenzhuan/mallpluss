@@ -39,7 +39,7 @@ public class SmsHomeRecommendProductController {
     @PreAuthorize("hasAuthority('sms:SmsHomeRecommendProduct:read')")
     public Object getSmsHomeRecommendProductByPage(SmsHomeRecommendProduct entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeRecommendProductService.page(new Page<SmsHomeRecommendProduct>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -48,6 +48,7 @@ public class SmsHomeRecommendProductController {
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("添加首页推荐")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
@@ -58,6 +59,7 @@ public class SmsHomeRecommendProductController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "sms", REMARK = "保存人气推荐商品表")
     @ApiOperation("保存人气推荐商品表")
     @PostMapping(value = "/creates")
@@ -140,7 +142,6 @@ public class SmsHomeRecommendProductController {
             return new CommonResult().failed();
         }
     }
-
 
 
     @ApiOperation("修改推荐排序")

@@ -35,7 +35,11 @@ public class PmsProductConsult extends BaseEntity implements Serializable {
      */
     @TableField("goods_id")
     private Long goodsId;
-
+    /**
+     * 商品编号
+     */
+    @TableField("order_id")
+    private Long orderId;
     /**
      * 商品名称
      */
@@ -92,7 +96,8 @@ public class PmsProductConsult extends BaseEntity implements Serializable {
 
     // 1 差评 2 一般  3 好评
     private Integer stars;
-
+    // 1 商品  2 订单
+    private Integer type;
 
 
 }

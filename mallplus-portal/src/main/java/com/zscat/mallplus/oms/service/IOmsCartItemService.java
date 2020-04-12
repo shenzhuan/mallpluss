@@ -3,10 +3,10 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
 import com.zscat.mallplus.oms.vo.CartProduct;
-import com.zscat.mallplus.oms.vo.CartPromotionItem;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -65,4 +65,9 @@ public interface IOmsCartItemService extends IService<OmsCartItem> {
     List<OmsCartItem> calcCartPromotion(List<OmsCartItem> cartItemList);
 
     OmsCartItem addCart(OmsCartItem cartItem);
+
+    Integer countCart(Long id);
+
+    Map<String, List<OmsCartItem>> listStoreCart(Long id);
+    //  List<StoreCart> listStoreCart(Long id);
 }

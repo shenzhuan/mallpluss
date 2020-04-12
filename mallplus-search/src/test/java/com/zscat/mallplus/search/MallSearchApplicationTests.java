@@ -2,13 +2,11 @@ package com.zscat.mallplus.search;
 
 import com.zscat.mallplus.search.dao.EsProductDao;
 import com.zscat.mallplus.search.domain.EsProduct;
-import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -21,16 +19,19 @@ public class MallSearchApplicationTests {
     private EsProductDao productDao;
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+
     @Test
     public void contextLoads() {
     }
+
     @Test
-    public void testGetAllEsProductList(){
+    public void testGetAllEsProductList() {
         List<EsProduct> esProductList = productDao.getAllEsProductList(null);
         System.out.print(esProductList);
     }
+
     @Test
-    public void testEsProductMapping(){
+    public void testEsProductMapping() {
         elasticsearchTemplate.putMapping(EsProduct.class);
         Map mapping = elasticsearchTemplate.getMapping(EsProduct.class);
         System.out.println(mapping);

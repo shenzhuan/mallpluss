@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.sys.entity.SysWebLog;
-import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.sys.service.ISysWebLogService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -55,7 +54,7 @@ public class SysWebLogController {
     @PreAuthorize("hasAuthority('sys:SysWebLog:read')")
     public Object getRoleByPage(SysWebLog entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysWebLogService.page(new Page<SysWebLog>(pageNum, pageSize), new QueryWrapper<>(entity)));

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.pms.vo.SamplePmsProduct;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
@@ -25,7 +24,7 @@ public class PmsProductAttributeCategory extends BaseEntity implements Serializa
 
     private static final long serialVersionUID = 1L;
     @TableField(exist = false)
-    List<SamplePmsProduct> goodsList;
+    List<PmsProduct> goodsList;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String name;
@@ -41,5 +40,10 @@ public class PmsProductAttributeCategory extends BaseEntity implements Serializa
     @TableField("param_count")
     private Integer paramCount;
 
-
+    /**
+     * 列表样式 一列1 2 3个
+     */
+    private Integer style;
+    @TableField("show_index")
+    private Integer showIndex;
 }

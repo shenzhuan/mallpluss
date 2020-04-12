@@ -2,6 +2,7 @@ package com.zscat.mallplus.pms.vo;
 
 
 import com.zscat.mallplus.pms.entity.*;
+import com.zscat.mallplus.sys.entity.SysStore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,13 +25,15 @@ public class GoodsDetailResult implements Serializable {
     private List<PmsSkuStock> skuStockList;
     @ApiModelProperty("商品参数及自定义规格属性")
     private List<PmsProductAttributeValue> productAttributeValueList;
+    private Object productAttributeNameValueList;
     @ApiModelProperty("专题和商品关系")
     private List<CmsSubjectProductRelation> subjectProductRelationList;
     @ApiModelProperty("优选专区和商品的关系")
     private List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList;
 
-    private List<PmsProductAttributeValue>  productCanShuValueList ;
-    private List<SamplePmsProduct> typeGoodsList;
+    private List<PmsProductAttributeValue> productCanShuValueList;
+    private List<PmsProduct> typeGoodsList;
 
-    private  PmsProduct goods;
+    private PmsProduct goods;
+    private SysStore storeInfo;
 }

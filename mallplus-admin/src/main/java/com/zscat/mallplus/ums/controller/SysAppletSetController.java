@@ -40,7 +40,7 @@ public class SysAppletSetController {
     @PreAuthorize("hasAuthority('ums:SysAppletSet:read')")
     public Object getSysAppletSetByPage(SysAppletSet entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysAppletSetService.page(new Page<SysAppletSet>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -53,7 +53,6 @@ public class SysAppletSetController {
     @SysLog(MODULE = "ums", REMARK = "保存")
     @ApiOperation("保存")
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('ums:SysAppletSet:create')")
     public Object saveSysAppletSet(@RequestBody SysAppletSet entity) {
         try {
             if (ISysAppletSetService.save(entity)) {
@@ -69,10 +68,9 @@ public class SysAppletSetController {
     @SysLog(MODULE = "ums", REMARK = "更新")
     @ApiOperation("更新")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('ums:SysAppletSet:update')")
     public Object updateSysAppletSet(@RequestBody SysAppletSet entity) {
         try {
-            if (ISysAppletSetService.updateById(entity)) {
+            if (ISysAppletSetService.update(entity, new QueryWrapper<>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -85,7 +83,6 @@ public class SysAppletSetController {
     @SysLog(MODULE = "ums", REMARK = "删除")
     @ApiOperation("删除")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('ums:SysAppletSet:delete')")
     public Object deleteSysAppletSet(@ApiParam("id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -104,13 +101,12 @@ public class SysAppletSetController {
     @SysLog(MODULE = "ums", REMARK = "给分配")
     @ApiOperation("查询明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ums:SysAppletSet:read')")
     public Object getSysAppletSetById(@ApiParam("id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("id");
             }
-            SysAppletSet coupon = ISysAppletSetService.getById(id);
+            SysAppletSet coupon = ISysAppletSetService.getOne(new QueryWrapper<>());
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询明细：%s", e.getMessage(), e);
@@ -123,7 +119,6 @@ public class SysAppletSetController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除")
-    @PreAuthorize("hasAuthority('ums:SysAppletSet:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = ISysAppletSetService.removeByIds(ids);
         if (count) {

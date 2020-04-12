@@ -39,7 +39,7 @@ public class SmsCouponProductRelationController {
     @PreAuthorize("hasAuthority('sms:SmsCouponProductRelation:read')")
     public Object getSmsCouponProductRelationByPage(SmsCouponProductRelation entity,
                                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsCouponProductRelationService.page(new Page<SmsCouponProductRelation>(pageNum, pageSize), new QueryWrapper<>(entity)));

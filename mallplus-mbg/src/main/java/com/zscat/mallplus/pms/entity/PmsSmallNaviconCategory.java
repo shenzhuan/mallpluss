@@ -35,11 +35,12 @@ public class PmsSmallNaviconCategory extends BaseEntity implements Serializable 
     @TableField("icon")
     private String icon;
 
-    @ApiModelProperty(value = "跳转页面")
+    // 1 h5 url 其他 /pages/classify/classify   2 商品详情 3文章详情  4文章列表 5 智能表单
+    @ApiModelProperty(value = "跳转页面 h5")
     @TableField("summary")
     private String summary;
 
-    @ApiModelProperty(value = "跳转类型")
+    @ApiModelProperty(value = "跳转类型applet")
     @TableField("content")
     private String content;
 
@@ -47,4 +48,7 @@ public class PmsSmallNaviconCategory extends BaseEntity implements Serializable 
     @TableField("sort")
     private Integer sort;
 
+    @ApiModelProperty(value = "跳转类型pc")
+    @TableField("pc_url")
+    private String pcUrl;
 }

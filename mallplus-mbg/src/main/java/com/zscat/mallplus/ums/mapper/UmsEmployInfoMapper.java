@@ -1,11 +1,11 @@
 package com.zscat.mallplus.ums.mapper;
 
-import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author zscat

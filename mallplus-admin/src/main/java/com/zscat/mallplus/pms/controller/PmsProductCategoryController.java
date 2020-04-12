@@ -37,10 +37,9 @@ public class PmsProductCategoryController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有产品分类列表")
     @ApiOperation("根据条件查询所有产品分类列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsProductCategory:read')")
     public Object getPmsProductCategoryByPage(PmsProductCategory entity,
                                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                              @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductCategoryService.page(new Page<PmsProductCategory>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -54,7 +53,7 @@ public class PmsProductCategoryController {
     @RequestMapping(value = "/list/{parentId}", method = RequestMethod.GET)
     @ResponseBody
     public Object getList(@PathVariable Long parentId,
-                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         PmsProductCategory entity = new PmsProductCategory();
         entity.setParentId(parentId);
@@ -115,7 +114,6 @@ public class PmsProductCategoryController {
     @SysLog(MODULE = "pms", REMARK = "给产品分类分配产品分类")
     @ApiOperation("查询产品分类明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductCategory:read')")
     public Object getPmsProductCategoryById(@ApiParam("产品分类id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {

@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,13 +37,12 @@ public class PmsFeightTemplateController {
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有运费模版列表")
     @ApiOperation("根据条件查询所有运费模版列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:read')")
     public Object getPmsFeightTemplateByPage(PmsFeightTemplate entity,
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsFeightTemplateService.page(new Page<PmsFeightTemplate>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IPmsFeightTemplateService.page(new Page<PmsFeightTemplate>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
         } catch (Exception e) {
             log.error("根据条件查询所有运费模版列表：%s", e.getMessage(), e);
         }
@@ -55,6 +55,7 @@ public class PmsFeightTemplateController {
     @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:create')")
     public Object savePmsFeightTemplate(@RequestBody PmsFeightTemplate entity) {
         try {
+            entity.setCreateTime(new Date());
             if (IPmsFeightTemplateService.save(entity)) {
                 return new CommonResult().success();
             }
@@ -103,7 +104,6 @@ public class PmsFeightTemplateController {
     @SysLog(MODULE = "pms", REMARK = "给运费模版分配运费模版")
     @ApiOperation("查询运费模版明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsFeightTemplate:read')")
     public Object getPmsFeightTemplateById(@ApiParam("运费模版id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {

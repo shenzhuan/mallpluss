@@ -2,6 +2,7 @@ package com.zscat.mallplus.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.pms.entity.*;
@@ -9,9 +10,13 @@ import com.zscat.mallplus.pms.mapper.*;
 import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;
 import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.utils.IdWorker;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +41,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements IPmsProductService {
-
+    @Resource
+    private ApiContext apiContext;
     @Resource
     private PmsProductMapper productMapper;
     @Resource
@@ -79,36 +85,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Override
     public int create(PmsProductParam productParam) {
         int count;
-        //创建商品
-        PmsProduct product = productParam;
-        product.setCreateTime(new Date());
-        product.setId(null);
-        productMapper.insert(product);
-        //根据促销类型设置价格：、阶梯价格、满减价格
-        Long productId = product.getId();
-        //会员价格
-     //   relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
-        //阶梯价格
-        relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
-        //满减价格
-        relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
-        //处理sku的编码
-        handleSkuStockCode(productParam.getSkuStockList(), product);
-        //添加sku库存信息
-        relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
-        //添加商品参数,添加自定义商品规格
-        relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
-        //关联专题
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
-        //关联优选
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
-        count = 1;
-    //    redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
-        return count;
+
+        return 0;
     }
 
     private void handleSkuStockCode(List<PmsSkuStock> skuStockList, PmsProduct product) {
         if (CollectionUtils.isEmpty(skuStockList)) return;
+        int stock = 0;
         for (int i = 0; i < skuStockList.size(); i++) {
             PmsSkuStock skuStock = skuStockList.get(i);
             skuStock.setProductName(product.getName());
@@ -118,12 +101,18 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 //日期
                 sb.append(sdf.format(new Date()));
                 //四位商品id
-                sb.append(String.format("%04d", product.getId()));
+                sb.append(String.format("%04d", product.getProductCategoryId()));
                 //三位索引id
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
+            if (skuStock.getStock()!=null && skuStock.getStock()>0){
+                stock = stock + skuStock.getStock();
+
+            }
+
         }
+        product.setStock(stock);
     }
 
     @Override
@@ -134,43 +123,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     @Override
     public int update(Long id, PmsProductParam productParam) {
 
-        int count;
-        //更新商品信息
-        PmsProduct product = productParam;
-        product.setId(id);
-        productMapper.updateById(product);
-        redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
-        //会员价格
-      //  memberPriceMapper.delete(new QueryWrapper<>(new PmsMemberPrice()).eq("product_id", id));
-      //  relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), id);
-        //阶梯价格
-
-        productLadderMapper.delete(new QueryWrapper<>(new PmsProductLadder()).eq("product_id", id));
-        relateAndInsertList(productLadderDao, productParam.getProductLadderList(), id);
-        //满减价格
-
-        productFullReductionMapper.delete(new QueryWrapper<>(new PmsProductFullReduction()).eq("product_id", id));
-        relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), id);
-        //修改sku库存信息
-        skuStockMapper.delete(new QueryWrapper<>(new PmsSkuStock()).eq("product_id", id));
-        handleSkuStockCode(productParam.getSkuStockList(), product);
-        relateAndInsertList(skuStockDao, productParam.getSkuStockList(), id);
-        //修改商品参数,添加自定义商品规格
-
-        productAttributeValueMapper.delete(new QueryWrapper<>(new PmsProductAttributeValue()).eq("product_id", id));
-        relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), id);
-        //关联专题
-
-        subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-        relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
-        //关联优选
-
-        prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-        relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
-        count = 1;
-
-        redisService.set(String.format(Rediskey.GOODSDETAIL, product.getId()), JsonUtil.objectToJson(productParam));
-        return count;
+        return 1;
     }
 
 
@@ -193,17 +146,27 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     }
 
     @Override
+    public int updateisFenxiao(List<Long> ids, Integer newStatus) {
+        PmsProduct record = new PmsProduct();
+        record.setIsFenxiao(newStatus);
+        clerGoodsRedis(ids);
+        return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
+    }
+
+    @Override
     public int updatePublishStatus(List<Long> ids, Integer publishStatus) {
         PmsProduct record = new PmsProduct();
         record.setPublishStatus(publishStatus);
         clerGoodsRedis(ids);
         return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
     }
+
     public void clerGoodsRedis(List<Long> ids) {
-        for (Long id : ids){
+        for (Long id : ids) {
             redisService.remove(String.format(Rediskey.GOODSDETAIL, id));
         }
     }
+
     @Override
     public int updateRecommendStatus(List<Long> ids, Integer recommendStatus) {
         PmsProduct record = new PmsProduct();

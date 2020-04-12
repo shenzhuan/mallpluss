@@ -16,14 +16,12 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +31,7 @@ import java.util.List;
  * https://github.com/shenzhuan/mallplus on 2018/8/30.
  */
 @Slf4j
-@Controller
+@RestController
 @Api(tags = "OmsPortalOrderController", description = "订单管理")
 @RequestMapping("/api/order")
 public class OmsPortalOrderController extends ApiBaseAction {
@@ -41,7 +39,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @Autowired
     private IOmsOrderService orderService;
     @Autowired
-    private IUmsMemberService umsMemberService;
+    private IUmsMemberService memberService;
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -50,9 +48,9 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list(OmsOrder queryParam,
-                       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        queryParam.setMemberId(UserUtils.getCurrentMember().getId());
+        queryParam.setMemberId(memberService.getNewCurrentMember().getId());
         List<OmsOrder> orderList = orderService.list(new QueryWrapper<>(queryParam));
         for (OmsOrder order : orderList) {
             OmsOrderItem query = new OmsOrderItem();
@@ -144,7 +142,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @RequestMapping("/getWayBillInfo")
     public Object getWayBillInfo(@RequestParam(value = "orderId", required = false, defaultValue = "0") Long orderId) throws Exception {
         try {
-            UmsMember member = UserUtils.getCurrentMember();
+            UmsMember member = memberService.getNewCurrentMember();
             OmsOrder order = orderService.getById(orderId);
             if (order == null) {
                 return null;

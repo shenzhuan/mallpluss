@@ -1,13 +1,13 @@
 package com.zscat.mallplus.pms.service;
 
-import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.pms.entity.PmsFavorite;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zscat

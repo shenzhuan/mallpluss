@@ -39,7 +39,7 @@ public class PmsProductCategoryAttributeRelationController {
     @PreAuthorize("hasAuthority('pms:PmsProductCategoryAttributeRelation:read')")
     public Object getPmsProductCategoryAttributeRelationByPage(PmsProductCategoryAttributeRelation entity,
                                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                               @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductCategoryAttributeRelationService.page(new Page<PmsProductCategoryAttributeRelation>(pageNum, pageSize), new QueryWrapper<>(entity)));

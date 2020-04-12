@@ -39,7 +39,7 @@ public class PmsProductAttributeValueController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttributeValue:read')")
     public Object getPmsProductAttributeValueByPage(PmsProductAttributeValue entity,
                                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsProductAttributeValueService.page(new Page<PmsProductAttributeValue>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -103,7 +103,6 @@ public class PmsProductAttributeValueController {
     @SysLog(MODULE = "pms", REMARK = "给存储产品参数信息的表分配存储产品参数信息的表")
     @ApiOperation("查询存储产品参数信息的表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProductAttributeValue:read')")
     public Object getPmsProductAttributeValueById(@ApiParam("存储产品参数信息的表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {

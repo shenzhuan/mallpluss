@@ -53,6 +53,13 @@ public class CommonResult {
         return this;
     }
 
+    /**
+     * 普通成功返回
+     */
+    public CommonResult fail(int code) {
+        this.code = code;
+        return this;
+    }
 
     /**
      * 普通失败提示信息
@@ -67,6 +74,12 @@ public class CommonResult {
         this.code = FAILED;
         this.msg = msg;
         this.data = msg;
+        return this;
+    }
+
+    public CommonResult failed(Integer code, String message) {
+        this.code = code;
+        this.msg = message;
         return this;
     }
 

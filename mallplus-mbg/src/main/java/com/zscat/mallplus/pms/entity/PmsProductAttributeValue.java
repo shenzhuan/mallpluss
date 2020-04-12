@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -38,7 +41,22 @@ public class PmsProductAttributeValue extends BaseEntity implements Serializable
     private String value;
     private String name;
     // 1 规格 2 参数
-    private Integer type ;
+    private Integer type;
+    @TableField(exist = false)
+    private List pics;
+
+    public List getPics() {
+        if (ValidatorUtils.notEmpty(value)) {
+            this.pics = Arrays.asList(value.split(","));
+        }
+        return pics;
+    }
+
+    public void setPics(List pics) {
+        if (ValidatorUtils.notEmpty(value)) {
+            this.pics = Arrays.asList(value.split(","));
+        }
+    }
 
 
 }

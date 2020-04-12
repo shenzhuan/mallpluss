@@ -19,7 +19,6 @@ import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtils;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.Rediskey;
 import io.swagger.annotations.Api;
@@ -64,7 +63,7 @@ public class HomeController {
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public Object content() {
-        List<UmsMember> log =  memberMapper.selectList(new QueryWrapper<UmsMember>().ne("id",2).last("limit 5"));
+        List<UmsMember> log = memberMapper.selectList(new QueryWrapper<UmsMember>().ne("id", 2).last("limit 5"));
 
         HomeContentResult contentResult = null;
         String bannerJson = redisService.get(Rediskey.HomeContentResult);
@@ -133,7 +132,7 @@ public class HomeController {
     @ApiOperation(value = "据分类获取专题")
     public Object subjectDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         CmsSubject cmsSubject = subjectService.getById(id);
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         /*if (umsMember != null && umsMember.getId() != null) {
             MemberProductCollection findCollection = productCollectionRepository.findByMemberIdAndProductId(
                     umsMember.getId(), id);
@@ -152,8 +151,7 @@ public class HomeController {
     @RequestMapping(value = "/navList", method = RequestMethod.GET)
     @ApiOperation(value = "获取导航栏")
     public Object getNavList() {
-
-        return new CommonResult().success(null);
+        return new CommonResult().success(advertiseService.getNav());
     }
 
 

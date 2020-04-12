@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Date;
  * @author zscat
  * @since 2019-04-19
  */
+@Data
 @TableName("sms_coupon_history")
 public class SmsCouponHistory extends BaseEntity implements Serializable {
 
@@ -27,6 +30,11 @@ public class SmsCouponHistory extends BaseEntity implements Serializable {
 
     @TableField("coupon_id")
     private Long couponId;
+    /**
+     * 使用门槛；0表示无门槛
+     */
+    @TableField("min_point")
+    private BigDecimal minPoint;
 
     @TableField("member_id")
     private Long memberId;
@@ -34,6 +42,7 @@ public class SmsCouponHistory extends BaseEntity implements Serializable {
     @TableField("coupon_code")
     private String couponCode;
 
+    private BigDecimal amount;
     /**
      * 领取人昵称
      */
@@ -82,135 +91,4 @@ public class SmsCouponHistory extends BaseEntity implements Serializable {
     private String note;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getCouponId() {
-        return couponId;
-    }
-
-    public void setCouponId(Long couponId) {
-        this.couponId = couponId;
-    }
-
-    public Long getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
-    }
-
-    public String getCouponCode() {
-        return couponCode;
-    }
-
-    public void setCouponCode(String couponCode) {
-        this.couponCode = couponCode;
-    }
-
-    public String getMemberNickname() {
-        return memberNickname;
-    }
-
-    public void setMemberNickname(String memberNickname) {
-        this.memberNickname = memberNickname;
-    }
-
-    public Integer getGetType() {
-        return getType;
-    }
-
-    public void setGetType(Integer getType) {
-        this.getType = getType;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getUseStatus() {
-        return useStatus;
-    }
-
-    public void setUseStatus(Integer useStatus) {
-        this.useStatus = useStatus;
-    }
-
-    public Date getUseTime() {
-        return useTime;
-    }
-
-    public void setUseTime(Date useTime) {
-        this.useTime = useTime;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getOrderSn() {
-        return orderSn;
-    }
-
-    public void setOrderSn(String orderSn) {
-        this.orderSn = orderSn;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    @Override
-    public String toString() {
-        return "SmsCouponHistory{" +
-                ", id=" + id +
-                ", couponId=" + couponId +
-                ", memberId=" + memberId +
-                ", couponCode=" + couponCode +
-                ", memberNickname=" + memberNickname +
-                ", getType=" + getType +
-                ", createTime=" + createTime +
-                ", useStatus=" + useStatus +
-                ", useTime=" + useTime +
-                ", orderId=" + orderId +
-                ", orderSn=" + orderSn +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", note=" + note +
-                "}";
-    }
 }

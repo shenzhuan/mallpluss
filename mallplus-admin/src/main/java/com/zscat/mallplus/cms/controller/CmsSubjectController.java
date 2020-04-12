@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -39,10 +40,10 @@ public class CmsSubjectController {
     @PreAuthorize("hasAuthority('cms:CmsSubject:read')")
     public Object getCmsSubjectByPage(CmsSubject entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(ICmsSubjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(ICmsSubjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(entity).select(ConstansValue.sampleSubjectList)));
         } catch (Exception e) {
             log.error("根据条件查询所有专题表列表：%s", e.getMessage(), e);
         }

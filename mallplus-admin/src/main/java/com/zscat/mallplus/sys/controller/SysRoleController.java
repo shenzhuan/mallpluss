@@ -43,7 +43,7 @@ public class SysRoleController extends ApiController {
     @PreAuthorize("hasAuthority('sys:role:read')")
     public Object getRoleByPage(SysRole entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(sysRoleService.page(new Page<SysRole>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -53,74 +53,7 @@ public class SysRoleController extends ApiController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "sys", REMARK = "保存角色")
-    @ApiOperation("保存角色")
-    @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('sys:role:create')")
-    public Object saveRole(@RequestBody SysRole entity) {
-        try {
-            if (sysRoleService.saves(entity)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("保存角色：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
 
-    @SysLog(MODULE = "sys", REMARK = "更新角色")
-    @ApiOperation("更新角色")
-    @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('sys:role:update')")
-    public Object updateRole(@RequestBody SysRole entity) {
-        try {
-            if (sysRoleService.updates(entity)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("更新角色：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
-
-    @SysLog(MODULE = "sys", REMARK = "删除角色")
-    @ApiOperation("删除角色")
-    @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('sys:role:delete')")
-    public Object deleteRole(@ApiParam("角色id") @PathVariable Long id) {
-        try {
-            if (ValidatorUtils.empty(id)) {
-                return new CommonResult().paramFailed("角色id");
-            }
-            if (sysRoleService.removeById(id)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("删除角色：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
-
-    @SysLog(MODULE = "sys", REMARK = "给角色分配角色")
-    @ApiOperation("查询角色明细")
-    @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('sys:role:read')")
-    public Object getRoleById(@ApiParam("角色id") @PathVariable Long id) {
-        try {
-            if (ValidatorUtils.empty(id)) {
-                return new CommonResult().paramFailed("角色id");
-            }
-            SysRole coupon = sysRoleService.getById(id);
-            return new CommonResult().success(coupon);
-        } catch (Exception e) {
-            log.error("查询角色明细：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-
-    }
 
     @ApiOperation(value = "批量删除角色")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
@@ -152,6 +85,21 @@ public class SysRoleController extends ApiController {
     public Object rolePermission(@PathVariable Long roleId) {
         List<SysRolePermission> rolePermission = sysRoleService.getRolePermission(roleId);
         return new CommonResult().success(rolePermission);
+    }
+
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        SysRole role = new SysRole();
+        role.setId(ids);
+        role.setStatus(showStatus);
+        sysRoleService.updates(role);
+
+        return new CommonResult().success();
+
     }
 }
 

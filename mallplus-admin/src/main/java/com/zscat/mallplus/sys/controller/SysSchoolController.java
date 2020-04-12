@@ -39,7 +39,7 @@ public class SysSchoolController {
     @PreAuthorize("hasAuthority('sys:SysSchool:read')")
     public Object getRoleByPage(SysSchool entity,
                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISysSchoolService.page(new Page<SysSchool>(pageNum, pageSize), new QueryWrapper<>(entity)));

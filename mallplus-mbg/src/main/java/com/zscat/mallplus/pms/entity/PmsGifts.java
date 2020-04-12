@@ -1,14 +1,14 @@
 package com.zscat.mallplus.pms.entity;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("pms_gifts")
-public class PmsGifts implements Serializable {
+public class PmsGifts extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +53,7 @@ public class PmsGifts implements Serializable {
      * 创建时间
      */
     @TableField("create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 内容

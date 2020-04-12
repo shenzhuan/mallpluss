@@ -16,7 +16,7 @@ public class JwtTokenExpiredException extends RuntimeException {
     public JwtTokenExpiredException(String errmsg) {
         super(errmsg);
         this.errmsg = errmsg;
-        this.errno=errno;
+        this.errno = errno;
     }
 
     public JwtTokenExpiredException(String errmsg, Throwable e) {

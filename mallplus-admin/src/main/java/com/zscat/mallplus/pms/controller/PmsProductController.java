@@ -1,8 +1,10 @@
 package com.zscat.mallplus.pms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductVertifyRecord;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -10,11 +12,13 @@ import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import com.zscat.mallplus.vo.IdStatus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,15 +46,23 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:read')")
     public Object getPmsProductByPage(PmsProduct entity,
                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            IPage<PmsProduct> page = null;
+            if (ValidatorUtils.notEmpty(entity.getKeyword())) {
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+            } else {
+                page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+
+            }
+            return new CommonResult().success(page);
         } catch (Exception e) {
             log.error("根据条件查询所有商品信息列表：%s", e.getMessage(), e);
         }
         return new CommonResult().failed();
     }
+
     @ApiOperation("根据商品名称或货号模糊查询")
     @RequestMapping(value = "/simpleList", method = RequestMethod.GET)
     @ResponseBody
@@ -58,43 +70,8 @@ public class PmsProductController {
         List<PmsProduct> productList = IPmsProductService.list(keyword);
         return new CommonResult().success(productList);
     }
-    @SysLog(MODULE = "pms", REMARK = "保存商品信息")
-    @ApiOperation("保存商品信息")
-    @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('pms:PmsProduct:create')")
-    public Object savePmsProduct(@RequestBody PmsProductParam productParam) {
-        try {
-            int count = IPmsProductService.create(productParam);
-            if (count > 0) {
-                return new CommonResult().success(count);
-            } else {
-                return new CommonResult().failed();
-            }
-        } catch (Exception e) {
-            log.error("保存商品信息：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
 
-    }
 
-    @SysLog(MODULE = "pms", REMARK = "更新商品信息")
-    @ApiOperation("更新商品信息")
-    @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('pms:PmsProduct:update')")
-    public Object updatePmsProduct(@PathVariable Long id, @RequestBody PmsProductParam productParam) {
-        try {
-            int count = IPmsProductService.update(id, productParam);
-            if (count > 0) {
-                return new CommonResult().success(count);
-            } else {
-                return new CommonResult().failed();
-            }
-        } catch (Exception e) {
-            log.error("更新商品信息：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-
-    }
 
     @SysLog(MODULE = "pms", REMARK = "删除商品信息")
     @ApiOperation("删除商品信息")
@@ -197,6 +174,22 @@ public class PmsProductController {
         }
     }
 
+    @ApiOperation("批量上下架")
+    @RequestMapping(value = "/publishStatus", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量上下架")
+    public Object updatePublishStatu(@RequestBody IdStatus ids, BindingResult result) {
+        PmsProduct product = new PmsProduct();
+        product.setId(ids.getId());
+        product.setPublishStatus(ids.getStatus());
+        Boolean count = IPmsProductService.updateById(product);
+        if (count) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+
     @ApiOperation("批量推荐商品")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -227,6 +220,20 @@ public class PmsProductController {
         }
     }
 
+    @ApiOperation("批量设为分销")
+    @RequestMapping(value = "/update/isFenxiao", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量设为分销")
+    public Object updateisFenxiao(@RequestParam("ids") List<Long> ids,
+                                  @RequestParam("newStatus") Integer newStatus) {
+        int count = IPmsProductService.updateisFenxiao(ids, newStatus);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+
     @ApiOperation("批量修改删除状态")
     @RequestMapping(value = "/update/deleteStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -240,5 +247,28 @@ public class PmsProductController {
         } else {
             return new CommonResult().failed();
         }
+    }
+
+    @GetMapping(value = "/goods/list")
+    public Object getPmsProductListByPage(PmsProduct entity,
+                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        try {
+            if (entity.getType() == 1) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status", 1).gt("stock", 0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            }
+            if (entity.getType() == 2) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().eq("publish_status", 0).gt("stock", 0).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            }
+            if (entity.getType() == 3) {
+                return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().lt("stock", 1).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")));
+            }
+
+            return new CommonResult().success(IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>().select(ConstansValue.sampleGoodsList)));
+        } catch (Exception e) {
+            log.error("根据条件查询所有商品信息列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
     }
 }

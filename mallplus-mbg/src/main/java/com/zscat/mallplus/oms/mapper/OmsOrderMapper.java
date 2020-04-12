@@ -9,6 +9,7 @@ import com.zscat.mallplus.oms.vo.OrderStstic;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -47,5 +48,28 @@ public interface OmsOrderMapper extends BaseMapper<OmsOrder> {
      */
     int delivery(@Param("list") List<OmsOrderDeliveryParam> deliveryParamList);
 
+    /**
+     * 根据会员分组订单
+     *
+     * @return
+     */
     List<OrderStstic> listOrderGroupByMemberId();
+
+    /**
+     * 订单日统计
+     *
+     * @param date
+     * @return
+     */
+    Map orderDayStatic(String date);
+
+    /**
+     * 订单 月统计
+     *
+     * @param date
+     * @return
+     */
+    Map orderMonthStatic(String date);
+
+    List<OmsOrder> listByDate(@Param("date") String date, @Param("type") Integer type);
 }

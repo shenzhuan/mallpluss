@@ -6,15 +6,17 @@ import com.zscat.mallplus.oms.mapper.OmsCompanyAddressMapper;
 import com.zscat.mallplus.oms.service.IOmsCompanyAddressService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
- * <p>
- * 公司收发货地址表 服务实现类
- * </p>
- *
- * @author zscat
- * @since 2019-04-17
+ * @author mallplus
+ * @date 2019-12-07
  */
 @Service
 public class OmsCompanyAddressServiceImpl extends ServiceImpl<OmsCompanyAddressMapper, OmsCompanyAddress> implements IOmsCompanyAddressService {
+
+    @Resource
+    private OmsCompanyAddressMapper omsCompanyAddressMapper;
+
 
 }

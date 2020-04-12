@@ -6,11 +6,11 @@ import com.zscat.mallplus.sms.entity.SmsRedPacket;
 import com.zscat.mallplus.sms.entity.SmsUserRedPacket;
 import com.zscat.mallplus.sms.service.ISmsRedPacketService;
 import com.zscat.mallplus.sms.service.ISmsUserRedPacketService;
-import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ import java.util.List;
  * @email 951449465@qq.com
  * @date 2019-04-05 16:20:35
  */
-@Controller
+@RestController
 @Api(tags = "RedPacketController", description = "红包管理")
 @RequestMapping("/api/redPacket")
 public class RedPacketController {
@@ -33,6 +33,8 @@ public class RedPacketController {
     private ISmsRedPacketService redPacketService;
     @Resource
     private ISmsUserRedPacketService userRedPacketService;
+    @Autowired
+    private IUmsMemberService memberService;
 
     @SysLog(MODULE = "sms", REMARK = "添加红包")
     @ApiOperation(value = "添加红包")
@@ -84,11 +86,11 @@ public class RedPacketController {
     @ResponseBody
     public Object getList(SmsRedPacket redPacket,
                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                          @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
+                          @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         List<SmsRedPacket> redPacketList = redPacketService.list(new QueryWrapper<>(redPacket));
 
         SmsUserRedPacket userRedPacket = new SmsUserRedPacket();
-        userRedPacket.setUserId(UserUtils.getCurrentMember().getId());
+        userRedPacket.setUserId(memberService.getNewCurrentMember().getId());
         List<SmsUserRedPacket> list = userRedPacketService.list(new QueryWrapper<>(userRedPacket));
         for (SmsRedPacket vo : redPacketList) {
             if (list != null && list.size() > 0) {

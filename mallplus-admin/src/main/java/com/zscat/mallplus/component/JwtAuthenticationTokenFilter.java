@@ -1,10 +1,12 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;
 import com.zscat.mallplus.util.JwtTokenUtil;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ import java.util.Map;
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+    @Resource
+    public ISysAdminLogService fopSystemOperationLogService;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -44,9 +48,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
-    @Resource
-    public ISysAdminLogService fopSystemOperationLogService;
+    @Autowired
+    private ApiContext apiContext;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -76,22 +79,30 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
 
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
-
+        String storeId = request.getParameter("storeid");
+        if (ValidatorUtils.notEmpty(storeId)) {
+            apiContext.setCurrentProviderId(Long.valueOf(storeId));
+        } else {
+            storeId = request.getHeader("storeid");
+            if (ValidatorUtils.notEmpty(storeId)) {
+                apiContext.setCurrentProviderId(Long.valueOf(storeId));
+            }
+        }
         String username = null;
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
-            if (fullUrl.contains("logout")){
+            if (fullUrl.contains("logout") || fullUrl.contains("login")) {
 
-            }else{
+            } else {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        LOGGER.info("authenticated user:{}", username);
+                        LOGGER.info("checking username:{}", username);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }
@@ -107,7 +118,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), authHeader)
                 + ",\"cost\":\"" + (endTime - startTime) + "ms\"");
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 1;
-        String interfaceName = fullUrl.substring(startIntercept,fullUrl.length());
+        String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
         sysLog.setCreateTime(new Date());
         sysLog.setIp(IpAddressUtil.getIpAddr(request));
         sysLog.setMethod(interfaceName);
@@ -118,7 +129,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-        //    fopSystemOperationLogService.save(sysLog);
+            fopSystemOperationLogService.save(sysLog);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.zscat.mallplus.sys.service.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.mapper.SysAdminLogMapper;
@@ -25,6 +24,7 @@ public class SysAdminLogServiceImpl extends ServiceImpl<SysAdminLogMapper, SysAd
 
     @Resource
     private SysAdminLogMapper logMapper;
+
     @Override
     public List<LogStatisc> selectPageExt(LogParam entity) {
         return logMapper.getLogStatisc(entity);

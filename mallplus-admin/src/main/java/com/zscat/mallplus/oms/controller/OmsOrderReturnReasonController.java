@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderReturnReasonController", description = "退货原因表管理")
+@Api(tags = "oms", description = "退货原因表管理")
 @RequestMapping("/oms/OmsOrderReturnReason")
 public class OmsOrderReturnReasonController {
     @Resource
@@ -39,7 +39,7 @@ public class OmsOrderReturnReasonController {
     @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:read')")
     public Object getOmsOrderReturnReasonByPage(OmsOrderReturnReason entity,
                                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderReturnReasonService.page(new Page<OmsOrderReturnReason>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -52,7 +52,6 @@ public class OmsOrderReturnReasonController {
     @SysLog(MODULE = "oms", REMARK = "保存退货原因表")
     @ApiOperation("保存退货原因表")
     @PostMapping(value = "/create")
-    @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:create')")
     public Object saveOmsOrderReturnReason(@RequestBody OmsOrderReturnReason entity) {
         try {
             if (IOmsOrderReturnReasonService.save(entity)) {
@@ -68,7 +67,6 @@ public class OmsOrderReturnReasonController {
     @SysLog(MODULE = "oms", REMARK = "更新退货原因表")
     @ApiOperation("更新退货原因表")
     @PostMapping(value = "/update/{id}")
-    @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:update')")
     public Object updateOmsOrderReturnReason(@RequestBody OmsOrderReturnReason entity) {
         try {
             if (IOmsOrderReturnReasonService.updateById(entity)) {
@@ -84,7 +82,6 @@ public class OmsOrderReturnReasonController {
     @SysLog(MODULE = "oms", REMARK = "删除退货原因表")
     @ApiOperation("删除退货原因表")
     @GetMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:delete')")
     public Object deleteOmsOrderReturnReason(@ApiParam("退货原因表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -103,7 +100,6 @@ public class OmsOrderReturnReasonController {
     @SysLog(MODULE = "oms", REMARK = "给退货原因表分配退货原因表")
     @ApiOperation("查询退货原因表明细")
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:read')")
     public Object getOmsOrderReturnReasonById(@ApiParam("退货原因表id") @PathVariable Long id) {
         try {
             if (ValidatorUtils.empty(id)) {
@@ -122,7 +118,6 @@ public class OmsOrderReturnReasonController {
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
     @ResponseBody
     @SysLog(MODULE = "pms", REMARK = "批量删除退货原因表")
-    @PreAuthorize("hasAuthority('oms:OmsOrderReturnReason:delete')")
     public Object deleteBatch(@RequestParam("ids") List<Long> ids) {
         boolean count = IOmsOrderReturnReasonService.removeByIds(ids);
         if (count) {

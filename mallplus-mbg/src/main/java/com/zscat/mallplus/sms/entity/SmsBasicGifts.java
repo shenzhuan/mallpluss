@@ -1,13 +1,11 @@
 package com.zscat.mallplus.sms.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.sms.vo.BasicRuls;
 import com.zscat.mallplus.sms.vo.BeanKv;
-import com.zscat.mallplus.sms.vo.GiftisRuls;
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
@@ -35,7 +33,7 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     private String name;
 
     /**
-     * 1 有效0 无效
+     * 0 有效 1 无效
      */
     private Integer status;
 
@@ -46,7 +44,7 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     private Integer activiUser;
 
     /**
-     * 活动商品
+     * 活动商品  1 按类别  2 部分商品 0 全部
      */
     @TableField("activi_goods")
     private Integer activiGoods;
@@ -61,7 +59,6 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
      * 首购礼 1第一单获取 2所有订单获取 ；
      * 满购礼1选赠礼 获取规则 2满赠礼；
      * 单品礼赠 1 仅送一件  2 按购买件数送  3 指定件数送
-     *
      */
     @TableField("small_type")
     private Integer smallType;
@@ -98,8 +95,10 @@ public class SmsBasicGifts extends BaseEntity implements Serializable {
     @TableField("gift_ids")
     private String giftIds;
 
+    @TableField(exist = false)
+    private BasicRuls rule;
     /**
-     * 消费金额
+     *
      */
     @TableField(exist = false)
     private List<BasicRuls> actrule;

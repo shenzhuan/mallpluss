@@ -1,6 +1,5 @@
 package com.zscat.mallplus;
 
-import com.zscat.mallplus.MallAdminApplication;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.mapper.SysAdminLogMapper;
 import lombok.extern.log4j.Log4j2;

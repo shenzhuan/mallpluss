@@ -7,16 +7,12 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberReceiveAddress;
 import com.zscat.mallplus.ums.mapper.UmsMemberReceiveAddressMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberReceiveAddressService;
-import com.zscat.mallplus.util.UserUtils;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -26,7 +22,7 @@ import java.util.List;
  * 会员收货地址管理Controller
  * https://github.com/shenzhuan/mallplus on 2018/8/28.
  */
-@Controller
+@RestController
 @Api(tags = "UmsMemberReceiveAddressController", description = "会员收货地址管理")
 @RequestMapping("/api/address")
 public class UmsMemberReceiveAddressController {
@@ -35,7 +31,8 @@ public class UmsMemberReceiveAddressController {
 
     @Resource
     private UmsMemberReceiveAddressMapper addressMapper;
-
+    @Autowired
+    private IUmsMemberService memberService;
 
 
     @ApiOperation("删除收货地址")
@@ -54,10 +51,11 @@ public class UmsMemberReceiveAddressController {
     @ResponseBody
     public Object update(UmsMemberReceiveAddress address) {
         boolean count = false;
-        if (address.getDefaultStatus()==1){
+        address.setMemberId(memberService.getNewCurrentMember().getId());
+        if (address.getDefaultStatus() == 1) {
             addressMapper.updateStatusByMember(address.getMemberId());
         }
-        if (address != null && address.getId() != null) {
+        if (address != null && address.getId() != null && address.getId() > 0) {
             count = memberReceiveAddressService.updateById(address);
         } else {
             count = memberReceiveAddressService.save(address);
@@ -73,9 +71,9 @@ public class UmsMemberReceiveAddressController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public Object list() {
-        UmsMember umsMember = UserUtils.getCurrentMember();
+        UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
-            List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id",umsMember.getId()));
+            List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list(new QueryWrapper<UmsMemberReceiveAddress>().eq("member_id", umsMember.getId()));
             return new CommonResult().success(addressList);
         }
         return new ArrayList<UmsMemberReceiveAddress>();

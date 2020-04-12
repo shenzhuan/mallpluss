@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.Date;
  * @author zscat
  * @since 2019-04-19
  */
+@Data
 @TableName("ums_integration_change_history")
 public class UmsIntegrationChangeHistory extends BaseEntity implements Serializable {
 
@@ -32,7 +34,7 @@ public class UmsIntegrationChangeHistory extends BaseEntity implements Serializa
     private Date createTime;
 
     /**
-     * 改变类型：0->增加；1->减少
+     * 改变类型：1->增加；2->减少 AllEnum.class
      */
     @TableField("change_type")
     private Integer changeType;
@@ -61,82 +63,16 @@ public class UmsIntegrationChangeHistory extends BaseEntity implements Serializa
     @TableField("source_type")
     private Integer sourceType;
 
-
-    public Long getId() {
-        return id;
+    public UmsIntegrationChangeHistory() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(Long memberId) {
+    public UmsIntegrationChangeHistory(Long memberId, Date createTime, Integer changeType, Integer changeCount, String operateMan, String operateNote, Integer sourceType) {
         this.memberId = memberId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getChangeType() {
-        return changeType;
-    }
-
-    public void setChangeType(Integer changeType) {
         this.changeType = changeType;
-    }
-
-    public Integer getChangeCount() {
-        return changeCount;
-    }
-
-    public void setChangeCount(Integer changeCount) {
         this.changeCount = changeCount;
-    }
-
-    public String getOperateMan() {
-        return operateMan;
-    }
-
-    public void setOperateMan(String operateMan) {
         this.operateMan = operateMan;
-    }
-
-    public String getOperateNote() {
-        return operateNote;
-    }
-
-    public void setOperateNote(String operateNote) {
         this.operateNote = operateNote;
-    }
-
-    public Integer getSourceType() {
-        return sourceType;
-    }
-
-    public void setSourceType(Integer sourceType) {
         this.sourceType = sourceType;
-    }
-
-    @Override
-    public String toString() {
-        return "UmsIntegrationChangeHistory{" +
-                ", id=" + id +
-                ", memberId=" + memberId +
-                ", createTime=" + createTime +
-                ", changeType=" + changeType +
-                ", changeCount=" + changeCount +
-                ", operateMan=" + operateMan +
-                ", operateNote=" + operateNote +
-                ", sourceType=" + sourceType +
-                "}";
     }
 }

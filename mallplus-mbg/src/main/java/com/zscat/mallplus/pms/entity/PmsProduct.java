@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import com.zscat.mallplus.vo.timeline.TimeSecound;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -46,6 +47,12 @@ public class PmsProduct extends BaseEntity implements Serializable {
 
     private String pic;
     private Integer type;// 1出售、2义卖、3免费
+    // 1普通 2拍卖
+    @TableField("is_paimai")
+    private Integer isPaiMai;//
+    @TableField("expire_time")
+    private Date expireTime;//
+
     /**
      * 货号
      */
@@ -82,6 +89,9 @@ public class PmsProduct extends BaseEntity implements Serializable {
     @TableField("verify_status")
     private Integer verifyStatus;
 
+
+    @TableField("is_fenxiao")
+    private Integer isFenxiao;
     /**
      * 排序
      */
@@ -225,7 +235,10 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField("brand_name")
     private String brandName;
-
+    /**
+     * 运费
+     */
+    private BigDecimal transfee;
     /**
      * 商品分类名称
      */
@@ -249,9 +262,16 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private String areaName;
     @TableField("school_name")
     private String schoolName;
+
+    @TableField("store_name")
+    private String storeName;
     /**
      * 1 學校 2 區域
      */
     @TableField(exist = false)
     private int qsType;
+    @TableField(exist = false)
+    private BigDecimal fenxiaoPrice;
+    @TableField(exist = false)
+    private TimeSecound timeSecound;
 }

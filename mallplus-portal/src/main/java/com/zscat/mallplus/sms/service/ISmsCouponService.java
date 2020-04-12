@@ -2,7 +2,8 @@ package com.zscat.mallplus.sms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsCartItem;
-import com.zscat.mallplus.oms.vo.CartPromotionItem;
+
+import com.zscat.mallplus.sms.entity.SmsBargainRecord;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
 import com.zscat.mallplus.sms.vo.SmsCouponHistoryDetail;
@@ -40,9 +41,16 @@ public interface ISmsCouponService extends IService<SmsCoupon> {
     List<SmsCouponHistoryDetail> listCart(List<OmsCartItem> cartItemList, Integer type);
 
 
-    List<SmsCoupon> selectNotRecive(Long memberId);
+    List<SmsCoupon> selectNotRecive(Integer pageSize);
 
-    List<SmsCoupon> selectRecive(Long memberId);
+    List<SmsCoupon> selectRecive(Integer pageSize);
 
     List<SmsCoupon> selectNotRecive();
+
+
+    List<SmsCouponHistory> listMemberCoupon(Integer useStatus);
+
+    CommonResult addbatch(String couponIds);
+
+
 }

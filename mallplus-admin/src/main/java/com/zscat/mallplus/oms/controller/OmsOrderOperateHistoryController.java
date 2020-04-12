@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "OmsOrderOperateHistoryController", description = "订单操作历史记录管理")
+@Api(tags = "oms", description = "订单操作历史记录管理")
 @RequestMapping("/oms/OmsOrderOperateHistory")
 public class OmsOrderOperateHistoryController {
     @Resource
@@ -39,7 +39,7 @@ public class OmsOrderOperateHistoryController {
     @PreAuthorize("hasAuthority('oms:OmsOrderOperateHistory:read')")
     public Object getOmsOrderOperateHistoryByPage(OmsOrderOperateHistory entity,
                                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                  @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IOmsOrderOperateHistoryService.page(new Page<OmsOrderOperateHistory>(pageNum, pageSize), new QueryWrapper<>(entity)));

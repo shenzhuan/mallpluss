@@ -17,5 +17,5 @@ import java.util.List;
  * @since 2019-04-14
  */
 public interface ISysAdminLogService extends IService<SysAdminLog> {
-     List<LogStatisc> selectPageExt(LogParam entity);
+    List<LogStatisc> selectPageExt(LogParam entity);
 }

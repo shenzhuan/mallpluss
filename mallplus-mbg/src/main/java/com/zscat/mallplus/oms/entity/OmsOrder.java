@@ -27,14 +27,21 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableField(exist = false)
+    private String payCode;
+    @TableField(exist = false)
     private BigDecimal blance;
     @TableField(exist = false)
     private List<OmsOrderItem> orderItemList;
+    @TableField(exist = false)
+    private List<OmsOrderOperateHistory> historyList;
+
     /**
      * 订单id
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+
+    private Long pid;
 
     @TableField("member_id")
     private Long memberId;
@@ -103,13 +110,13 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private BigDecimal discountAmount;
 
     /**
-     * 支付方式：0->未支付；1->支付宝；2->微信 3余额支付
+     * 支付方式：0->未支付；2->支付宝；1->微信 3余额支付
      */
     @TableField("pay_type")
     private Integer payType;
 
     /**
-     * 订单来源：0->PC订单；1->app订单
+     * 订单来源：；1->小程序订单2 h5订单3PC订单  4 app
      */
     @TableField("source_type")
     private Integer sourceType;
@@ -120,7 +127,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Integer status;
 
     /**
-     * 订单类型：0->正常订单；1->秒杀订单
+     * 订单类型：0->正常订单；1->秒杀订单 AllEnum
      */
     @TableField("order_type")
     private Integer orderType;
@@ -303,5 +310,18 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Long schoolId;
     @TableField("group_id")
     private Long groupId;
+    @TableField("tax_type")
+    private Integer taxType;    //	是否开发票 1=不发票 2=个人发票 3=公司发票
+    @TableField("tax_content")
+    private String taxContent;    //	0	发票内容
+    @TableField("tax_code")
+    private String taxCode;    //	税号
+    @TableField("tax_title")
+    private String taxTitle;    //	发票抬头
+    @TableField("is_comment")
+    private Integer isComment;    //是否评论，1未评论，2已评论
+
+    @TableField("store_name")
+    private String storeName;    //	税号
 
 }

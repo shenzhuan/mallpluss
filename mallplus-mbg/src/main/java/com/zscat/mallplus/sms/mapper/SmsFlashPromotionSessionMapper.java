@@ -5,6 +5,8 @@ import com.zscat.mallplus.sms.entity.SmsFlashPromotionSession;
 import com.zscat.mallplus.sms.vo.SmsFlashSessionInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 限时购场次表 Mapper 接口
@@ -14,6 +16,6 @@ import org.apache.ibatis.annotations.Param;
  * @since 2019-04-19
  */
 public interface SmsFlashPromotionSessionMapper extends BaseMapper<SmsFlashPromotionSession> {
-    SmsFlashSessionInfo getCurrentDang(@Param("current_time") String current_time);
+    List<SmsFlashSessionInfo> getCurrentDang(@Param("current_time") String current_time);
 
 }

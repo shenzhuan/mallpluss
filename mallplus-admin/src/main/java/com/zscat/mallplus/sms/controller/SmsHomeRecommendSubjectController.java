@@ -39,7 +39,7 @@ public class SmsHomeRecommendSubjectController {
     @PreAuthorize("hasAuthority('sms:SmsHomeRecommendSubject:read')")
     public Object getSmsHomeRecommendSubjectByPage(SmsHomeRecommendSubject entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsHomeRecommendSubjectService.page(new Page<SmsHomeRecommendSubject>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -142,7 +142,6 @@ public class SmsHomeRecommendSubjectController {
             return new CommonResult().failed();
         }
     }
-
 
 
     @ApiOperation("修改推荐排序")

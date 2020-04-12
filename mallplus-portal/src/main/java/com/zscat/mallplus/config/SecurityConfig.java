@@ -6,7 +6,10 @@ import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.vo.MemberDetails;
+import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +21,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,9 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private IUmsMemberService memberService;
     @Autowired
+    private RedisService redisService;
+    @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -65,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/admin/login", "/admin/register")// 对登录注册要允许匿名访问
                 .permitAll()
-               // .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
+                // .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 //.permitAll()
                 .antMatchers("/**")//测试时全部运行访问
                 .permitAll()
@@ -98,12 +103,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //获取登录用户信息
         return new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                UmsMember member = memberService.getByUsername(username);
-                if (member != null) {
-                    return new MemberDetails(member);
+            public MemberDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+                try {
+                    UmsMember member = JsonUtils.jsonToPojo(redisService.get( String.format(Rediskey.MEMBER, username)), UmsMember.class);
+                    //   UmsMember member = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.MEMBER, username)),UmsMember.class);
+                    if (member != null) {
+                        return new MemberDetails(member);
+                    } else {
+                        member = memberService.getByUsername(username);
+                        if (member != null) {
+                            return new MemberDetails(member);
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                throw new UsernameNotFoundException("用户名或密码错误");
+                return null;
             }
         };
     }

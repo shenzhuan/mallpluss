@@ -6,7 +6,7 @@ import com.aliyun.oss.OSSException;
 import com.aliyun.oss.model.DeleteObjectsRequest;
 import com.aliyun.oss.model.DeleteObjectsResult;
 import com.aliyun.oss.model.PutObjectRequest;
-import com.zscat.mallplus.config.OssAliyunField;
+import com.zscat.mallplus.vo.OssAliyunField;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +25,9 @@ import java.util.UUID;
 @Component
 public class OssAliyunUtil {
 
-    @Resource(name="defaultOssAliyunField")
+    @Resource(name = "defaultOssAliyunField")
     private OssAliyunField defaultOssAliyunField;
+
     /**
      * 上传文件（选择默认的OSS配置）
      *
@@ -42,6 +43,17 @@ public class OssAliyunUtil {
             e.printStackTrace();
         }
         return url;
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param suffix
+     * @param inputStream
+     * @return
+     */
+    public String upload(String suffix, InputStream inputStream) {
+        return upload(defaultOssAliyunField, getKey(defaultOssAliyunField.getPrefix(), suffix), inputStream);
     }
 
     /**
@@ -131,7 +143,7 @@ public class OssAliyunUtil {
      * @param key             文件名
      */
     public void delete(final String accessKeyId, final String accessKeySecret, final String bucketName,
-                              final String endpoint, final String key) {
+                       final String endpoint, final String key) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 删除Object
@@ -161,7 +173,7 @@ public class OssAliyunUtil {
      * @param keys            多个文件名的集合
      */
     public void delete(final String accessKeyId, final String accessKeySecret, final String bucketName,
-                              final String endpoint, final List<String> keys) {
+                       final String endpoint, final List<String> keys) {
         // 创建OSSClient实例
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         // 删除Objects

@@ -39,7 +39,7 @@ public class CmsHelpController {
     @PreAuthorize("hasAuthority('cms:CmsHelp:read')")
     public Object getCmsHelpByPage(CmsHelp entity,
                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                   @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ICmsHelpService.page(new Page<CmsHelp>(pageNum, pageSize), new QueryWrapper<>(entity)));
@@ -132,4 +132,19 @@ public class CmsHelpController {
         }
     }
 
+    @ApiOperation("修改展示状态")
+    @RequestMapping(value = "/update/updateShowStatus")
+    @ResponseBody
+    @SysLog(MODULE = "cms", REMARK = "修改展示状态")
+    public Object updateShowStatus(@RequestParam("ids") Long ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        CmsHelp record = new CmsHelp();
+        record.setShowStatus(showStatus);
+        record.setId(ids);
+        if (ICmsHelpService.updateById(record)) {
+            return new CommonResult().success();
+        } else {
+            return new CommonResult().failed();
+        }
+    }
 }

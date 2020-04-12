@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +18,8 @@ import java.util.Date;
  * @author zscat
  * @since 2019-04-14
  */
+@Setter
+@Getter
 @TableName("sys_permission")
 public class SysPermission implements Serializable {
 
@@ -71,99 +75,14 @@ public class SysPermission implements Serializable {
     private Integer sort;
 
 
-    public Long getId() {
-        return id;
-    }
+    @TableField(exist = false)
+    private String label;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getPid() {
-        return pid;
-    }
-
-    public void setPid(Long pid) {
-        this.pid = pid;
-    }
-
-    public String getName() {
+    public String getLabel() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setLabel(String label) {
         this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
-
-    @Override
-    public String toString() {
-        return "SysPermission{" +
-                ", id=" + id +
-                ", pid=" + pid +
-                ", name=" + name +
-                ", value=" + value +
-                ", icon=" + icon +
-                ", type=" + type +
-                ", uri=" + uri +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                ", sort=" + sort +
-                "}";
     }
 }

@@ -4,7 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.sms.entity.SmsGroup;
+import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
+import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
+import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -32,7 +37,13 @@ import java.util.List;
 @RequestMapping("/sms/SmsGroup")
 public class SmsGroupController {
     @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
+    @Resource
     private ISmsGroupService ISmsGroupService;
+    @Resource
+    private IUmsMemberService memberService;
+    @Resource
+    private SmsGroupMemberMapper groupMemberMapper;
 
     @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
     @ApiOperation("根据条件查询所有列表")
@@ -40,10 +51,31 @@ public class SmsGroupController {
     @PreAuthorize("hasAuthority('sms:SmsGroup:read')")
     public Object getSmsGroupByPage(SmsGroup entity,
                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(ISmsGroupService.page(new Page<SmsGroup>(pageNum, pageSize), new QueryWrapper<>(entity)));
+
+        } catch (Exception e) {
+            log.error("根据条件查询所有列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
+
+    @SysLog(MODULE = "sms", REMARK = "根据条件查询所有列表")
+    @ApiOperation("根据条件查询所有列表")
+    @GetMapping(value = "/listGroupMember")
+    public Object listGroupMember(SmsGroupRecord entity,
+                                  @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                  @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        try {
+            List<SmsGroupRecord> groupRecords = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("group_id", entity.getGroupId()));
+            for (SmsGroupRecord groupRecord : groupRecords) {
+                List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
+                groupRecord.setList(groupMembers);
+            }
+            return new CommonResult().success(groupRecords);
 
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);

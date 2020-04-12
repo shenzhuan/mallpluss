@@ -1,23 +1,21 @@
 package com.zscat.mallplus.pms.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.pms.entity.PmsGiftsCategory;
+import com.zscat.mallplus.pms.service.IPmsGiftsCategoryService;
+import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.ValidatorUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-
-import com.zscat.mallplus.pms.entity.PmsGiftsCategory;
-import com.zscat.mallplus.pms.service.IPmsGiftsCategoryService;
 
 /**
  * <p>
@@ -41,7 +39,7 @@ public class PmsGiftsCategoryController {
     @PreAuthorize("hasAuthority('pms:PmsGiftsCategory:read')")
     public Object getPmsGiftsCategoryByPage(PmsGiftsCategory entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
             return new CommonResult().success(IPmsGiftsCategoryService.page(new Page<PmsGiftsCategory>(pageNum, pageSize), new QueryWrapper<>(entity)));
