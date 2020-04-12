@@ -1,7 +1,9 @@
 package com.zscat.mallplus.ums.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import com.zscat.mallplus.ums.entity.UmsMemberBlanceLog;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.AppletLoginParam;
 import com.zscat.mallplus.vo.AppletLoginnewParam;
@@ -41,6 +43,8 @@ public interface IUmsMemberService extends IService<UmsMember> {
 
     Object loginByWeixin1(AppletLoginParam req);
 
+    Object loginByWeixin2(AppletLoginParam req);
+
     /**
      * 根据用户名获取会员
      */
@@ -75,6 +79,7 @@ public interface IUmsMemberService extends IService<UmsMember> {
      */
     void updateIntegration(Long id, Integer integration);
 
+    SysAppletSet getSysAppletSet(Integer soruce);
 
     UmsMember queryByOpenId(String openId);
 
@@ -138,5 +143,12 @@ public interface IUmsMemberService extends IService<UmsMember> {
     Object resetPassword(String phone, String password, String confimpassword, String authCode);
 
     Object loginByWeixin2(AppletLoginnewParam param);
+
+    /**
+     * 用户提现
+     *
+     * @return
+     */
+    Object withDraw(UmsMemberBlanceLog blanceLog);
 }
 

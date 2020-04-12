@@ -7,7 +7,6 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OmsOrderDetail;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.TbThanks;
@@ -87,7 +86,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
         try {
-            ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            Object result = orderService.submitPreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());

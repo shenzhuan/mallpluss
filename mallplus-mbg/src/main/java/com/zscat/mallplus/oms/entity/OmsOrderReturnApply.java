@@ -189,4 +189,6 @@ public class OmsOrderReturnApply extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private List<OmsOrderItem> orderItemList;
+    @TableField(exist = false)
+    private OmsOrder order;
 }

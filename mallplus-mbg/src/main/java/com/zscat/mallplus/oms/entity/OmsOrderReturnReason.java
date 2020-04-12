@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,8 +18,10 @@ import java.util.Date;
  * @author zscat
  * @since 2019-04-17
  */
+@Setter
+@Getter
 @TableName("oms_order_return_reason")
-public class OmsOrderReturnReason extends BaseEntity implements Serializable {
+public class OmsOrderReturnReason implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,54 +47,6 @@ public class OmsOrderReturnReason extends BaseEntity implements Serializable {
     private Date createTime;
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "OmsOrderReturnReason{" +
-                ", id=" + id +
-                ", name=" + name +
-                ", sort=" + sort +
-                ", status=" + status +
-                ", createTime=" + createTime +
-                "}";
-    }
+    @TableField("store_id")
+    private Integer storeId;
 }

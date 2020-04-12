@@ -44,7 +44,7 @@ public class FenxiaoRecordsController {
                                           @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IFenxiaoRecordsService.page(new Page<FenxiaoRecords>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            return new CommonResult().success(IFenxiaoRecordsService.page(new Page<FenxiaoRecords>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("id")));
         } catch (Exception e) {
             log.error("根据条件查询所有分销记录列表：%s", e.getMessage(), e);
         }

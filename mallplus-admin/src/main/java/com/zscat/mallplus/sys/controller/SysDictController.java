@@ -3,6 +3,7 @@ package com.zscat.mallplus.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.sys.entity.SysDict;
 import com.zscat.mallplus.sys.service.ISysDictService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -133,4 +134,12 @@ public class SysDictController {
         }
     }
 
+    /**
+     * 根据字典类型查询字典数据信息
+     */
+    @GetMapping(value = "/dictType/{dictType}")
+    public Object dictType(@PathVariable String dictType) {
+        List<SysDict> list = ISysDictService.list(new QueryWrapper<SysDict>().eq("type", dictType).eq("status", StatusEnum.YesNoType.YES.code()));
+        return new CommonResult().success(list);
+    }
 }

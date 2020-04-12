@@ -30,6 +30,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,6 +125,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             this.removePermissRedis(UserUtils.getCurrentMember().getId());
         } catch (AuthenticationException e) {
             log.warn("登录异常:{}", e.getMessage());
+            throw new UsernameNotFoundException(e.getMessage());
         }
         return token;
     }
@@ -251,14 +253,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public List<SysPermission> listPerms() {
-        if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
-            List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
-            String key = String.format(Rediskey.allMenuList, "admin");
-            redisService.set(key, JsonUtil.objectToJson(list));
-            return list;
-        } else {
-            return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
-        }
+       try {
+           if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
+               List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
+               String key = String.format(Rediskey.allMenuList, "admin");
+               redisService.set(key, JsonUtil.objectToJson(list));
+               return list;
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+        return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
     }
 
     @Override
@@ -382,6 +387,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         adminMapper.updateById(role);
     }
 
+    @Override
+    public SysUserVo selectByUserName(String username) {
+        return adminMapper.selectByUserName(username);
+    }
+
     /**
      * 保存短信记录，并发送短信
      *
@@ -471,5 +481,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             }
             adminRoleRelationService.saveBatch(list);
         }
+    }
+
+    @Override
+    public Object resetPwd(SysUser user) {
+        if (ValidatorUtils.empty(user.getPassword())) {
+            return new CommonResult().paramFailed("请输入密码");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return new CommonResult().success(adminMapper.updateById(user));
     }
 }

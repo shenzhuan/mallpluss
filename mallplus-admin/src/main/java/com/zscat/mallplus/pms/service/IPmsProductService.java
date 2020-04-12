@@ -72,4 +72,6 @@ public interface IPmsProductService extends IService<PmsProduct> {
     List<PmsProduct> list(String keyword);
 
     List<PmsProductVertifyRecord> getProductVertifyRecord(Long id);
+
+    int updateisVip(List<Long> ids, Integer newStatus);
 }

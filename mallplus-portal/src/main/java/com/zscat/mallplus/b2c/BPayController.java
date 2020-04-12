@@ -125,7 +125,7 @@ public class BPayController extends ApiBaseAction {
     @ApiOperation(value = "余额支付")
     @PostMapping("balancePay")
     public Object balancePay(BalancePayParam payParam) {
-        OmsOrder order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
+        Object order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
         return new CommonResult().success(order);
     }
 

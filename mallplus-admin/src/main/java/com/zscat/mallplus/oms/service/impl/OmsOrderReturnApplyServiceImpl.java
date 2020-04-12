@@ -1,6 +1,7 @@
 package com.zscat.mallplus.oms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.oms.entity.OmsOrderOperateHistory;
 import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.mapper.OmsOrderReturnApplyMapper;
@@ -26,6 +27,7 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
     private OmsOrderReturnApplyMapper returnApplyMapper;
     @Autowired
     private IOmsOrderOperateHistoryService orderOperateHistoryService;
+
     @Override
     public int updateStatus(Long id, OmsUpdateStatusParam statusParam) {
         Integer status = statusParam.getStatus();
@@ -35,8 +37,8 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
             //确认退货
             history.setNote("确认退货");
             returnApply.setId(id);
-            returnApply.setStatus(1);
-           // returnApply.setReturnAmount(statusParam.getReturnAmount());
+            returnApply.setStatus(AllEnum.OmsOrderReturnApplyStatus.INIT.code());
+            // returnApply.setReturnAmount(statusParam.getReturnAmount());
             //returnApply.setCompanyAddressId(statusParam.getCompanyAddressId());
             returnApply.setHandleTime(new Date());
             returnApply.setHandleMan(statusParam.getHandleMan());
@@ -45,7 +47,7 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
             //完成退货
             history.setNote("完成退货");
             returnApply.setId(id);
-            returnApply.setStatus(2);
+            returnApply.setStatus(AllEnum.OmsOrderReturnApplyStatus.REFUNDED.code());
             returnApply.setReceiveTime(new Date());
             returnApply.setReceiveMan(statusParam.getReceiveMan());
             returnApply.setReceiveNote(statusParam.getReceiveNote());
@@ -53,7 +55,7 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
             //拒绝退货
             history.setNote("拒绝退货");
             returnApply.setId(id);
-            returnApply.setStatus(3);
+            returnApply.setStatus(AllEnum.OmsOrderReturnApplyStatus.REJECT.code());
             returnApply.setHandleTime(new Date());
             returnApply.setHandleMan(statusParam.getHandleMan());
             returnApply.setHandleNote(statusParam.getHandleNote());

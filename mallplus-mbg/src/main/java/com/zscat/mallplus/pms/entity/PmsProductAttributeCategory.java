@@ -46,4 +46,7 @@ public class PmsProductAttributeCategory extends BaseEntity implements Serializa
     private Integer style;
     @TableField("show_index")
     private Integer showIndex;
+
+    @TableField(exist = false)
+    private List<PmsProduct> listGoods;
 }

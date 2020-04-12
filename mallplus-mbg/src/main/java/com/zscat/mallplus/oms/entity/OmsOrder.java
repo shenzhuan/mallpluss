@@ -96,6 +96,11 @@ public class OmsOrder extends BaseEntity implements Serializable {
      */
     @TableField("integration_amount")
     private BigDecimal integrationAmount;
+    /**
+     * 会员折扣金额
+     */
+    @TableField("vip_amount")
+    private BigDecimal vipAmount;
 
     /**
      * 优惠券抵扣金额

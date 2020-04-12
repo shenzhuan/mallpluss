@@ -399,7 +399,7 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "获取广告")
     @PostMapping("/advert.getcarousellists")
     public Object advList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList();
+        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(0,0);
         return new CommonResult().success(bannerList);
     }
 
@@ -531,7 +531,7 @@ public class BHomeController {
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
             @RequestParam(value = "type", required = false, defaultValue = "1") Integer type) {
-        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type);
+        List<SmsHomeAdvertise> banner = advertiseService.getHomeAdvertiseList(type,0);
         List<PmsProduct> list = new ArrayList<>();
         if (type == 1) {
             list = pmsProductService.getHotProductList(1, 100);

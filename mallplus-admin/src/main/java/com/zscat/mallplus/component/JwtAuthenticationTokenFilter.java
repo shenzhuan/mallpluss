@@ -1,7 +1,6 @@
 package com.zscat.mallplus.component;
 
 
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -48,8 +47,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -80,22 +78,20 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         String fullUrl = ((HttpServletRequest) request).getRequestURL().toString();
         String storeId = request.getParameter("storeid");
-        if (ValidatorUtils.notEmpty(storeId)) {
-            apiContext.setCurrentProviderId(Long.valueOf(storeId));
-        } else {
-            storeId = request.getHeader("storeid");
-            if (ValidatorUtils.notEmpty(storeId)) {
-                apiContext.setCurrentProviderId(Long.valueOf(storeId));
-            }
-        }
+
         String username = null;
         String authHeader = request.getHeader(this.tokenHeader);
+        if (ValidatorUtils.empty(authHeader)) {
+            authHeader = request.getParameter(this.tokenHeader);
+        }
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
             if (fullUrl.contains("logout") || fullUrl.contains("login")) {
-
+                if (fullUrl.contains("logout")) {
+                    SecurityContextHolder.getContext().setAuthentication(null);
+                }
             } else {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -129,7 +125,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         sysLog.setTimeMin((endTime - startTime));
         if (!"OPTIONS".equals(requestType) && !interfaceName.contains("webjars")
                 && !interfaceName.contains("api-docs")) {
-            fopSystemOperationLogService.save(sysLog);
+            //          fopSystemOperationLogService.save(sysLog);
         }
     }
 

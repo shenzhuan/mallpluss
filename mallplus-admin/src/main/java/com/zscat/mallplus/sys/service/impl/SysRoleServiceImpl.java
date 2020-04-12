@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -53,6 +51,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     public List<SysRolePermission> getRolePermission(Long roleId) {
         return rolePermissionMapper.selectList(new QueryWrapper<SysRolePermission>().eq("role_id", roleId));
+    }
+
+    @Override
+    public Set<String> selectRolePermissionByUserId(Long userId) {
+        List<SysRole> perms = roleMapper.selectRolePermissionByUserId(userId);
+        Set<String> permsSet = new HashSet<>();
+        for (SysRole perm : perms) {
+            if (perm != null) {
+                //  permsSet.addAll(Arrays.asList(perm.getRoleKey().trim().split(",")));
+            }
+        }
+        return permsSet;
     }
 
     @Transactional

@@ -3,18 +3,20 @@ package com.zscat.mallplus.sys.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.bill.entity.BakCategory;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.sys.service.impl.RedisUtil;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
@@ -22,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -43,7 +44,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Api(tags = "SysStoreController", description = "管理")
-@RequestMapping("/sys/SysStore")
+@RequestMapping("/sys/sysStore")
 public class SysStoreController {
     @Resource
     private ISysStoreService ISysStoreService;
@@ -53,8 +54,7 @@ public class SysStoreController {
     private RedisUtil redisUtil;
     @Resource
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
-    @Autowired
-    private ApiContext apiContext;
+
     @Resource
     private BakCategoryMapper bakCategoryMapper;
 
@@ -79,7 +79,13 @@ public class SysStoreController {
                                     @RequestParam(value = "pageSize", defaultValue = "30") Integer pageSize
     ) {
         try {
+            SysUser user = UserUtils.getCurrentMember();
+            if (user.getSupplyId() != null && user.getSupplyId() == 1) {
+                return new CommonResult().success(ISysStoreService.page(new Page<SysStore>(pageNum, pageSize), new QueryWrapper<>(entity)));
+            }
+
             return new CommonResult().success(ISysStoreService.page(new Page<SysStore>(pageNum, pageSize), new QueryWrapper<>(entity)));
+
         } catch (Exception e) {
             log.error("根据条件查询所有列表：%s", e.getMessage(), e);
         }
@@ -119,7 +125,7 @@ public class SysStoreController {
     @SysLog(MODULE = "sys", REMARK = "删除")
     @ApiOperation("删除")
     @GetMapping(value = "/delete/{id}")
-    public Object deleteSysStore(@ApiParam("id") @PathVariable Long id) {
+    public Object deleteSysStore(@ApiParam("id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("id");
@@ -137,7 +143,7 @@ public class SysStoreController {
     @SysLog(MODULE = "sys", REMARK = "给分配")
     @ApiOperation("查询明细")
     @GetMapping(value = "/{id}")
-    public Object getSysStoreById(@ApiParam("id") @PathVariable Long id) {
+    public Object getSysStoreById(@ApiParam("id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("id");
@@ -148,8 +154,9 @@ public class SysStoreController {
             log.error("查询明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
         }
-
     }
+
+
 
     @ApiOperation(value = "批量删除")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.GET)
@@ -185,19 +192,21 @@ public class SysStoreController {
     public Object storeDetail() {
         SysStore store = ISysStoreService.getById(1);
         List<PmsProductAttributeCategory> list = productAttributeCategoryMapper.selectList(new QueryWrapper<PmsProductAttributeCategory>().eq("store_id", store.getId()));
+        List<PmsProductAttributeCategory> newlist = new ArrayList<>();
         for (PmsProductAttributeCategory gt : list) {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
-            productQueryParam.setPublishStatus(1);
-            productQueryParam.setVerifyStatus(1);
+            productQueryParam.setPublishStatus(StatusEnum.YesNoType.YES.code());
+            productQueryParam.setVerifyStatus(StatusEnum.YesNoType.YES.code());
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
                 gt.setGoodsList(goodsList.getRecords());
+                newlist.add(gt);
             } else {
                 gt.setGoodsList(new ArrayList<>());
             }
         }
-        store.setList(list);
+        store.setList(newlist);
         store.setGoodsCount(pmsProductService.count(new QueryWrapper<PmsProduct>().eq("store_id", store.getId())));
         //记录浏览量到redis,然后定时更新到数据库
         String key = Rediskey.STORE_VIEWCOUNT_CODE + store.getId();
@@ -219,5 +228,33 @@ public class SysStoreController {
         store.setHit(viewCount);
         map.put("store", store);
         return new CommonResult().success(map);
+    }
+
+    @ApiOperation(value = "批量更新显示状态")
+    @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
+    public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
+                                   @RequestParam("showStatus") Integer showStatus) {
+        int count = ISysStoreService.updateShowStatus(ids, showStatus);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
+    }
+
+    @ApiOperation(value = "批量更新显示状态")
+    @RequestMapping(value = "/update/audit", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
+    public Object audit(@RequestParam("ids") List<Long> ids,
+                        @RequestParam("showStatus") Integer showStatus) {
+        int count = ISysStoreService.audit(ids, showStatus);
+        if (count > 0) {
+            return new CommonResult().success(count);
+        } else {
+            return new CommonResult().failed();
+        }
     }
 }

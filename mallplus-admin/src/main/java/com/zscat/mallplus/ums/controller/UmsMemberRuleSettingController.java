@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.ums.entity.UmsMemberRuleSetting;
 import com.zscat.mallplus.ums.service.IUmsMemberRuleSettingService;
+import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -71,7 +72,8 @@ public class UmsMemberRuleSettingController {
     @PreAuthorize("hasAuthority('ums:UmsMemberRuleSetting:update')")
     public Object updateUmsMemberRuleSetting(@RequestBody UmsMemberRuleSetting entity) {
         try {
-            if (IUmsMemberRuleSettingService.updateById(entity)) {
+            entity.setId(1L);
+            if (IUmsMemberRuleSettingService.update(entity, new QueryWrapper<UmsMemberRuleSetting>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -110,6 +112,11 @@ public class UmsMemberRuleSettingController {
                 return new CommonResult().paramFailed("会员积分成长规则表id");
             }
             UmsMemberRuleSetting coupon = IUmsMemberRuleSettingService.getById(id);
+            if (coupon == null) {
+                coupon.setId(1L);
+
+                IUmsMemberRuleSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询会员积分成长规则表明细：%s", e.getMessage(), e);

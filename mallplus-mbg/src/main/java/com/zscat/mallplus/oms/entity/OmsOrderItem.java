@@ -118,7 +118,7 @@ public class OmsOrderItem extends BaseEntity implements Serializable {
     private BigDecimal integrationAmount;
 
     /**
-     * 该商品经过优惠后的分解金额
+     * vip折扣金额
      */
     @TableField("real_amount")
     private BigDecimal realAmount;
@@ -149,4 +149,9 @@ public class OmsOrderItem extends BaseEntity implements Serializable {
     private Integer type;
     @TableField("store_name")
     private String storeName;
+
+    @TableField("is_fenxiao")
+    private Integer isFenxiao;
+    @TableField("invite_memberId")
+    private Long inviteMemberId = 0l; //分佣商品 链接带过来的会员编号
 }

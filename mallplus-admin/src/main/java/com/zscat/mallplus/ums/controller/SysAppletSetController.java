@@ -70,6 +70,7 @@ public class SysAppletSetController {
     @PostMapping(value = "/update/{id}")
     public Object updateSysAppletSet(@RequestBody SysAppletSet entity) {
         try {
+
             if (ISysAppletSetService.update(entity, new QueryWrapper<>())) {
                 return new CommonResult().success();
             }
@@ -107,6 +108,10 @@ public class SysAppletSetController {
                 return new CommonResult().paramFailed("id");
             }
             SysAppletSet coupon = ISysAppletSetService.getOne(new QueryWrapper<>());
+            if (coupon == null) {
+                coupon = new SysAppletSet();
+                ISysAppletSetService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询明细：%s", e.getMessage(), e);

@@ -1,12 +1,10 @@
 package com.zscat.mallplus.single;
-import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.bill.entity.BillAftersales;
-import com.zscat.mallplus.bill.entity.BillAftersalesItems;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
@@ -14,6 +12,7 @@ import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
 import com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService;
@@ -223,7 +222,7 @@ public class SingeOmsController extends ApiBaseAction {
     @GetMapping("/submitPreview")
     public Object submitPreview(OrderParam orderParam) {
         try {
-            ConfirmOrderResult result = orderService.submitPreview(orderParam);
+            Object result = orderService.submitPreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
@@ -237,7 +236,7 @@ public class SingeOmsController extends ApiBaseAction {
     @GetMapping("/submitStorePreview")
     public Object submitStorePreview(OrderParam orderParam) {
         try {
-            ConfirmListOrderResult result = orderService.submitStorePreview(orderParam);
+            Object result = orderService.submitStorePreview(orderParam);
             return new CommonResult().success(result);
         } catch (ApiMallPlusException e) {
             return new CommonResult().failed(e.getMessage());
@@ -526,6 +525,7 @@ public class SingeOmsController extends ApiBaseAction {
         OmsOrderReturnApply omsOrder = IOmsOrderReturnApplyService.getById(id);
         List<OmsOrderItem> itemList = orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", omsOrder.getId()).eq("type", AllEnum.OrderItemType.GOODS.code()));
         omsOrder.setOrderItemList(itemList);
+        omsOrder.setOrder(orderService.getById(omsOrder.getOrderId()));
         return new CommonResult().success(omsOrder);
     }
 
@@ -538,7 +538,6 @@ public class SingeOmsController extends ApiBaseAction {
 
         return null;
     }
-
 
 
     @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
@@ -563,16 +562,20 @@ public class SingeOmsController extends ApiBaseAction {
     @PostMapping(value = "/saveOmsOrderReturnApply")
     public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
                                           @RequestParam(value = "type") Integer type,
-                                            @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "images", required = false) String[] images,
                                           @RequestParam(value = "returnAmount") BigDecimal returnAmount,
-                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+                                          @RequestParam(value = "desc", required = false) String desc) throws Exception {
         ApplyRefundVo vo = new ApplyRefundVo();
-       try {
-           vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
-           return orderService.applyRe(vo);
-       }catch (Exception e){
-           return new CommonResult().failed();
-       }
+        try {
+            vo.setDesc(desc);
+            vo.setItems(items);
+            vo.setReturnAmount(returnAmount);
+            vo.setType(type);
+            vo.setImages(images);
+            return orderService.applyRe(vo);
+        } catch (Exception e) {
+            return new CommonResult().failed();
+        }
 
     }
 }

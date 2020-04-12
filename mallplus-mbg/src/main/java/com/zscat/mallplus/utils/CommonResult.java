@@ -58,6 +58,10 @@ public class CommonResult {
      */
     public CommonResult fail(int code) {
         this.code = code;
+        if (code == 100) {
+            this.msg = "请先登录";
+            this.data = "请先登录";
+        }
         return this;
     }
 

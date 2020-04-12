@@ -7,6 +7,7 @@ import com.zscat.mallplus.cms.entity.CmsFavorite;
 import com.zscat.mallplus.cms.service.ICmsFavoriteService;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
+import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
 import io.swagger.annotations.Api;
@@ -36,6 +37,11 @@ public class MemberCollectionController {
     @ApiOperation("添加和取消收藏 type 1 商品 2 文章")
     @PostMapping("favoriteSave")
     public Object favoriteSave(PmsFavorite productCollection) {
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
+            return new CommonResult().fail(100);
+        }
+        productCollection.setMemberId(member.getId());
         int count = memberCollectionService.addProduct(productCollection);
         if (count > 0) {
             return new CommonResult().success(count);

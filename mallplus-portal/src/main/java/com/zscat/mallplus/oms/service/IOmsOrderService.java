@@ -2,11 +2,17 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.vo.*;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.oms.vo.PayParam;
+import com.zscat.mallplus.oms.vo.TbThanks;
+import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.ApplyRefundVo;
 import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -61,7 +67,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmOrderResult submitPreview(OrderParam orderParam);
+    Object submitPreview(OrderParam orderParam);
 
     /**
      * 多店铺预览订单
@@ -69,7 +75,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param orderParam
      * @return
      */
-    ConfirmListOrderResult submitStorePreview(OrderParam orderParam);
+    Object submitStorePreview(OrderParam orderParam);
 
     /**
      * pc 支付
@@ -149,9 +155,9 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param order
      * @return
      */
-    OmsOrder blancePay(OmsOrder order);
+    Object blancePay(OmsOrder order);
 
-    OmsOrder blancePay(PayParam payParam);
+    Object blancePay(PayParam payParam);
 
     /**
      * 团购商品订单预览
@@ -182,12 +188,17 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 订单退货申请
+     *
      * @param items
      * @return
      */
     Object applyRe(ApplyRefundVo items);
 
-
+    /**
+     * 放弃拼团
+     *
+     * @return
+     */
     Object quitGroup(Long id);
 
     /**
@@ -197,7 +208,32 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     CommonResult autoDeliveryOrder();
 
+    /**
+     * 订单到期自动评论
+     *
+     * @return
+     */
     CommonResult autoCommentOrder();
 
+    /**
+     * 订单到期自动完成
+     *
+     * @return
+     */
     CommonResult autoSucessOrder();
+
+    /**
+     * 会员等级升级
+     *
+     * @return
+     */
+    Object applyMember(Long memberLevelId);
+
+    /**
+     * 分拥计算
+     *
+     * @param list
+     * @param currentMember
+     */
+    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember);
 }

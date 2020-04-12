@@ -39,7 +39,7 @@ public class BuildWuyeCompany implements Serializable {
     /**
      * 1申请 2 审核失败 3 审核成功
      */
-    private String status;
+    private Integer status;
 
     /**
      * 照片

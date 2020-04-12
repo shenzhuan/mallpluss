@@ -1,7 +1,6 @@
 package com.zscat.mallplus.component;
 
 
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -49,8 +48,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    @Autowired
-    private ApiContext apiContext;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -83,20 +81,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         int startIntercept = fullUrl.replace("//", "a").indexOf("/") + 2;
         String interfaceName = fullUrl.substring(startIntercept, fullUrl.length());
-        String storeId = request.getParameter("storeid");
-        if (ValidatorUtils.notEmpty(storeId)) {
-            apiContext.setCurrentProviderId(Long.valueOf(storeId));
-        } else {
-            storeId = request.getHeader("storeid");
-            if (ValidatorUtils.notEmpty(storeId)) {
-                apiContext.setCurrentProviderId(Long.valueOf(storeId));
-            }
-        }
+
         logger.info(formMapKey(11, fullUrl, requestType,
                 IpAddressUtil.getIpAddr((HttpServletRequest) request), sbParams.toString(), "")
                 + ",\"cost\":\"" + 0 + "ms\"");
 
-        String tokenPre = this.tokenHeader + storeId;
+        String tokenPre = this.tokenHeader;
         String authHeader = request.getParameter(tokenPre);
         if (ValidatorUtils.empty(authHeader)) {
             authHeader = request.getHeader(tokenPre);

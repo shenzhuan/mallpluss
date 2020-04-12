@@ -8,8 +8,6 @@ import com.zscat.mallplus.annotation.SysLog;
 
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -37,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,7 +97,7 @@ public class SingelHomeController {
             detail.setMember(newMember);
             return new CommonResult().success(detail);
         }
-        return new CommonResult().failed();
+        return new CommonResult().success();
     }
 
     @IgnoreAuth
@@ -538,7 +536,7 @@ public class SingelHomeController {
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public Object logout() {
-
+        SecurityContextHolder.getContext().setAuthentication(null);
         return new CommonResult().success(null);
     }
 }

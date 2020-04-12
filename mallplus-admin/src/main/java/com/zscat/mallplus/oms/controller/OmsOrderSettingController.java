@@ -69,7 +69,8 @@ public class OmsOrderSettingController {
     @PostMapping(value = "/update/{id}")
     public Object updateOmsOrderSetting(@RequestBody OmsOrderSetting entity) {
         try {
-            if (IOmsOrderSettingService.updateById(entity)) {
+            entity.setId(1L);
+            if (IOmsOrderSettingService.update(entity, new QueryWrapper<OmsOrderSetting>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -104,6 +105,11 @@ public class OmsOrderSettingController {
         try {
 
             OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
+            if (coupon == null) {
+                coupon = new OmsOrderSetting();
+                coupon.setId(1L);
+                IOmsOrderSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询订单设置表明细：%s", e.getMessage(), e);

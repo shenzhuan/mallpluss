@@ -137,7 +137,7 @@ public class SysLogAspect {
             sysLog.setIp(IpAddressUtil.getIpAddr(request));
             //用户名
             SysUser sysUserEntity = UserUtils.getCurrentMember();
-            if (null != sysUserEntity) {
+            if (null != sysUserEntity && sysUserEntity.getId() != null) {
                 sysLog.setUserId(sysUserEntity.getId());
                 sysLog.setUserName(sysUserEntity.getUsername());
             }
@@ -147,7 +147,7 @@ public class SysLogAspect {
             //保存系统日志
             //    fopSystemOperationLogService.save(sysLog);
         } catch (Exception ex) {
-            logger.error("保存系统日志失败");
+            logger.error("保存系统日志失败" + ex.getMessage());
         }
 
     }

@@ -71,7 +71,7 @@ public class UmsIntegrationConsumeSettingController {
     //  @PreAuthorize("hasAuthority('ums:UmsIntegrationConsumeSetting:update')")
     public Object updateUmsIntegrationConsumeSetting(@RequestBody UmsIntegrationConsumeSetting entity) {
         try {
-            if (IUmsIntegrationConsumeSettingService.updateById(entity)) {
+            if (IUmsIntegrationConsumeSettingService.update(entity, new QueryWrapper<UmsIntegrationConsumeSetting>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -110,6 +110,10 @@ public class UmsIntegrationConsumeSettingController {
                 return new CommonResult().paramFailed("积分消费设置id");
             }
             UmsIntegrationConsumeSetting coupon = IUmsIntegrationConsumeSettingService.getOne(new QueryWrapper<>());
+            if (coupon == null) {
+                coupon = new UmsIntegrationConsumeSetting();
+                IUmsIntegrationConsumeSettingService.save(coupon);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询积分消费设置明细：%s", e.getMessage(), e);

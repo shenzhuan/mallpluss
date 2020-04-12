@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @TableName("fenxiao_records")
-public class FenxiaoRecords implements Serializable {
+public class FenxiaoRecords extends BaseEntity implements Serializable {
 
 
     @TableId(value = "id", type = IdType.AUTO)
@@ -46,6 +47,7 @@ public class FenxiaoRecords implements Serializable {
     private String level;
 
 
+    // 1 支付成功 2 结算成功
     @TableField("status")
     private String status;
 

@@ -25,7 +25,7 @@ ${prefix}
 */
 @Data
 @TableName("${tableName}")
-public class ${className} implements Serializable {
+public class ${className} extends BaseEntity implements Serializable {
 <#if columns??>
     <#list columns as column>
 
@@ -35,7 +35,7 @@ public class ${className} implements Serializable {
         </#if>
         <#if column.changeColumnName != 'id'>
             /**
-              ${column.columnComment}
+            ${column.columnComment}
             **/
             @TableField( "${column.columnName}")
         </#if>

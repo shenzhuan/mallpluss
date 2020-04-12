@@ -9,6 +9,7 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.cms.service.ISysAreaService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
@@ -27,6 +28,7 @@ import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsFlashPromotionProductRelationService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
 import com.zscat.mallplus.sms.service.ISmsHomeAdvertiseService;
+import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
@@ -82,6 +84,8 @@ public class SingePmsController extends ApiBaseAction {
     private SmsGroupRecordMapper groupRecordMapper;
 
     @Resource
+    private ISysAreaService areaService;
+    @Resource
     private IPmsProductAttributeCategoryService productAttributeCategoryService;
     @Resource
     private IPmsProductCategoryService productCategoryService;
@@ -116,6 +120,7 @@ public class SingePmsController extends ApiBaseAction {
     @Autowired
     private IUmsMemberService memberService;
 
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/paimai/detail")
@@ -139,6 +144,25 @@ public class SingePmsController extends ApiBaseAction {
         }
     }
 
+    private PmsProduct buildFenPrice(PmsProduct pmsProduct) {
+        pmsProduct.setMemberRate(10);
+        if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+            FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectOne(new QueryWrapper<>());
+            if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            }
+        }
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member != null && member.getId() != null && pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+            UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+            if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+            }
+        }
+        return pmsProduct;
+    }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
     @IgnoreAuth
     @GetMapping(value = "/goods/detail")
@@ -146,7 +170,7 @@ public class SingePmsController extends ApiBaseAction {
     public Object queryProductDetail(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get( String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
             if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
                 log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
@@ -155,6 +179,7 @@ public class SingePmsController extends ApiBaseAction {
             log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
         }
+        goods.setGoods(buildFenPrice(goods.getGoods()));
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();
         if (umsMember != null && umsMember.getId() != null) {
@@ -282,6 +307,8 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation(value = "查询商品列表")
     @GetMapping(value = "/goods/list")
     public Object goodsList(
+            @RequestParam(value = "isVip", required = false) Integer isVip,
+            @RequestParam(value = "isFenxiao", required = false) Integer isFenxiao,
             @RequestParam(value = "storeId", required = false) Integer storeId,
             @RequestParam(value = "areaId", required = false) Long areaId,
             @RequestParam(value = "schoolId", required = false) Long schoolId,
@@ -300,6 +327,12 @@ public class SingePmsController extends ApiBaseAction {
         product.setMemberId(null);
         product.setSort(sort);
 
+        if (ValidatorUtils.notEmpty(isVip) && isVip > 0) {
+            product.setIsVip(isVip);
+        }
+        if (ValidatorUtils.notEmpty(isFenxiao) && isFenxiao > 0) {
+            product.setIsFenxiao(isFenxiao);
+        }
         if (ValidatorUtils.notEmpty(productCategoryId) && productCategoryId > 0) {
             product.setProductCategoryId(productCategoryId);
         }
@@ -312,9 +345,7 @@ public class SingePmsController extends ApiBaseAction {
         if (ValidatorUtils.notEmpty(productAttributeCategoryId) && productAttributeCategoryId > 0) {
             product.setProductAttributeCategoryId(productAttributeCategoryId);
         }
-        if (ValidatorUtils.notEmpty(storeId) && storeId > 0) {
-            product.setStoreId(storeId);
-        }
+
         if (ValidatorUtils.notEmpty(areaId) && areaId > 0) {
             product.setAreaId(areaId);
         }
@@ -334,35 +365,53 @@ public class SingePmsController extends ApiBaseAction {
         product.setSort(null);
         IPage<PmsProduct> list;
         if (ValidatorUtils.notEmpty(keyword)) {
-            if (orderBy==1) {
+            if (orderBy == 1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list, product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).like("name", keyword).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list, product);
             }
         } else {
-            if (orderBy==1) {
+            if (orderBy == 1) {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByDesc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list, product);
             } else {
                 list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).select(ConstansValue.sampleGoodsList).orderByAsc(orderColum));
-                buildFenPrice(list);
+                buildFenPrice(list, product);
             }
         }
         return new CommonResult().success(list);
     }
 
-    private void buildFenPrice(IPage<PmsProduct> list) {
+    private void buildFenPrice(IPage<PmsProduct> list, PmsProduct product) {
+        product.setMemberRate(10);
         if (list != null && list.getRecords() != null && list.getRecords().size() > 0) {
-            for (PmsProduct pmsProduct : list.getRecords()) {
-                if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
-                    FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectById(pmsProduct.getStoreId());
-                    if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
-                        pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+            if (product.getIsFenxiao() != null && product.getIsFenxiao() == 1) {
+                for (PmsProduct pmsProduct : list.getRecords()) {
+                    if (pmsProduct.getIsFenxiao() != null && pmsProduct.getIsFenxiao() == 1) {
+                        FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectOne(new QueryWrapper<>());
+                        if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && fenxiaoConfig.getOnePercent() > 0) {
+                            pmsProduct.setFenxiaoPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getOnePercent())).divide(BigDecimal.valueOf(100)));
+                        }
+                    }
+
+                }
+            }
+            if (product.getIsVip() != null && product.getIsVip() == 1) {
+                UmsMember member = memberService.getNewCurrentMember();
+                for (PmsProduct pmsProduct : list.getRecords()) {
+
+                    if (member != null && member.getId() != null && pmsProduct.getIsVip() != null && pmsProduct.getIsVip() == 1) {
+                        UmsMemberLevel fenxiaoConfig = memberLevelService.getById(member.getMemberLevelId());
+                        if (fenxiaoConfig != null && fenxiaoConfig.getPriviledgeMemberPrice() > 0) {
+                            pmsProduct.setMemberRate(fenxiaoConfig.getPriviledgeMemberPrice());
+                            pmsProduct.setVipPrice(pmsProduct.getPrice().multiply(new BigDecimal(fenxiaoConfig.getPriviledgeMemberPrice())).divide(BigDecimal.valueOf(10)));
+                        }
                     }
                 }
             }
+
         }
     }
 
@@ -375,6 +424,7 @@ public class SingePmsController extends ApiBaseAction {
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(productCategoryService.page(new Page<PmsProductCategory>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
     }
+
     @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
     @IgnoreAuth
     @ApiOperation(value = "查询商品分类列表")
@@ -541,6 +591,7 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(result);
     }
 
+    @Deprecated
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询团购商品列表")
@@ -571,8 +622,8 @@ public class SingePmsController extends ApiBaseAction {
 
         GoodsDetailResult goods = null;
         try {
-            goods = JsonUtils.jsonToPojo(redisService.get( String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
-            if (ValidatorUtils.empty(goods)) {
+            goods = JsonUtils.jsonToPojo(redisService.get(String.format(Rediskey.GOODSDETAIL, id + "")), GoodsDetailResult.class);
+            if (ValidatorUtils.empty(goods) || ValidatorUtils.empty(goods.getGoods())) {
                 log.info("redis缓存失效：" + id);
                 goods = pmsProductService.getGoodsRedisById(id);
             }
@@ -761,6 +812,43 @@ public class SingePmsController extends ApiBaseAction {
 
     @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
     @IgnoreAuth
+    @ApiOperation(value = "查询商品类型")
+    @GetMapping(value = "/typeGoodsList1")
+    public Object typeGoodsList1(PmsProductCategory productCategory) throws Exception {
+        List<ProductTypeVo> relList = new ArrayList<>();
+
+        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<PmsProductCategory>());
+        for (PmsProductCategory v : categories) {
+            if (v.getLevel() == 0) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
+                relList.add(vo);
+            } else if (v.getLevel() == 1) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setPid(v.getParentId());
+                vo.setLevel(v.getLevel());
+                relList.add(vo);
+            } else if (v.getLevel() == 2) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
+                vo.setPid(v.getParentId());
+                vo.setPrice(BigDecimal.ONE);
+                vo.setPic(v.getIcon());
+                relList.add(vo);
+            }
+        }
+
+        return new CommonResult().success(relList);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
+    @IgnoreAuth
     @ApiOperation(value = "查询商品类型下的商品列表")
     @GetMapping(value = "/typeGoodsList")
     public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
@@ -774,7 +862,7 @@ public class SingePmsController extends ApiBaseAction {
 
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
-        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 100), new QueryWrapper<>(productQueryParam)).getRecords();
+        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("product_category_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
 
         for (PmsProduct l : list) {
             ProductTypeVo vo = new ProductTypeVo();
@@ -784,25 +872,80 @@ public class SingePmsController extends ApiBaseAction {
             vo.setName(l.getName());
             vo.setPrice(l.getPrice());
             vo.setPid(l.getProductCategoryId());
+            vo.setLevel(2);
             relList.add(vo);
         }
-        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(0L);
+        List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<PmsProductCategory>().in("level", ids));
         for (PmsProductCategory v : categories) {
-            if (v.getParentId() == 0) {
+            if (v.getLevel() == 0) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setLevel(v.getLevel());
+                vo.setId(v.getId());
+                relList.add(vo);
+            } else if (v.getLevel() == 1) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
+                vo.setLevel(v.getLevel());
+                vo.setPid(v.getParentId());
+                relList.add(vo);
+            }
+        }
+        redisService.set(Rediskey.specialcategoryAndGoodsList, JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.specialcategoryAndGoodsList, 20);
+        return new CommonResult().success(relList);
+    }
+
+
+    @SysLog(MODULE = "pms", REMARK = "查询商品类型下的商品列表")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商品类型下的商品列表")
+    @GetMapping(value = "/areaGoodsList")
+    public Object areaGoodsList(PmsProductCategory productCategory) throws Exception {
+        List<ProductTypeVo> relList = new ArrayList<>();
+
+        PmsProduct productQueryParam = new PmsProduct();
+
+        productQueryParam.setPublishStatus(1);
+        productQueryParam.setVerifyStatus(1);
+        List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("area_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
+
+        for (PmsProduct l : list) {
+            ProductTypeVo vo = new ProductTypeVo();
+            vo.setGoodsId(l.getId());
+            vo.setId(l.getId());
+            vo.setPic(l.getPic());
+            vo.setName(l.getName());
+            vo.setLevel(2);
+            vo.setPrice(l.getPrice());
+            vo.setPid(l.getAreaId());
+            relList.add(vo);
+        }
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(0L);
+        List<SysArea> categories = areaService.list(new QueryWrapper<SysArea>().in("deep", ids));
+        for (SysArea v : categories) {
+            if (v.getDeep() == 0) {
+                ProductTypeVo vo = new ProductTypeVo();
+                vo.setName(v.getName());
+                vo.setId(v.getId());
+                vo.setLevel(0);
                 relList.add(vo);
             } else {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
-                vo.setPid(v.getParentId());
+                vo.setPid(v.getPid());
+                vo.setLevel(1);
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList , JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList , 2);
+
         return new CommonResult().success(relList);
     }
 
@@ -832,14 +975,14 @@ public class SingePmsController extends ApiBaseAction {
         for (int i = 0; i < relList.size(); i++) {
             list = new ArrayList<>();
             for (PmsProductCategory v : categories) {
-                if ( ValidatorUtils.notEmpty(v.getParentId()) &&  v.getParentId().longValue() == relList.get(i).getId().longValue()) {
+                if (ValidatorUtils.notEmpty(v.getParentId()) && v.getParentId().longValue() == relList.get(i).getId().longValue()) {
                     list.add(v);
                 }
             }
             relList.get(i).setChildList(list);
         }
-        redisService.set(Rediskey.goodsCategorys , JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.goodsCategorys , 2);
+        redisService.set(Rediskey.goodsCategorys, JsonUtils.objectToJson(relList));
+        redisService.expire(Rediskey.goodsCategorys, 2);
         return new CommonResult().success(relList);
     }
 
@@ -852,7 +995,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
         List<PmsProductCategory> categories = categoryMapper.selectList(new QueryWrapper<>());
         for (PmsProductCategory v : categories) {
-            if ( ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
+            if (ValidatorUtils.empty(v.getParentId()) || v.getParentId() == 0) {
                 ProductTypeVo vo = new ProductTypeVo();
                 vo.setName(v.getName());
                 vo.setId(v.getId());
@@ -874,18 +1017,22 @@ public class SingePmsController extends ApiBaseAction {
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/addView")
     public Object addView(@RequestParam Long goodsId) {
+        UmsMember member = memberService.getNewCurrentMember();
+        if (member == null || member.getId() == null) {
 
-        String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getUsername());
+        } else {
+            String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
 
-        //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
+            //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
 
-        redisUtil.lRemove(key, 1, goodsId.toString());
-        //将value push 到该key下的list中
-        redisUtil.lLeftPush(key, goodsId.toString());
-        //使用ltrim将60个数据之后的数据剪切掉
-        redisUtil.lTrim(key, 0, 59);
-        //设置缓存时间为一个月
-        redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
+            redisUtil.lRemove(key, 1, goodsId.toString());
+            //将value push 到该key下的list中
+            redisUtil.lLeftPush(key, goodsId.toString());
+            //使用ltrim将60个数据之后的数据剪切掉
+            redisUtil.lTrim(key, 0, 59);
+            //设置缓存时间为一个月
+            redisUtil.expire(key, 60 * 60 * 24 * 30, TimeUnit.SECONDS);
+        }
         return new CommonResult().success();
     }
 
@@ -925,7 +1072,7 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(product.getPic());
     }
 
-    @ApiOperation("生成商品海报")
+    @ApiOperation("商品数量")
     @GetMapping(value = "/goodsCount")
     public Object goodsCount() {
         PmsProduct productQueryParam = new PmsProduct();

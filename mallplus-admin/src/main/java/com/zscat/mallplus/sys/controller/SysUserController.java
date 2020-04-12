@@ -18,6 +18,7 @@ import com.zscat.mallplus.sys.service.ISysRoleService;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.util.JwtTokenUtil;
 import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -33,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -169,9 +167,10 @@ public class SysUserController extends ApiController {
         if (refreshToken == null) {
             return new CommonResult().failed();
         }
-        Map<String, String> tokenMap = new HashMap<>();
+        Map<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", tokenHead);
+        tokenMap.put("userInfo", UserUtils.getCurrentMember());
         return new CommonResult().success(tokenMap);
     }
 
@@ -179,7 +178,7 @@ public class SysUserController extends ApiController {
     @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login1", method = RequestMethod.POST)
     @ResponseBody
-    public Object login1( @RequestParam(value = "username", defaultValue = "1") String username,
+    public Object login1(@RequestParam(value = "username", defaultValue = "1") String username,
                          @RequestParam(value = "password", defaultValue = "1") String password) {
         try {
             String token = sysUserService.login(username, password);
@@ -208,29 +207,35 @@ public class SysUserController extends ApiController {
             Map<String, Object> tokenMap = new HashMap<>();
             tokenMap.put("token", token);
             tokenMap.put("tokenHead", tokenHead);
-            // tokenMap.put("userId", UserUtils.getCurrentMember().getId());
+            tokenMap.put("userInfo", UserUtils.getCurrentMember());
             return new CommonResult().success(tokenMap);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @SysLog(MODULE = "sys", REMARK = "获取当前登录用户信息")
     @ApiOperation(value = "获取当前登录用户信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
     public Object getAdminInfo(Principal principal) {
+
         String username = principal.getName();
         SysUser queryU = new SysUser();
         queryU.setUsername(username);
         SysUser umsAdmin = sysUserService.getOne(new QueryWrapper<>(queryU));
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
-        data.put("roles", new String[]{"TEST"});
-        if (umsAdmin != null) {
+
+        if (umsAdmin != null && umsAdmin.getId() != null) {
+            Set<String> roles = permissionService.getRolePermission(umsAdmin);
+            Set<String> permissions = permissionService.getMenuPermission(umsAdmin);
+            data.put("permissions", permissions);
+            data.put("roles", roles);
             data.put("sysUser", umsAdmin);
             data.put("icon", umsAdmin.getIcon());
             data.put("userId", umsAdmin.getId());
-            data.put("storeId", umsAdmin.getStoreId());
+
 
         }
 
@@ -320,13 +325,13 @@ public class SysUserController extends ApiController {
     }
 
     @ApiOperation("修改展示状态")
-    @RequestMapping(value = "/update/updateShowStatus")
+    @RequestMapping(value = "/update/updateShowStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "sys", REMARK = "修改展示状态")
-    public Object updateShowStatus(@RequestParam("ids") Long ids,
+    public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         SysUser role = new SysUser();
-        role.setId(ids);
+        role.setId(ids.get(0));
         role.setStatus(showStatus);
         sysUserService.updateById(role);
 
@@ -395,5 +400,11 @@ public class SysUserController extends ApiController {
         }
         return new CommonResult().success(newList);
     }
+
+    @PutMapping("/resetPwd")
+    public Object resetPwd(@RequestBody SysUser user) {
+        return sysUserService.resetPwd(user);
+    }
+
 }
 

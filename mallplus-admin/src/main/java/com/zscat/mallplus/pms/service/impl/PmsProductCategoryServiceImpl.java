@@ -125,7 +125,7 @@ public class PmsProductCategoryServiceImpl extends ServiceImpl<PmsProductCategor
      */
     private void setCategoryLevel(PmsProductCategory productCategory) {
         //没有父分类时为一级分类
-        if (productCategory.getParentId() == 0) {
+        if (productCategory.getParentId() == null || productCategory.getParentId() == 0) {
             productCategory.setLevel(0);
         } else {
             //有父分类时选择根据父分类level设置

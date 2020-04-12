@@ -2,7 +2,6 @@ package com.zscat.mallplus.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.cms.service.ICmsPrefrenceAreaProductRelationService;
 import com.zscat.mallplus.cms.service.ICmsSubjectProductRelationService;
 import com.zscat.mallplus.pms.entity.*;
@@ -41,8 +40,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements IPmsProductService {
-    @Resource
-    private ApiContext apiContext;
+
     @Resource
     private PmsProductMapper productMapper;
     @Resource
@@ -105,7 +103,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         }
 
         //product.setStoreId(user.getStoreId());
-        if (ValidatorUtils.empty(product.getAlbumPics()) ||ValidatorUtils.notEmpty(product.getPic())){
+        if (ValidatorUtils.empty(product.getAlbumPics())) {
             product.setAlbumPics(product.getPic());
         }
         productMapper.insert(product);
@@ -123,20 +121,20 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //添加商品参数,添加自定义商品规格
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
         //关联专题
-      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
+        //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
         //关联优选
-     //   relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+        //   relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
         //关联专题
 
-        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
-            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())) {
+            for (CmsSubjectProductRelation relation : productParam.getSubjectProductRelationList()) {
                 relation.setProductId(productId);
                 subjectProductRelationDao.save(relation);
             }
         }
         //关联优选
-        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
-            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())) {
+            for (CmsPrefrenceAreaProductRelation relation : productParam.getPrefrenceAreaProductRelationList()) {
                 relation.setProductId(productId);
                 prefrenceAreaProductRelationDao.save(relation);
             }
@@ -163,7 +161,7 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
                 sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
-            if (skuStock.getStock()!=null && skuStock.getStock()>0){
+            if (skuStock.getStock() != null && skuStock.getStock() > 0) {
                 stock = stock + skuStock.getStock();
 
             }
@@ -212,9 +210,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
 
         //关联专题
         subjectProductRelationMapper.delete(new QueryWrapper<>(new CmsSubjectProductRelation()).eq("product_id", id));
-      //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
-        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())){
-            for (CmsSubjectProductRelation relation:productParam.getSubjectProductRelationList()){
+        //  relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getSubjectProductRelationList())) {
+            for (CmsSubjectProductRelation relation : productParam.getSubjectProductRelationList()) {
                 relation.setProductId(id);
                 subjectProductRelationDao.save(relation);
             }
@@ -222,9 +220,9 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         //关联优选
 
         prefrenceAreaProductRelationMapper.delete(new QueryWrapper<>(new CmsPrefrenceAreaProductRelation()).eq("product_id", id));
-      //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
-        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())){
-            for (CmsPrefrenceAreaProductRelation relation:productParam.getPrefrenceAreaProductRelationList()){
+        //  relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), id);
+        if (!CollectionUtils.isEmpty(productParam.getPrefrenceAreaProductRelationList())) {
+            for (CmsPrefrenceAreaProductRelation relation : productParam.getPrefrenceAreaProductRelationList()) {
                 relation.setProductId(id);
                 prefrenceAreaProductRelationDao.save(relation);
             }
@@ -258,6 +256,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     public int updateisFenxiao(List<Long> ids, Integer newStatus) {
         PmsProduct record = new PmsProduct();
         record.setIsFenxiao(newStatus);
+        clerGoodsRedis(ids);
+        return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
+    }
+
+    @Override
+    public int updateisVip(List<Long> ids, Integer newStatus) {
+        PmsProduct record = new PmsProduct();
+        record.setIsVip(newStatus);
         clerGoodsRedis(ids);
         return productMapper.update(record, new QueryWrapper<PmsProduct>().in("id", ids));
     }

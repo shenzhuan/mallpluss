@@ -24,6 +24,10 @@ public class OrderParam {
     //支付方式
     private Integer payType = 1;
     private Integer offline;// 0 送货 1 自取
+    private String lading_mobile; //自取人电话
+    private String lading_name; //自取人姓名
+    private Integer shopId; //门店编号
+
     private String content;
     private String cartId;
     private String cartIds;
@@ -36,6 +40,7 @@ public class OrderParam {
     private Long groupActivityId;
     // 1 发起拼团 2 参与拼团
     private Integer groupType;
+    // 参与拼团 团购记录id
     private Long mgId = 0l;
     private Long skillId = 0l; // 秒杀ID
     private Long inviteMemberId = 0l; //分佣商品 链接带过来的会员编号

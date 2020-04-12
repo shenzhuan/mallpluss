@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.cms.entity.CmsSubject;
-import com.zscat.mallplus.cms.entity.CmsSubjectCategory;
 import com.zscat.mallplus.cms.service.ICmsSubjectCategoryService;
 import com.zscat.mallplus.cms.service.ICmsSubjectCommentService;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
@@ -140,7 +139,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Callable<List> recomBrandCallable = () -> this.getRecommendBrandList(0, 4);
         Callable<HomeFlashPromotion> homeFlashCallable = () -> getHomeFlashPromotion();
         Callable<List> cateProductCallable = () -> getPmsProductAttributeCategories();
-        Callable<List> advListCallable = this::getHomeAdvertiseList;
+        Callable<List> advListCallable = () -> this.getHomeAdvertiseList(0, 0);
 
         FutureTask<List> recomBrandTask = new FutureTask<>(recomBrandCallable);
         FutureTask<HomeFlashPromotion> homeFlashTask = new FutureTask<>(homeFlashCallable);
@@ -194,7 +193,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     public HomeContentResult singelmobileContent() {
         HomeContentResult result = new HomeContentResult();
         result.setNavList(getNav());
-        result.setAdvertiseList(getHomeAdvertiseList());
+        result.setAdvertiseList(getHomeAdvertiseList(0, 0));
         return result;
     }
 
@@ -206,7 +205,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         Callable<List> newGoodsListCallable = () -> this.getNewProductList(0, 4);
         Callable<List> newHotListCallable = () -> this.getHotProductList(0, 4);
         Callable<List> recomSubListCallable = () -> this.getRecommendSubjectList(0, 4);
-        Callable<List> advListCallable = this::getHomeAdvertiseList;
+        Callable<List> advListCallable = () -> this.getHomeAdvertiseList(0, 0);
 
         FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
         FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
@@ -265,7 +264,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             stopWatch.stop();
             stopWatch.start("2单条循环处理");
             //获取首页广告
-            result.setAdvertiseList(getHomeAdvertiseList());
+            result.setAdvertiseList(getHomeAdvertiseList(0, 0));
             stopWatch.stop();
             stopWatch.start("3单条循环处理");
             //获取新品推荐
@@ -307,39 +306,43 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         searchPa.setStyle("round");
         PagesItems searchItems = new PagesItems(1, "search", "mobile_home", 1, 1, searchPa);
 
+
         Params imgSlidePa = new Params();
         imgSlidePa.setDuration(2500);
-        imgSlidePa.setList(getHomeAdvertiseList());
+        imgSlidePa.setList(getHomeAdvertiseList(0, 0));
         PagesItems imgSlideItems = new PagesItems(2, "imgSlide", "mobile_home", 2, 2, imgSlidePa);
-
 
         Params navBarPa = new Params();
         navBarPa.setLimit(4);
-        navBarPa.setList(getNav());
+        // navBarPa.setList(getNav());
+        PmsProductAttributeCategory productCategory = new PmsProductAttributeCategory();
+        productCategory.setShowIndex(1);
+        navBarPa.setList(productAttributeCategoryService.page(new Page<PmsProductAttributeCategory>(0, 8), new QueryWrapper<>(productCategory)).getRecords());
         PagesItems navBarItems = new PagesItems(3, "navBar", "mobile_home", 3, 3, navBarPa);
 
+
         Params pintuanPa = new Params();
-        navBarPa.setLimit(4);
+        pintuanPa.setLimit(4);
         pintuanPa.setList(lastGroupGoods(10));
         pintuanPa.setTitle("最新拼团");
         PagesItems pintuanItems = new PagesItems(4, "pintuan", "mobile_home", 4, 4, pintuanPa);
 
-        Params groupPurchasePa = new Params();
+       /* Params groupPurchasePa = new Params();
         groupPurchasePa.setLimit(4);
         groupPurchasePa.setList(homeFlashPromotionList());
         groupPurchasePa.setTitle("限时秒杀");
         PagesItems groupPurchaseItems = new PagesItems(5, "groupPurchase", "mobile_home", 5, 5, groupPurchasePa);
-
-        Params articleClassifyPa = new Params();
+*/
+       /* Params articleClassifyPa = new Params();
         articleClassifyPa.setLimit(10);
         articleClassifyPa.setList(subjectCategoryService.list(new QueryWrapper<CmsSubjectCategory>().eq("show_status", 1)));
         PagesItems articleClassifyItems = new PagesItems(6, "articleClassify", "mobile_home", 6, 6, articleClassifyPa);
-
-        Params couponPa = new Params();
+*/
+       /* Params couponPa = new Params();
         couponPa.setLimit(10);
         couponPa.setList(couponService.selectNotRecive());
         PagesItems couponItems = new PagesItems(7, "coupon", "mobile_home", 7, 7, couponPa);
-
+*/
         Params articlePa = new Params();
         articlePa.setLimit(10);
         articlePa.setList(getRecommendSubjectList(1, 10));
@@ -361,9 +364,9 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         pagesItemsList.add(imgSlideItems);
         pagesItemsList.add(navBarItems);
         pagesItemsList.add(pintuanItems);
-        pagesItemsList.add(groupPurchaseItems);
-        pagesItemsList.add(articleClassifyItems);
-        pagesItemsList.add(couponItems);
+        //  pagesItemsList.add(groupPurchaseItems);
+        //  pagesItemsList.add(articleClassifyItems);
+        // pagesItemsList.add(couponItems);
         pagesItemsList.add(goodsItems);
         pagesItemsList.add(articleItems);
 
@@ -402,9 +405,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
         List<SmsGroup> groupList = groupService.list(new QueryWrapper<SmsGroup>().orderByDesc("create_time"));
         List<SmsGroup> result = new ArrayList<>();
         for (SmsGroup group : groupList) {
-            if (ValidatorUtils.empty(group.getHours())) {
-                continue;
-            }
+
             group.setPintuan_start_status(1);
             group.setTimeSecound(ValidatorUtils.getTimeSecound(group.getEndTime()));
             Long nowT = System.currentTimeMillis();
@@ -579,31 +580,21 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
 
     @Override
     public List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize) {
-       /* List<SmsHomeRecommendSubject> brands = homeRecommendSubjectService.list(new QueryWrapper<>());
-        if (brands == null || brands.size() == 0) {
-            return new ArrayList<>();
-        }
 
-        List<Long> ids = brands.stream()
-                .map(SmsHomeRecommendSubject::getSubjectId)
-                .collect(Collectors.toList());*/
         CmsSubject subject = new CmsSubject();
         subject.setRecommendStatus(1);
         return subjectService.page(new Page<CmsSubject>(pageNum, pageSize), new QueryWrapper<>(subject).select(ConstansValue.sampleSubjectList)).getRecords();
     }
 
-    @Override
-    public List<SmsHomeAdvertise> getHomeAdvertiseList() {
-        SmsHomeAdvertise advertise = new SmsHomeAdvertise();
-        advertise.setStatus(1);
-        return advertiseService.list(new QueryWrapper<>(advertise));
-    }
 
     @Override
-    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type) {
+    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type, int storeId) {
         SmsHomeAdvertise advertise = new SmsHomeAdvertise();
         advertise.setStatus(1);
-        advertise.setType(type);
+        if (ValidatorUtils.notEmpty(type)) {
+            advertise.setType(type);
+        }
+
         return advertiseService.list(new QueryWrapper<>(advertise));
     }
 

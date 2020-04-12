@@ -2,6 +2,7 @@ package com.zscat.mallplus.sms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.sms.entity.SmsHomeNewProduct;
 import com.zscat.mallplus.sms.mapper.SmsHomeNewProductMapper;
 import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
@@ -41,7 +42,7 @@ public class SmsHomeNewProductServiceImpl extends ServiceImpl<SmsHomeNewProductM
     @Override
     public int create(List<SmsHomeNewProduct> homeNewProductList) {
         for (SmsHomeNewProduct SmsHomeNewProduct : homeNewProductList) {
-            SmsHomeNewProduct.setRecommendStatus(1);
+            SmsHomeNewProduct.setRecommendStatus(StatusEnum.YesNoType.YES.code());
             SmsHomeNewProduct.setSort(0);
             homeNewProductMapper.insert(SmsHomeNewProduct);
         }

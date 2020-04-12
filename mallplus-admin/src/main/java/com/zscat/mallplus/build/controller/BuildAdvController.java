@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.entity.BuildAdv;
 import com.zscat.mallplus.build.service.IBuildAdvService;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.util.EasyPoiUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -58,7 +59,7 @@ public class BuildAdvController {
     @PreAuthorize("hasAuthority('build:adv:create')")
     public Object saveBuildAdv(@RequestBody BuildAdv entity) {
         try {
-            entity.setStatus(1);
+            entity.setStatus(StatusEnum.AuditType.INIT.code());
             if (IBuildAdvService.save(entity)) {
                 return new CommonResult().success();
             }

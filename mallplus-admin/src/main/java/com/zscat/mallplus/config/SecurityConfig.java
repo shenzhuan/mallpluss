@@ -1,12 +1,15 @@
 package com.zscat.mallplus.config;
 
-import com.zscat.mallplus.ApiContext;
+
 import com.zscat.mallplus.bo.AdminUserDetails;
 import com.zscat.mallplus.component.JwtAuthenticationTokenFilter;
 import com.zscat.mallplus.component.RestAuthenticationEntryPoint;
 import com.zscat.mallplus.component.RestfulAccessDeniedHandler;
+import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.sys.entity.SysPermission;
+import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysUserVo;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,13 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private ISysUserService sysUserService;
     @Resource
     private SysUserMapper userMapper;
+    @Resource
+    private SysStoreMapper storeMapper;
     @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    @Autowired
-    private ApiContext apiContext;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -74,12 +77,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/admin/login", "/admin/register")// 对登录注册要允许匿名访问
                 .permitAll()
+                /* .and()
+                 .logout()
+                 .invalidateHttpSession(true)
+                 .permitAll()*/
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
                 .antMatchers("/**")//测试时全部运行访问
                 .permitAll()
                 .anyRequest()// 除上面外的所有请求全部需要鉴权认证
                 .authenticated();
+        //访问 /logout 表示用户注销，并清空session
+        httpSecurity.logout().logoutSuccessUrl("/logoutSuccess");
         // 禁用缓存
         httpSecurity.headers().cacheControl();
         // 添加JWT filter

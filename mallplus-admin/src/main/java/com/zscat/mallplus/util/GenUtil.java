@@ -1,6 +1,5 @@
 package com.zscat.mallplus.util;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.template.*;
 import com.zscat.mallplus.bo.ColumnInfo;
