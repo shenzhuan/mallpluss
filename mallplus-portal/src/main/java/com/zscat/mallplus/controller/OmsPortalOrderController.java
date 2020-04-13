@@ -11,7 +11,7 @@ import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OmsOrderDetail;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.TbThanks;
-import com.zscat.mallplus.single.ApiBaseAction;
+
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -34,7 +34,7 @@ import java.util.List;
 @RestController
 @Api(tags = "OmsPortalOrderController", description = "订单管理")
 @RequestMapping("/api/order")
-public class OmsPortalOrderController extends ApiBaseAction {
+public class OmsPortalOrderController {
 
     @Autowired
     private IOmsOrderService orderService;

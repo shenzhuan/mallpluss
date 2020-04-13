@@ -1,6 +1,6 @@
 package com.zscat.mallplus;
 
-import com.zscat.mallplus.pay.config.StartupRunner;
+
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -26,8 +26,5 @@ public class MallPortalApplication {
         System.out.println("end-------------");
     }
 
-    @Bean
-    public StartupRunner startupRunner() {
-        return new StartupRunner();
-    }
+
 }

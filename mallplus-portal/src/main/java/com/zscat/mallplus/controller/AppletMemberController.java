@@ -16,7 +16,7 @@ import com.zscat.mallplus.pms.service.IPmsProductAttributeCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductCategoryService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.service.IPmsSmallNaviconCategoryService;
-import com.zscat.mallplus.single.ApiBaseAction;
+
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsHomeAdvertise;
 import com.zscat.mallplus.sms.mapper.SmsFlashPromotionSessionMapper;
@@ -49,7 +49,7 @@ import java.util.Map;
 @RestController
 @Api(tags = "AppletMemberController", description = "小程序登录首页")
 @RequestMapping("/api/applet")
-public class AppletMemberController extends ApiBaseAction {
+public class AppletMemberController  {
     @Autowired
     ISmsFlashPromotionSessionService smsFlashPromotionSessionService;
     @Autowired

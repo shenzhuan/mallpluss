@@ -2,7 +2,7 @@ package com.zscat.mallplus.controller;
 
 
 import com.zscat.mallplus.annotation.IgnoreAuth;
-import com.zscat.mallplus.single.ApiBaseAction;
+
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RestController
 @Api(tags = "UmsMemberController", description = "会员管理系统")
 @RequestMapping("/api/member")
-public class UmsMemberController extends ApiBaseAction {
+public class UmsMemberController  {
     @Autowired
     private IUmsMemberService memberService;
     @Value("${jwt.tokenHeader}")

@@ -12,7 +12,7 @@
 package com.zscat.mallplus.config;
 
 
-import com.zscat.mallplus.pay.interceptor.WxPayInterceptor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -37,8 +37,5 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
-    @Bean
-    public HandlerInterceptor getMyInterceptor() {
-        return new WxPayInterceptor();
-    }
+
 }
