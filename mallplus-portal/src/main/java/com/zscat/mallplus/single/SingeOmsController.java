@@ -15,6 +15,8 @@ import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.oms.vo.ExpressInfo;
+import com.zscat.mallplus.oms.vo.ExpressParam;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
@@ -330,13 +332,45 @@ public class SingeOmsController extends ApiBaseAction {
         return null;
     }
 
+
     /**
      * 查看物流
+     * orderCode: this.id,
+     *         shipperCode: this.orderInfo.deliverySn,
+     *         logisticCode: this.orderInfo.deliveryId
+     */
+    @ApiOperation("查看物流#快鸟物流查询配置")
+    @ResponseBody
+    @RequestMapping("/wuliuapi")
+    public Object getWayBillInfo(ExpressParam expressInfoDo) throws Exception {
+        ExpressInfo expressInfo = orderService.getExpressInfo(expressInfoDo.getOrderCode(),
+                expressInfoDo.getShipperCode(), expressInfoDo.getLogisticCode());
+        if(!expressInfo.isSuccess())   return new CommonResult().failed(expressInfo.getReason());
+        return new CommonResult().success(expressInfo);
+    }
+
+    /**
+     * 查看物流
+     * @param deliveryCorpCode
+     *            物流公司代码
+     * @param trackingNo
+     *            运单号
+     */
+    @ApiOperation("查看物流#快递100")
+    @ResponseBody
+    @RequestMapping("/wuliu100api")
+    public Object getWayBillInfo100(ExpressParam expressInfoDo) throws Exception {
+        List<Map<String, String>> expressInfo = orderService.getTransitSteps(expressInfoDo.getOrderCode(),
+                expressInfoDo.getShipperCode());
+        return new CommonResult().success(expressInfo);
+    }
+    /**
+     * 阿里云 查看物流
      */
     @ApiOperation("查看物流")
     @ResponseBody
     @RequestMapping("/logisticbyapi")
-    public Object getWayBillInfo(String no, String type) throws Exception {
+    public Object getWayBillInfo1(String no, String type) throws Exception {
         try {
             no = "801132164062135036";
             if (StringUtils.isEmpty(no)) {

@@ -3,6 +3,7 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.vo.ExpressInfo;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.PayParam;
 import com.zscat.mallplus.oms.vo.TbThanks;
@@ -13,6 +14,7 @@ import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -236,4 +238,24 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param currentMember
      */
     void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember);
+
+    /**
+     * 查看物流#快鸟物流查询配置
+     * @param orderCode
+     * @param shipperCode
+     * @param logisticCode
+     * @return
+     */
+    ExpressInfo getExpressInfo(String orderCode, String shipperCode, String logisticCode);
+
+    /**
+     * 获取物流动态
+     *
+     * @param deliveryCorpCode
+     *            物流公司代码
+     * @param trackingNo
+     *            运单号
+     * @return 物流动态
+     */
+    List<Map<String, String>> getTransitSteps(String deliveryCorpCode, String trackingNo);
 }

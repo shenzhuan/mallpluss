@@ -1,7 +1,11 @@
 package com.zscat.mallplus.oms.service.impl;
 
+import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zscat.mallplus.config.ExpressProperties;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
@@ -50,10 +54,13 @@ import com.zscat.mallplus.vo.CartParam;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
@@ -61,6 +68,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -150,6 +159,18 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     @Resource
     private OmsOrderReturnApplyMapper orderReturnApplyMapper;
 
+    //请求url
+    private String ReqURL = "http://api.kdniao.com/Ebusiness/EbusinessOrderHandle.aspx";
+
+    private ExpressProperties properties;
+
+    public ExpressProperties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(ExpressProperties properties) {
+        this.properties = properties;
+    }
     @Override
     public int payOrder(TbThanks tbThanks) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -924,7 +945,125 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
         }
     }
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable("transitSteps")
+    public List<Map<String, String>> getTransitSteps(String deliveryCorpCode, String trackingNo) {
+     //   Setting setting = SystemUtils.getSetting();
+        String kuaidi100Customer = "setting.getKuaidi100Customer()";
+        String kuaidi100Key = "setting.getKuaidi100Key()";
+        if (org.apache.commons.lang.StringUtils.isEmpty(kuaidi100Customer) || org.apache.commons.lang.StringUtils.isEmpty(kuaidi100Key) || org.apache.commons.lang.StringUtils.isEmpty(deliveryCorpCode) || org.apache.commons.lang.StringUtils.isEmpty(trackingNo)) {
+            return Collections.emptyList();
+        }
 
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("com", deliveryCorpCode);
+        paramMap.put("num", trackingNo);
+        String param = JsonUtils.objectToJson(paramMap);
+        String sign = DigestUtils.md5Hex(param + kuaidi100Key + kuaidi100Customer).toUpperCase();
+
+        Map<String, Object> parameterMap = new HashMap<>();
+        parameterMap.put("customer", kuaidi100Customer);
+        parameterMap.put("sign", sign);
+        parameterMap.put("param", param);
+        String content = HttpUtil.post("http://poll.kuaidi100.com/poll/query.do", parameterMap);
+        Map<String, Object> data = JsonUtils.readJsonToMap(content);
+
+        if (!org.apache.commons.lang.StringUtils.equals(String.valueOf(data.get("message")), "ok")) {
+            return Collections.emptyList();
+        }
+        return (List<Map<String, String>>) data.get("data");
+    }
+    @Override
+    public ExpressInfo getExpressInfo(String orderCode, String shipperCode, String logisticCode) {
+        try {
+            String result = getOrderTracesByJson(orderCode,shipperCode, logisticCode);
+            ObjectMapper objMap = new ObjectMapper();
+            ExpressInfo ei = objMap.readValue(result, ExpressInfo.class);
+            ei.setShipperName(getVendorName(shipperCode));
+            return ei;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+    /**
+     * Json方式 查询订单物流轨迹
+     *
+     * @throws Exception
+     */
+    private String getOrderTracesByJson(String OrderCode,String ShipperCode, String LogisticCode) throws Exception {
+        if (!properties.isEnable()) {
+            return null;
+        }
+        String requestData = "{'OrderCode':'"+OrderCode+"','ShipperCode':'" + ShipperCode + "','LogisticCode':'" + LogisticCode + "'}";
+        Map<String, Object> params = new HashMap<>();
+        params.put("RequestData", URLEncoder.encode(requestData, "UTF-8"));
+        params.put("EBusinessID", properties.getAppId());
+        params.put("RequestType", "1002");
+        String dataSign = encrypt(requestData, properties.getAppKey(), "UTF-8");
+        params.put("DataSign", URLEncoder.encode(dataSign, "UTF-8"));
+        params.put("DataType", "2");
+        String result = HttpUtil.post(ReqURL, params);
+        //根据公司业务处理返回的信息......
+        return result;
+    }
+    /**
+     * Sign签名生成
+     *
+     * @param content  内容
+     * @param keyValue Appkey
+     * @param charset  编码方式
+     * @return DataSign签名
+     */
+    private String encrypt(String content, String keyValue, String charset) {
+        if (keyValue != null) {
+            content = content + keyValue;
+        }
+        byte[] src;
+        try {
+            src = MD5(content, charset).getBytes(charset);
+            return Base64Utils.encodeToString(src);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+    /**
+     * MD5加密
+     *
+     * @param str     内容
+     * @param charset 编码方式
+     * @throws Exception
+     */
+    private String MD5(String str, String charset) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(str.getBytes(charset));
+        byte[] result = md.digest();
+        StringBuilder sb = new StringBuilder(32);
+        for (int i = 0; i < result.length; i++) {
+            int val = result[i] & 0xff;
+            if (val <= 0xf) {
+                sb.append("0");
+            }
+            sb.append(Integer.toHexString(val));
+        }
+        return sb.toString().toLowerCase();
+    }
+    /**
+     * 获取物流供应商名
+     *
+     * @param vendorCode
+     * @return
+     */
+    public String getVendorName(String vendorCode) {
+        for (Map<String, String> item : properties.getVendors()) {
+            if (item.get("code").equals(vendorCode))
+                return item.get("name");
+        }
+        return null;
+    }
     @Override
     public CommonResult acceptGroup(OrderParam orderParam) {
 
