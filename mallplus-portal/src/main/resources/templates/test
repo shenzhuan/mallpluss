@@ -360,7 +360,7 @@ cd /usr/local/nginx/sbin/
 
 子用户登录地址：https://signin.aliyun.com/1455185185689318.onaliyun.com/login.htm
 用户名：shenzhuan@1455185185689318.onaliyun.com
-初始密码：好像是987654321
+
 
 
 ALTER USER 'root'@'localhost' IDENTIFIED BY '1@123';

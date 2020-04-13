@@ -271,6 +271,8 @@ public class WxPayController extends AbstractWxPayApiController {
             String ip = IpKit.getRealIp(request);
             if (StrUtil.isEmpty(ip)) {
                 ip = "127.0.0.1";
+            }else {
+                ip=ip.split(",")[0];
             }
 
             OmsOrder orderInfo = orderService.getById(orderId);
@@ -323,8 +325,8 @@ public class WxPayController extends AbstractWxPayApiController {
             Map<String, String> packageParams = WxPayKit.prepayIdCreateSign(prepayId, wxPayApiConfig.getAppId(),
                     wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-            String jsonStr = JSON.toJSONString(packageParams);
-            return new CommonResult().success(jsonStr);
+         //   String jsonStr = JSON.toJSONString(packageParams);
+            return new CommonResult().success(packageParams);
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed(e.getMessage());
