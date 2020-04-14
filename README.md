@@ -25,6 +25,7 @@
 
 ### 项目演示
 
+[部署文档](https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1786312&doc_id=326093)
 > 后台管理系统
 
 - 1. 商城总后台 http://www.yjlive.cn:8007/index
