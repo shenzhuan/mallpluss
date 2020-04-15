@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,6 +60,7 @@ public class PmsGiftsController {
     @PreAuthorize("hasAuthority('pms:PmsGifts:create')")
     public Object savePmsGifts(@RequestBody PmsGifts entity) {
         try {
+            entity.setCreateTime(new Date());
             if (IPmsGiftsService.save(entity)) {
                 return new CommonResult().success();
             }
