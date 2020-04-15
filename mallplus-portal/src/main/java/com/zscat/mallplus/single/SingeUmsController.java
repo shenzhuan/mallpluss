@@ -10,9 +10,7 @@ import com.zscat.mallplus.cms.service.ISysSchoolService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoRecords;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoRecordsMapper;
-import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.PayParam;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -62,10 +60,9 @@ import java.util.Map;
 public class SingeUmsController extends ApiBaseAction {
 
     @Resource
-    private IUmsMemberLevelService memberLevelService;
-
-    @Resource
     FenxiaoRecordsMapper fenxiaoRecordsMapper;
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
     @Resource
     private SysUserMapper userMapper;
     @Resource
@@ -98,6 +95,7 @@ public class SingeUmsController extends ApiBaseAction {
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
     @Resource
     private IOmsOrderService orderService;
+
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -171,13 +169,14 @@ public class SingeUmsController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(storeMapper.selectList(new QueryWrapper<SysStore>(entity)));
     }
+
     @IgnoreAuth
     @ApiOperation(value = "查询会员等级列表")
     @GetMapping(value = "/memberLevel/list")
     @SysLog(MODULE = "ums", REMARK = "查询会员等级列表")
     public Object memberLevelList(UmsMemberLevel entity,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                  @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(memberLevelService.list(new QueryWrapper<UmsMemberLevel>(entity)));
     }
 
@@ -195,6 +194,7 @@ public class SingeUmsController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @ApiOperation("获取商铺详情")
     @RequestMapping(value = "/storeDetail", method = RequestMethod.GET)
     @ResponseBody

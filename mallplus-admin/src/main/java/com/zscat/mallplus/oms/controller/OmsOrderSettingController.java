@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.oms.entity.OmsOrderSetting;
 import com.zscat.mallplus.oms.service.IOmsOrderSettingService;
-import com.zscat.mallplus.ums.entity.UmsIntegrationConsumeSetting;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -72,7 +70,7 @@ public class OmsOrderSettingController {
     public Object updateOmsOrderSetting(@RequestBody OmsOrderSetting entity) {
         try {
             entity.setId(1L);
-            if (IOmsOrderSettingService.update(entity,new QueryWrapper<OmsOrderSetting>())) {
+            if (IOmsOrderSettingService.update(entity, new QueryWrapper<OmsOrderSetting>())) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
@@ -107,7 +105,7 @@ public class OmsOrderSettingController {
         try {
 
             OmsOrderSetting coupon = IOmsOrderSettingService.getOne(new QueryWrapper<>());
-            if (coupon==null){
+            if (coupon == null) {
                 coupon = new OmsOrderSetting();
                 coupon.setId(1L);
                 IOmsOrderSettingService.save(coupon);

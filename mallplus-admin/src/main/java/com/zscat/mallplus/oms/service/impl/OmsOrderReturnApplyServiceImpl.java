@@ -27,6 +27,7 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
     private OmsOrderReturnApplyMapper returnApplyMapper;
     @Autowired
     private IOmsOrderOperateHistoryService orderOperateHistoryService;
+
     @Override
     public int updateStatus(Long id, OmsUpdateStatusParam statusParam) {
         Integer status = statusParam.getStatus();
@@ -37,7 +38,7 @@ public class OmsOrderReturnApplyServiceImpl extends ServiceImpl<OmsOrderReturnAp
             history.setNote("确认退货");
             returnApply.setId(id);
             returnApply.setStatus(AllEnum.OmsOrderReturnApplyStatus.INIT.code());
-           // returnApply.setReturnAmount(statusParam.getReturnAmount());
+            // returnApply.setReturnAmount(statusParam.getReturnAmount());
             //returnApply.setCompanyAddressId(statusParam.getCompanyAddressId());
             returnApply.setHandleTime(new Date());
             returnApply.setHandleMan(statusParam.getHandleMan());

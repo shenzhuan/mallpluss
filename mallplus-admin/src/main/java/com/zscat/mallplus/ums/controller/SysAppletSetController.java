@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.ums.entity.SysAppletSet;
 import com.zscat.mallplus.ums.service.ISysAppletSetService;
-import com.zscat.mallplus.util.UserUtils;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
@@ -109,7 +108,7 @@ public class SysAppletSetController {
                 return new CommonResult().paramFailed("id");
             }
             SysAppletSet coupon = ISysAppletSetService.getOne(new QueryWrapper<>());
-            if (coupon==null){
+            if (coupon == null) {
                 coupon = new SysAppletSet();
                 ISysAppletSetService.save(coupon);
             }

@@ -4,8 +4,6 @@ package com.zscat.mallplus.sys.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.sys.entity.SysDict;
 
-import java.util.List;
-
 /**
  * <p>
  * 系统配置信息表 服务类

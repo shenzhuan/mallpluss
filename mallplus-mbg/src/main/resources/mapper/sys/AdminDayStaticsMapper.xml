@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zscat.mallplus.sys.mapper.AdminDayStaticsMapper">
+
+    <resultMap type="com.zscat.mallplus.sys.entity.AdminDayStatics" id="AdminDayStaticsResult">
+        <result property="id" column="id"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="payOrderCount" column="pay_order_count"/>
+        <result property="articleCount" column="article_count"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="memberCount" column="member_count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="storeId" column="store_id"/>
+        <result property="notPayOrderCount" column="not_pay_order_count"/>
+        <result property="notPayAmount" column="not_pay_amount"/>
+        <result property="storeName" column="store_name"/>
+    </resultMap>
+
+
+    <delete id="deleteAdminDayStaticsByDate" parameterType="String">
+        delete from admin_day_statics where date_format(create_time,'%y%m%d') &lt;= date_format(#{createTime},'%y%m%d')
+    </delete>
+
+    <delete id="deleteAdminDayStaticsByIds" parameterType="String">
+        delete from admin_day_statics where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectAdminDayStaticsGroupBySId" parameterType="Long" resultMap="AdminDayStaticsResult">
+        SELECT store_id,sum(goods_count) goods_count, sum(pay_order_count) pay_order_count,sum(article_count)
+        article_count,sum(pay_amount) pay_amount,sum(member_count) member_count
+        from admin_day_statics where date_format(create_time,'%y%m%d') = date_format(now(),'%y%m%d') GROUP BY store_id
+    </select>
+
+</mapper>

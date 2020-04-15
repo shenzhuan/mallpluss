@@ -30,9 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -71,6 +68,8 @@ public class SysUserController extends ApiController {
     private UserCommunityRelateMapper userCommunityRelateMapper;
     @Resource
     private BuildingCommunityMapper buildingCommunityMapper;
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有用户列表")
     @ApiOperation("根据条件查询所有用户列表")
@@ -183,7 +182,7 @@ public class SysUserController extends ApiController {
     @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login1", method = RequestMethod.POST)
     @ResponseBody
-    public Object login1( @RequestParam(value = "username", defaultValue = "1") String username,
+    public Object login1(@RequestParam(value = "username", defaultValue = "1") String username,
                          @RequestParam(value = "password", defaultValue = "1") String password) {
         try {
             String token = sysUserService.login(username, password);
@@ -199,6 +198,7 @@ public class SysUserController extends ApiController {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @SysLog(MODULE = "sys", REMARK = "登录以后返回token")
     @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -218,8 +218,7 @@ public class SysUserController extends ApiController {
             return new CommonResult().failed(e.getMessage());
         }
     }
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
+
     @SysLog(MODULE = "sys", REMARK = "获取当前登录用户信息")
     @ApiOperation(value = "获取当前登录用户信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -233,7 +232,7 @@ public class SysUserController extends ApiController {
         Map<String, Object> data = new HashMap<>();
         data.put("username", username);
 
-        if (umsAdmin != null && umsAdmin.getId()!=null) {
+        if (umsAdmin != null && umsAdmin.getId() != null) {
             Set<String> roles = permissionService.getRolePermission(umsAdmin);
             Set<String> permissions = permissionService.getMenuPermission(umsAdmin);
             data.put("permissions", permissions);
@@ -334,7 +333,7 @@ public class SysUserController extends ApiController {
     @RequestMapping(value = "/update/updateShowStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "sys", REMARK = "修改展示状态")
-    public Object updateShowStatus(@RequestParam("ids")  List<Long> ids,
+    public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         SysUser role = new SysUser();
         role.setId(ids.get(0));
@@ -406,9 +405,9 @@ public class SysUserController extends ApiController {
         }
         return new CommonResult().success(newList);
     }
+
     @PutMapping("/resetPwd")
-    public Object resetPwd(@RequestBody SysUser user)
-    {
+    public Object resetPwd(@RequestBody SysUser user) {
         return sysUserService.resetPwd(user);
     }
 

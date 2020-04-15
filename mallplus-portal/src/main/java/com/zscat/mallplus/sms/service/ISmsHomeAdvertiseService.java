@@ -41,7 +41,7 @@ public interface ISmsHomeAdvertiseService extends IService<SmsHomeAdvertise> {
 
     List<CmsSubject> getRecommendSubjectList(int pageNum, int pageSize);
 
-    List<SmsHomeAdvertise> getHomeAdvertiseList(int type,int storeId);
+    List<SmsHomeAdvertise> getHomeAdvertiseList(int type, int storeId);
 
 
     List<PmsProductAttributeCategory> getPmsProductAttributeCategories();

@@ -52,12 +52,12 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     @Override
     public List<SysRolePermission> leftMenu(Long userId) {
         SysUser user = userService.getById(userId);
-        if (user!=null  && user.getId()>0){
-            if("admin".equals(user.getUsername())){
+        if (user != null && user.getId() > 0) {
+            if ("admin".equals(user.getUsername())) {
                 return rolePermissionMapper.selectList(new QueryWrapper<>());
             }
             List<Integer> roleIdList = roleMapper.getRoleIdsByUserId(userId);
-            if (roleIdList!=null && roleIdList.size()>0){
+            if (roleIdList != null && roleIdList.size() > 0) {
                 List<SysRolePermission> menuList2 = roleMapper.crmSysRoleMenu(roleIdList);
                 return menuList2;
             }
@@ -71,25 +71,20 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     public Set<String> getMenuPermission(SysUser user) {
         Set<String> perms = new HashSet<String>();
         // 管理员拥有所有权限
-        if (user.getSupplyId() != null &&user.getSupplyId()==1)
-        {
+        if (user.getSupplyId() != null && user.getSupplyId() == 1) {
             perms.add("*:*:*");
-        }
-        else
-        {
+        } else {
             perms.addAll(this.selectMenuPermsByUserId(user.getId()));
         }
         return perms;
     }
+
     @Override
-    public Set<String> selectMenuPermsByUserId(Long userId)
-    {
+    public Set<String> selectMenuPermsByUserId(Long userId) {
         List<String> perms = permissionMapper.selectMenuPermsByUserId(userId);
         Set<String> permsSet = new HashSet<>();
-        for (String perm : perms)
-        {
-            if (StringUtils.isNotEmpty(perm))
-            {
+        for (String perm : perms) {
+            if (StringUtils.isNotEmpty(perm)) {
                 permsSet.addAll(Arrays.asList(perm.trim().split(",")));
             }
         }
@@ -100,14 +95,11 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     public Set<String> getRolePermission(SysUser user) {
         Set<String> roles = new HashSet<String>();
         // 管理员拥有所有权限
-        if (user.getSupplyId()!=null && user.getSupplyId()==1)
-        {
+        if (user.getSupplyId() != null && user.getSupplyId() == 1) {
             roles.add("admin");
-        }
-        else
-        {
+        } else {
             roles.add("admin");
-         //   roles.addAll(roleService.selectRolePermissionByUserId(user.getId()));
+            //   roles.addAll(roleService.selectRolePermissionByUserId(user.getId()));
         }
         return roles;
     }

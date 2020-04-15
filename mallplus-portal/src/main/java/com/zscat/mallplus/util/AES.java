@@ -3,14 +3,12 @@ package com.zscat.mallplus.util;
 
 import org.apache.commons.codec.binary.Base64;
 
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.AlgorithmParameters;
 import java.security.Key;
-import java.security.Security;
 
 public class AES {
     // 算法名
@@ -49,7 +47,7 @@ public class AES {
      * 初始化密钥
      */
     public static void init() throws Exception {
-      //  Security.addProvider(new BouncyCastleProvider());
+        //  Security.addProvider(new BouncyCastleProvider());
         KeyGenerator.getInstance(KEY_NAME).init(128);
     }
 

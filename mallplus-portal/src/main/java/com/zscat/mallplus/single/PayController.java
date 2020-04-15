@@ -144,7 +144,7 @@ public class PayController extends ApiBaseAction {
         try {
             Object order = orderService.blancePay(orderService.getById(payParam.getOrderId()));
             return new CommonResult().success(order);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
 
@@ -175,7 +175,7 @@ public class PayController extends ApiBaseAction {
     public Object jifenPay(OrderParam payParam) {
         try {
             return orderService.jifenPay(payParam);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
 

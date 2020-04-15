@@ -3,7 +3,10 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
-import com.zscat.mallplus.oms.vo.*;
+import com.zscat.mallplus.oms.vo.ExpressInfo;
+import com.zscat.mallplus.oms.vo.OrderParam;
+import com.zscat.mallplus.oms.vo.PayParam;
+import com.zscat.mallplus.oms.vo.TbThanks;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.vo.ApplyRefundVo;
@@ -11,6 +14,7 @@ import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -46,10 +50,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     @Transactional
     void cancelOrder(Long orderId);
 
-    /**
-     * 发送延迟消息取消订单
-     */
-    void sendDelayMessageCancelOrder(Long orderId);
 
     /**
      * 获取用户可用优惠券列表
@@ -182,10 +182,16 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Object orderComment(Long orderId, String items);
 
+    /**
+     * 多商户下单
+     * @param orderParam
+     * @return
+     */
     CommonResult generateStoreOrder(OrderParam orderParam);
 
     /**
      * 订单退货申请
+     *
      * @param items
      * @return
      */
@@ -193,12 +199,13 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 放弃拼团
+     *
      * @return
      */
     Object quitGroup(Long id);
 
     /**
-     * autoDeliveryOrder
+     * 订单到期自动发货
      *
      * @return
      */
@@ -206,25 +213,50 @@ public interface IOmsOrderService extends IService<OmsOrder> {
 
     /**
      * 订单到期自动评论
+     *
      * @return
      */
     CommonResult autoCommentOrder();
+
     /**
      * 订单到期自动完成
+     *
      * @return
      */
     CommonResult autoSucessOrder();
 
     /**
      * 会员等级升级
+     *
      * @return
      */
-    Object applyMember( Long memberLevelId);
+    Object applyMember(Long memberLevelId);
 
     /**
      * 分拥计算
+     *
      * @param list
      * @param currentMember
      */
-    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember );
+    void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember);
+
+    /**
+     * 查看物流#快鸟物流查询配置
+     * @param orderCode
+     * @param shipperCode
+     * @param logisticCode
+     * @return
+     */
+    ExpressInfo getExpressInfo(String orderCode, String shipperCode, String logisticCode);
+
+    /**
+     * 获取物流动态
+     *
+     * @param deliveryCorpCode
+     *            物流公司代码
+     * @param trackingNo
+     *            运单号
+     * @return 物流动态
+     */
+    List<Map<String, String>> getTransitSteps(String deliveryCorpCode, String trackingNo);
 }

@@ -1,7 +1,6 @@
 package com.zscat.mallplus.controller;
 
 
-import cn.hutool.extra.emoji.EmojiUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
@@ -121,6 +120,7 @@ public class AppletMemberController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
@@ -132,6 +132,7 @@ public class AppletMemberController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("注册")
     @SysLog(MODULE = "applet", REMARK = "小程序注册")
@@ -156,19 +157,21 @@ public class AppletMemberController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @IgnoreAuth
     @ApiOperation("获取小程序openid")
     @SysLog(MODULE = "applet", REMARK = "获取小程序openid")
     @PostMapping("getAppletOpenId1")
-    public Object getAppletOpenId1( AppletLoginParam param) {
+    public Object getAppletOpenId1(AppletLoginParam param) {
         try {
             return memberService.getAppletOpenId(param);
         } catch (Exception e) {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @PutMapping("/setUserInfo")
-    @ApiOperation(value="设置用户信息", notes="设置用户信息")
+    @ApiOperation(value = "设置用户信息", notes = "设置用户信息")
     public Object setUserInfo(@RequestBody AppletLoginParam userInfoParam) {
         Long userId = memberService.getNewCurrentMember().getId();
         UmsMember user = new UmsMember();

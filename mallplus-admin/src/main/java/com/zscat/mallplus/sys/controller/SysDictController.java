@@ -133,13 +133,13 @@ public class SysDictController {
             return new CommonResult().failed();
         }
     }
+
     /**
      * 根据字典类型查询字典数据信息
      */
     @GetMapping(value = "/dictType/{dictType}")
-    public Object dictType(@PathVariable String dictType)
-    {
-        List<SysDict> list = ISysDictService.list(new QueryWrapper<SysDict>().eq("type",dictType).eq("status", StatusEnum.YesNoType.YES.code()));
+    public Object dictType(@PathVariable String dictType) {
+        List<SysDict> list = ISysDictService.list(new QueryWrapper<SysDict>().eq("type", dictType).eq("status", StatusEnum.YesNoType.YES.code()));
         return new CommonResult().success(list);
     }
 }

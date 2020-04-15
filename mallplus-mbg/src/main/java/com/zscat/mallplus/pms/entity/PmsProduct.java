@@ -287,7 +287,7 @@ public class PmsProduct extends BaseEntity implements Serializable {
      * 会员折扣
      */
     @TableField(exist = false)
-    private Integer memberRate=10;
+    private Integer memberRate = 10;
     /**
      * 分销价格
      */

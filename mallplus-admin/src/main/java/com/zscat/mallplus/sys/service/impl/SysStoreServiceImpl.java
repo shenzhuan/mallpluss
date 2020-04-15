@@ -1,11 +1,14 @@
 package com.zscat.mallplus.sys.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
 import com.zscat.mallplus.component.OssAliyunUtil;
+import com.zscat.mallplus.enums.StatusEnum;
+import com.zscat.mallplus.fenxiao.mapper.FenxiaoConfigMapper;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsBrandMapper;
 import com.zscat.mallplus.pms.mapper.PmsProductAttributeCategoryMapper;
@@ -13,8 +16,10 @@ import com.zscat.mallplus.pms.mapper.PmsProductCategoryMapper;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.sys.entity.SysUserRole;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
+import com.zscat.mallplus.sys.mapper.SysUserRoleMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -28,6 +33,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -43,6 +49,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
 
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
+    @Resource
+    SysUserRoleMapper userRoleMapper;
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
     @Resource
     private SysStoreMapper storeMapper;
     @Resource
@@ -67,6 +77,10 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
     @Transactional
     @Override
     public boolean saveStore(SysStore entity) {
+        if (ValidatorUtils.empty(entity.getName())) {
+            return false;
+        }
+        entity.setStatus(StatusEnum.AuditType.INIT.code());
         entity.setTryTime(new Date());
         entity.setCreateTime(new Date());
         storeMapper.insert(entity);
@@ -85,14 +99,21 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
             return false;
         }
         user.setStatus(1);
-        user.setSupplyId(1L);
-        user.setPassword(passwordEncoder.encode(entity.getSupportName()));
+        user.setSupplyId(0L);
+        user.setPassword(passwordEncoder.encode("123456"));
         user.setCreateTime(new Date());
         user.setIcon(entity.getLogo());
         user.setNickName(entity.getName());
         user.setStoreId(entity.getId());
         user.setStoreName(entity.getName());
         user.setEmail(entity.getSupportPhone());
+
+        userMapper.insert(user);
+
+        SysUserRole userRole = new SysUserRole();
+        userRole.setRoleId(3L);
+        userRole.setAdminId(user.getId());
+        userRoleMapper.insert(userRole);
 
         //
        /* if (entity.getType() != null) {
@@ -154,7 +175,21 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
                 }
             });
         }*/
-        return userMapper.insert(user) > 0;
+        return true;
+    }
+
+    @Override
+    public int updateShowStatus(List<Long> ids, Integer showStatus) {
+        SysStore pmsBrand = new SysStore();
+        pmsBrand.setIsBoutique(showStatus);
+        return storeMapper.update(pmsBrand, new QueryWrapper<SysStore>().in("id", ids));
+    }
+
+    @Override
+    public int audit(List<Long> ids, Integer showStatus) {
+        SysStore pmsBrand = new SysStore();
+        pmsBrand.setStatus(showStatus);
+        return storeMapper.update(pmsBrand, new QueryWrapper<SysStore>().in("id", ids));
     }
 
     void createG(BakGoods gg, Integer storeId) {

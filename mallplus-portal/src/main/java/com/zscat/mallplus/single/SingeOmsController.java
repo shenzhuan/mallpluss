@@ -1,12 +1,10 @@
 package com.zscat.mallplus.single;
-import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.bill.entity.BillAftersales;
-import com.zscat.mallplus.bill.entity.BillAftersalesItems;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
@@ -14,12 +12,11 @@ import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
-import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
-import com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
+import com.zscat.mallplus.oms.vo.ExpressInfo;
+import com.zscat.mallplus.oms.vo.ExpressParam;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.pms.service.IPmsProductConsultService;
 import com.zscat.mallplus.sms.service.ISmsGroupService;
@@ -335,13 +332,45 @@ public class SingeOmsController extends ApiBaseAction {
         return null;
     }
 
+
     /**
      * 查看物流
+     * orderCode: this.id,
+     *         shipperCode: this.orderInfo.deliverySn,
+     *         logisticCode: this.orderInfo.deliveryId
+     */
+    @ApiOperation("查看物流#快鸟物流查询配置")
+    @ResponseBody
+    @RequestMapping("/wuliuapi")
+    public Object getWayBillInfo(ExpressParam expressInfoDo) throws Exception {
+        ExpressInfo expressInfo = orderService.getExpressInfo(expressInfoDo.getOrderCode(),
+                expressInfoDo.getShipperCode(), expressInfoDo.getLogisticCode());
+        if(!expressInfo.isSuccess())   return new CommonResult().failed(expressInfo.getReason());
+        return new CommonResult().success(expressInfo);
+    }
+
+    /**
+     * 查看物流
+     * @param deliveryCorpCode
+     *            物流公司代码
+     * @param trackingNo
+     *            运单号
+     */
+    @ApiOperation("查看物流#快递100")
+    @ResponseBody
+    @RequestMapping("/wuliu100api")
+    public Object getWayBillInfo100(ExpressParam expressInfoDo) throws Exception {
+        List<Map<String, String>> expressInfo = orderService.getTransitSteps(expressInfoDo.getOrderCode(),
+                expressInfoDo.getShipperCode());
+        return new CommonResult().success(expressInfo);
+    }
+    /**
+     * 阿里云 查看物流
      */
     @ApiOperation("查看物流")
     @ResponseBody
     @RequestMapping("/logisticbyapi")
-    public Object getWayBillInfo(String no, String type) throws Exception {
+    public Object getWayBillInfo1(String no, String type) throws Exception {
         try {
             no = "801132164062135036";
             if (StringUtils.isEmpty(no)) {
@@ -541,7 +570,6 @@ public class SingeOmsController extends ApiBaseAction {
     }
 
 
-
     @SysLog(MODULE = "cms", REMARK = "用户发送退货包裹")
     @ApiOperation(value = "用户发送退货包裹")
     @PostMapping(value = "/order.sendreship")
@@ -564,16 +592,20 @@ public class SingeOmsController extends ApiBaseAction {
     @PostMapping(value = "/saveOmsOrderReturnApply")
     public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
                                           @RequestParam(value = "type") Integer type,
-                                            @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "images", required = false) String[] images,
                                           @RequestParam(value = "returnAmount") BigDecimal returnAmount,
-                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+                                          @RequestParam(value = "desc", required = false) String desc) throws Exception {
         ApplyRefundVo vo = new ApplyRefundVo();
-       try {
-           vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
-           return orderService.applyRe(vo);
-       }catch (Exception e){
-           return new CommonResult().failed();
-       }
+        try {
+            vo.setDesc(desc);
+            vo.setItems(items);
+            vo.setReturnAmount(returnAmount);
+            vo.setType(type);
+            vo.setImages(images);
+            return orderService.applyRe(vo);
+        } catch (Exception e) {
+            return new CommonResult().failed();
+        }
 
     }
 }

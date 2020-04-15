@@ -32,13 +32,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
@@ -68,6 +64,8 @@ public class HomeController extends BaseController {
     private IPmsProductService productService;
     @Resource
     private IUmsMemberService memberService;
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     @ApiOperation("按时间统计订单 会员和商品")
     @SysLog(MODULE = "home", REMARK = "首页订单日统计")
@@ -95,8 +93,7 @@ public class HomeController extends BaseController {
         }
         return new CommonResult().success(orderService.orderMonthStatic(date));
     }
-    @Resource
-    private JwtTokenUtil jwtTokenUtil;
+
     /**
      * 订单状态：0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单
      *
@@ -141,7 +138,7 @@ public class HomeController extends BaseController {
 
         for (OmsOrder order : orderList) {
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))) {
-                if (order.getStatus() < 9){
+                if (order.getStatus() < 9) {
                     nowOrderCount++;
                     nowOrderPay = nowOrderPay.add(order.getPayAmount());
                 }
@@ -149,8 +146,8 @@ public class HomeController extends BaseController {
                 nowToatlOrderPay = nowToatlOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))
-                    ) {
-                if (order.getStatus() < 9){
+            ) {
+                if (order.getStatus() < 9) {
                     yesOrderCount++;
                     yesOrderPay = yesOrderPay.add(order.getPayAmount());
                 }

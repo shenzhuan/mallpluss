@@ -7,7 +7,6 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
 import com.zscat.mallplus.oms.vo.OmsOrderDetail;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.TbThanks;
@@ -126,13 +125,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
         return orderService.cancelTimeOutOrder();
     }
 
-    @ApiOperation("取消单个超时订单")
-    @RequestMapping(value = "/cancelOrder", method = RequestMethod.POST)
-    @ResponseBody
-    public Object cancelOrder(Long orderId) {
-        orderService.sendDelayMessageCancelOrder(orderId);
-        return new CommonResult().success(null);
-    }
+
 
     /**
      * 查看物流

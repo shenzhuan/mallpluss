@@ -346,3 +346,42 @@ https://www.jianshu.com/p/19f6b809d255
 https://sit-admin.ec.widiazine.cn/#/
 yjlive1688
 beijingyijun1688
+
+systemctl start  mysqld.service
+
+cd /usr/local/nginx/sbin/
+./nginx
+./nginx -s stop
+./nginx -s quit
+./nginx -s reload
+
+/etc/init.d/redis_6379 start
+
+
+子用户登录地址：https://signin.aliyun.com/1455185185689318.onaliyun.com/login.htm
+用户名：shenzhuan@1455185185689318.onaliyun.com
+
+
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '1@123';
+
+
+在本机先使用root用户登录mysql：
+mysql -u root -p"youpassword"
+进行授权操作：
+mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1@123' WITH GRANT OPTION;
+重载授权表：
+FLUSH PRIVILEGES;
+退出mysql数据库：
+exit
+
+https://www.cnblogs.com/shuo1208/p/11237713.html
+https://www.cnblogs.com/boonya/p/7907999.html
+https://www.linuxidc.com/Linux/2018-02/150956.htm
+https://www.cnblogs.com/telwanggs/p/11546751.html
+
+39.99.170.78
+39.100.69.249
+
+put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
+put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-SNAPSHOT.jar  /root/jm

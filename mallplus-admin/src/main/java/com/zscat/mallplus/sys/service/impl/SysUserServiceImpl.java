@@ -253,14 +253,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public List<SysPermission> listPerms() {
-        if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
-            List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
-            String key = String.format(Rediskey.allMenuList, "admin");
-            redisService.set(key, JsonUtil.objectToJson(list));
-            return list;
-        } else {
-            return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
-        }
+       try {
+           if (!redisService.exists(String.format(Rediskey.allMenuList, "admin"))) {
+               List<SysPermission> list = permissionMapper.selectList(new QueryWrapper<>());
+               String key = String.format(Rediskey.allMenuList, "admin");
+               redisService.set(key, JsonUtil.objectToJson(list));
+               return list;
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
+        return JsonUtil.jsonToList(redisService.get(String.format(Rediskey.allMenuList, "admin")), SysPermission.class);
     }
 
     @Override
@@ -385,9 +388,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public SysUserVo selectByUserName(String username){
+    public SysUserVo selectByUserName(String username) {
         return adminMapper.selectByUserName(username);
     }
+
     /**
      * 保存短信记录，并发送短信
      *
@@ -480,8 +484,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public  Object resetPwd(SysUser user){
-        if(ValidatorUtils.empty(user.getPassword())){
+    public Object resetPwd(SysUser user) {
+        if (ValidatorUtils.empty(user.getPassword())) {
             return new CommonResult().paramFailed("请输入密码");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));

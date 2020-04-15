@@ -31,7 +31,8 @@ public class StatusEnum {
         /**
          * 审核失败
          */
-        SUCESS(3, "sucess"),;
+        SUCESS(3, "sucess"),
+        ;
 
         private int code;
         private String value;
@@ -67,7 +68,8 @@ public class StatusEnum {
         /**
          * 禁用
          */
-        NO(0, "no"),;
+        NO(0, "no"),
+        ;
 
         private int code;
         private String value;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author lnj
- *         createTime 2018-11-07 22:25
+ * createTime 2018-11-07 22:25
  **/
 @Component
 public class CommandLineRunnerImpl implements CommandLineRunner {

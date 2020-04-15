@@ -67,7 +67,6 @@ public class OmsOrderReturnApplyController {
     }
 
 
-
     @SysLog(MODULE = "oms", REMARK = "删除订单退货申请")
     @ApiOperation("删除订单退货申请")
     @GetMapping(value = "/delete/{id}")
@@ -126,7 +125,7 @@ public class OmsOrderReturnApplyController {
                                @RequestParam("status") Integer status,
                                @RequestParam("orderId") Long orderId,
                                @RequestParam("handleNote") String handleNote
-                               ) {
+    ) {
         OmsUpdateStatusParam statusParam = new OmsUpdateStatusParam();
         statusParam.setHandleMan(UserUtils.getCurrentMember().getNickName());
         statusParam.setHandleNote(handleNote);

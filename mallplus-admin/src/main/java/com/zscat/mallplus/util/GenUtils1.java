@@ -51,6 +51,16 @@ import java.util.zip.ZipOutputStream;
  * 获取配置信息
  * <p>
  * 获取文件名
+ * <p>
+ * 生成代码
+ * <p>
+ * 列名转换成Java属性名
+ * <p>
+ * 表名转换成Java类名
+ * <p>
+ * 获取配置信息
+ * <p>
+ * 获取文件名
  *//*
 
 public class GenUtils1 {

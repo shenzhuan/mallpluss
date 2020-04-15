@@ -1,7 +1,6 @@
 package com.zscat.mallplus.pms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.zscat.mallplus.pms.entity.EsShopGoodsGroupMap;
 import org.apache.ibatis.annotations.Param;
 

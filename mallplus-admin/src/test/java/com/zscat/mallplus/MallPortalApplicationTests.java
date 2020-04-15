@@ -1,6 +1,7 @@
 package com.zscat.mallplus;
 
 import com.zscat.mallplus.sys.entity.SysAdminLog;
+import com.zscat.mallplus.sys.mapper.GeneratorMapper;
 import com.zscat.mallplus.sys.mapper.SysAdminLogMapper;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
@@ -9,10 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest(classes = MallAdminApplication.class)
 @RunWith(SpringRunner.class)
@@ -21,13 +19,13 @@ public class MallPortalApplicationTests {
 
     @Resource
     SysAdminLogMapper sysAdminLogMapper;
-
+    @Resource
+    GeneratorMapper generatorMapper;
     @Test
     public void contextLoads() {
-        String ids = "1,2,3,4";
-        List<SysAdminLog> ll = sysAdminLogMapper.selectBatchIds(Arrays.asList(ids.split(",")));
-        for (SysAdminLog log : ll) {
-            System.out.println(log.getMethod());
+        List<Map<String, Object>>  list=  generatorMapper.list();
+        for (Map<String, Object> map :list){
+            System.out.println(map);
         }
     }
 
