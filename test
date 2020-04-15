@@ -99,12 +99,12 @@ SELECT * from sms_flash_promotion_session;
 
 
 
-http://ext.dcloud.net.cn/plugin?id=214
-http://ext.dcloud.net.cn/plugin?id=465
-http://ext.dcloud.net.cn/plugin?id=232
-http://ext.dcloud.net.cn/plugin?id=271
-http://ext.dcloud.net.cn/plugin?id=467
-http://ext.dcloud.net.cn/plugin?id=235
+http://ext.dcloud.net.cn/plugin?id=214 6foo-percent 进度
+http://ext.dcloud.net.cn/plugin?id=465 仔仔-登录注册
+http://ext.dcloud.net.cn/plugin?id=232 登录注册忘记密码模板
+http://ext.dcloud.net.cn/plugin?id=271 uCharts高性能跨全端图表
+http://ext.dcloud.net.cn/plugin?id=467 仔仔-家居格子组件
+http://ext.dcloud.net.cn/plugin?id=235 签到
 http://ext.dcloud.net.cn/plugin?id=434 水印
 http://ext.dcloud.net.cn/plugin?id=417 物流
 http://ext.dcloud.net.cn/plugin?id=305 优惠券
@@ -211,7 +211,7 @@ server {
         rewrite ^.*$ /index.html last;
         }
     }
-
+https://ext.dcloud.net.cn/plugin?id=972
 
 DELETE from pms_sku_stock ;
 DELETE from pms_product_attribute_value  ;

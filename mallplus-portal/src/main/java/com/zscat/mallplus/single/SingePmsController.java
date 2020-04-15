@@ -316,8 +316,8 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
             @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
             @RequestParam(value = "brandId", required = false) Long brandId,
-            @RequestParam(value = "sort", required = false) Integer sort,
-            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
+            @RequestParam(value = "sort", required = false) Integer sort, //  1 sale 2 price
+            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy, // 1 降序
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {

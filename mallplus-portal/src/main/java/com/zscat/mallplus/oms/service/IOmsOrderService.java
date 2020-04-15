@@ -50,10 +50,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     @Transactional
     void cancelOrder(Long orderId);
 
-    /**
-     * 发送延迟消息取消订单
-     */
-    void sendDelayMessageCancelOrder(Long orderId);
 
     /**
      * 获取用户可用优惠券列表
@@ -186,6 +182,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Object orderComment(Long orderId, String items);
 
+    /**
+     * 多商户下单
+     * @param orderParam
+     * @return
+     */
     CommonResult generateStoreOrder(OrderParam orderParam);
 
     /**
@@ -204,7 +205,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Object quitGroup(Long id);
 
     /**
-     * autoDeliveryOrder
+     * 订单到期自动发货
      *
      * @return
      */
