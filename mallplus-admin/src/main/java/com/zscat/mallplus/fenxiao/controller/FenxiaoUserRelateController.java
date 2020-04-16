@@ -87,7 +87,7 @@ public class FenxiaoUserRelateController {
     @ApiOperation("删除分销关系")
     @GetMapping(value = "/delete/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoUserRelate:delete')")
-    public Object deleteFenxiaoUserRelate(@ApiParam("分销关系id") @PathVariable Long id) {
+    public Object deleteFenxiaoUserRelate(@ApiParam("分销关系id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("分销关系id");
@@ -106,7 +106,7 @@ public class FenxiaoUserRelateController {
     @ApiOperation("查询分销关系明细")
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoUserRelate:read')")
-    public Object getFenxiaoUserRelateById(@ApiParam("分销关系id") @PathVariable Long id) {
+    public Object getFenxiaoUserRelateById(@ApiParam("分销关系id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("分销关系id");
@@ -125,7 +125,7 @@ public class FenxiaoUserRelateController {
     @SysLog(MODULE = "fenxiao", REMARK = "批量删除分销关系")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoUserRelate:delete')")
     public Object deleteBatch(@RequestParam("ids") List
-            <Long> ids) {
+            <Integer> ids) {
         boolean count = IFenxiaoUserRelateService.removeByIds(ids);
         if (count) {
             return new CommonResult().success(count);

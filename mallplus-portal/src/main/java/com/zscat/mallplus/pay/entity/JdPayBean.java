@@ -17,9 +17,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Javen
  */
-@Component
-@PropertySource("classpath:/production/jdpay.properties")
-@ConfigurationProperties(prefix = "jdpay")
+
 public class JdPayBean {
     private String mchId;
     private String rsaPrivateKey;

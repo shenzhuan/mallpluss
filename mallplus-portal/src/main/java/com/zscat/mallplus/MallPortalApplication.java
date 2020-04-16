@@ -11,14 +11,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
 
+
 @SpringBootApplication
 @MapperScan({"com.zscat.mallplus.mapper", "com.zscat.mallplus.ums.mapper", "com.zscat.mallplus.sms.mapper", "com.zscat.mallplus.cms.mapper", "com.zscat.mallplus.sys.mapper", "com.zscat.mallplus.oms.mapper", "com.zscat.mallplus.pms.mapper"})
 @EnableTransactionManagement
 @EnableScheduling
 public class MallPortalApplication {
 
-    @Resource
-    PmsProductMapper mapper;
 
     public static void main(String[] args) {
         System.out.println("start-------------");
