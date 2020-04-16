@@ -179,6 +179,9 @@ public class SingePmsController extends ApiBaseAction {
             log.info("redis缓存失效：" + id);
             goods = pmsProductService.getGoodsRedisById(id);
         }
+        if (goods==null){
+            return new CommonResult().failed("商品不存在");
+        }
         goods.setGoods(buildFenPrice(goods.getGoods()));
         Map<String, Object> map = new HashMap<>();
         UmsMember umsMember = memberService.getNewCurrentMember();

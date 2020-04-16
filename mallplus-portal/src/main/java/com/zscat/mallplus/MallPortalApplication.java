@@ -25,8 +25,8 @@ public class MallPortalApplication {
         System.out.println("end-------------");
     }
 
-    @Bean
+   /* @Bean
     public StartupRunner startupRunner() {
         return new StartupRunner();
-    }
+    }*/
 }

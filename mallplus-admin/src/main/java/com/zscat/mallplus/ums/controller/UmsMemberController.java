@@ -107,7 +107,7 @@ public class UmsMemberController {
 
     @SysLog(MODULE = "ums", REMARK = "后台余额充值")
     @ApiOperation("后台余额充值")
-    @PostMapping(value = "/mallplus PayditBlance")
+    @PostMapping(value = "/handleEditBlance")
     //  @PreAuthorize("hasAuthority('ums:UmsMember:update')")
     @Transactional
     public Object handleEditBlance(@RequestParam("id") Long id,

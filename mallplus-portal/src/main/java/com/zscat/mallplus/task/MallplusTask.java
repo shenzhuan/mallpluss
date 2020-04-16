@@ -11,6 +11,10 @@ import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.sms.service.ISmsHomeBrandService;
+import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
+import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
+import com.zscat.mallplus.sms.service.ISmsHomeRecommendSubjectService;
 import com.zscat.mallplus.sys.entity.AdminDayStatics;
 import com.zscat.mallplus.sys.entity.SysStore;
 import com.zscat.mallplus.sys.entity.SysStoreDepositLog;
@@ -62,7 +66,23 @@ public class MallplusTask {
     private AdminDayStaticsMapper dayStaticsMapper;
     @Resource
     private SysStoreDepositLogMapper sysStoreDepositLogMapper;
+    @Resource
+    private ISmsHomeNewProductService homeNewProductService;
+    @Resource
+    private ISmsHomeRecommendProductService homeRecommendProductService;
+    @Resource
+    private ISmsHomeBrandService homeBrandService;
+    @Resource
+    private ISmsHomeRecommendSubjectService homeRecommendSubjectService;
 
+    /**
+     * 清理 因为商品被删除 导致的数据关联问题
+     */
+    @Scheduled(cron = "0 0/10 * ? * ?")
+    private void clearGoodsRelate() {
+     //   CommonResult result = portalOrderService.cancelTimeOutOrder();
+
+    }
     /**
      * cron表达式：Seconds Minutes Hours DayofMonth Month DayofWeek [Year]
      * 每10分钟扫描一次，扫描设定超时时间之前下的订单，如果没支付则取消该订单
