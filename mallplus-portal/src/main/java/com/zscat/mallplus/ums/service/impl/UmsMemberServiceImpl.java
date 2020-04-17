@@ -259,12 +259,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return member;
                 }
             } else {
-                UmsMember member = UserUtils.getCurrentMember();
+               /* UmsMember member = UserUtils.getCurrentMember();
                 if (member != null && member.getId() != null) {
                     return member;
                 } else {
                     return new UmsMember();
-                }
+                }*/
             }
             return new CommonResult().fail(100);
         } catch (Exception e) {
