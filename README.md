@@ -8,7 +8,7 @@
 
 > 或者您可以 "follow" 一下，该项目将持续更新，不断完善功能。
 
-> 项目交流人QQ群：) 133070260]
+> 项目交流人QQ群：) 133070260 725021772]
 
 > 如有问题或者好的建议可以在 Issues 中提。
 
@@ -24,6 +24,10 @@
 后台管理系统包含商品管理、订单管理、会员管理、促销管理、运营管理、内容管理、统计报表、财务管理、权限管理、代码生成设置等模块。
 
 ### 项目演示
+
+
+ _下载项目根路径下的mallplus.sql 和mall-web-admin(后台管理vue项目，需要启动mllplus-admin项目)
+修改mallplus-admin中application-dev.properties 的数据库和redis配置_ 
 
 [部署文档](https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1786312&doc_id=326093)
 > 后台管理系统
