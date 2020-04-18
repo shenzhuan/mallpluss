@@ -8,12 +8,20 @@
     <artifactId>mallplus</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
+    <properties>
+        <alipay.version>4.8.10.ALL</alipay.version>
+        <fastjson.version>1.2.62</fastjson.version>
+        <jdk.version>1.8</jdk.version>
+        <junit.version>4.12</junit.version>
+        <hutool.version>5.0.4</hutool.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
     <modules>
         <module>mallplus-mbg</module>
         <module>mallplus-pay</module>
-        <module>mallplus-monitor</module>
-        <module>mallplus-wechat</module>
         <module>mallplus-portal</module>
         <module>mallplus-admin</module>
         <module>mallplus-search</module>

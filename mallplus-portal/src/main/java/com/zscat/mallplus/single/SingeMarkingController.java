@@ -8,17 +8,13 @@ import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.entity.PmsProductCategory;
 import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
-import com.zscat.mallplus.sms.entity.SmsBasicGifts;
-import com.zscat.mallplus.sms.entity.SmsBasicMarking;
-import com.zscat.mallplus.sms.entity.SmsCouponHistory;
-import com.zscat.mallplus.sms.entity.SmsGroupActivity;
-import com.zscat.mallplus.sms.service.ISmsBasicGiftsService;
-import com.zscat.mallplus.sms.service.ISmsBasicMarkingService;
-import com.zscat.mallplus.sms.service.ISmsCouponService;
-import com.zscat.mallplus.sms.service.ISmsGroupActivityService;
+import com.zscat.mallplus.sms.entity.*;
+import com.zscat.mallplus.sms.mapper.SmsDiyPageMapper;
+import com.zscat.mallplus.sms.service.*;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.ums.service.RedisService;
@@ -68,6 +64,58 @@ public class SingeMarkingController extends ApiBaseAction {
     private IPmsFavoriteService favoriteService;
     @Autowired
     private IUmsMemberService memberService;
+    @Resource
+    private SmsDiyPageMapper diyPageMapper;
+    @Resource
+    private ISmsHomeNewProductService homeNewProductService;
+    @Resource
+    private ISmsHomeRecommendProductService homeRecommendProductService;
+    @Resource
+    private ISmsHomeBrandService homeBrandService;
+    @Resource
+    private ISmsHomeRecommendSubjectService homeRecommendSubjectService;
+
+    @SysLog(MODULE = "pms", REMARK = "首页新品推荐列表")
+    @IgnoreAuth
+    @GetMapping(value = "/homeNewProduct/list")
+    public Object productCategoryList(SmsHomeNewProduct productCategory,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(homeNewProductService.page(new Page<SmsHomeNewProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+    }
+    @SysLog(MODULE = "pms", REMARK = "首页品牌推荐列表")
+    @IgnoreAuth
+    @GetMapping(value = "/homeBrand/list")
+    public Object productCategoryList(SmsHomeBrand productCategory,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(homeBrandService.page(new Page<SmsHomeBrand>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+    }
+    @SysLog(MODULE = "pms", REMARK = "首页人气推荐列表")
+    @IgnoreAuth
+    @GetMapping(value = "/homeRecommendProduct/list")
+    public Object productCategoryList(SmsHomeRecommendProduct productCategory,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(homeRecommendProductService.page(new Page<SmsHomeRecommendProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+    }
+    @SysLog(MODULE = "pms", REMARK = "首页专题推荐列表")
+    @IgnoreAuth
+    @GetMapping(value = "/homeRecommendSubject/list")
+    public Object productCategoryList(SmsHomeRecommendSubject productCategory,
+                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                      @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(homeRecommendSubjectService.page(new Page<SmsHomeRecommendSubject>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+    }
+
+    @ApiOperation("获取单个商品得优惠详情")
+    @RequestMapping(value = "/diyDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public Object diyDetail(@RequestParam(value = "storeId", required = true) Long storeId,
+                            @RequestParam(value = "type", required = true) Integer type) {
+        return new CommonResult().success(diyPageMapper.selectOne(
+                new QueryWrapper<SmsDiyPage>().eq("status", 1).eq("type", type).eq("store_id", storeId)));
+    }
 
 
     @ApiOperation("领取指定优惠券")

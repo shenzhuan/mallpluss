@@ -230,14 +230,16 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             if ("OPTIONS".equals(requestType)) {
                 return null;
             }
-            UmsMember member = UserUtils.getCurrentMember();
+
             String storeId = request.getParameter("storeid");
             if (ValidatorUtils.empty(storeId)) {
                 storeId = request.getHeader("storeid");
             }
+            UmsMember member = new UmsMember();
+            /*UmsMember member = UserUtils.getCurrentMember();
             if (member != null && member.getId() != null ) {
-          //      return member;
-            }
+                return member;
+            }*/
 
             String tokenPre = "authorization" + storeId;
             String authHeader = request.getParameter(tokenPre);
