@@ -319,8 +319,8 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "productCategoryId", required = false) Long productCategoryId,
             @RequestParam(value = "recommandStatus", required = false) Integer recommandStatus,
             @RequestParam(value = "brandId", required = false) Long brandId,
-            @RequestParam(value = "sort", required = false) Integer sort, //  1 sale 2 price
-            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy, // 1 降序
+            @RequestParam(value = "sort", required = false) Integer sort,
+            @RequestParam(value = "orderBy", required = false, defaultValue = "1") Integer orderBy,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
@@ -1021,18 +1021,18 @@ public class SingePmsController extends ApiBaseAction {
     @ApiOperation("添加商品浏览记录")
     @SysLog(MODULE = "pms", REMARK = "添加商品浏览记录")
     @PostMapping(value = "/addView")
-    public Object addView(@RequestParam Long goodsId) {
-        UmsMember member = memberService.getNewCurrentMember();
-        if (member == null || member.getId() == null) {
+    public Object addView(@RequestParam Long goodsId,
+                          @RequestParam(value = "pic", required = false) String pic) {
+        UmsMember member =memberService.getNewCurrentMember();
+        if (member==null || member.getId()==null){
 
-        } else {
+        }else {
             String key = String.format(Rediskey.GOODSHISTORY, memberService.getNewCurrentMember().getId());
-
             //为了保证浏览商品的 唯一性,每次添加前,将list 中该 商品ID去掉,在加入,以保证其浏览的最新的商品在最前面
-
-            redisUtil.lRemove(key, 1, goodsId.toString());
+            String keys=goodsId+",;;"+pic;
+            redisUtil.lRemove(key, 1, keys);
             //将value push 到该key下的list中
-            redisUtil.lLeftPush(key, goodsId.toString());
+            redisUtil.lLeftPush(key, keys);
             //使用ltrim将60个数据之后的数据剪切掉
             redisUtil.lTrim(key, 0, 59);
             //设置缓存时间为一个月
@@ -1061,8 +1061,13 @@ public class SingePmsController extends ApiBaseAction {
         //根据用户的ID分頁获取该用户最近浏览的50个商品信息
         List<String> result = redisUtil.lRange(key, (pageNum - 1) * pageSize, pageNum * pageSize - 1);
         if (result != null && result.size() > 0) {
-            List<PmsProduct> list = (List<PmsProduct>) pmsProductService.listByIds(result);
-
+            List<PmsProduct> list = new ArrayList<>();
+            for (String keys : result){
+                PmsProduct product = new PmsProduct();
+                product.setId(Long.valueOf(keys.split(",;;")[0]));
+                product.setPic(keys.split(",;;")[1]);
+                list.add(product);
+            }
             map.put("result", list);
             map.put("pageCount", (pageCount % pageSize == 0 ? pageCount / pageSize : pageCount / pageSize + 1));
         }

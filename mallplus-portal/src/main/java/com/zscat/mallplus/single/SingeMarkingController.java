@@ -81,7 +81,7 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object productCategoryList(SmsHomeNewProduct productCategory,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(homeNewProductService.page(new Page<SmsHomeNewProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+        return new CommonResult().success(homeNewProductService.page(new Page<SmsHomeNewProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory).orderByDesc("sort")));
     }
     @SysLog(MODULE = "pms", REMARK = "首页品牌推荐列表")
     @IgnoreAuth
@@ -89,7 +89,7 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object productCategoryList(SmsHomeBrand productCategory,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(homeBrandService.page(new Page<SmsHomeBrand>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+        return new CommonResult().success(homeBrandService.page(new Page<SmsHomeBrand>(pageNum, pageSize), new QueryWrapper<>(productCategory).orderByDesc("sort")));
     }
     @SysLog(MODULE = "pms", REMARK = "首页人气推荐列表")
     @IgnoreAuth
@@ -97,7 +97,7 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object productCategoryList(SmsHomeRecommendProduct productCategory,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(homeRecommendProductService.page(new Page<SmsHomeRecommendProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+        return new CommonResult().success(homeRecommendProductService.page(new Page<SmsHomeRecommendProduct>(pageNum, pageSize), new QueryWrapper<>(productCategory).orderByDesc("sort")));
     }
     @SysLog(MODULE = "pms", REMARK = "首页专题推荐列表")
     @IgnoreAuth
@@ -105,7 +105,7 @@ public class SingeMarkingController extends ApiBaseAction {
     public Object productCategoryList(SmsHomeRecommendSubject productCategory,
                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
-        return new CommonResult().success(homeRecommendSubjectService.page(new Page<SmsHomeRecommendSubject>(pageNum, pageSize), new QueryWrapper<>(productCategory)));
+        return new CommonResult().success(homeRecommendSubjectService.page(new Page<SmsHomeRecommendSubject>(pageNum, pageSize), new QueryWrapper<>(productCategory).orderByDesc("sort")));
     }
 
     @ApiOperation("获取单个商品得优惠详情")
