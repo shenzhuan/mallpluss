@@ -518,9 +518,7 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页推荐商品")
     @GetMapping(value = "/initGoodsRedis")
     public Object initGoodsRedis() {
-
         return pmsProductService.initGoodsRedis();
-
     }
 
     @SysLog(MODULE = "pms", REMARK = "查询商品列表")
@@ -528,7 +526,6 @@ public class SingelHomeController {
     @ApiOperation(value = "查询首页推荐商品")
     @GetMapping(value = "/initMemberRedis")
     public Object initMemberRedis() {
-
         return new CommonResult().success(memberService.initMemberRedis());
 
     }

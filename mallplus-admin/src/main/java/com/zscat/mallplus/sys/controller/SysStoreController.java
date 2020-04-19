@@ -44,7 +44,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @Api(tags = "SysStoreController", description = "管理")
-@RequestMapping("/sys/SysStore")
+@RequestMapping("/sys/sysStore")
 public class SysStoreController {
     @Resource
     private ISysStoreService ISysStoreService;
