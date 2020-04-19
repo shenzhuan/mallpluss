@@ -22,12 +22,9 @@ public class OmsOrderReturnReasonServiceImpl extends ServiceImpl<OmsOrderReturnR
 
     @Override
     public int updateStatus(List<Long> ids, Integer status) {
-        if (!status.equals(0) && !status.equals(1)) {
-            return 0;
-        }
         OmsOrderReturnReason record = new OmsOrderReturnReason();
         record.setStatus(status);
-        this.update(record, new QueryWrapper<>(record).in("id", ids));
+        this.update(record, new QueryWrapper<>(new OmsOrderReturnReason()).in("id", ids));
         return 1;
     }
 }
