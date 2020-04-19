@@ -5,9 +5,10 @@
 
 package com.zscat.mallplus.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -53,7 +54,7 @@ class Sequence {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        if (StringUtils.hasText(name)) {
+        if (StringUtils.isNotBlank(name)) {
             mpid.append(name.split("@")[0]);
         }
 

@@ -25,7 +25,7 @@ import com.zscat.mallplus.ums.service.IStoreService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
 import com.zscat.mallplus.util.OssAliyunUtil;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.MatrixToImageWriter;
+import com.zscat.mallplus.util.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
