@@ -347,11 +347,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateNote(note);
         history.setSourceType(sourceType);
         history.setOperateMan(operateMan);
-        umsIntegrationChangeHistoryService.save(history);
+
         UmsMember member = memberMapper.selectById(id);
         if (member == null) {
-            member.setIntegration(0);
+
         } else {
+            umsIntegrationChangeHistoryService.save(history);
             if (member != null && ValidatorUtils.empty(member.getIntegration())) {
                 member.setIntegration(0);
             }
