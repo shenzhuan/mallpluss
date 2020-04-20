@@ -178,7 +178,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 0) {
 
                 }
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
 
             H5SceneInfo sceneInfo = new H5SceneInfo();
@@ -283,7 +283,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             System.out.println(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString());
 
@@ -604,7 +604,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
@@ -684,7 +684,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             WxPayBean wxPayApiConfig = new WxPayBean();
 

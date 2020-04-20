@@ -154,7 +154,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
 
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
@@ -186,7 +186,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 throw new ApiMallPlusException("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                throw new ApiMallPlusException("订单已支付，请不要重复操作");
+                throw new ApiMallPlusException("订单不是未支付，不能重新支付");
             }
             AliPayApiConfig aliPayApiConfig = AliPayApiConfigKit.getAliPayApiConfig();
             Map<String, String> paramsMap = new HashMap<>();
@@ -237,7 +237,7 @@ public class AliPayController extends AbstractAliPayApiController {
             return new CommonResult().failed("订单已已关闭，请不要重复操作");
         }
         if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return new CommonResult().failed("订单已支付，请不要重复操作");
+            return new CommonResult().failed("订单不是未支付，不能重新支付");
         }
 
         String body = orderInfo.getGoodsName();
@@ -279,7 +279,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 throw new ApiMallPlusException("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                throw new ApiMallPlusException("订单已支付，请不要重复操作");
+                throw new ApiMallPlusException("订单不是未支付，不能重新支付");
             }
             String returnUrl = domain + "/aliPay/return_url";
             String notifyUrl = domain + "/aliPay/notify_url";
