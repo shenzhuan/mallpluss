@@ -1,6 +1,8 @@
 package com.zscat.mallplus.utils;
 
-import org.springframework.util.DigestUtils;
+
+
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -85,6 +87,7 @@ public class EncryptUtils {
      * 密码加密
      */
     public static String encryptPassword(String password) {
-        return DigestUtils.md5DigestAsHex(password.getBytes());
+    //    return DigestUtils.md5DigestAsHex(password.getBytes());
+        return DigestUtils.md5Hex(password.getBytes());
     }
 }

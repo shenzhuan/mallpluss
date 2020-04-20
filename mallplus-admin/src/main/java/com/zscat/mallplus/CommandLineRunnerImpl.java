@@ -15,7 +15,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     GeneratorMapper generatorMapper;
 
     public static void main(String[] args) {
-        System.out.println("http://localhost:8080/cms/CmsSubjectCategory/list".replace("//", "a").indexOf("/") + 1);
+        System.out.println("http://localhost:8083/cms/CmsSubjectCategory/list".replace("//", "a").indexOf("/") + 1);
     }
 
     @Override

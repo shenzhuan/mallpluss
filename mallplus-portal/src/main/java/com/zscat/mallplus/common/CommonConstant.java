@@ -4,7 +4,7 @@ package com.zscat.mallplus.common;
 public class CommonConstant {
 
 
-//	public static final String DOMAIN = "http://localhost:8080";
+
 
     // 外部来源和内部来源的cookie名
     public static final String OUTER_SOURCE_COOKIE = "RJFT_OUTER_SOURCE";

@@ -205,7 +205,7 @@ public class PayController extends ApiBaseAction {
             return toResponsObject(400, "订单已已关闭，请不要重复操作", "");
         }
         if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return toResponsObject(400, "订单已支付，请不要重复操作", "");
+            return toResponsObject(400, "订单不是未支付，不能重新支付", "");
         }
 
         String nonceStr = CharUtil.getRandomString(32);

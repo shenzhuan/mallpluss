@@ -39,15 +39,15 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private IUmsMemberService memberService;
+
     @Autowired
     private RedisService redisService;
     @Autowired
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
+    @Autowired
+    private IUmsMemberService memberService;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

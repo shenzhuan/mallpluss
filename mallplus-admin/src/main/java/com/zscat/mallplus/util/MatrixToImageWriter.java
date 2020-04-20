@@ -1,4 +1,4 @@
-package com.zscat.mallplus.utils;
+package com.zscat.mallplus.util;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;

@@ -1,5 +1,5 @@
 
-user root;
+user mallplus;
 worker_processes 1;
 
 #error_log  logs/error.log;
@@ -36,7 +36,7 @@ http {
 
     #access_log  logs/host.access.log  main;
     location / {
-      root /root/jm/dist;
+      root /app/amllplus/dist;
       index index.html;
     }
 
@@ -50,7 +50,7 @@ http {
     server_name localhost;
 
     location / {
-      root /root/jm/ruoyi;
+      root /app/amllplus/ruoyi;
       try_files $uri $uri/ /index.html;
       index index.html index.htm;
       proxy_pass http://localhost:8085/;
@@ -71,12 +71,12 @@ http {
     }
 
     location / {
-      alias /root/jm/h5/;
+      alias /app/amllplus/h5/;
       index index.html;
     }
 
     location /h5 {
-      alias /root/jm/mall/;
+      alias /app/amllplus/mall/;
       try_files $uri $uri/ @router;
       index index.html;
     }
@@ -92,14 +92,14 @@ http {
   server {
     listen 8082;
     server_name _;
-    root /root/jm/h5;
+    root /app/amllplus/h5;
     index index.html;
   }
 
   server {
     listen 8084;
     server_name _;
-    root /root/jm/cms;
+    root /app/amllplus/cms;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
@@ -108,36 +108,47 @@ http {
   server {
     listen 8088;
     server_name _;
-    root /root/jm/pc;
+    root /app/amllplus/pc;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
   server {
     listen 8086;
     server_name _;
-    root /root/jm/ecshop;
+    root /app/amllplus/ecshop;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
   server {
     listen 8000;
     server_name _;
-    root /root/jm/h5bak1;
+    root /app/amllplus/h5bak1;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
   server {
     listen 8010;
     server_name _;
-    root /root/jm/pcbak;
+    root /app/amllplus/pcbak;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
   server {
     listen 8018;
     server_name _;
-    root /root/jm/pcbak1;
+    root /app/amllplus/pcbak1;
     index index.html;
     try_files $uri $uri/ /index.html;
   }
 }
+
+
+
+
+nohup java -Xms128m -Xmx256m -jar /app/amllplus/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /app/amllplus/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /app/amllplus/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /app/amllplus/RuoYi.jar >rrr.log 2>&1 &

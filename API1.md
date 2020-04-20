@@ -962,7 +962,7 @@ POST
 |参数|是否必选|类型|说明|
 |:-----|:-------:|:-----|:-----|
 |method: images.upload|
-|upfile: blob:http://localhost:8080/b9a722fc-dd16-4ad1-85bc-6d1c2dbbde94|
+|upfile: blob:http://localhost:8083/b9a722fc-dd16-4ad1-85bc-6d1c2dbbde94|
 |file: (binary)|
 
 #### 返回示例：

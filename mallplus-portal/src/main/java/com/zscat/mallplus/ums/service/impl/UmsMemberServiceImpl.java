@@ -3,7 +3,6 @@ package com.zscat.mallplus.ums.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
-import com.zscat.mallplus.component.UserUtils;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -17,7 +16,7 @@ import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
 import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
-import com.zscat.mallplus.utils.MatrixToImageWriter;
+import com.zscat.mallplus.util.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -259,12 +258,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return member;
                 }
             } else {
-                UmsMember member = UserUtils.getCurrentMember();
+               /* UmsMember member = UserUtils.getCurrentMember();
                 if (member != null && member.getId() != null) {
                     return member;
                 } else {
                     return new UmsMember();
-                }
+                }*/
             }
             return new CommonResult().fail(100);
         } catch (Exception e) {
@@ -348,11 +347,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateNote(note);
         history.setSourceType(sourceType);
         history.setOperateMan(operateMan);
-        umsIntegrationChangeHistoryService.save(history);
+
         UmsMember member = memberMapper.selectById(id);
         if (member == null) {
-            member.setIntegration(0);
+
         } else {
+            umsIntegrationChangeHistoryService.save(history);
             if (member != null && ValidatorUtils.empty(member.getIntegration())) {
                 member.setIntegration(0);
             }

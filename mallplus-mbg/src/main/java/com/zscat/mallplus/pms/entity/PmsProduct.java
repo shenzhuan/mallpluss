@@ -11,6 +11,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -300,4 +301,6 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private Integer status;
+    @TableField(exist = false)
+    List<PmsSkuStock> skuStockList;
 }

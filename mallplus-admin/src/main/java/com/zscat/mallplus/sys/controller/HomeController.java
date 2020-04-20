@@ -301,9 +301,9 @@ public class HomeController extends BaseController {
     }
 
     /**
-     * 导出：http://localhost:8080/home/export/users
-     * 导入：http://localhost:8080/demo/import/users (用postman或者curl测试吧)
-     * http://localhost:8080/home/import/goods
+     * 导出：http://localhost:8085/home/export/users
+     * 导入：http://localhost:8085/demo/import/users (用postman或者curl测试吧)
+     * http://localhost:8085/home/import/goods
      *
      * @param response
      */

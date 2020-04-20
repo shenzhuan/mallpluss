@@ -21,7 +21,8 @@ import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.mapper.SysUserRoleMapper;
 import com.zscat.mallplus.sys.service.ISysStoreService;
-import com.zscat.mallplus.utils.MatrixToImageWriter;
+
+import com.zscat.mallplus.util.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
