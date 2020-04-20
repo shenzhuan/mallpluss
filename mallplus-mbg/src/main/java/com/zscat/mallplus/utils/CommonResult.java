@@ -95,6 +95,7 @@ public class CommonResult {
     public CommonResult validateFailed(String msg) {
         this.code = VALIDATE_FAILED;
         this.msg = msg;
+        this.data = msg;
         return this;
     }
 
@@ -107,6 +108,7 @@ public class CommonResult {
         this.code = UNAUTHORIZED;
         this.msg = "暂未登录或token已经过期";
         this.data = msg;
+
         return this;
     }
 
@@ -138,6 +140,7 @@ public class CommonResult {
     public CommonResult paramFailed() {
         this.code = FAILED;
         this.msg = "参数失败";
+        this.data = "参数失败";
         return this;
     }
 
