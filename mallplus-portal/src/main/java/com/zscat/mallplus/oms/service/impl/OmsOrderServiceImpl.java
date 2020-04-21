@@ -739,12 +739,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             couponHistory.setOrderSn(order.getOrderSn());
             couponHistoryService.updateById(couponHistory);
         }
-        if (orderParam.getOrderType() == AllEnum.OrderType.KNAN_JIA.code()) {
-            SmsBargainRecord groupRecords = bargainRecordMapper.selectById(orderParam.getBargainRecordId());
-            groupRecords.setStatus(BargainEnum.Status.PAY.code());
-            groupRecords.setOrderId(order.getId());
-            bargainRecordMapper.updateById(groupRecords);
-        }
         OmsOrderOperateHistory history = new OmsOrderOperateHistory();
         history.setOrderId(order.getId());
         history.setCreateTime(new Date());
@@ -832,7 +826,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 FenxiaoConfig fenxiaoConfig = fenxiaoConfigMapper.selectOne(new QueryWrapper<>());
                 // 商品分佣
                 if (fenxiaoConfig != null && fenxiaoConfig.getStatus() == 1 && ValidatorUtils.notEmpty(cartPromotionItem.getInviteMemberId())
-                        && cartPromotionItem.getInviteMemberId()>0 &&fenxiaoConfig.getOnePercent() > 0) {
+                        && cartPromotionItem.getInviteMemberId() > 0 && fenxiaoConfig.getOnePercent() > 0) {
                     //一级 分销
                     FenxiaoRecords records1 = new FenxiaoRecords();
                     records1.setCreateTime(new Date());
@@ -1060,7 +1054,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     private void createCartObj(OrderParam orderParam, List<OmsCartItem> list, OmsCartItem cartItem, PmsProduct pmsProduct) {
         cartItem.setIsFenxiao(pmsProduct.getIsFenxiao());
-        if (ValidatorUtils.notEmpty(orderParam.getSkuId())) {
+        if (ValidatorUtils.notEmpty(orderParam.getSkuId()) && orderParam.getSkuId()>0) {
             PmsSkuStock pmsSkuStock = skuStockMapper.selectById(orderParam.getSkuId());
             checkGoods(pmsProduct, false, 1);
             checkSkuGoods(pmsSkuStock, 1);
@@ -1384,7 +1378,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         order.setStatus(OrderStatus.TO_DELIVER.getValue());
         order.setPayType(AllEnum.OrderPayType.balancePay.code());
         order.setPaymentTime(new Date());
-        if (order.getPayAmount().compareTo(BigDecimal.ZERO) < 0) {
+        if (order.getPayAmount().compareTo(BigDecimal.ZERO) <= 0) {
             order.setPayAmount(new BigDecimal("0.01"));
         }
         orderService.updateById(order);
@@ -1394,6 +1388,18 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             member.setId(order.getGroupId());
             member.setStatus(2);
             groupMemberMapper.updateById(member);
+
+            SmsGroupMember groupMember = groupMemberMapper.selectById(order.getGroupId());
+            SmsGroupRecord groupRecord = groupRecordMapper.selectById(groupMember.getGroupRecordId());
+            SmsGroup group = groupMapper.selectById(groupRecord.getGroupId());
+
+            List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
+            groupRecord.setList(groupMembers);
+            if (groupMembers != null && groupMembers.size() == group.getMaxPeople()) {
+                groupRecord.setStatus("2");
+                groupRecordMapper.updateById(groupRecord);
+            }
+
         }
 
         userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
@@ -1414,20 +1420,16 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setNote("余额支付");
         orderOperateHistoryService.save(history);
         memberService.addIntegration(userDO.getId(), order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(), 1, "余额支付添加积分", AllEnum.ChangeSource.order.code(), userDO.getUsername());
-
-
         OmsOrderItem queryO = new OmsOrderItem();
         queryO.setOrderId(order.getId());
         queryO.setType(AllEnum.OrderItemType.GOODS.code());
         List<OmsOrderItem> list = orderItemService.list(new QueryWrapper<>(queryO));
         // 分拥计算
         recordFenxiaoMoney(list, userDO);
-        /*FenxiaoRecords config = new FenxiaoRecords();
-        config.setStatus("2");
-        fenxiaoRecordsMapper.update(config,new QueryWrapper<FenxiaoRecords>().eq("order_id",order.getId()));
-        */
         return order;
     }
+
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -2287,7 +2289,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 cartItem.setMemberId(currentMember.getId());
                 cartItem.setProductCategoryId(pmsProduct.getProductCategoryId());
                 cartItem.setProductBrand(pmsProduct.getBrandName());
-                //  cartItem.setStoreId(pmsProduct.getStoreId());
+
                 cartItem.setStoreName(pmsProduct.getStoreName());
                 cartItem.setIsFenxiao(pmsProduct.getIsFenxiao());
                 cartItemMapper.insert(cartItem);
@@ -2351,7 +2353,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             omsCartItem.setPrice(product.getPrice());
         }
         omsCartItem.setProductPic(product.getPic());
-        if (ValidatorUtils.notEmpty(orderParam.getSkuId())) {
+        if (ValidatorUtils.notEmpty(orderParam.getSkuId()) && orderParam.getSkuId()>0) {
             PmsSkuStock skuStock = skuStockMapper.selectById(skuId);
             if (memberRate > 0) {
                 omsCartItem.setPrice(skuStock.getPrice().multiply(new BigDecimal(memberRate)).divide(BigDecimal.valueOf(10)));
@@ -2376,13 +2378,12 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         omsCartItem.setProductSn(product.getProductSn());
         omsCartItem.setQuantity(orderParam.getTotal());
         omsCartItem.setMemberId(currentMember.getId());
-      //  omsCartItem.setStoreId(product.getStoreId());
+
         omsCartItem.setStoreName(product.getStoreName());
         return omsCartItem;
     }
     @Override
     public CommonResult generateStoreOrder(OrderParam orderParam) {
-
 
         return new CommonResult().success("下单成功");
     }
@@ -2427,17 +2428,17 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 history.setCreateTime(new Date());
                 history.setOperateMan("shop");
                 //  //0换货 1退钱 2退货3 退钱退货
-                if (apply.getType() == 0) {
-                    history.setNote("换货");
-                } else if (apply.getType() == 1) {
-                    history.setNote("申请退款");
-                } else if (apply.getType() == 2) {
-                    history.setNote("申请退货");
-                } else if (apply.getType() == 3) {
-                    history.setNote("申请退货退款");
-                }
+             if (apply.getType()==0){
+                 history.setNote("换货");
+             }else  if (apply.getType()==1){
+                 history.setNote("申请退款");
+             }else  if (apply.getType()==2){
+                 history.setNote("申请退货");
+             }else  if (apply.getType()==3){
+                 history.setNote("申请退货退款");
+             }
 
-                orderOperateHistoryService.save(history);
+            orderOperateHistoryService.save(history);
             }
 
         } catch (Exception e) {
