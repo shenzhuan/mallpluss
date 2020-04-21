@@ -200,6 +200,24 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/goods/category")
     @ApiOperation(value = "查询商品详情信息")
     public Object category(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
+        PmsProductAttributeCategory cur = productAttributeCategoryService.getById(id);
+        PmsProductAttributeCategory parent = null;
+        List<PmsProductAttributeCategory> children = null;
+            parent = cur;
+            children = productAttributeCategoryService.list(new QueryWrapper<PmsProductAttributeCategory>());
+            cur = children.size() > 0 ? children.get(0) : cur;
+        Map<String, Object> data = new HashMap<>();
+        data.put("currentCategory", cur);
+        data.put("parentCategory", parent);
+        data.put("brotherCategory", children);
+        return new CommonResult().success(data);
+
+    }
+    @SysLog(MODULE = "pms", REMARK = "查询商品详情信息")
+    @IgnoreAuth
+    @GetMapping(value = "/goods/category1")
+    @ApiOperation(value = "查询商品详情信息")
+    public Object category1(@RequestParam(value = "id", required = false, defaultValue = "0") Long id) {
         PmsProductCategory cur = productCategoryService.getById(id);
         PmsProductCategory parent = null;
         List<PmsProductCategory> children = null;
@@ -219,7 +237,6 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(data);
 
     }
-
     /**
      * 当前分类栏目
      *

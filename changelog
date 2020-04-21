@@ -1,3 +1,37 @@
+
+alter table sms_home_recommend_subject add pic varchar(127) ;
+alter table sms_home_recommend_subject add read_count int ;
+alter table sms_home_recommend_subject add description varchar(127) ;
+
+alter table sms_home_brand add logo varchar(127) ;
+
+--0419
+alter table sms_home_new_product add price decimal ;
+alter table sms_home_new_product add pic varchar(127) ;
+
+alter table sms_home_recommend_product add price decimal ;
+alter table sms_home_recommend_product add pic varchar(127) ;
+
+alter table oms_payments  add store_id int not null default 0;
+1.uniapp 首页添加人气推荐和新品推荐 添加版本信息页面 订单列表重复问题 。
+2。后台管理 支付列表出不来（更新）
+3.分销问题（二级分销获取用户信息错误）
+4.拼团结构调整
+
+
+--0316
+后台商户系统
+1.运营管理 添加门店维护
+2.优化 设置管理下面的 小程序设置 积分设置和支付设置
+3.登录添加租户判断，审核通过的才能登录
+
+uniapp用户端
+1.优化登录相关错误
+2.会员折扣展示和购买
+3.接入商户端数据统计（会员 订单和商品）
+4.区域商品展示
+5.分类页面优化
+
 admin6918 898158
 shop7586  985819
 
@@ -12,8 +46,3 @@ delete FROM admin_day_statics ;
 
 
 商户等级 商户列表 商户充值 提现和提现审核
-
-
-
- pc 8088
-ecshop  8086
