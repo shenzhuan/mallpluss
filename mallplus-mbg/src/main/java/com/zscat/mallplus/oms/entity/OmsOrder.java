@@ -333,5 +333,37 @@ public class OmsOrder extends BaseEntity implements Serializable {
 
     @TableField("store_name")
     private String storeName;    //	税号
+    @TableField(exist = false)
+    private String statusName;    //
 
+    public String getStatusName() {
+        if (this.status == 12) {
+            return "待付款";
+        }if (this.status == 1) {
+            return "支付成功，没有回掉";
+        }if (this.status == 2) {
+            statusName = "待发货";
+        } else if (this.status == 3) {
+            statusName = "待收货";
+        } else if (this.status == 4) {
+            statusName = "待评价";
+        } else if (this.status == 5) {
+            statusName = "已完成";
+        } else if (this.status == 6) {
+            statusName = "维权中";
+        } else if (this.status == 7) {
+            statusName = " 维权已完成";
+        } else if (this.status == 8) {
+            statusName = "待分享";
+        } else if (this.status == 13) {
+            statusName = "申请退款";
+        } else if (this.status == 14) {
+            statusName = "已退款";
+        }  else if (this.status == 15) {
+            statusName = "已关闭";
+        } else if (this.status == 16) {
+            statusName = "无效订单";
+        }
+        return statusName;
+    }
 }

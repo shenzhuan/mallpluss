@@ -1,3 +1,10 @@
+
+alter table sms_home_recommend_subject add pic varchar(127) ;
+alter table sms_home_recommend_subject add read_count int ;
+alter table sms_home_recommend_subject add description varchar(127) ;
+
+alter table sms_home_brand add logo varchar(127) ;
+
 --0419
 alter table sms_home_new_product add price decimal ;
 alter table sms_home_new_product add pic varchar(127) ;

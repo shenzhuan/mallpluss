@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zscat.mallplus.utils.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -16,6 +18,8 @@ import java.io.Serializable;
  * @author zscat
  * @since 2019-04-19
  */
+@Setter
+@Getter
 @TableName("sms_home_recommend_subject")
 public class SmsHomeRecommendSubject extends BaseEntity implements Serializable {
 
@@ -35,55 +39,16 @@ public class SmsHomeRecommendSubject extends BaseEntity implements Serializable 
 
     private Integer sort;
 
+    private String pic;
 
-    public Long getId() {
-        return id;
-    }
+    /**
+     * 点击量
+     */
+    @TableField("read_count")
+    private Integer readCount;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public void setSubjectId(Long subjectId) {
-        this.subjectId = subjectId;
-    }
-
-    public String getSubjectName() {
-        return subjectName;
-    }
-
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
-    }
-
-    public Integer getRecommendStatus() {
-        return recommendStatus;
-    }
-
-    public void setRecommendStatus(Integer recommendStatus) {
-        this.recommendStatus = recommendStatus;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
-    }
-
-    @Override
-    public String toString() {
-        return "SmsHomeRecommendSubject{" +
-                ", id=" + id +
-                ", subjectId=" + subjectId +
-                ", subjectName=" + subjectName +
-                ", recommendStatus=" + recommendStatus +
-                ", sort=" + sort +
-                "}";
-    }
+    /**
+     * 描述
+     */
+    private String description;
 }
