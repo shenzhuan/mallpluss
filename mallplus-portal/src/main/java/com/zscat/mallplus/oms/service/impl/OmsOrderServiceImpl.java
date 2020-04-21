@@ -973,7 +973,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     private void createCartObj(OrderParam orderParam, List<OmsCartItem> list, OmsCartItem cartItem, PmsProduct pmsProduct) {
         cartItem.setIsFenxiao(pmsProduct.getIsFenxiao());
-        if (ValidatorUtils.notEmpty(orderParam.getSkuId())) {
+        if (ValidatorUtils.notEmpty(orderParam.getSkuId()) && orderParam.getSkuId()>0) {
             PmsSkuStock pmsSkuStock = skuStockMapper.selectById(orderParam.getSkuId());
             checkGoods(pmsProduct, false, 1);
             checkSkuGoods(pmsSkuStock, 1);
@@ -2270,7 +2270,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             omsCartItem.setPrice(product.getPrice());
         }
         omsCartItem.setProductPic(product.getPic());
-        if (ValidatorUtils.notEmpty(orderParam.getSkuId())) {
+        if (ValidatorUtils.notEmpty(orderParam.getSkuId()) && orderParam.getSkuId()>0) {
             PmsSkuStock skuStock = skuStockMapper.selectById(skuId);
             if (memberRate > 0) {
                 omsCartItem.setPrice(skuStock.getPrice().multiply(new BigDecimal(memberRate)).divide(BigDecimal.valueOf(10)));
