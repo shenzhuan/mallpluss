@@ -778,11 +778,7 @@ public class BOmsController extends ApiBaseAction {
                     payAmount = payAmount.add(consult.getPayAmount());
 
                 }
-                if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
-                    status5++;
-                    payAmount = payAmount.add(consult.getPayAmount());
 
-                }
             }
             statusAll = status1 + status2 + status3 + status4 + status5;
             count.setPayAmount(payAmount);
