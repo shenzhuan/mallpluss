@@ -273,6 +273,8 @@ public class PmsProduct extends BaseEntity implements Serializable {
 
     @TableField("store_name")
     private String storeName;
+
+
     /**
      * 1 學校 2 區域
      */

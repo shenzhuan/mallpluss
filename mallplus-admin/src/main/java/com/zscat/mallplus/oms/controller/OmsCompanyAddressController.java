@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author mallplus
  * @date 2019-12-07
- * 发货地址
+ * 退货的收货地址地址
  */
 @Slf4j
 @Api(tags = "oms", description = "发货地址列表")

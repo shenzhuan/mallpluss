@@ -1082,7 +1082,9 @@ public class SingePmsController extends ApiBaseAction {
             for (String keys : result){
                 PmsProduct product = new PmsProduct();
                 product.setId(Long.valueOf(keys.split(",;;")[0]));
-                product.setPic(keys.split(",;;")[1]);
+                if (keys.split(",;;").length>1){
+                    product.setPic(keys.split(",;;")[1]);
+                }
                 list.add(product);
             }
             map.put("result", list);

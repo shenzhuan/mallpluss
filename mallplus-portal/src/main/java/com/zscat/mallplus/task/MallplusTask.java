@@ -1,16 +1,28 @@
 package com.zscat.mallplus.task;
 
 
+import com.alipay.api.domain.AlipayTradeRefundModel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.cms.service.ICmsSubjectService;
+import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoRecords;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoRecordsMapper;
 import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
+import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
+import com.zscat.mallplus.pay.controller.alipay.AliPayController;
+import com.zscat.mallplus.pay.controller.wxpay.WxPayController;
+import com.zscat.mallplus.pms.entity.CmsSubjectProductRelation;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
+import com.zscat.mallplus.sms.entity.SmsGroupMember;
+import com.zscat.mallplus.sms.entity.SmsGroupRecord;
+import com.zscat.mallplus.sms.mapper.SmsGroupMemberMapper;
+import com.zscat.mallplus.sms.mapper.SmsGroupRecordMapper;
 import com.zscat.mallplus.sms.service.ISmsHomeBrandService;
 import com.zscat.mallplus.sms.service.ISmsHomeNewProductService;
 import com.zscat.mallplus.sms.service.ISmsHomeRecommendProductService;
@@ -33,10 +45,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * https://github.com/shenzhuan/mallplus on 2018/8/24.
@@ -74,7 +88,48 @@ public class MallplusTask {
     private ISmsHomeBrandService homeBrandService;
     @Resource
     private ISmsHomeRecommendSubjectService homeRecommendSubjectService;
-
+    @Resource
+    private IOmsOrderReturnApplyService orderReturnApplyService;
+    @Resource
+    private SmsGroupRecordMapper groupRecordMapper;
+    @Resource
+    private SmsGroupMemberMapper groupMemberMapper;
+    /**
+     * 拼团成功后 将订单状态改为发货
+     * 查询所有拼团成功且未处理的拼团记录
+     * 更新订单状态为发货 拼团记录为已处理
+     */
+    @Scheduled(cron = "0 0/10 * ? * ?")
+    private void pinTuanOrder() {
+      List<SmsGroupRecord> list = groupRecordMapper.selectList(new QueryWrapper<SmsGroupRecord>().eq("status",2).eq("handle_status",1));
+       for (SmsGroupRecord groupRecord:list){
+           List<SmsGroupMember> groupMembers = groupMemberMapper.selectList(new QueryWrapper<SmsGroupMember>().eq("group_record_id", groupRecord.getId()).eq("status", 2));
+          if (groupMembers!=null && groupMembers.size()>0){
+              List<Long> ids = groupMembers.stream()
+                      .map(SmsGroupMember::getOrderId)
+                      .collect(Collectors.toList());
+              if (ids.size()>0){
+                  OmsOrder order = new OmsOrder();
+                  order.setStatus(OrderStatus.TO_DELIVER.getValue());
+                  orderMapper.update(order,new QueryWrapper<OmsOrder>().in("status",ids));
+                  groupRecord.setHandleStatus(2);
+                  groupRecordMapper.updateById(groupRecord);
+              }
+          }
+       }
+    }
+    /**
+     * 退款
+     */
+    @Scheduled(cron = "0 0/10 * ? * ?")
+    private void refund() {
+        List<Integer> ids = Arrays.asList(1,3);
+      List<OmsOrderReturnApply> returnApplyList=  orderReturnApplyService.list(new QueryWrapper<OmsOrderReturnApply>().
+              eq("status", AllEnum.OmsOrderReturnApplyStatus.REFUNDING.code()).eq("refund_status",1).in("type",ids));
+        for (OmsOrderReturnApply orderReturnApply:returnApplyList){
+                portalOrderService.refund(orderReturnApply);
+        }
+    }
     /**
      * 清理 因为商品被删除 导致的数据关联问题
      */

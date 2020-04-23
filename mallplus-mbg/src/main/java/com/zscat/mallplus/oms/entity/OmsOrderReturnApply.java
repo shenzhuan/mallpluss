@@ -91,6 +91,12 @@ public class OmsOrderReturnApply extends BaseEntity implements Serializable {
     private Integer status;
 
     /**
+     * 退款状态：0->待处理；1->退款成功
+     */
+    @TableField("refund_status")
+    private Integer refundStatus;
+
+    /**
      * 处理时间
      */
     @TableField("handle_time")
@@ -191,4 +197,21 @@ public class OmsOrderReturnApply extends BaseEntity implements Serializable {
     private List<OmsOrderItem> orderItemList;
     @TableField(exist = false)
     private OmsOrder order;
+
+    @TableField(exist = false)
+    private String typeStr;
+
+    public String getTypeStr() {
+        String  typeStr ="换货";
+        if (this.getType()==0){
+            typeStr ="换货";
+        }else  if (this.getType()==1){
+            typeStr ="退钱";
+        }else  if (this.getType()==2){
+            typeStr ="退货";
+        }else  if (this.getType()==3){
+            typeStr ="退钱退货";
+        }
+        return typeStr;
+    }
 }

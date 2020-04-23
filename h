@@ -1,126 +1,17 @@
-
-#user  nobody;
-worker_processes  1;
-
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
-
-#pid        logs/nginx.pid;
-
-
-events {
-    worker_connections  1024;
-}
-
-
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
-
-    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-    #                  '$status $body_bytes_sent "$http_referer" '
-    #                  '"$http_user_agent" "$http_x_forwarded_for"';
-
-    #access_log  logs/access.log  main;
-
-    sendfile        on;
-    #tcp_nopush     on;
-
-    #keepalive_timeout  0;
-    keepalive_timeout  165;
-client_header_timeout 45;
-
-client_body_timeout 45;
-
-send_timeout 45;
-
-    #gzip  on;
-
-    server {
-        listen       8090;
-        server_name  47.244.191.12;
-	client_max_body_size 10M;
-        #charset koi8-r;
-
-        #access_log  logs/host.access.log  main;
-        location / {
-  root /root/jm/dist;
-  index index.html;
-}
-
-
-        #error_page  404              /404.html;
-
-        # redirect server error pages to the static page /50x.html
-        #
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   html;
-        }
-
-
-    }
-server {
-        listen 80;
-        server_name www.yjlive.cn;
-
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-            root html;
-        }
-
-		location / {
-            alias /root/jm/h5/;
-            index index.html;
-        }
-
-        location /h5 {
-            alias  /root/jm/mall/;
-			try_files $uri $uri/ @router;
-			index index.html;
-        }
-         location /cms {
-                    alias  /root/jm/cms/;
-        			try_files $uri $uri/ @router;
-        			index index.html;
-                }
-                 location /pc {
-                            alias  /root/jm/pc/;
-                			try_files $uri $uri/ @router;
-                			index index.html;
-                        }
-                           location /pcbak {
-                                                    alias  /root/jm/pcbak/;
-                                        			try_files $uri $uri/ @router;
-                                        			index index.html;
-                                                }
-                         location /h5bak {
-                                    alias  /root/jm/h5bak/;
-                        			try_files $uri $uri/ @router;
-                        			index index.html;
-                                }
-
-                                location /mei {
-                                                                    alias  /root/jm/mei/;
-                                                        			try_files $uri $uri/ @router;
-                                                        			index index.html;
-                                                                }
-                                                                 location /mei1 {
-                                                                                                                                    alias  /root/jm/mei1/;
-                                                                                                                        			try_files $uri $uri/ @router;
-                                                                                                                        			index index.html;
-                                                                                                                                }
-        location /api {
-            rewrite  ^/api/(.*)$ /$1 break;
-            include  uwsgi_params;
-            proxy_pass   http://47.244.191.12:8081 ;
-        }
-        location @router {
-        rewrite ^.*$ /index.html last;
-        }
-    }
-
-
-
- }
+支付宝回调
+{
+		"alipay_trade_app_pay_response": {
+			"code": "10000",
+			"msg": "Success",
+			"app_id": "20204939183847",
+			"auth_app_id": "20204939183847",
+			"charset": "UTF-8",
+			"timestamp": "2020-04-21 15:04:58",
+			"out_trade_no": "2871031303901184",
+			"total_amount": "0.01",
+			"trade_no": "2020042122001458671441351997",
+			"seller_id": "20204939183847"
+		},
+		"sign": "YlpKPoPWuIpLKjbvfshhdhsbhcds&cds+taQE97xvT3C1r6a0tWekeTRCAQHZAg6QIBGWP2/OhrVQiEb4+NJil89l84UMMDKSH86sGDlDko8yKeG2BnXVtAv4eEBUtwG3jivivCnezZK/XgZmb/DHrW75MCKjdsjKldskv8cdshkIhncjdsj^tsaHHDdTXnMtVxTOifPw4etlkaKD8xKduIm132K+aJeYXpxq0y/lUAp2OSIjbvdfk(bjcGSHBKkd$3cshoffA==",
+		"sign_type": "RSA2"
+	}

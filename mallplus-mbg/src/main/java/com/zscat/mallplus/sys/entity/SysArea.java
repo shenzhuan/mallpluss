@@ -62,5 +62,9 @@ public class SysArea extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private List<SysArea> children = new ArrayList<>();
+    @TableField(exist = false)
+    private String lat;
+    @TableField(exist = false)
+    private String lng;
 
 }

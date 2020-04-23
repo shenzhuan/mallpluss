@@ -123,7 +123,7 @@ public class ApiBaseAction {
     public String getClientIp() {
         String xff = request.getHeader("x-forwarded-for");
         if (xff == null) {
-            return "8.8.8.8";
+            xff = "101.81.121.39";
         }
         return xff;
     }

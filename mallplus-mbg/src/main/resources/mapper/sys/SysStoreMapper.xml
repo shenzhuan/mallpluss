@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zscat.mallplus.sys.mapper.SysStoreMapper">
+
+
+
+    <select id="selectDisStore" resultType="com.zscat.mallplus.sys.entity.SysStore">
+        SELECT
+        *,
+        (
+        6371 * acos (
+        cos ( radians( #{address_lat} ) ) * cos( radians( address_lat ) ) * cos( radians( address_lng ) - radians( #{address_lng} ) ) + sin ( radians( #{address_lat} ) ) * sin( radians( address_lat ) )
+        )
+        ) AS distance
+        FROM
+        sys_store
+        HAVING
+        #{distance} >distance
+        ORDER BY
+        distance
+        LIMIT 0 , #{pageSize}
+    </select>
+
+    <!-- 筛选距离小于2km的商家(可不写)，如果没查到数据就是没有小于2km的商家
+     https://blog.csdn.net/MaNongXf/article/details/84977927?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1
+     -->
+    <select id="selectDisStore1" resultType="com.zscat.mallplus.sys.entity.SysStore">
+        SELECT
+        *,
+        SQRT(
+        POW( 111.2 * ( address_lat - #{address_lat} ), 2 ) + POW( 111.2 * ( #{address_lng} - address_lng ) * COS( address_lat / 57.3 ), 2 )
+        ) AS distance
+        FROM
+        sys_store
+        HAVING
+        #{distance} >distance
+        ORDER BY
+        distance
+        LIMIT 0 , {pageSize}
+    </select>
+</mapper>
