@@ -466,14 +466,14 @@ public class AliPayController extends AbstractAliPayApiController {
      */
     @RequestMapping(value = "/tradeRefund")
     @ResponseBody
-    public Object tradeRefund() {
+    public Object tradeRefund(AlipayTradeRefundModel model) {
 
         try {
-            AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-            model.setOutTradeNo("081014283315023");
+           // AlipayTradeRefundModel model = new AlipayTradeRefundModel();
+            /*model.setOutTradeNo("081014283315023");
             model.setTradeNo("2017081021001004200200273870");
             model.setRefundAmount("86.00");
-            model.setRefundReason("正常退款");
+            model.setRefundReason("正常退款");*/
             return new CommonResult().success(AliPayApi.tradeRefundToResponse(model, this.getApiConfig()).getBody());
         } catch (AlipayApiException e) {
             e.printStackTrace();
@@ -755,6 +755,7 @@ public class AliPayController extends AbstractAliPayApiController {
 
             if (verifyResult) {
                 // 更新订单信息
+                orderInfo.setPayCode(params.get("trade_no"));
                 orderService.updateById(orderInfo);
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
                     OmsOrder childOrder = new OmsOrder();

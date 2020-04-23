@@ -53,6 +53,8 @@
         <result column="area_name" property="areaName"/>
         <result column="school_id" property="schoolId"/>
         <result column="transfee" property="transfee"/>
+        <result column="type" property="type"/>
+        <result column="store_name" property="storeName"/>
     </resultMap>
 
     <resultMap id="cartProductMap" type="com.zscat.mallplus.oms.vo.CartProduct" autoMapping="true">

@@ -1,4 +1,39 @@
+0426 拼团优化 文档https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1699565&doc_id=326093
+alter table sms_group_member  add group_id BIGINT not null default 0;
+alter table sms_group_record  add handle_status int not null default 1;
+SELECT * from sys_store_class ; -- 店铺分类
+SELECT * from sys_store_comment ; -- 店铺评论
 
+CREATE TABLE `sys_store_class` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `pic` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片',
+  `sort` int DEFAULT NULL COMMENT '排序',
+  `memo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `store_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `sys_store_comment` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `pic` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片',
+  `sort` int DEFAULT NULL COMMENT '排序',
+  `memo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `store_id` int DEFAULT NULL,
+  `member_id` int DEFAULT NULL,
+  `star` int DEFAULT NULL COMMENT '等级',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+-- 0425 退款定时任务
+alter table oms_order_return_apply  add refund_status int not null default 0;
+
+-- 0421 首页推荐优化
 alter table sms_home_recommend_subject add pic varchar(127) ;
 alter table sms_home_recommend_subject add read_count int ;
 alter table sms_home_recommend_subject add description varchar(127) ;
@@ -46,3 +81,5 @@ delete FROM admin_day_statics ;
 
 
 商户等级 商户列表 商户充值 提现和提现审核
+
+多租户版本 ums_member  用户名和store_id需要添加唯一索引

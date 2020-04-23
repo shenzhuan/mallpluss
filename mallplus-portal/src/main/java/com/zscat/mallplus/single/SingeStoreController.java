@@ -1,16 +1,18 @@
 package com.zscat.mallplus.single;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
-import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.pms.entity.PmsGifts;
+import com.zscat.mallplus.sys.entity.*;
+import com.zscat.mallplus.sys.mapper.SysShopMapper;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
-import com.zscat.mallplus.ums.service.IStoreService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.util.JsonUtils;
 import com.zscat.mallplus.utils.CommonResult;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +45,19 @@ public class SingeStoreController extends ApiBaseAction {
     private RedisService redisService;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private IPositionService positionService;
+    @Resource
+    private SysStoreMapper storeMapper;
+
+    @Resource
+    private SysShopMapper shopMapper;
+
+    @Resource
+    private ISysStoreClassService classService;
+    @Resource
+    private ISysStoreCommentService commentService;
+
 
     @SysLog(MODULE = "sys", REMARK = "保存")
     @ApiOperation("保存")
@@ -65,10 +81,10 @@ public class SingeStoreController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         entity.setStatus(StatusEnum.AuditType.SUCESS.code());
         String orderColum = "create_time";
-        if (ValidatorUtils.notEmpty(entity.getIsChecked())) {
-            if (entity.getIsChecked() == 1) {
+        if (ValidatorUtils.notEmpty(entity.getSort())) {
+            if (entity.getSort() == 1) {
                 orderColum = "hit";
-            } else if (entity.getIsChecked() == 2) {
+            } else if (entity.getSort() == 2) {
                 orderColum = "collect";
             }
         }
@@ -158,5 +174,122 @@ public class SingeStoreController extends ApiBaseAction {
             redisService.expire(key, 60);
         }
         return new CommonResult().success(contentResult);
+    }
+    /**
+     * 根据经纬度坐标获取位置信息
+     * @param geoHash
+     * @return
+     */
+    @RequestMapping(value = "/v1/position/pois",method = RequestMethod.GET)
+    public Object getPoiByGeoHash(@RequestParam("geohash")String geoHash){
+        System.out.println("geohash:"+geoHash);
+        return  new CommonResult().success(positionService.pois(geoHash));
+    }
+
+    @RequestMapping(value = "/v1/pois",method = RequestMethod.GET)
+    public Object getPoiByCityAndKeyword(@RequestParam(value = "type",defaultValue = "search")String type,
+                                         @RequestParam(value = "city_id",required = false)Long cityId,
+                                         @RequestParam(value = "keyword")String keyword){
+        String cityName = null;
+        if(cityId==null){
+            SysArea city = positionService.guessCity(getClientIp());
+            cityName = city.getName();
+        }else {
+            SysArea map = positionService.findById(cityId);
+            cityName = map.getName();
+        }
+        return new CommonResult().success(positionService.searchPlace(cityName, keyword));
+
+    }
+
+    /**
+     * 根据经纬度获取商铺列表
+     * @param geoHash 40.0844020000,116.3483150000
+     * @param distance
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/dis/storeList", method = RequestMethod.GET)
+    public Object restaurants(@RequestParam("geohash") String geoHash
+            , @RequestParam(value = "distance",defaultValue = "10") Integer distance,
+                              @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize) {
+        String[] geoHashArr = geoHash.split(",");
+        String longitude = geoHashArr[1];
+        String latitude = geoHashArr[0];
+        List<SysStore> storeList =  storeMapper.selectDisStore(distance,Double.valueOf(latitude),Double.valueOf(longitude),pageSize);
+       /* GeoResults<Map> geoResults = mongoRepository.near(Double.valueOf(longitude), Double.valueOf(latitude), "shops", params);
+        List<GeoResult<Map>> geoResultList = geoResults.getContent();
+        List<Map> list = new ArrayList<>();
+        for (int i = 0; i < geoResultList.size(); i++) {
+            Map map = geoResultList.get(i).getContent();
+            Distance distance = new Distance(Double.valueOf(longitude), Double.valueOf(latitude),
+                    Double.valueOf(map.get("longitude").toString()), Double.valueOf(map.get("latitude").toString()));
+            map.put("distance", distance.getDistance());
+            list.add(map);
+        }*/
+        return new CommonResult().success(storeList);
+    }
+
+    /**
+     * 根据经纬度获取商铺列表
+     * @param geoHash 40.0844020000,116.3483150000
+     * @param distance
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/dis/shopList", method = RequestMethod.GET)
+    public Object shopList(@RequestParam("geohash") String geoHash
+            , @RequestParam(value = "distance",defaultValue = "10") Integer distance,
+                           @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize) {
+        String[] geoHashArr = geoHash.split(",");
+        String longitude = geoHashArr[1];
+        String latitude = geoHashArr[0];
+        List<SysShop> storeList =  shopMapper.selectDisShop(distance,Double.valueOf(latitude),Double.valueOf(longitude),pageSize);
+       /* GeoResults<Map> geoResults = mongoRepository.near(Double.valueOf(longitude), Double.valueOf(latitude), "shops", params);
+        List<GeoResult<Map>> geoResultList = geoResults.getContent();
+        List<Map> list = new ArrayList<>();
+        for (int i = 0; i < geoResultList.size(); i++) {
+            Map map = geoResultList.get(i).getContent();
+            Distance distance = new Distance(Double.valueOf(longitude), Double.valueOf(latitude),
+                    Double.valueOf(map.get("longitude").toString()), Double.valueOf(map.get("latitude").toString()));
+            map.put("distance", distance.getDistance());
+            list.add(map);
+        }*/
+        return new CommonResult().success(storeList);
+    }
+    @IgnoreAuth
+    @ApiOperation(value = "查询门店管理列表")
+    @GetMapping(value = "/shoplist")
+    @SysLog(MODULE = "ums", REMARK = "查询门店管理列表")
+    public Object shoplist(@RequestParam(value = "storeId", required = true) Long storeId) {
+        return new CommonResult().success(shopMapper.selectList(new QueryWrapper<SysShop>().eq("store_id", storeId)));
+    }
+
+    @ApiOperation("门店详情")
+    @GetMapping(value = "/shopDetail")
+    public Object shopDetail(Long id) {
+        return new CommonResult().success(shopMapper.selectById(id));
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商户内部分类")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商户内部分类")
+    @GetMapping(value = "/storeClass/list")
+    public Object SysStoreClassList(SysStoreClass product,
+                           @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        IPage<SysStoreClass> list = classService.page(new Page<SysStoreClass>(pageNum, pageSize), new QueryWrapper<>(product));
+        return new CommonResult().success(list);
+    }
+
+    @SysLog(MODULE = "pms", REMARK = "查询商户内部评论")
+    @IgnoreAuth
+    @ApiOperation(value = "查询商户评论")
+    @GetMapping(value = "/storeComment/list")
+    public Object SysStoreClassList(SysStoreComment product,
+                                    @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                    @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        IPage<SysStoreComment> list = commentService.page(new Page<SysStoreComment>(pageNum, pageSize), new QueryWrapper<>(product));
+        return new CommonResult().success(list);
     }
 }

@@ -1,9 +1,30 @@
 package com.zscat.mallplus.single;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.base.Strings;
+import com.zscat.mallplus.annotation.IgnoreAuth;
+import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.sys.entity.SysArea;
+import com.zscat.mallplus.sys.entity.SysShop;
+import com.zscat.mallplus.sys.entity.SysStore;
+import com.zscat.mallplus.sys.mapper.SysShopMapper;
+import com.zscat.mallplus.sys.mapper.SysStoreMapper;
+import com.zscat.mallplus.sys.vo.Distance;
+import com.zscat.mallplus.ums.service.IPositionService;
 import com.zscat.mallplus.util.WeixinCheckoutUtil;
+import com.zscat.mallplus.utils.CommonResult;
+import com.zscat.mallplus.utils.Maps;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.nutz.json.Json;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName WechatController
@@ -12,8 +33,16 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @Slf4j
 @RestController
-public class WechatController {
+@RequestMapping("/api")
+public class WechatController extends ApiBaseAction{
 
+    @Resource
+    private IPositionService positionService;
+    @Resource
+    private SysStoreMapper storeMapper;
+
+    @Resource
+    private SysShopMapper shopMapper;
     /**
      * 微信公众号签名认证接口
      *

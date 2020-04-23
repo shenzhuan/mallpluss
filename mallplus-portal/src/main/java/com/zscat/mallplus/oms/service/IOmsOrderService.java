@@ -3,6 +3,7 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.vo.ExpressInfo;
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.PayParam;
@@ -259,4 +260,10 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @return 物流动态
      */
     List<Map<String, String>> getTransitSteps(String deliveryCorpCode, String trackingNo);
+
+    /**
+     *
+     * @param orderReturnApply
+     */
+    void refund(OmsOrderReturnApply orderReturnApply);
 }

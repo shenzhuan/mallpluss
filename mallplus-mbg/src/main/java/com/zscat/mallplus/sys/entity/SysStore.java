@@ -213,4 +213,9 @@ public class SysStore implements Serializable {
      */
     @TableField("member_count")
     private Integer memberCount;
+
+    @TableField(exist = false)
+    private double  distance;
+    @TableField(exist = false)
+    private Integer sort;
 }

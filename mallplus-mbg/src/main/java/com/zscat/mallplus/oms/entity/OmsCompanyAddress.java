@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * @author mallplus
  * @date 2019-12-07
- * 发货地址
+ * 退货的收货地址地址
  */
 @Data
 @TableName("oms_company_address")
