@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.config.MallplusProperties;
 import com.zscat.mallplus.exception.Server;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
@@ -87,7 +88,13 @@ public class SingelHomeController {
 
     @Resource
     private IAdminSysNoticeService sysNoticeService;
+    @Resource
+    private MallplusProperties mallplusProperties;
 
+    @RequestMapping(value = "/sysInfo", method = RequestMethod.GET)
+    public Object sysInfo() {
+        return new CommonResult().success(mallplusProperties);
+    }
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")

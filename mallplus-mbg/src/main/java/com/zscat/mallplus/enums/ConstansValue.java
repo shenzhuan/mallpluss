@@ -26,4 +26,6 @@ public class ConstansValue {
 
     public static final String sampleSubjectList = "id, category_id, title, pic, product_count, recommend_status, create_time, collect_count, read_count, comment_count, album_pics, description, show_status,  forward_count, category_name, area_id, school_id, member_id, area_name, school_name, reward, member_name, video_src, type";
 
+    public static final String sampleCommunityList = "id, company_id, name, pic, price,wuyecompany,wuyefei,latitude,longitude,create_time ";
+
 }

@@ -7,7 +7,10 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.build.BuildHomeResult;
 import com.zscat.mallplus.build.entity.*;
+import com.zscat.mallplus.build.service.IBuildRepairService;
 import com.zscat.mallplus.build.service.IBuildingCommunityService;
+import com.zscat.mallplus.build.service.IBuildingOwnerService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.service.IPmsProductService;
@@ -61,6 +64,11 @@ public class SingeBuildController extends ApiBaseAction {
 
     @Resource
     private com.zscat.mallplus.build.service.IBuildingFloorService IBuildingFloorService;
+    @Resource
+    private IBuildingOwnerService ownerService;
+    @Resource
+    private IBuildRepairService repairService;
+
 
     @SysLog(MODULE = "pms", REMARK = "所有社区和房间")
     @IgnoreAuth
@@ -113,7 +121,7 @@ public class SingeBuildController extends ApiBaseAction {
                                              @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
 
-        return new CommonResult().success(communityService.page(new Page<BuildingCommunity>(pageNum, pageSize), new QueryWrapper<>(entity)));
+        return new CommonResult().success(communityService.page(new Page<BuildingCommunity>(pageNum, pageSize), new QueryWrapper<>(entity).select(ConstansValue.sampleCommunityList)));
 
     }
 
@@ -143,6 +151,12 @@ public class SingeBuildController extends ApiBaseAction {
         return new CommonResult().failed();
     }
 
+    /**
+     * @param entity
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @GetMapping(value = "/getBuildNoticeByPage")
     public Object getBuildNoticeByPage(BuildNotice entity,
                                        @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
@@ -156,6 +170,12 @@ public class SingeBuildController extends ApiBaseAction {
         return new CommonResult().failed();
     }
 
+    /**
+     * @param entity
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @GetMapping(value = "/getBuildWuyeCompanyByPage")
     public Object getBuildWuyeCompanyByPage(BuildWuyeCompany entity,
                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
@@ -168,7 +188,24 @@ public class SingeBuildController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
-
+    /**
+     * @param entity
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @GetMapping(value = "/getBuildingOwnerByPage")
+    public Object getBuildWuyeCompanyByPage(BuildingOwner entity,
+                                            @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        try {
+            return new CommonResult().success(ownerService.page(new Page<BuildingOwner>(pageNum, pageSize), new QueryWrapper<>(entity)));
+        } catch (Exception e) {
+            log.error("根据条件查询所有物业公司表列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
     @SysLog(MODULE = "pms", REMARK = "查询团购商品列表")
     @IgnoreAuth
     @ApiOperation(value = "查询带团购商品列表")
@@ -192,4 +229,40 @@ public class SingeBuildController extends ApiBaseAction {
         }
         return new CommonResult().success(result);
     }
+
+    /**
+     * 根据经纬度获取商铺列表
+     *
+     * @param geoHash  40.0844020000,116.3483150000
+     * @param distance
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/near/communityList", method = RequestMethod.GET)
+    public Object restaurants(@RequestParam("geohash") String geoHash
+            , @RequestParam(value = "distance", defaultValue = "10") Integer distance,
+                              @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+        String[] geoHashArr = geoHash.split(",");
+        String longitude = geoHashArr[1];
+        String latitude = geoHashArr[0];
+        List<BuildingCommunity> storeList = communityService.selectNearCommunity(distance, Double.valueOf(latitude), Double.valueOf(longitude), pageSize);
+        return new CommonResult().success(storeList);
+    }
+
+
+    /**
+     * @return
+     */
+    @RequestMapping(value = "/test1", method = RequestMethod.GET)
+    public Object restaurants() {
+        List<BuildWuyeCompany> companyList = IBuildWuyeCompanyService.list(new QueryWrapper<>());
+        for (BuildWuyeCompany company : companyList) {
+            BuildingCommunity community = new BuildingCommunity();
+            community.setCreateTime(new Date());
+            community.setCompanyId(company.getId());
+            communityService.update(community, new QueryWrapper<BuildingCommunity>().eq("wuyecompany", company.getName()));
+        }
+        return new CommonResult().success();
+    }
+
 }

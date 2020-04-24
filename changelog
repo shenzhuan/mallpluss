@@ -82,4 +82,6 @@ delete FROM admin_day_statics ;
 
 商户等级 商户列表 商户充值 提现和提现审核
 
+数据库密码 加密
+https://blog.csdn.net/huijiangu4621/article/details/90403130
 多租户版本 ums_member  用户名和store_id需要添加唯一索引

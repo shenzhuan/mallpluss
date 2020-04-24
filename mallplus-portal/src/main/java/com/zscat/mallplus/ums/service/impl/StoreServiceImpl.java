@@ -3,6 +3,7 @@ package com.zscat.mallplus.ums.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zscat.mallplus.config.MallplusProperties;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoConfig;
@@ -65,6 +66,9 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
     @Autowired
     private ISmsHomeAdvertiseService advertiseService;
 
+    @Resource
+    private   MallplusProperties mallplusProperties;
+
     @Override
     @Transactional
     public Object applyStore(SysStore entity) {
@@ -81,7 +85,7 @@ public class StoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> impl
             return new CommonResult().failed("你已申请");
         }
         storeMapper.insert(entity);
-        String url = "http://www.yjlive.cn:8082/#/pages/store/store?id=" + entity.getId();
+        String url = mallplusProperties.getDomain()+"/#/pages/store/store?id=" + entity.getId();
         //要添加到二维码下面的文字
         String words = entity.getName() + "的二维码";
         //调用刚才的工具类

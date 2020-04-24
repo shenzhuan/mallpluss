@@ -9,6 +9,8 @@ import com.zscat.mallplus.bill.entity.BakGoods;
 import com.zscat.mallplus.bill.mapper.BakBrandMapper;
 import com.zscat.mallplus.bill.mapper.BakCategoryMapper;
 import com.zscat.mallplus.bill.mapper.BakGoodsMapper;
+import com.zscat.mallplus.build.service.IBuildWuyeCompanyService;
+import com.zscat.mallplus.build.service.IBuildingCommunityService;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -71,6 +73,10 @@ public class SysTestController {
     private PmsProductAttributeCategoryMapper pmsProductAttributeCategoryMapper;
     @Resource
     private PmsBrandMapper pmsBrandMapper;
+    @Resource
+    private IBuildingCommunityService communityService;
+    @Resource
+    private IBuildWuyeCompanyService wuyeCompanyService;
 
     @SysLog(MODULE = "sys", REMARK = "根据条件查询所有测试列表")
     @ApiOperation("根据条件查询所有测试列表")

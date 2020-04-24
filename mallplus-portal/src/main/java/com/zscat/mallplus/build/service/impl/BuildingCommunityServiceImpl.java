@@ -8,8 +8,10 @@ import com.zscat.mallplus.build.CommunityTree;
 import com.zscat.mallplus.build.entity.*;
 import com.zscat.mallplus.build.mapper.*;
 import com.zscat.mallplus.build.service.IBuildingCommunityService;
+import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.vo.ActivityVo;
+import com.zscat.mallplus.sys.entity.SysShop;
 import com.zscat.mallplus.sys.entity.SysUser;
 import com.zscat.mallplus.sys.entity.SysUserRole;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
@@ -90,7 +92,7 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
     public Object allCommunity() {
         List<CommunityTree> resultList = new ArrayList<>();
 
-        List<BuildingCommunity> list = communityMapper.selectList(new QueryWrapper<>());
+        List<BuildingCommunity> list = communityMapper.selectList(new QueryWrapper<BuildingCommunity>().select(ConstansValue.sampleCommunityList));
         for (BuildingCommunity community : list) {
             CommunityTree communityTree = new CommunityTree();
             communityTree.setCode("C" + community.getId());
@@ -167,13 +169,20 @@ public class BuildingCommunityServiceImpl extends ServiceImpl<BuildingCommunityM
         }
         buildAdvs = advMapper.selectList(new QueryWrapper<BuildAdv>().eq("community_id", community.getId()));
         buildNotices = noticeMapper.selectList(new QueryWrapper<BuildNotice>().eq("community_id", community.getId()));
-        List<BuildingCommunity> communityList = this.page(new Page<BuildingCommunity>(0, 10), new QueryWrapper<>()).getRecords();
-        result.setCommunityList(communityList);
+        if (Double.valueOf(community.getLatitude())>0){
+            List<BuildingCommunity> communityList = this.selectNearCommunity(40,Double.valueOf(community.getLatitude()),Double.valueOf(community.getLongitude()),10);
+            result.setCommunityList(communityList);
+        }
         result.setCommunity(community);
         result.setActivityList(getActivityList());
         result.setSubjectList(buildNotices);
         result.setAdvertiseList(buildAdvs);
         return result;
+    }
+
+    @Override
+    public List<BuildingCommunity> selectNearCommunity(Integer distance, double latitude, double longitude, Integer pageSize) {
+        return communityMapper.selectNearCommunity(distance,latitude,longitude,pageSize);
     }
 
     public List<ActivityVo> getActivityList() {
