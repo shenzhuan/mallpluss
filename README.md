@@ -32,13 +32,13 @@
 [部署文档](https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1786312&doc_id=326093)
 > 后台管理系统
 
-- 1. 商城总后台 http://www.yjlive.cn:8007/index
+- 1. 商城总后台 http://51wangshi.com:8087/index
 - 2.商户后台和用户端h5 小程序 和app（群文件下载） 
--  - 商户端演示 http://yjlive.cn:8090/
--  - uniapp h5演示 http://yjlive.cn:8082/
-- - app下载 https://share.weiyun.com/5KsC2YL
-pc演示  [http://yjlive.cn:8088/#/](http://yjlive.cn:8088/#/)  [http://yjlive.cn:8088/](http://yjlive.cn:8088/)
-- 
+- 商户端演示 http://51wangshi.com:8090/
+- uniapp h5演示 http://51wangshi.com:8082/
+- app下载 https://share.weiyun.com/5KsC2YL
+pc演示  [http://51wangshi.com:8088/#/](http://51wangshi.com:8088/#/)  
+
 
 小程序下载 地址 https://gitee.com/catshen/mall-applet
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/102351_cfd0b0c7_134431.png "屏幕截图.png")
