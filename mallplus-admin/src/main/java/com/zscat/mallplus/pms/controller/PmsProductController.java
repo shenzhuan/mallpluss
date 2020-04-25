@@ -15,6 +15,8 @@ import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
+import com.zscat.mallplus.ums.service.IUmsMemberTagService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.IdStatus;
@@ -44,6 +46,8 @@ import java.util.List;
 public class PmsProductController {
     @Resource
     private IPmsProductService IPmsProductService;
+    @Resource
+    private com.zscat.mallplus.ums.service.IUmsMemberTagService IUmsMemberTagService;
     @Resource
     private IPmsSkuStockService skuStockService;
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有商品信息列表")
@@ -255,6 +259,11 @@ public class PmsProductController {
                 return new CommonResult().paramFailed("商品信息id");
             }
             PmsProduct coupon = IPmsProductService.getById(id);
+            if (ValidatorUtils.notEmpty(coupon.getTags())){
+                String[] ids = coupon.getTags().split(",");
+                 List<UmsMemberTag> tagList =  IUmsMemberTagService.list(new QueryWrapper<UmsMemberTag>().eq("type",2).eq("status",1).in("id",ids));
+                 coupon.setTagList(tagList);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询商品信息明细：%s", e.getMessage(), e);
@@ -284,6 +293,11 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:read')")
     public Object getUpdateInfo(@PathVariable Long id) {
         PmsProductResult productResult = IPmsProductService.getUpdateInfo(id);
+        if (ValidatorUtils.notEmpty(productResult.getTags())){
+            String[] ids = productResult.getTags().split(",");
+            List<UmsMemberTag> tagList =  IUmsMemberTagService.list(new QueryWrapper<UmsMemberTag>().eq("type",2).in("id",ids));
+            productResult.setTagList(tagList);
+        }
         return new CommonResult().success(productResult);
     }
 

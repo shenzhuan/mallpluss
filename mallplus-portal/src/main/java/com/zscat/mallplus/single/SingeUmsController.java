@@ -26,12 +26,10 @@ import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
-import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
-import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -96,6 +94,9 @@ public class SingeUmsController extends ApiBaseAction {
     @Resource
     private IOmsOrderService orderService;
 
+    @Resource
+    private IUmsMemberTagService IUmsMemberTagService;
+
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -158,6 +159,16 @@ public class SingeUmsController extends ApiBaseAction {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
         return memberService.resetPassword(phone, password, confimpassword, authCode);
+    }
+
+    @IgnoreAuth
+    @ApiOperation(value = "查询标签列表")
+    @GetMapping(value = "/memberTag/list")
+    @SysLog(MODULE = "ums", REMARK = "查询标签列表")
+    public Object storeList(UmsMemberTag entity,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(IUmsMemberTagService.page(new Page<UmsMemberTag>(pageNum, pageSize), new QueryWrapper<>(entity)));
     }
 
     @IgnoreAuth

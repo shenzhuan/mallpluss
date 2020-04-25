@@ -12,6 +12,10 @@ import com.zscat.mallplus.sys.entity.SysUserVo;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
+import com.zscat.mallplus.sys.service.impl.RedisUtil;
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
+    @Resource
+    private RedisService redisService;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -115,7 +120,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         //获取登录用户信息
         return username -> {
-            SysUserVo admin = userMapper.selectByUserName(username);
+            SysUserVo admin = new SysUserVo();
+            if (!redisService.exists(String.format(Rediskey.user, username))) {
+                admin = userMapper.selectByUserName(username);
+                redisService.set(String.format(Rediskey.user, username), JsonUtil.objectToJson(admin));
+            } else {
+                admin =JsonUtil.fromJson(redisService.get(String.format(Rediskey.user, username)), SysUserVo.class);
+            }
             //  apiContext.setCurrentProviderId(admin.getStoreId());
             if (admin != null) {
                 if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {

@@ -96,7 +96,9 @@ public class JwtTokenUtil {
         }
         return false;
     }
-
+    public boolean validateTokenByUserName(String token) {
+        return !isTokenExpired(token);
+    }
     /**
      * 判断token是否已经失效
      */
@@ -108,7 +110,7 @@ public class JwtTokenUtil {
     /**
      * 从token中获取过期时间
      */
-    private Date getExpiredDateFromToken(String token) {
+    public Date getExpiredDateFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         return claims.getExpiration();
     }

@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.exception.JwtTokenExpiredException;
 import com.zscat.mallplus.sys.entity.SysWebLog;
 import com.zscat.mallplus.sys.mapper.SysWebLogMapper;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -97,15 +98,20 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring("Bearer".length());
             username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (userDetails != null && userDetails.getUsername() != null) {
+
+            if (!jwtTokenUtil.validateTokenByUserName(authToken)){
+                logger.info("expire token" + authToken+",expire="+jwtTokenUtil.getExpiredDateFromToken(authToken));
+                throw new JwtTokenExpiredException("");
+            }
+           // UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            /*if (userDetails != null && userDetails.getUsername() != null) {
                 if (userDetails != null && jwtTokenUtil.validateToken(authToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     LOGGER.info("authenticated user:{}", username);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-            }
+            }*/
         } else {
             logger.info("no token" + request.getRequestURI());
         }

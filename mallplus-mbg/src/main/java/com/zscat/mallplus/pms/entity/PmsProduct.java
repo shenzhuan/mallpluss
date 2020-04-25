@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.utils.BaseEntity;
 import com.zscat.mallplus.vo.timeline.TimeSecound;
 import lombok.Data;
@@ -35,6 +36,9 @@ public class PmsProduct extends BaseEntity implements Serializable {
     @TableField("brand_id")
     private Long brandId;
 
+
+    @TableField("store_class_id")
+    private Long storeClassId;
     @TableField("product_category_id")
     private Long productCategoryId;
 
@@ -280,6 +284,12 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private int qsType;
+
+    /**
+     * 标签
+     */
+    private String tags;
+
     /**
      * 会员价
      */
@@ -305,4 +315,6 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private Integer status;
     @TableField(exist = false)
     List<PmsSkuStock> skuStockList;
+    @TableField(exist = false)
+    List<UmsMemberTag> tagList ;
 }

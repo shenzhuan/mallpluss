@@ -161,6 +161,20 @@ public class SingeOmsController extends ApiBaseAction {
         }
         return new CommonResult().failed();
     }
+    @SysLog(MODULE = "小程序订单管理", REMARK = "取消订单")
+    @ApiOperation("关闭订单")
+    @RequestMapping(value = "/deleteOrder", method = RequestMethod.POST)
+    public Object deleteOrder(@ApiParam("订单id") @RequestParam Long orderId) {
+        try {
+            if (ValidatorUtils.empty(orderId)) {
+                return new CommonResult().paramFailed("订单id is empty");
+            }
+            return new CommonResult().success(orderService.removeById(orderId));
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+
+    }
 
     @SysLog(MODULE = "订单管理", REMARK = "订单确认收货")
     @ApiOperation("订单确认收货")
@@ -351,10 +365,7 @@ public class SingeOmsController extends ApiBaseAction {
 
     /**
      * 查看物流
-     * @param deliveryCorpCode
-     *            物流公司代码
-     * @param trackingNo
-     *            运单号
+     * @param
      */
     @ApiOperation("查看物流#快递100")
     @ResponseBody

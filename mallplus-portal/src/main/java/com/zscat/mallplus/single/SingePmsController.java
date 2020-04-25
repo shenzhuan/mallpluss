@@ -129,7 +129,13 @@ public class SingePmsController extends ApiBaseAction {
 
         return new CommonResult().success(pmsProductService.queryPaiMaigoodsDetail(id));
     }
-
+    @SysLog(MODULE = "pms", REMARK = "查询标签商品")
+    @IgnoreAuth
+    @GetMapping(value = "/tag/goods")
+    @ApiOperation(value = "查询标签商品")
+    public Object tagGoodsList(@RequestParam(value = "tags", required = true) String tags) {
+        return new CommonResult().success(pmsProductService.selectByTags(tags));
+    }
 
     @ApiOperation("创建商品")
     @SysLog(MODULE = "pms", REMARK = "创建商品")
@@ -775,9 +781,9 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(categories);
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
+    @SysLog(MODULE = "pms", REMARK = "查询商品属性分类列表和商品")
     @IgnoreAuth
-    @ApiOperation(value = "查询商品分类列表")
+    @ApiOperation(value = "查询商品属性分类列表和商品")
     @GetMapping(value = "/categoryAndGoodsList/list")
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) {
         List<PmsProductAttributeCategory> productAttributeCategoryList = productAttributeCategoryService.list(new QueryWrapper<>());
@@ -875,11 +881,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/typeGoodsList")
     public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
-        if (ValidatorUtils.notEmpty(json)) {
-            relList = JsonUtils.json2list(json, ProductTypeVo.class);
-            return new CommonResult().success(relList);
-        }
+
         PmsProduct productQueryParam = new PmsProduct();
 
         productQueryParam.setPublishStatus(1);
@@ -917,8 +919,7 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList, JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList, 20);
+
         return new CommonResult().success(relList);
     }
 
@@ -978,11 +979,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/getGoodsTypes")
     public Object getGoodsTypes() throws Exception {
         List<PmsProductCategory> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.goodsCategorys);
-        if (ValidatorUtils.notEmpty(json)) {
-            relList = JsonUtils.json2list(json, PmsProductCategory.class);
-            return new CommonResult().success(relList);
-        }
+
         PmsProductCategory pmsProductCategory = new PmsProductCategory();
         pmsProductCategory.setShowStatus(1);
         pmsProductCategory.setNavStatus(1);
@@ -1003,8 +1000,7 @@ public class SingePmsController extends ApiBaseAction {
             }
             relList.get(i).setChildList(list);
         }
-        redisService.set(Rediskey.goodsCategorys, JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.goodsCategorys, 2);
+
         return new CommonResult().success(relList);
     }
 

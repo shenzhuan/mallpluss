@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;
@@ -107,6 +108,15 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         if (ValidatorUtils.empty(product.getAlbumPics())) {
             product.setAlbumPics(product.getPic());
         }
+       /* Long[] tagList = productParam.getTagLists();
+        String tags=null;
+        if(tagList!=null && tagList.length>0){
+            for (Long tag:tagList){
+                tags=tags+tag+",";
+            }
+            tags.substring(0,tags.length()-1);
+        }
+        product.setTags(tags);*/
         productMapper.insert(product);
         //根据促销类型设置价格：、阶梯价格、满减价格
         Long productId = product.getId();
@@ -187,6 +197,15 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
             product.setProductSn(IdWorker.getId() + "");
         }
         handleSkuStockCode(productParam.getSkuStockList(), product);
+        /* Long[] tagList = productParam.getTagLists();
+        String tags=null;
+        if(tagList!=null && tagList.length>0){
+            for (Long tag:tagList){
+                tags=tags+tag+",";
+            }
+            tags.substring(0,tags.length()-1);
+        }
+        product.setTags(tags);*/
         productMapper.updateById(product);
         redisService.remove(String.format(Rediskey.GOODSDETAIL, product.getId()));
         //会员价格

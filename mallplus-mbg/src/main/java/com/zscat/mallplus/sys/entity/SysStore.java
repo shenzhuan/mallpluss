@@ -218,4 +218,6 @@ public class SysStore implements Serializable {
     private double  distance;
     @TableField(exist = false)
     private Integer sort;
+    @TableField(exist = false)
+    private boolean favorite;
 }

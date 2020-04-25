@@ -3,6 +3,9 @@ package com.zscat.mallplus.ums.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.AllEnum;
+import com.zscat.mallplus.enums.StatusEnum;
+import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.ums.service.IUmsMemberTagService;
 import com.zscat.mallplus.utils.CommonResult;
@@ -15,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +40,6 @@ public class UmsMemberTagController {
     @SysLog(MODULE = "ums", REMARK = "根据条件查询所有用户标签表列表")
     @ApiOperation("根据条件查询所有用户标签表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('ums:UmsMemberTag:read')")
     public Object getUmsMemberTagByPage(UmsMemberTag entity,
                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                         @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
@@ -55,12 +58,15 @@ public class UmsMemberTagController {
     @PreAuthorize("hasAuthority('ums:UmsMemberTag:create')")
     public Object saveUmsMemberTag(@RequestBody UmsMemberTag entity) {
         try {
+            entity.setCreateTime(new Date());
+            entity.setGenType(2);
+            entity.setStatus(StatusEnum.YesNoType.NO.code());
             if (IUmsMemberTagService.save(entity)) {
                 return new CommonResult().success();
             }
         } catch (Exception e) {
             log.error("保存用户标签表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().failed();
     }
@@ -76,7 +82,7 @@ public class UmsMemberTagController {
             }
         } catch (Exception e) {
             log.error("更新用户标签表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().failed();
     }
@@ -95,7 +101,7 @@ public class UmsMemberTagController {
             }
         } catch (Exception e) {
             log.error("删除用户标签表：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().failed();
     }
@@ -113,7 +119,7 @@ public class UmsMemberTagController {
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询用户标签表明细：%s", e.getMessage(), e);
-            return new CommonResult().failed();
+            return new CommonResult().failed(e.getMessage());
         }
 
     }
@@ -131,5 +137,15 @@ public class UmsMemberTagController {
             return new CommonResult().failed();
         }
     }
+    @ApiOperation(value = "批量更新显示状态")
+    @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
+    @ResponseBody
+    @SysLog(MODULE = "pms", REMARK = "批量更新显示状态")
+    public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
+                                   @RequestParam("status") Integer status) {
+        UmsMemberTag pmsBrand = new UmsMemberTag();
+        pmsBrand.setStatus(status);
+        return new CommonResult().success(IUmsMemberTagService.update(pmsBrand, new QueryWrapper<UmsMemberTag>().in("id", ids)));
 
+    }
 }

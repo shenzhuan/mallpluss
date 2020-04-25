@@ -1,4 +1,16 @@
-0426 拼团优化 文档https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1699565&doc_id=326093
+--0425
+ 数据库密码加密（druid）
+ 商城设置下添加 标签管理
+ 店铺管理 添加 店内分类和商户评价
+ 添加商品中增加店内分类和标签选择
+
+ uniapp 店铺 评价和收藏 标签页面和标签下的商品
+alter table ums_member_tag add pic varchar(127) ;
+alter table ums_member_tag  add status BIGINT not null default 0;
+alter table pms_product add tags varchar(127) ;
+alter table pms_product add store_class_id bigint ;
+
+-- 0426 拼团优化 文档https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1699565&doc_id=326093
 alter table sms_group_member  add group_id BIGINT not null default 0;
 alter table sms_group_record  add handle_status int not null default 1;
 SELECT * from sys_store_class ; -- 店铺分类

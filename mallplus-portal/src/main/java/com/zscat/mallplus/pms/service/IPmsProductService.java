@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.pms.entity.PmsBrand;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.vo.GoodsDetailResult;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -94,4 +95,11 @@ public interface IPmsProductService extends IService<PmsProduct> {
      * @return
      */
     Object updatePaiMai(PmsProduct goods);
+
+    /**
+     * 标签商品
+     * @param tags
+     * @return
+     */
+    List<PmsProduct> selectByTags(@Param("tags") String tags);
 }

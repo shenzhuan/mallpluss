@@ -44,8 +44,7 @@ import java.util.Map;
 @Service
 public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper, SysQiniuConfig> implements ISysQiniuConfigService {
 
-    @Value("${qiniu.max-size}")
-    private Long maxSize;
+
     @Resource
     private SysQiniuContentMapper qiniuContentMapper;
 
@@ -62,7 +61,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SysQiniuContent upload(MultipartFile file, SysQiniuConfig qiniuConfig) {
-        FileUtil.checkSize(maxSize, file.getSize());
+        FileUtil.checkSize(1000, file.getSize());
         if (qiniuConfig.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }

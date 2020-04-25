@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.exception.JwtTokenExpiredException;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;
@@ -94,6 +95,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 }
             } else {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                   /* if (!jwtTokenUtil.validateTokenByUserName(authToken)){
+                        logger.info("expire token" + authToken+",expire="+jwtTokenUtil.getExpiredDateFromToken(authToken));
+                        throw new JwtTokenExpiredException("");
+                    }*/
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(authToken, userDetails)) {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

@@ -269,7 +269,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return new UmsMember();
                 }*/
             }
-            return new CommonResult().fail(100);
+            return new UmsMember();
         } catch (Exception e) {
             e.printStackTrace();
             return new UmsMember();

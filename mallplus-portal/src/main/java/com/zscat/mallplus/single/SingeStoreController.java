@@ -7,7 +7,10 @@ import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
 import com.zscat.mallplus.enums.StatusEnum;
 import com.zscat.mallplus.oms.vo.StoreContentResult;
+import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsGifts;
+import com.zscat.mallplus.pms.entity.PmsProduct;
+import com.zscat.mallplus.pms.service.IPmsFavoriteService;
 import com.zscat.mallplus.sys.entity.*;
 import com.zscat.mallplus.sys.mapper.SysShopMapper;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
@@ -24,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +62,8 @@ public class SingeStoreController extends ApiBaseAction {
     @Resource
     private ISysStoreCommentService commentService;
 
-
+    @Autowired
+    private IPmsFavoriteService favoriteService;
     @SysLog(MODULE = "sys", REMARK = "保存")
     @ApiOperation("保存")
     @PostMapping(value = "/applyStore")
@@ -95,8 +100,8 @@ public class SingeStoreController extends ApiBaseAction {
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
     public Object detail(@RequestParam(value = "id", required = false, defaultValue = "0") Integer id) {
+        UmsMember member = memberService.getNewCurrentMember();
         if (ValidatorUtils.empty(id)) {
-            UmsMember member = memberService.getNewCurrentMember();
             if (member == null) {
                 return new CommonResult().fail(100);
             }
@@ -119,6 +124,18 @@ public class SingeStoreController extends ApiBaseAction {
         } else {
             redisUtil.hPut(Rediskey.STORE_VIEWCOUNT_KEY, key, 1 + "");
         }
+
+        PmsFavorite query = new PmsFavorite();
+        query.setObjId(Long.valueOf(store.getId()));
+        query.setMemberId(member.getId());
+        query.setType(3);
+        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+        if (findCollection != null) {
+           store.setFavorite(true);
+        } else {
+            store.setFavorite(false);
+        }
+
         return new CommonResult().success(store);
     }
 
@@ -127,8 +144,8 @@ public class SingeStoreController extends ApiBaseAction {
     @ResponseBody
     public Object detail1(@RequestParam(value = "id", required = false) Integer id) {
         Map map = new HashMap();
+        UmsMember member = memberService.getNewCurrentMember();
         if (ValidatorUtils.empty(id)) {
-            UmsMember member = memberService.getNewCurrentMember();
             if (member == null) {
                 return new CommonResult().fail(100);
             }
@@ -137,6 +154,16 @@ public class SingeStoreController extends ApiBaseAction {
             map.put("member", newMember);
         }
         SysStore store = storeService.getById(id);
+        PmsFavorite query = new PmsFavorite();
+        query.setObjId(Long.valueOf(store.getId()));
+        query.setMemberId(member.getId());
+        query.setType(3);
+        PmsFavorite findCollection = favoriteService.getOne(new QueryWrapper<>(query));
+        if (findCollection != null) {
+            store.setFavorite(true);
+        } else {
+            store.setFavorite(false);
+        }
         map.put("store", store);
         return new CommonResult().success(map);
     }
@@ -291,5 +318,23 @@ public class SingeStoreController extends ApiBaseAction {
                                     @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         IPage<SysStoreComment> list = commentService.page(new Page<SysStoreComment>(pageNum, pageSize), new QueryWrapper<>(product));
         return new CommonResult().success(list);
+    }
+
+    @SysLog(MODULE = "sys", REMARK = "保存")
+    @ApiOperation("保存")
+    @PostMapping(value = "/addStoreComment")
+    public Object addStoreComment(SysStoreComment entity) {
+        try {
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member==null){
+                return new CommonResult().fail(100);
+            }
+            entity.setCreateTime(new Date());
+            entity.setMemberId(member.getId());
+            entity.setName(member.getUsername());
+            return new CommonResult().success(commentService.save(entity));
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
     }
 }

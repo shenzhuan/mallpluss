@@ -2,6 +2,7 @@ package com.zscat.mallplus.pms.vo;
 
 
 import com.zscat.mallplus.pms.entity.*;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -27,7 +28,7 @@ public class PmsProductParam extends PmsProduct {
     private List<CmsSubjectProductRelation> subjectProductRelationList;
     @ApiModelProperty("优选专区和商品的关系")
     private List<CmsPrefrenceAreaProductRelation> prefrenceAreaProductRelationList;
-
+    Long[] tagLists;
     private List<PmsProductAttributeValue> productCanShuValueList;
     private List<PmsProduct> typeGoodsList;
 
