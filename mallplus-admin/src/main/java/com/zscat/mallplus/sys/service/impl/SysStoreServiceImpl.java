@@ -219,6 +219,7 @@ public class SysStoreServiceImpl extends ServiceImpl<SysStoreMapper, SysStore> i
         g.setStock(gg.getId());
         g.setLowStock(0);
         g.setPublishStatus(1);
+        g.setDeleteStatus(1);
         g.setGiftPoint(gg.getCategoryId());
         g.setGiftGrowth(gg.getCategoryId());
         g.setPromotionType(0);

@@ -349,6 +349,7 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
+        product.setDeleteStatus(1);
         product.setVerifyStatus(1);
         product.setMemberId(null);
         product.setSort(sort);
@@ -633,6 +634,7 @@ public class SingePmsController extends ApiBaseAction {
                     .map(SmsGroup::getGoodsId)
                     .collect(Collectors.toList());
             product.setPublishStatus(1);
+            product.setDeleteStatus(1);
             product.setVerifyStatus(1);
             product.setMemberId(null);
             IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
@@ -791,6 +793,7 @@ public class SingePmsController extends ApiBaseAction {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
+            productQueryParam.setDeleteStatus(1);
             productQueryParam.setVerifyStatus(1);
             gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
@@ -883,7 +886,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
 
         PmsProduct productQueryParam = new PmsProduct();
-
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("product_category_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
@@ -932,7 +935,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
 
         PmsProduct productQueryParam = new PmsProduct();
-
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("area_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
@@ -1101,7 +1104,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/goodsCount")
     public Object goodsCount() {
         PmsProduct productQueryParam = new PmsProduct();
-
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         return new CommonResult().success(pmsProductService.count(new QueryWrapper<>(productQueryParam)));

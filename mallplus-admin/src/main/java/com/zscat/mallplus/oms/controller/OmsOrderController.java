@@ -15,12 +15,15 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.oms.vo.OrderCountDto;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -214,4 +217,24 @@ public class OmsOrderController {
         }
         return new CommonResult().success(page);
     }
+    /**@Valid
+     * 根据商品分类统计订单占比
+     */
+    @GetMapping("/orderCount")
+     public Object orderCount(){
+        OrderCountDto orderCountDto  = IOmsOrderService.getOrderCount();
+        return new CommonResult().success(orderCountDto);
+    }
+
+    @GetMapping(value = "/data/count")
+    public Object getCount(@RequestParam("status") Integer status) {
+        return new CommonResult().success(IOmsOrderService.getOrderTimeData(status));
+    }
+
+    @GetMapping(value = "/data/chart")
+    public Object getChart() {
+        return new CommonResult().success(IOmsOrderService.chartCount());
+    }
+
+
 }

@@ -414,6 +414,7 @@ public class HomeController extends BaseController {
         g.setLowStock(0);
         g.setGiftPoint(0);
         g.setGiftGrowth(0);
+        g.setDeleteStatus(1);
         g.setPublishStatus(1);
         g.setPromotionType(0);
         g.setVerifyStatus(1);

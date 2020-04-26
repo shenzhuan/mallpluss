@@ -152,6 +152,7 @@ public class BSmsController extends ApiBaseAction {
                     .map(SmsBargainConfig::getGoodsId)
                     .collect(Collectors.toList());
             product.setPublishStatus(1);
+            product.setDeleteStatus(1);
             product.setVerifyStatus(1);
             product.setMemberId(null);
             IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids).select(ConstansValue.sampleGoodsList));

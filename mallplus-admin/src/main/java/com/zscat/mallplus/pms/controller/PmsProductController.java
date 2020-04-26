@@ -65,15 +65,18 @@ public class PmsProductController {
             }
             if (ValidatorUtils.notEmpty(entity.getKeyword())) {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
                     entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
@@ -86,15 +89,18 @@ public class PmsProductController {
                 }
             } else {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
                     entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
@@ -129,19 +135,22 @@ public class PmsProductController {
             }
             if (ValidatorUtils.notEmpty(entity.getKeyword())) {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
                     entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
-                    entity.setDeleteStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else {
@@ -150,19 +159,22 @@ public class PmsProductController {
                 }
             } else {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(0);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
-                    entity.setDeleteStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else {
@@ -445,17 +457,20 @@ public class PmsProductController {
                 if (entity.getStatus() == 1) {
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(0);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
-                    entity.setDeleteStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else {
@@ -466,12 +481,15 @@ public class PmsProductController {
                 if (entity.getStatus() == 1) {
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(0);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));

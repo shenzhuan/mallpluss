@@ -5,6 +5,7 @@ import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.oms.vo.OrderCountDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -70,4 +71,13 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Map orderMonthStatic(String date);
 
     Object dayStatic(String date, Integer type);
+
+    /**@Valid
+     * 根据商品分类统计订单占比
+     */
+    OrderCountDto getOrderCount();
+
+    Object getOrderTimeData(Integer status);
+
+    Object chartCount();
 }

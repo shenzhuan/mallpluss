@@ -65,7 +65,7 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private String productSn;
 
     /**
-     * 删除状态：0->未删除；1->已删除
+     * 删除状态：1->未删除；0->已删除
      */
     @TableField("delete_status")
     private Integer deleteStatus;

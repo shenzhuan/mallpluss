@@ -13,6 +13,7 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+import com.zscat.mallplus.oms.vo.OrderCountDto;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -161,6 +162,38 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         map.put("orderCount", orderMapper.selectCount(new QueryWrapper<>()));
         return map;
 
+    }
+
+    @Override
+    public OrderCountDto getOrderCount() {
+        return null;
+    }
+
+    @Override
+    public Object getOrderTimeData(Integer status) {
+        BigDecimal nowOrderPay = new BigDecimal(0); //销售总额
+        List<OmsOrder> orders =null;
+        Map<Long,Object> memberMap =new HashMap<>();
+        if (status==0){
+            orders = orderMapper.selectList(new QueryWrapper<OmsOrder>());
+        }else {
+            orders = orderMapper.selectList(new QueryWrapper<OmsOrder>().eq("status",status));
+        }
+        for (OmsOrder order : orders) {
+            memberMap.put(order.getMemberId(),order.getId());
+           nowOrderPay = nowOrderPay.add(order.getPayAmount());
+        }
+        Map<String, Object> map = new HashMap();
+        map.put("orderCount", orders.size());
+        map.put("orderPay", nowOrderPay);
+        map.put("memberCount", memberMap.size());
+     //   map.put("femallount", femallount);
+        return map;
+    }
+
+    @Override
+    public Object chartCount() {
+        return null;
     }
 
     @Override
