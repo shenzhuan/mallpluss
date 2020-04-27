@@ -13,6 +13,7 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
@@ -164,6 +165,33 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
     }
 
     @Override
+    public Object getOrderTimeData(Integer status) {
+        BigDecimal nowOrderPay = new BigDecimal(0); //销售总额
+        List<OmsOrder> orders =null;
+        Map<Long,Object> memberMap =new HashMap<>();
+        if (status==0){
+            orders = orderMapper.selectList(new QueryWrapper<OmsOrder>());
+        }else {
+            orders = orderMapper.selectList(new QueryWrapper<OmsOrder>().eq("status",status));
+        }
+        for (OmsOrder order : orders) {
+            memberMap.put(order.getMemberId(),order.getId());
+           nowOrderPay = nowOrderPay.add(order.getPayAmount());
+        }
+        Map<String, Object> map = new HashMap();
+        map.put("orderCount", orders.size());
+        map.put("orderPay", nowOrderPay);
+        map.put("memberCount", memberMap.size());
+     //   map.put("femallount", femallount);
+        return map;
+    }
+
+    @Override
+    public Object chartCount() {
+        return null;
+    }
+
+    @Override
     public int close(List<Long> ids, String note) {
         OmsOrder record = new OmsOrder();
         record.setStatus(OrderStatus.CLOSED.getValue());
@@ -207,25 +235,14 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
 
     @Override
     public int updateMoneyInfo(OmsMoneyInfoParam moneyInfoParam) {
-        //插入操作记录
-        OmsOrderOperateHistory history = new OmsOrderOperateHistory();
-        OmsOrder order = orderMapper.selectById(moneyInfoParam.getOrderId());
+        OmsOrder order = new OmsOrder();
         order.setId(moneyInfoParam.getOrderId());
-        if (ValidatorUtils.notEmpty(moneyInfoParam.getFreightAmount())){
-            history.setNote("修改费用信息freightAmount"+order.getFreightAmount()+"="+moneyInfoParam.getFreightAmount());
-            order.setFreightAmount(moneyInfoParam.getFreightAmount());
-        }
-        if (ValidatorUtils.notEmpty(moneyInfoParam.getDiscountAmount())) {
-            history.setNote("修改费用信息discountAmount"+order.getDiscountAmount()+"="+moneyInfoParam.getDiscountAmount());
-            order.setDiscountAmount(moneyInfoParam.getDiscountAmount());
-        }
-        if (ValidatorUtils.notEmpty(moneyInfoParam.getPayAmount())) {
-            history.setNote("修改费用信息payAmount"+order.getPayAmount()+"="+moneyInfoParam.getPayAmount());
-            order.setPayAmount(moneyInfoParam.getPayAmount());
-        }
+        order.setFreightAmount(moneyInfoParam.getFreightAmount());
+        order.setDiscountAmount(moneyInfoParam.getDiscountAmount());
         order.setModifyTime(new Date());
         int count = orderMapper.updateById(order);
-
+        //插入操作记录
+        OmsOrderOperateHistory history = new OmsOrderOperateHistory();
         history.setOrderId(moneyInfoParam.getOrderId());
         history.setCreateTime(new Date());
         history.setOperateMan("后台管理员");

@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -66,20 +67,6 @@ public class OmsOrderReturnApplyController {
         return new CommonResult().failed();
     }
 
-    @SysLog(MODULE = "oms", REMARK = "更新订单退货申请")
-    @ApiOperation("更新订单退货申请")
-    @PostMapping(value = "/update/{id}")
-    public Object updateOmsOrderReturnApply(@RequestBody OmsOrderReturnApply entity) {
-        try {
-            if (IOmsOrderReturnApplyService.updateById(entity)) {
-                return new CommonResult().success();
-            }
-        } catch (Exception e) {
-            log.error("更新订单退货申请：%s", e.getMessage(), e);
-            return new CommonResult().failed();
-        }
-        return new CommonResult().failed();
-    }
 
     @SysLog(MODULE = "oms", REMARK = "删除订单退货申请")
     @ApiOperation("删除订单退货申请")
@@ -136,11 +123,16 @@ public class OmsOrderReturnApplyController {
     @RequestMapping(value = "/update/status", method = RequestMethod.POST)
     @ResponseBody
     public Object updateStatus(@RequestParam("id") Long id,
+
+                               @RequestParam("returnAmount") BigDecimal returnAmount,
+                               @RequestParam("companyAddressId") Long companyAddressId,
                                @RequestParam("status") Integer status,
                                @RequestParam("orderId") Long orderId,
-                               @RequestParam("handleNote") String handleNote
-                               ) {
+                               @RequestParam(value = "handleNote",required = false) String handleNote
+    ) {
         OmsUpdateStatusParam statusParam = new OmsUpdateStatusParam();
+        statusParam.setCompanyAddressId(companyAddressId);
+        statusParam.setReturnAmount(returnAmount);
         statusParam.setHandleMan(UserUtils.getCurrentMember().getNickName());
         statusParam.setHandleNote(handleNote);
         statusParam.setStatus(status);

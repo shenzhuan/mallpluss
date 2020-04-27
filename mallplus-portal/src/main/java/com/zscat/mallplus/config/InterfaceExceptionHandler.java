@@ -1,5 +1,6 @@
 package com.zscat.mallplus.config;
 
+import com.zscat.mallplus.exception.JwtTokenExpiredException;
 import com.zscat.mallplus.utils.CommonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,10 +23,19 @@ public class InterfaceExceptionHandler {
     @ExceptionHandler(ClassCastException.class)
     public Object businessInterfaceException(ClassCastException e) {
         log.error(e.getMessage(), e);
-        e.printStackTrace();
+     //   e.printStackTrace();
         return new CommonResult().fail(100);
     }
-
+    /**
+     * 接口 业务异常
+     */
+    @ResponseBody
+    @ExceptionHandler(JwtTokenExpiredException.class)
+    public Object JwtTokenExpiredException(JwtTokenExpiredException e) {
+        log.error(e.getMessage(), e);
+        //   e.printStackTrace();
+        return new CommonResult().fail(300);
+    }
     /**
      * 拦截所有运行时的全局异常   
      */

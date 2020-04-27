@@ -10,34 +10,34 @@ import lombok.NoArgsConstructor;
  * @author dp
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StatusEnum {
+public class UmsStatusEnum {
 
 
     /**
-     * 审核类型：
+     * 标签类型：
      *
      * @author mallplus
      */
-    public enum AuditType implements BaseEnum<Integer> {
+    public enum TagType implements BaseEnum<Integer> {
 
         /**
-         * 初始状态
+         * 会员标签
          */
-        INIT(1, "init"),
+        INIT(1, "会员标签"),
         /**
          * 审核成功
          */
-        FAIL(2, "fail"),
+        FAIL(2, "商品标签"),
         /**
          * 审核失败
          */
-        SUCESS(3, "sucess"),
+        SUCESS(3, "文章标签"),
         ;
 
         private int code;
         private String value;
 
-        AuditType(int code, String value) {
+        TagType(int code, String value) {
             this.code = code;
             this.value = value;
         }
@@ -54,21 +54,21 @@ public class StatusEnum {
     }
 
     /**
-     * 审核类型：
+     * 标签方式类型：
      *
      * @author mallplus
      */
     public enum YesNoType implements BaseEnum<Integer> {
 
         /**
-         * 启用
+         * 自动标签
          */
-        YES(1, "yes"),
+        YES(1, "自动标签"),
 
         /**
-         * 禁用
+         * 手动标签
          */
-        NO(0, "no"),
+        NO(2, "手动标签"),
         ;
 
         private int code;

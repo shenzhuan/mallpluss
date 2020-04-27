@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("es_shop_goods_group_map")
-public class EsShopGoodsGroupMap  implements Serializable {
+public class EsShopGoodsGroupMap implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

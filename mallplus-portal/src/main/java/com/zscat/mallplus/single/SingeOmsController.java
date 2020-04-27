@@ -1,12 +1,10 @@
 package com.zscat.mallplus.single;
-import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-import com.zscat.mallplus.bill.entity.BillAftersales;
-import com.zscat.mallplus.bill.entity.BillAftersalesItems;
 import com.zscat.mallplus.cms.entity.CmsSubject;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
@@ -14,9 +12,8 @@ import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
 import com.zscat.mallplus.oms.service.IOmsOrderItemService;
-import com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService;
-import com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.ConfirmListOrderResult;
 import com.zscat.mallplus.oms.vo.ConfirmOrderResult;
@@ -75,13 +72,12 @@ public class SingeOmsController extends ApiBaseAction {
     private IPmsProductConsultService pmsProductConsultService;
     @Autowired
     private IUmsMemberService memberService;
-
+    @Resource
+    private com.zscat.mallplus.oms.service.IOmsOrderReturnReasonService IOmsOrderReturnReasonService;
+    @Resource
+    private com.zscat.mallplus.oms.service.IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
     @Autowired
     private RedisUtil redisUtil;
-    @Autowired
-    IOmsOrderReturnReasonService  IOmsOrderReturnReasonService;
-    @Autowired
-    private IOmsOrderReturnApplyService IOmsOrderReturnApplyService;
 
     @IgnoreAuth
     @SysLog(MODULE = "oms", REMARK = "查询订单列表")
@@ -164,6 +160,20 @@ public class SingeOmsController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
         return new CommonResult().failed();
+    }
+    @SysLog(MODULE = "小程序订单管理", REMARK = "取消订单")
+    @ApiOperation("关闭订单")
+    @RequestMapping(value = "/deleteOrder", method = RequestMethod.POST)
+    public Object deleteOrder(@ApiParam("订单id") @RequestParam Long orderId) {
+        try {
+            if (ValidatorUtils.empty(orderId)) {
+                return new CommonResult().paramFailed("订单id is empty");
+            }
+            return new CommonResult().success(orderService.removeById(orderId));
+        } catch (Exception e) {
+            return new CommonResult().failed(e.getMessage());
+        }
+
     }
 
     @SysLog(MODULE = "订单管理", REMARK = "订单确认收货")
@@ -459,11 +469,7 @@ public class SingeOmsController extends ApiBaseAction {
                     payAmount = payAmount.add(consult.getPayAmount());
 
                 }
-                if (consult.getStatus() == OrderStatus.RIGHT_APPLY.getValue()) {
-                    status5++;
-                    payAmount = payAmount.add(consult.getPayAmount());
 
-                }
             }
             statusAll = status1 + status2 + status3 + status4 + status5;
             count.setPayAmount(payAmount);
@@ -544,16 +550,20 @@ public class SingeOmsController extends ApiBaseAction {
     @PostMapping(value = "/saveOmsOrderReturnApply")
     public Object saveOmsOrderReturnApply(@RequestParam(value = "items") String items,
                                           @RequestParam(value = "type") Integer type,
-                                            @RequestParam(value = "images" ,required = false) String[] images,
+                                          @RequestParam(value = "images", required = false) String[] images,
                                           @RequestParam(value = "returnAmount") BigDecimal returnAmount,
-                                          @RequestParam(value = "desc",required = false) String desc) throws Exception {
+                                          @RequestParam(value = "desc", required = false) String desc) throws Exception {
         ApplyRefundVo vo = new ApplyRefundVo();
-       try {
-           vo.setDesc(desc);vo.setItems(items);vo.setReturnAmount(returnAmount);vo.setType(type);vo.setImages(images);
-           return orderService.applyRe(vo);
-       }catch (Exception e){
-           return new CommonResult().failed();
-       }
+        try {
+            vo.setDesc(desc);
+            vo.setItems(items);
+            vo.setReturnAmount(returnAmount);
+            vo.setType(type);
+            vo.setImages(images);
+            return orderService.applyRe(vo);
+        } catch (Exception e) {
+            return new CommonResult().failed();
+        }
 
     }
 }

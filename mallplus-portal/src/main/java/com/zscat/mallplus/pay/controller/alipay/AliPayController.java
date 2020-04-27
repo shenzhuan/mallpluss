@@ -83,7 +83,7 @@ public class AliPayController extends AbstractAliPayApiController {
             //aliPayApiConfig = AliPayApiConfigKit.getApiConfig(aliPayBean.getAppId());
             OmsPayments payments = paymentsService.getOne(new QueryWrapper<OmsPayments>().eq("code","alipay").eq("status",1));
             if (payments != null) {
-                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParamss(), AliPayBean.class);
+                AliPayBean aliPayBean = JsonUtils.jsonToPojo(payments.getParams(), AliPayBean.class);
                 aliPayApiConfig = AliPayApiConfig.builder()
                         .setAppId(aliPayBean.getAppId())
                         .setAliPayPublicKey(aliPayBean.getPublicKey())
@@ -154,7 +154,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
 
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
@@ -186,7 +186,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 throw new ApiMallPlusException("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                throw new ApiMallPlusException("订单已支付，请不要重复操作");
+                throw new ApiMallPlusException("订单不是未支付，不能重新支付");
             }
             AliPayApiConfig aliPayApiConfig = AliPayApiConfigKit.getAliPayApiConfig();
             Map<String, String> paramsMap = new HashMap<>();
@@ -237,7 +237,7 @@ public class AliPayController extends AbstractAliPayApiController {
             return new CommonResult().failed("订单已已关闭，请不要重复操作");
         }
         if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-            return new CommonResult().failed("订单已支付，请不要重复操作");
+            return new CommonResult().failed("订单不是未支付，不能重新支付");
         }
 
         String body = orderInfo.getGoodsName();
@@ -279,7 +279,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 throw new ApiMallPlusException("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                throw new ApiMallPlusException("订单已支付，请不要重复操作");
+                throw new ApiMallPlusException("订单不是未支付，不能重新支付");
             }
             String returnUrl = domain + "/aliPay/return_url";
             String notifyUrl = domain + "/aliPay/notify_url";
@@ -466,14 +466,14 @@ public class AliPayController extends AbstractAliPayApiController {
      */
     @RequestMapping(value = "/tradeRefund")
     @ResponseBody
-    public Object tradeRefund() {
+    public Object tradeRefund(AlipayTradeRefundModel model) {
 
         try {
-            AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-            model.setOutTradeNo("081014283315023");
+           // AlipayTradeRefundModel model = new AlipayTradeRefundModel();
+            /*model.setOutTradeNo("081014283315023");
             model.setTradeNo("2017081021001004200200273870");
             model.setRefundAmount("86.00");
-            model.setRefundReason("正常退款");
+            model.setRefundReason("正常退款");*/
             return new CommonResult().success(AliPayApi.tradeRefundToResponse(model, this.getApiConfig()).getBody());
         } catch (AlipayApiException e) {
             e.printStackTrace();
@@ -755,6 +755,7 @@ public class AliPayController extends AbstractAliPayApiController {
 
             if (verifyResult) {
                 // 更新订单信息
+                orderInfo.setPayCode(params.get("trade_no"));
                 orderService.updateById(orderInfo);
                 if (ValidatorUtils.isEmpty(orderInfo.getPid()) || orderInfo.getPid() < 1) {
                     OmsOrder childOrder = new OmsOrder();
@@ -768,7 +769,7 @@ public class AliPayController extends AbstractAliPayApiController {
                 queryO.setType(AllEnum.OrderItemType.GOODS.code());
                 List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
                 // 分拥计算
-                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
+                orderService.recordFenxiaoMoney(omsOrderItems, memberService.getById(orderInfo.getMemberId()));
                 // TODO 请在这里加上商户的业务逻辑程序代码 异步通知可能出现订单重复通知 需要做去重处理
                 System.out.println("notify_url 验证成功succcess");
                 return new CommonResult().success();

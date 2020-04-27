@@ -384,6 +384,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
+            productQueryParam.setDeleteStatus(1);
             productQueryParam.setVerifyStatus(1);
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {
@@ -544,6 +545,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     public List<PmsProduct> getSaleProductList(int pageNum, int pageSize) {
         PmsProduct query = new PmsProduct();
         query.setPublishStatus(1);
+        query.setDeleteStatus(1);
         query.setVerifyStatus(1);
         return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).select(ConstansValue.sampleGoodsList).orderByDesc("sale")).getRecords();
     }
@@ -552,6 +554,7 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     public List<PmsProduct> getNewProductList(int pageNum, int pageSize) {
         PmsProduct query = new PmsProduct();
         query.setPublishStatus(1);
+        query.setDeleteStatus(1);
         query.setVerifyStatus(1);
         return pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(query).select(ConstansValue.sampleGoodsList).orderByDesc("create_time")).getRecords();
 
@@ -588,12 +591,11 @@ public class SmsHomeAdvertiseServiceImpl extends ServiceImpl<SmsHomeAdvertiseMap
     }
 
 
-
     @Override
-    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type,int storeId) {
+    public List<SmsHomeAdvertise> getHomeAdvertiseList(int type, int storeId) {
         SmsHomeAdvertise advertise = new SmsHomeAdvertise();
         advertise.setStatus(1);
-        if (ValidatorUtils.notEmpty(type)){
+        if (ValidatorUtils.notEmpty(type)) {
             advertise.setType(type);
         }
 

@@ -47,7 +47,7 @@ public class OmsPayments extends BaseEntity  {
     /**
      * 参数
      */
-    private String paramss;
+    private String params;
 
     /**
      * 排序

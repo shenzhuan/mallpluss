@@ -103,5 +103,6 @@ public class SysShop extends BaseEntity implements Serializable {
             @TableField( "utime")
         private Date utime;
 
-
+    @TableField(exist = false)
+    private double  distance;
 }

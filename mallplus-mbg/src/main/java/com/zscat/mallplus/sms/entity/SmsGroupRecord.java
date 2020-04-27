@@ -39,7 +39,7 @@ public class SmsGroupRecord implements Serializable {
     private Long groupId;
 
     /**
-     * 状态 1
+     * 状态  1>>初始状态 2拼团成功
      */
     private String status;
 
@@ -51,6 +51,12 @@ public class SmsGroupRecord implements Serializable {
 
     @TableField("store_id")
     private Integer storeId;
+    /**
+     * 状态  1>>初始状态 2定时任务，将订单状态已更新
+     */
+    @TableField("handle_status")
+    private Integer handleStatus;
+
 
     @TableField(exist = false)
     private List<SmsGroupMember> list;

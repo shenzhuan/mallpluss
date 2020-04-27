@@ -89,7 +89,7 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             OmsPayments payments = paymentsService.getOne(new QueryWrapper<OmsPayments>().eq("code","wechatpay").eq("status",1));
             if (payments != null) {
-                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParamss(), WxPayBean.class);
+                WxPayBean wxPayBean = JsonUtils.jsonToPojo(payments.getParams(), WxPayBean.class);
                 apiConfig = WxPayApiConfig.builder()
                         .appId(wxPayBean.getAppId())
                         .mchId(wxPayBean.getMchId())
@@ -257,8 +257,8 @@ public class WxPayController extends AbstractWxPayApiController {
         try {
             String totalFee = "0.01";
             // openId，采用 网页授权获取 access_token API：SnsAccessTokenApi获取
-            UmsMember member =memberService.getNewCurrentMember();
-            if (member==null || member.getId()==null){
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member == null || member.getId() == null) {
                 return new CommonResult().fail(100);
             }
             String openId = member.getWeixinOpenid();
@@ -271,6 +271,8 @@ public class WxPayController extends AbstractWxPayApiController {
             String ip = IpKit.getRealIp(request);
             if (StrUtil.isEmpty(ip)) {
                 ip = "127.0.0.1";
+            }else {
+                ip=ip.split(",")[0];
             }
 
             OmsOrder orderInfo = orderService.getById(orderId);
@@ -281,7 +283,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             System.out.println(orderInfo.getPayAmount().multiply(new BigDecimal(100)).toPlainString());
 
@@ -323,8 +325,8 @@ public class WxPayController extends AbstractWxPayApiController {
             Map<String, String> packageParams = WxPayKit.prepayIdCreateSign(prepayId, wxPayApiConfig.getAppId(),
                     wxPayApiConfig.getPartnerKey(), SignType.HMACSHA256);
 
-            String jsonStr = JSON.toJSONString(packageParams);
-            return new CommonResult().success(jsonStr);
+         //   String jsonStr = JSON.toJSONString(packageParams);
+            return new CommonResult().success(packageParams);
         } catch (Exception e) {
             e.printStackTrace();
             return new CommonResult().failed(e.getMessage());
@@ -602,7 +604,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             WxPayApiConfig wxPayApiConfig = this.getApiConfig();
 
@@ -660,8 +662,8 @@ public class WxPayController extends AbstractWxPayApiController {
                              @RequestParam(value = "appIdsource", required = false) Integer appIdsource) {
         try {
             //需要通过授权来获取openId
-            UmsMember member =memberService.getNewCurrentMember();
-            if (member==null || member.getId()==null){
+            UmsMember member = memberService.getNewCurrentMember();
+            if (member == null || member.getId() == null) {
                 return new CommonResult().fail(100);
             }
 
@@ -682,7 +684,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 return new CommonResult().failed("订单已已关闭，请不要重复操作");
             }
             if (orderInfo.getStatus() != OrderStatus.INIT.getValue()) {
-                return new CommonResult().failed("订单已支付，请不要重复操作");
+                return new CommonResult().failed("订单不是未支付，不能重新支付");
             }
             WxPayBean wxPayApiConfig = new WxPayBean();
 
@@ -995,7 +997,7 @@ public class WxPayController extends AbstractWxPayApiController {
                 queryO.setType(AllEnum.OrderItemType.GOODS.code());
                 List<OmsOrderItem> omsOrderItems = orderItemService.list(new QueryWrapper<>(queryO));
                 // 分拥计算
-                orderService.recordFenxiaoMoney(omsOrderItems,memberService.getById(orderInfo.getMemberId()));
+                orderService.recordFenxiaoMoney(omsOrderItems, memberService.getById(orderInfo.getMemberId()));
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);
                 xml.put("return_code", "SUCCESS");

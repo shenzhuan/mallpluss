@@ -22,7 +22,7 @@ public interface GeneratorMapper {
             + "	where table_schema = (select database()) and table_name = #{tableName}")
     Map<String, String> get(String tableName);
 
-    @Select("select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns\r\n"
+    @Select("select column_name as 'column_name', is_nullable as 'is_nullable', data_type as 'data_type', column_comment  as 'column_comment', column_key as 'column_key', extra as 'extra' from information_schema.columns\r\n"
             + " where table_name = #{tableName} and table_schema = (select database()) order by ordinal_position")
     List<Map<String, String>> listColumns(String tableName);
 }

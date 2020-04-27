@@ -426,7 +426,7 @@ public class BHomeController {
     @SysLog(MODULE = "home", REMARK = "获取广告")
     @PostMapping("/advert.getcarousellists")
     public Object advList(@RequestParam(value = "type", required = false, defaultValue = "10") Integer type) {
-        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(type,0);
+        List<SmsHomeAdvertise> bannerList = advertiseService.getHomeAdvertiseList(type, 0);
         return new CommonResult().success(bannerList);
     }
 

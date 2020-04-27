@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zscat.mallplus.build.mapper.BuildingCommunityMapper">
+
+
+
+    <select id="selectNearCommunity" resultType="com.zscat.mallplus.build.entity.BuildingCommunity">
+        SELECT
+        id, company_id, name, pic, price,wuyecompany,wuyefei,latitude,longitude,create_time,
+        (
+        6371 * acos (
+        cos ( radians( #{latitude} ) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians( #{longitude} ) ) + sin ( radians( #{latitude} ) ) * sin( radians( latitude ) )
+        )
+        ) AS distance
+        FROM
+        building_community
+        HAVING
+        #{distance} >distance
+        ORDER BY
+        distance
+        LIMIT 0 , #{pageSize}
+    </select>
+
+    <!-- 筛选距离小于2km的商家(可不写)，如果没查到数据就是没有小于2km的商家
+     https://blog.csdn.net/MaNongXf/article/details/84977927?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1
+     -->
+    <select id="selectNearCommunity1" resultType="com.zscat.mallplus.build.entity.BuildingCommunity">
+        SELECT
+        *id, company_id, name, pic, price,wuyecompany,wuyefei,latitude,longitude,create_time,
+        SQRT(
+        POW( 111.2 * ( latitude - #{latitude} ), 2 ) + POW( 111.2 * ( #{longitude} - longitude ) * COS( latitude / 57.3 ), 2 )
+        ) AS distance
+        FROM
+        building_community
+        HAVING
+        #{distance} >distance
+        ORDER BY
+        distance
+        LIMIT 0 , {pageSize}
+    </select>
+</mapper>

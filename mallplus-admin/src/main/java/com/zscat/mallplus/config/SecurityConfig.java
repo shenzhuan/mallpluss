@@ -12,6 +12,10 @@ import com.zscat.mallplus.sys.entity.SysUserVo;
 import com.zscat.mallplus.sys.mapper.SysStoreMapper;
 import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.sys.service.ISysUserService;
+import com.zscat.mallplus.sys.service.impl.RedisUtil;
+import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.util.JsonUtil;
+import com.zscat.mallplus.vo.Rediskey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
+    @Resource
+    private RedisService redisService;
     @Autowired
     private ApiContext apiContext;
 
@@ -77,14 +82,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs/**"
                 )
                 .permitAll()
-                .antMatchers("/sys/sysUser/login", "/sys/sysUser/register")// 对登录注册要允许匿名访问
+                .antMatchers("/admin/login", "/admin/register")// 对登录注册要允许匿名访问
                 .permitAll()
+                /* .and()
+                 .logout()
+                 .invalidateHttpSession(true)
+                 .permitAll()*/
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
                 .antMatchers("/**")//测试时全部运行访问
                 .permitAll()
                 .anyRequest()// 除上面外的所有请求全部需要鉴权认证
                 .authenticated();
+        //访问 /logout 表示用户注销，并清空session
+        httpSecurity.logout().logoutSuccessUrl("/logoutSuccess");
         // 禁用缓存
         httpSecurity.headers().cacheControl();
         // 添加JWT filter
@@ -111,14 +122,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         //获取登录用户信息
         return username -> {
-            SysUserVo admin = userMapper.selectByUserName(username);
+            SysUserVo admin = new SysUserVo();
+            if (!redisService.exists(String.format(Rediskey.user, username))) {
+                admin = userMapper.selectByUserName(username);
+                redisService.set(String.format(Rediskey.user, username), JsonUtil.objectToJson(admin));
+            } else {
+                admin =JsonUtil.fromJson(redisService.get(String.format(Rediskey.user, username)), SysUserVo.class);
+            }
             //  apiContext.setCurrentProviderId(admin.getStoreId());
             if (admin != null) {
                 if (admin.getSupplyId() != null && admin.getSupplyId() == 1L) {
                     List<SysPermission> permissionList = sysUserService.listPerms();
                     return new AdminUserDetails(admin, permissionList);
                 }
-
+                SysStore store = storeMapper.selectById(admin.getStoreId());
+                if (store == null) {
+                    throw new UsernameNotFoundException("商户不存在");
+                } else {
+                    if (store.getStatus() == StatusEnum.AuditType.FAIL.code()) {
+                        throw new UsernameNotFoundException("商户审核失败");
+                    } else if (store.getStatus() == StatusEnum.AuditType.INIT.code()) {
+                        throw new UsernameNotFoundException("商户审核中");
+                    }
+                }
                 List<SysPermission> permissionList = sysUserService.listUserPerms(admin.getId());
                 return new AdminUserDetails(admin, permissionList);
             }

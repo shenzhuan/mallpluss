@@ -43,6 +43,7 @@ public class PmsProductAttributeCategoryController {
 
     @Resource
     private IPmsProductService pmsProductService;
+
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有产品属性分类表列表")
     @ApiOperation("根据条件查询所有产品属性分类表列表")
     @GetMapping(value = "/list")
@@ -81,6 +82,7 @@ public class PmsProductAttributeCategoryController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "pms", REMARK = "保存产品属性分类表")
     @ApiOperation("保存产品属性分类表")
     @PostMapping(value = "/createSingle")
@@ -96,6 +98,7 @@ public class PmsProductAttributeCategoryController {
         }
         return new CommonResult().failed();
     }
+
     @SysLog(MODULE = "pms", REMARK = "更新产品属性分类表")
     @ApiOperation("更新产品属性分类表")
     @PostMapping(value = "/update/{id}")

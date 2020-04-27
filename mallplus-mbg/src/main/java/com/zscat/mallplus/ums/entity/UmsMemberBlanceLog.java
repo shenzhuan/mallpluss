@@ -24,20 +24,17 @@ import java.util.Date;
 public class UmsMemberBlanceLog extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @TableField(exist = false)
+    BigDecimal money;
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
     @TableField("member_id")
     private Long memberId;
-
     private BigDecimal price;
     //0, 1, 2, 3, 4, 5, 7
     // '全部', '消费', '退款', '充值', '提现', '佣金', '平台调整'
     private Integer type;
-
     private String note;
-
     @TableField("create_time")
     private Date createTime;
     // 1 申请 2 通过 3 拒绝
@@ -45,11 +42,8 @@ public class UmsMemberBlanceLog extends BaseEntity implements Serializable {
     // 提现类型 1 银行卡 2 微信 3支付宝
     @TableField("with_draw_type")
     private Integer withDrawType;
-     //关联提现类型的编号
-     @TableField("obj_id")
+    //关联提现类型的编号
+    @TableField("obj_id")
     private Long objId;
     private String objname;
-
-     @TableField(exist = false)
-     BigDecimal money;
 }

@@ -158,7 +158,7 @@ public class SysRoleController extends ApiController {
     @RequestMapping(value = "/update/updateShowStatus", method = RequestMethod.POST)
     @ResponseBody
     @SysLog(MODULE = "cms", REMARK = "修改展示状态")
-    public Object updateShowStatus(@RequestParam("ids")  List<Long> ids,
+    public Object updateShowStatus(@RequestParam("ids") List<Long> ids,
                                    @RequestParam("showStatus") Integer showStatus) {
         SysRole role = new SysRole();
         role.setId(ids.get(0));
