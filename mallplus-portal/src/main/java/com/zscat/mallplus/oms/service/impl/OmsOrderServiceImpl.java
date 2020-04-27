@@ -812,7 +812,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setNote("创建订单");
         orderOperateHistoryService.save(history);
 
-        memberService.addIntegration(currentMember.getId(), order.getPayAmount().intValue(), 1, "下单添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
+
 
         stopWatch.stop();
         //如使用积分需要扣除积分
@@ -1598,13 +1598,15 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         }
         userDO.setBlance(userDO.getBlance().subtract(order.getPayAmount()));
         memberService.updateById(userDO);
+         // 余额日志记录
         UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
         blog.setMemberId(userDO.getId());
         blog.setCreateTime(new Date());
-        blog.setNote("支付订单：" + order.getId());
+        blog.setNote("订单：" + order.getId()+",消费:"+order.getPayAmount());
         blog.setPrice(order.getPayAmount());
         blog.setType(1);
         memberBlanceLogService.save(blog);
+        // 订单日志记录
         OmsOrderOperateHistory history = new OmsOrderOperateHistory();
         history.setOrderId(order.getId());
         history.setCreateTime(new Date());
@@ -1613,7 +1615,9 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setOrderStatus(OrderStatus.TO_DELIVER.getValue());
         history.setNote("余额支付");
         orderOperateHistoryService.save(history);
-        memberService.addIntegration(userDO.getId(), order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(), 1, "余额支付添加积分", AllEnum.ChangeSource.order.code(), userDO.getUsername());
+        // 积分日志记录
+        memberService.addIntegration(userDO.getId(), order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(),
+                1, "余额支付添加积分", AllEnum.ChangeSource.order.code(), userDO.getUsername());
         OmsOrderItem queryO = new OmsOrderItem();
         queryO.setOrderId(order.getId());
         queryO.setType(AllEnum.OrderItemType.GOODS.code());
@@ -2971,8 +2975,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
             // TODO: 2018/9/3 bill_*,delivery_*
             if (pid != null) {
                 order.setPid(pid);
-            } else {
-                memberService.addIntegration(currentMember.getId(), order.getPayAmount().intValue(), 1, "下单添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
             }
             if (flagStore) {
                 if (ValidatorUtils.empty(storeId)) {
@@ -3018,8 +3020,6 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
                 memberService.updateIntegration(currentMember.getId(), currentMember.getIntegration() - order.getUseIntegration());
             }
             if (pid == null) {
-                memberService.addIntegration(currentMember.getId(), order.getPayAmount().multiply(new BigDecimal("0.1")).intValue(), 1, "余额支付添加积分", AllEnum.ChangeSource.order.code(), currentMember.getUsername());
-
                 lockStockByOrder(orderItemList, orderParam.getType());
                 //删除购物车中的下单商品
                 if (!"1".equals(orderParam.getType())){
