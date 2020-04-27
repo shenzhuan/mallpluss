@@ -1,166 +1,150 @@
-<template> 
-    <el-card class="form-container" shadow="never">
-        <el-form :model="${changeClassName}" :rules="rules" ref="${className}From" label-width="150px">
+  @import '../../../../components/templatePage/static/common/common.less';
 
-            <#if columns??>
-                <#list columns as column>
+  .container {
+    position: relative;
+  }
 
-                    <el-form-item
-                            label="<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>"
-                            prop="${column.changeColumnName}">
-                        <el-input v-model="${changeClassName}.${column.changeColumnName}" style="width: 370px;"/>
-                    </el-form-item>
+  //.container .redu-box {
+  //  padding: 0 20px;
+  //}
 
-                </#list>
-            </#if>
+  .container .redu-bread {
+    line-height: 30px;
+    height: 30px;
+  }
 
-            <el-form-item>
-                <el-button type="primary" @click="onSubmit('${className}From')">提交</el-button>
-                <el-button v-if="!isEdit" @click="resetForm('${className}From')">重置</el-button>
-            </el-form-item>
-        </el-form>
-    </el-card>
-</template>
-<script>
-    import {create${className}, get${className}, update${className}} from '@/api/${moduleName}/${changeClassName}'
-    import SingleUpload from '@/components/Upload/singleUpload'
+  .container .redu-content {
+    padding: 20px 20px 100px 20px;
+  }
 
-    const default${className} = {
-        name: ''
-    };
-    export default {
-        name: '${className}Detail',
-        components: {SingleUpload},
-        props: {
-            isEdit: {
-                type: Boolean,
-                default: false
-            }
-        },
-        data() {
-            return {
-            ${changeClassName}:
-            Object.assign({},
-        default${className}),
-            rules: {
-                name: [
-                    {required: true, message: '请输入品牌名称', trigger: 'blur'},
-                    {min: 2, max: 140, message: '长度在 2 到 140 个字符', trigger: 'blur'}
-                ],
-                    logo
-            :
-                [
-                    {required: true, message: '请输入品牌logo', trigger: 'blur'}
-                ],
-                    sort
-            :
-                [
-                    {type: 'number', message: '排序必须为数字'}
-                ],
-            }
-        }
-        },
-        created() {
-            if (this.isEdit) {
-                get${className}(this.$route.query.id).then(response => {
-                    this.${changeClassName} = response.data;
-            })
-                ;
-            } else {
-                this.${changeClassName} = Object.assign({},
-            default${className})
-                ;
-            }
-        },
-        methods: {
-            onSubmit(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if(valid) {
-                        this.$confirm('是否提交数据', '提示', {
-                            confirmButtonText: '确定',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                        }).then(() => {
-                            if(this.isEdit
-                    )
-                        {
-                            update${className}(this.$route.query.id, this.${changeClassName}).then(response => {
-                                if(response.code == 200
-                        )
-                            {
-                                this.$refs[formName].resetFields();
-                                this.$message({
-                                    message: '修改成功',
-                                    type: 'success',
-                                    duration: 1000
-                                });
-                                this.$router.back();
-                            }
-                        else
-                            {
-                                this.$message({
-                                    message: response.msg,
-                                    type: 'error',
-                                    duration: 1000
-                                });
-                            }
+  .container .redu-inset {
+    background: #fff;
+  }
 
-                        })
-                            ;
-                        }
-                    else
-                        {
-                            create${className}(this.${changeClassName}).then(response => {
-                                if(response.code == 200
-                        )
-                            {
-                                this.$refs[formName].resetFields();
-                                this.${changeClassName} = Object.assign({},
-                            default${className})
-                                ;
-                                this.$message({
-                                    message: '提交成功',
-                                    type: 'success',
-                                    duration: 1000
-                                });
-                                this.$router.back();
-                            }
-                        else
-                            {
-                                this.$message({
-                                    message: response.msg,
-                                    type: 'error',
-                                    duration: 1000
-                                });
-                            }
+  .container .star {
+    color: red;
+    padding: 5px;
+    font-size: 20px;
+    margin-right: 10px;
+  }
 
-                        })
-                            ;
-                        }
-                    })
-                        ;
+  .container .redu-title {
+    height: 30px;
+    line-height: 30px;
+    color: #000;
+    padding-left: 15px;
+    background-color: #f2f2f2;
+  }
 
-                    } else {
-                        this.$message({
-                            message: '验证失败',
-                            type: 'error',
-                            duration: 1000
-                        });
-                return false;
-            }
-            })
-                ;
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-                this.${changeClassName} = Object.assign({},
-            default${className})
-                ;
-            }
-        }
-    }
-</script>
-<style>
-</style>
+  .container .inset-content {
+    padding: 40px 0 30px 50px;
+    background: #fff;
+  }
 
+  .container .high-opation {
+    padding: 10px;
+    cursor: pointer;
+    color:#0083B0
+  }
 
+  .container .set {
+    width: 600px;
+    padding: 20px 20px 20px 10px;
+    margin-bottom: 10px;
+    border: 1px dashed #aeaeae;
+    background: #F2F2F2;
+    position: relative;
+  }
+
+  .container .set .delete {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    top: -15px;
+    right: -18px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .container .formBtn {
+    width: 150px;
+    margin: 0 auto;
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .container .comBtn {
+    margin: 0 5px;
+  }
+
+  .container .mask {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container .set .delete {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    top: -15px;
+    right: -18px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .container .time-set {
+    width: 700px;
+    height: 270px;
+    border: 1px solid #aeaeae;
+    background: #fff;
+  }
+
+  .container .set-title {
+    padding: 8px;
+    font-size: 14px;
+    background: @mainColor;
+    color: #fff;
+    position: relative;
+  }
+
+  .container .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 8px 10px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+
+  .container .choose-week {
+    border-bottom: 1px solid #aeaeae;
+    padding: 30px 0 0 0;
+  }
+
+  .container .week-btn {
+    width: 70px;
+    margin-right: 10px;
+  }
+
+  .limitLength {
+    position: absolute;
+    margin-left: 10px;
+    color: #bbb;
+  }
+
+  .bgColor {
+    background: @mainColor;
+    color: #fff;
+  }

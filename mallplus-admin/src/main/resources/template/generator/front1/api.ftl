@@ -1,38 +1,56 @@
-import request from '@/utils/request'
-export function fetchList(params) {
-return request({
-url: '/${moduleName}/${changeClassName}/list',
-method: 'get',
-params: params
-})
-}
-export function create${className}(data) {
-return request({
-url: '/${moduleName}/${changeClassName}/create',
-method: 'post',
-data: data
-})
-}
 
-export function delete${className}(id) {
-return request({
-url: '/${moduleName}/${changeClassName}/delete/' + id,
-method: 'get',
-})
-}
+{
+	path: '/@/views/${moduleName}/${changeClassName}/index',
+	name: '${changeClassName}',
+	meta: {
+		title: '${prefix}',
+		showflg: true,
+		roles: "50",
+		level1: "${moduleName}_level",
+		level2: "${changeClassName}_level"
+	},
+	component: () =>
+		import('@/views/${moduleName}/${changeClassName}/index'),
+},
 
-export function get${className}(id) {
-return request({
-url: '/${moduleName}/${changeClassName}/' + id,
-method: 'get',
-})
-}
+{
+	path: '/@/views/${moduleName}/${changeClassName}/components/add',
+	name: 'add',
+	meta: {
+		title: '新增${prefix}',
+		showflg: false,
+		roles: "51",
+		level1: "${moduleName}_level",
+		level2: "${changeClassName}_level"
+	},
+	component: () =>
+		import('@/views/${moduleName}/${changeClassName}/components/add'),
+},
 
-export function update${className}(id, data) {
-return request({
-url: '/${moduleName}/${changeClassName}/update/' + id,
-method: 'post',
-data: data
-})
-}
+{
+	path: '/@/views/${moduleName}/${changeClassName}/components/edit',
+	name: 'edit',
+	meta: {
+		title: '编辑${prefix}',
+		showflg: false,
+		roles: "52",
+		level1: "${moduleName}_level",
+		level2: "${changeClassName}_level"
+	},
+	component: () =>
+		import('@/views/${moduleName}/${changeClassName}/components/edit'),
+},
+
+{
+	path: '',
+	name: '4010401',
+	meta: {
+		title: '删除${prefix}',
+		showflg: false,
+		roles: "4010401",
+		level1: "${moduleName}_level",
+		level2: "${changeClassName}_level"
+	},
+},
+
 
