@@ -43,14 +43,12 @@
                 <#if columns??>
                     <#list columns as column>
                         <#if column.columnShow = 'true'>
-
                             <el-table-column prop="${column.changeColumnName}"
                                              label="<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>">
                                 <template slot-scope="scope">
                                     {{scope.row.${column.changeColumnName} }}
                                 </template>
                             </el-table-column>
-
                         </#if>
                     </#list>
                 </#if>

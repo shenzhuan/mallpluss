@@ -57,6 +57,7 @@ public class AllEnum {
      */
     public enum ChangeSource implements BaseEnum<Integer> {
 
+
         /**
          * 下单
          */

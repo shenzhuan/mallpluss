@@ -65,7 +65,20 @@ public class GenUtil {
         templateNames.add("update");
         return templateNames;
     }
-
+    /**
+     * 获取前端代码模板名称
+     *
+     * @return List
+     */
+    private static List<String> getFrontTemplateNames1() {
+        List<String> templateNames = new ArrayList<>();
+        templateNames.add("api");
+        templateNames.add("index");
+        templateNames.add("eForm");
+        templateNames.add("add");
+        templateNames.add("update");
+        return templateNames;
+    }
     /**
      * 生成代码
      *
@@ -161,14 +174,30 @@ public class GenUtil {
                 continue;
             }
             // 生成代码
-            genFile(file, template, map);
+         //   genFile(file, template, map);
         }
 
         // 生成前端代码
-        templates = getFrontTemplateNames();
-        for (String templateName : templates) {
+        List<String>  templates1 = getFrontTemplateNames();
+        for (String templateName : templates1) {
             Template template = engine.getTemplate("generator/front/" + templateName + ".ftl");
             String filePath = getFrontFilePath(templateName, genConfig, map.get("changeClassName").toString());
+
+            assert filePath != null;
+            File file = new File(filePath);
+
+            // 如果非覆盖生成
+            if (!genConfig.getCover() && FileUtil.exist(file)) {
+                continue;
+            }
+            // 生成代码
+            genFile(file, template, map);
+        }
+        // 生成前端代码2
+        List<String> templates2 = getFrontTemplateNames1();
+        for (String templateName : templates2) {
+            Template template = engine.getTemplate("generator/front1/" + templateName + ".ftl");
+            String filePath = getFrontFilePath1(templateName, genConfig, map.get("changeClassName").toString());
 
             assert filePath != null;
             File file = new File(filePath);
@@ -242,12 +271,38 @@ public class GenUtil {
         }
         return null;
     }
+    /**
+     * 定义前端文件路径以及名称
+     */
+    private static String getFrontFilePath1(String templateName, GenConfig genConfig, String apiName) {
+        String path = genConfig.getPath();
 
+        if ("api".equals(templateName)) {
+            return path + File.separator +"shop"+ File.separator+ apiName + ".text";
+        }
+
+        if ("index".equals(templateName)) {
+            return path + File.separator +"shop"+ File.separator+ apiName + File.separator + "index.vue";
+        }
+
+        if ("eForm".equals(templateName)) {
+            return path + File.separator +"shop"+ File.separator+ apiName + File.separator + "components" + File.separator + "reduction.less";
+        }
+        if ("add".equals(templateName)) {
+            return path + File.separator +"shop"+ File.separator+ apiName + File.separator + "components" + File.separator + "add.vue";
+        }
+        if ("update".equals(templateName)) {
+            return path + File.separator +"shop"+ File.separator+ apiName + File.separator + "components" + File.separator + "edit.vue";
+        }
+        return null;
+    }
     private static void genFile(File file, Template template, Map<String, Object> map) throws IOException {
         // 生成目标文件
         Writer writer = null;
         try {
+            System.out.println(file);
             FileUtil.touch(file);
+            System.out.println(file.getName());
             writer = new FileWriter(file);
             template.render(map, writer);
         } catch (TemplateException | IOException e) {

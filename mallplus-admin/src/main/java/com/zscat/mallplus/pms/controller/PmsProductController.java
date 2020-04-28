@@ -210,6 +210,7 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:create')")
     public Object savePmsProduct(@RequestBody PmsProductParam productParam) {
         try {
+            productParam.setDeleteStatus(1);
             int count = IPmsProductService.create(productParam);
             if (count > 0) {
                 return new CommonResult().success(count);
