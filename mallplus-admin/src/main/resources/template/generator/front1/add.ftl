@@ -26,7 +26,7 @@
                      <#if columns??>
                                     <#list columns as column>
                                         <FormItem label="<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>" prop="${column.changeColumnName}">
-                                                 <Input v-model="${changeClassName}.${column.changeColumnName}" placeholder='请输入<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>" prop="${column.changeColumnName}' :maxlength="20" style="width: 350px;"></Input>
+                                                 <Input v-model="${changeClassName}.${column.changeColumnName}" placeholder="请输入${column.columnComment}"  style="width: 350px;"></Input>
                                           </FormItem>
                                     </#list>
                                 </#if>
@@ -74,9 +74,9 @@
  	methods: {
  		// 保存
  		save(reduForm) {
- 			createMemberLevel(this.${changeClassName}).then(response => {
+ 			create${className}(this.${changeClassName}).then(response => {
  				if (response.code == 200) {
- 					this.$refs[reduForm].resetFields();
+
  					this.$Message.success('保存成功');
  					this.$router.back();
  				} else {

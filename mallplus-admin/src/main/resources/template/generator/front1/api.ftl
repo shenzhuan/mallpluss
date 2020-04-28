@@ -15,7 +15,7 @@
 
 {
 	path: '/@/views/${moduleName}/${changeClassName}/components/add',
-	name: 'add',
+	name: 'add${className}',
 	meta: {
 		title: '新增${prefix}',
 		showflg: false,
@@ -29,7 +29,7 @@
 
 {
 	path: '/@/views/${moduleName}/${changeClassName}/components/edit',
-	name: 'edit',
+	name: 'edit${className}',
 	meta: {
 		title: '编辑${prefix}',
 		showflg: false,

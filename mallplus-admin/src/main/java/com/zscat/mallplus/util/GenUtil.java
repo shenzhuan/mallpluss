@@ -174,7 +174,7 @@ public class GenUtil {
                 continue;
             }
             // 生成代码
-            genFile(file, template, map);
+         //   genFile(file, template, map);
         }
 
         // 生成前端代码

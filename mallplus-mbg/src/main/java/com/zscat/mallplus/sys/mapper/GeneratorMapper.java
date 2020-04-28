@@ -8,8 +8,8 @@ import java.util.Map;
 public interface GeneratorMapper {
 
     @Select("select table_name tableName,create_time createTime , engine, table_collation, table_comment from information_schema.tables"
-            + " where table_schema = (select database()) and table_name like '%${arg0}%' limit #{arg1},#{arg2}")
-    List<Map<String, Object>> list(String name, int page, int limit);
+            + " where table_schema = (select database())  ")
+    List<Map<String, Object>> list(String name);
 
     @Select("select table_name tableName, engine, table_comment tableComment, create_time createTime from information_schema.tables"
             + " where table_schema = (select database()) ")

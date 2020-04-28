@@ -27,7 +27,7 @@
                                <#if columns??>
                                               <#list columns as column>
                                                   <FormItem label="<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>" prop="${column.changeColumnName}">
-                                                           <Input v-model="${changeClassName}.${column.changeColumnName}" placeholder='请输入<#if column.columnComment != ''>${column.columnComment}<#else>${column.changeColumnName}</#if>" prop="${column.changeColumnName}' :maxlength="20" style="width: 350px;"></Input>
+                                                          <Input v-model="${changeClassName}.${column.changeColumnName}" placeholder="请输入${column.columnComment}"  style="width: 350px;"></Input>
                                                     </FormItem>
                                               </#list>
                                           </#if>
@@ -37,7 +37,7 @@
       </div>
       <!--保存 取消 -->
       <div class="formBtn">
-        <Button type="primary" :loading="loading" class="comBtn" @click.native="save(${className})">
+        <Button type="primary" :loading="loading" class="comBtn" @click.native="save(${changeClassName})">
           保存
         </Button>
         <Button type="default" class="comBtn" @click="prev()">取消</Button>
@@ -59,8 +59,9 @@
   		return {
   			loading: false,
   			lenght: 0,
+  			id:0,
   			currentIndex: 0,
-  			${className}: {},
+  			${changeClassName}: {},
   			reduRule: {
   				name: [
   					{
@@ -85,7 +86,7 @@
   			let _this = this;
   			get${className}(id).then(res => {
   				if (res.code == 200) {
-  					_this.reduForm = res.data;
+  					_this.${changeClassName} = res.data;
   				}
   			});
   		},
@@ -93,7 +94,7 @@
   		save(reduForm) {
   			update${className}(this.$route.query.id, this.${changeClassName}).then(response => {
   				if (response.code == 200) {
-  					this.$refs[reduForm].resetFields();
+
   					this.$Message.success('保存成功');
   					this.$router.back();
   				} else {
@@ -109,7 +110,6 @@
   		},
   		init: function() {
   			this.getDetail(this.id);
-  			this.editGroup(this.id);
   		},
   		restore() {
   			this.showData = [];
@@ -121,12 +121,7 @@
   				this.init();
   			}
   		},
-  		watch: {
-  			'reduForm.name': function(val) {
-  				var that = this;
-  				that._data.lenght = val.length;
-  			}
-  		}
+
   	}
   };
   </script>

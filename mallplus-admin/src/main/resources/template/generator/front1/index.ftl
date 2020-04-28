@@ -144,7 +144,7 @@ export default {
 					title: '操作',
 					key: 'mark',
 					align: 'center',
-					width: 250,
+
 					render: (h, params) => {
 						let status = params.row.status;
 						return h(
@@ -235,16 +235,17 @@ export default {
 
 	methods: {
 		//分页
-		changepage(index) {
-			this.current = index;
-			this.switchFun();
-			console.log(this.list);
-		},
-		pageSizeFun(data) {
-			console.log(data);
-			this.pageSize = data;
-			this.switchFun();
-		},
+        		changepage(index) {
+        			this.current = index;
+        			this.listQuery.pageSize=index;
+        			this.switchFun();
+        			console.log(this.list);
+        		},
+        		pageSizeFun(data) {
+        			console.log(data);
+        			this.listQuery.pageSize = data;
+        			this.switchFun();
+        		},
 
 		// 弹出框接口
 		updateStatus(params, index) {
@@ -278,7 +279,7 @@ export default {
 
 		//删除
 		removeDate(params, index) {
-			deleteMemberLevel(params.row.id)
+			delete${className}(params.row.id)
 				.then(res => {
 					if (res.code == 200) {
 						this.$Message.success('删除成功');
@@ -297,7 +298,7 @@ export default {
 		editGroup(index) {
 			console.log(index);
 			this.$router.push({
-				path: '/@/views/user/memberLevel/components/edit',
+				path: '/@/views/${moduleName}/${changeClassName}/components/edit',
 				query: { id: index }
 			});
 		},

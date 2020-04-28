@@ -31,8 +31,8 @@ public class GeneratorController {
     public Object getTables(@RequestParam(defaultValue = "") String name,
                             @RequestParam(defaultValue = "0") Integer page,
                             @RequestParam(defaultValue = "10") Integer size) {
-        int[] startEnd = PageUtil.transToStartEnd(page + 1, size);
-        return new CommonResult().success(generatorService.getTables(name, startEnd));
+
+        return new CommonResult().success(generatorService.getTables(name));
     }
 
     @ApiOperation("查询表内元数据")
