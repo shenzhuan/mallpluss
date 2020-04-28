@@ -60,10 +60,10 @@ public class UmsMemberController {
                                      @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize
     ) {
         try {
-            if (ValidatorUtils.empty(entity.getBuyCountss())){
+            if (ValidatorUtils.empty(entity.getBuyCountss())) {
                 return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("create_time")));
             }
-            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).ge("buy_count",entity.getBuyCountss()).orderByDesc("create_time")));
+            return new CommonResult().success(IUmsMemberService.page(new Page<UmsMember>(pageNum, pageSize), new QueryWrapper<>(entity).ge("buy_count", entity.getBuyCountss()).orderByDesc("create_time")));
 
         } catch (Exception e) {
             log.error("根据条件查询所有会员表列表：%s", e.getMessage(), e);
@@ -117,7 +117,7 @@ public class UmsMemberController {
             entity.setId(id);
             entity.setBlance(blance);
             UmsMember member = IUmsMemberService.getById(entity.getId());
-            entity.setBlance(entity.getBlance().add(member.getBlance()));
+
             UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
             blog.setMemberId(entity.getId());
             blog.setCreateTime(new Date());
@@ -125,7 +125,7 @@ public class UmsMemberController {
             blog.setPrice(entity.getBlance());
             blog.setType(AllEnum.BlanceType.ADD.code());
             memberBlanceLogService.save(blog);
-
+            entity.setBlance(entity.getBlance().add(member.getBlance()));
             if (IUmsMemberService.updateById(entity)) {
                 return new CommonResult().success();
             }

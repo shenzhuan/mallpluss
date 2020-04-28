@@ -16,8 +16,8 @@ public enum OrderStatus {
     TO_COMMENT(4),//待评价
     TRADE_SUCCESS(5), // 已完成
 
-    RIGHT_APPLY(6), // 维权中
-    RIGHT_APPLYF_SUCCESS(7), // 维权已完成
+    PINTUAN_ORDER(18), // 拼团下单成功
+
     TO_SHARE(8),  // 待分享
     REFUNDING(13),  // 申请退款
     REFUND(14),  // 已退款

@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.IgnoreAuth;
 import com.zscat.mallplus.annotation.SysLog;
-
+import com.zscat.mallplus.config.MallplusProperties;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.HomeContentResult;
-import com.zscat.mallplus.pms.entity.PmsFavorite;
-import com.zscat.mallplus.pms.entity.PmsGifts;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sms.entity.SmsCoupon;
 import com.zscat.mallplus.sms.entity.SmsCouponHistory;
@@ -87,6 +85,14 @@ public class SingelHomeController {
     @Resource
     private SmsCouponHistoryMapper couponHistoryMapper;
 
+
+    @Resource
+    private MallplusProperties mallplusProperties;
+
+    @RequestMapping(value = "/sysInfo", method = RequestMethod.GET)
+    public Object sysInfo() {
+        return new CommonResult().success(mallplusProperties);
+    }
     @IgnoreAuth
     @ApiOperation("首页内容页信息展示")
     @SysLog(MODULE = "home", REMARK = "首页内容页信息展示")
@@ -340,15 +346,15 @@ public class SingelHomeController {
             Map<String, Object> token = memberService.login(phone, password);
             if (token.get("token") == null) {
                 log.info("用户名或密码错误");
-                return new CommonResult().validateFailed("用户名或密码错误");
+                return new CommonResult().failed("用户名或密码错误");
             }
             return new CommonResult().success(token);
         } catch (AuthenticationException e) {
             log.info("用户名或密码错误");
-            return new CommonResult().validateFailed("用户名或密码错误");
+            return new CommonResult().failed("用户名或密码错误");
         } catch (Exception e) {
             log.info(e.getMessage());
-            return new CommonResult().validateFailed(e.getMessage());
+            return new CommonResult().failed(e.getMessage());
         }
 
     }
@@ -418,8 +424,6 @@ public class SingelHomeController {
         if (confimpassword == null || "".equals(confimpassword)) {
             return new CommonResult().validateFailed("用户名或密码错误");
         }
-
-
         return memberService.simpleReg(phone, password, confimpassword, invitecode);
     }
 

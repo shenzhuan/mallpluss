@@ -30,6 +30,9 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     @TableField("group_record_id")
     private Long groupRecordId;
 
+    @TableField("group_id")
+    private Long groupId;
+
     @TableField("member_id")
     private Long memberId;
 
@@ -45,12 +48,12 @@ public class SmsGroupMember extends BaseEntity implements Serializable {
     private Long goodsId;
 
     /**
-     * 状态 1
+     * 状态 1>>初始状态 2支付成功
      */
     private Integer status;
 
     @TableField("order_id")
-    private String orderId;
+    private Long orderId;
 
     private String pic;
 

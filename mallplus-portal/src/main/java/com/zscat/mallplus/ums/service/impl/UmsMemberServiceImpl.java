@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.zscat.mallplus.ApiContext;
 import com.zscat.mallplus.component.UserUtils;
+import com.zscat.mallplus.config.MallplusProperties;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.jifen.entity.JifenDonateRule;
@@ -72,12 +73,22 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember> implements IUmsMemberService {
 
+    public final static String getPageOpenidUrl = "https://api.weixin.qq.com/sns/jscode2session";
+    public final static String GetPageAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+    //微信公众号获取用户信息
+    public final static String GetPageUserInfoUrl = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+    //微信小程序获取用户信息
+    public final static String GetPageUserInfoUrl_XCX = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);
+    @Resource
+    private MallplusProperties mallplusProperties;
 
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
     Integer regJifen = 100;
     Integer logginJifen = 5;
+    @Resource
+    UmsIntegrationConsumeSettingMapper integrationConsumeSettingMapper;
     @Resource
     private SysAppletSetMapper appletSetMapper;
     @Resource
@@ -121,17 +132,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Autowired
     private ApiContext apiContext;
 
-    @Resource
-    UmsIntegrationConsumeSettingMapper integrationConsumeSettingMapper;
 
     private OkHttpClient okHttpClient = new OkHttpClient();
 
-    public final static String getPageOpenidUrl = "https://api.weixin.qq.com/sns/jscode2session";
-    public final static String GetPageAccessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
-    //微信公众号获取用户信息
-    public final static String GetPageUserInfoUrl = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-    //微信小程序获取用户信息
-    public final static String GetPageUserInfoUrl_XCX = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+    /**
+     * 微信访问获取结果
+     *
+     * @param url
+     * @return
+     * @throws Exception
+     */
+    public static String httpClientSend(String url) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet(url);
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        String response = client.execute(httpget, responseHandler);
+        return response;
+
+    }
 
     @Override
     public UmsMember getNewCurrentMember() {
@@ -324,18 +342,20 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public void addIntegration(Long id, Integer integration, int changeType, String note, int sourceType, String operateMan) {
         UmsIntegrationConsumeSetting setting = integrationConsumeSettingMapper.selectOne(new QueryWrapper<>());
-        if (setting==null){
+        if (setting == null) {
             return;
         }
         UmsIntegrationChangeHistory history = new UmsIntegrationChangeHistory();
         history.setMemberId(id);
-        if (sourceType==AllEnum.ChangeSource.register.code()){
+        if (sourceType == AllEnum.ChangeSource.register.code()) {
             history.setChangeCount(setting.getRegister());
-        }else  if (sourceType==AllEnum.ChangeSource.login.code()){
+        } else if (sourceType == AllEnum.ChangeSource.login.code()) {
             history.setChangeCount(setting.getLogin());
-        } if (sourceType==AllEnum.ChangeSource.order.code()){
-            history.setChangeCount(setting.getOrders()*integration);
-        } if (sourceType==AllEnum.ChangeSource.sign.code()){
+        }
+        if (sourceType == AllEnum.ChangeSource.order.code()) {
+            history.setChangeCount(setting.getOrders() * integration);
+        }
+        if (sourceType == AllEnum.ChangeSource.sign.code()) {
             history.setChangeCount(setting.getSign());
         }
 
@@ -344,17 +364,18 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateNote(note);
         history.setSourceType(sourceType);
         history.setOperateMan(operateMan);
-        umsIntegrationChangeHistoryService.save(history);
+
         UmsMember member = memberMapper.selectById(id);
-        if (member==null ) {
-            member.setIntegration(0);
-        }else {
-            if (member!=null && ValidatorUtils.empty(member.getIntegration())) {
+        if (member == null) {
+
+        } else {
+            umsIntegrationChangeHistoryService.save(history);
+            if (member != null && ValidatorUtils.empty(member.getIntegration())) {
                 member.setIntegration(0);
             }
             member.setIntegration(member.getIntegration() + integration);
             memberMapper.updateById(member);
-            redisService.set( String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
+            redisService.set(String.format(Rediskey.MEMBER, member.getUsername()), JsonUtils.objectToJson(member));
         }
     }
 
@@ -521,25 +542,26 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         if (ValidatorUtils.notEmpty(user.getInvitecode())) {
             umsMember.setInvitecode(user.getInvitecode());
         }
+        String defaultIcon = mallplusProperties.getDefaultIcon();
+        umsMember.setIcon(defaultIcon);
+        memberMapper.insert(umsMember);
         try {
-            String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
-            umsMember.setIcon(defaultIcon);
             //这是要生成二维码的url
-            String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+            String url = mallplusProperties.getDomain()+"/?invitecode=" + user.getId();
             //要添加到二维码下面的文字
             String words = user.getUsername() + "的二维码";
             //调用刚才的工具类
             ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
             InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-            umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
-        }catch (Exception e){
-
+            UmsMember member = new UmsMember();
+            member.setId(umsMember.getId());
+            member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+            memberMapper.updateById(member);
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
 
-        memberMapper.insert(umsMember);
-
-        redisService.set(apiContext.getCurrentProviderId() + ":" + String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
+        redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
 
         addIntegration(umsMember.getId(), regJifen, 1, "注册添加积分", AllEnum.ChangeSource.register.code(), umsMember.getUsername());
         umsMember.setPassword(null);
@@ -743,19 +765,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(me.get("nickName").toString());
-                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = mallplusProperties.getDefaultIcon();
                 umsMember.setIcon(defaultIcon);
-                //这是要生成二维码的url
-                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
-                //要添加到二维码下面的文字
-                String words = umsMember.getUsername() + "的二维码";
-                //调用刚才的工具类
-                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-
-                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
+                try {
+                    //这是要生成二维码的url
+                    String url = mallplusProperties.getDomain()+"/?invitecode=" + umsMember.getId();
+                    //要添加到二维码下面的文字
+                    String words = umsMember.getUsername() + "的二维码";
+                    //调用刚才的工具类
+                    ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                    InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+                    UmsMember member = new UmsMember();
+                    member.setId(umsMember.getId());
+                    member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+                    memberMapper.updateById(member);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
@@ -882,19 +909,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(userInfos.getNickName());
-                String defaultIcon = "http://yjlive160322.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = mallplusProperties.getDefaultIcon();
                 umsMember.setIcon(defaultIcon);
-                //这是要生成二维码的url
-                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
-                //要添加到二维码下面的文字
-                String words = umsMember.getUsername() + "的二维码";
-                //调用刚才的工具类
-                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-
-                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
+                try {
+                    //这是要生成二维码的url
+                    String url = mallplusProperties.getDomain()+"/?invitecode=" + umsMember.getId();
+                    //要添加到二维码下面的文字
+                    String words = umsMember.getUsername() + "的二维码";
+                    //调用刚才的工具类
+                    ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                    InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+                    UmsMember member = new UmsMember();
+                    member.setId(umsMember.getId());
+                    member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+                    memberMapper.updateById(member);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
@@ -927,20 +959,6 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
 
     }
 
-    /**
-     * 微信访问获取结果
-     * @param url
-     * @return
-     * @throws Exception
-     */
-    public static String httpClientSend(String url) throws Exception{
-        HttpClient client =  new DefaultHttpClient();
-        HttpGet httpget = new HttpGet(url);
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        String response = client.execute(httpget, responseHandler);
-        return response;
-
-    }
     @Override
     public Object loginByWeixin1(AppletLoginParam req) {
         try {
@@ -994,12 +1012,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     String requestUserInfoUrl = GetPageUserInfoUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", appletSet.getAppid());
                     String userresponse = httpClientSend(requestUserInfoUrl);
                     JSONObject userJSON = JSONObject.fromObject(userresponse);
-                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"),"UTF-8");
+                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"), "UTF-8");
                     String avatarUrl = String.valueOf(userJSON.get("avatarUrl"));
-                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"),"UTF-8");
-                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"),"UTF-8");
+                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"), "UTF-8");
+                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"), "UTF-8");
                     String gender = String.valueOf(userJSON.get("gender"));
-                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"),"UTF-8");
+                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"), "UTF-8");
                     String language = String.valueOf(userJSON.get("language"));
                     umsMember.setCity(country + "-" + province + "-" + city);
                     if (StringUtils.isEmpty(avatarUrl)) {
@@ -1010,10 +1028,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     }
                     // umsMember.setGender(Integer.parseInt(me.get("gender")));
                     umsMember.setNickname(nickname);
-                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)){
+                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)) {
                         umsMember.setGender(Integer.valueOf(gender));
                     }
-                }else {
+                } else {
                     Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
                     umsMember.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
                     if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
@@ -1053,6 +1071,7 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             throw new ApiMallPlusException(e.getMessage());
         }
     }
+
     @Override
     public Object loginByWeixin2(AppletLoginParam req) {
         try {
@@ -1089,12 +1108,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     String requestUserInfoUrl = GetPageUserInfoUrl.replace("ACCESS_TOKEN", accessToken).replace("OPENID", appletSet.getAppid());
                     String userresponse = httpClientSend(requestUserInfoUrl);
                     JSONObject userJSON = JSONObject.fromObject(userresponse);
-                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"),"UTF-8");
+                    String nickname = new String(String.valueOf(userJSON.get("nickname")).getBytes("ISO8859-1"), "UTF-8");
                     String avatarUrl = String.valueOf(userJSON.get("avatarUrl"));
-                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"),"UTF-8");
-                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"),"UTF-8");
+                    String city = new String(String.valueOf(userJSON.get("city")).getBytes("ISO8859-1"), "UTF-8");
+                    String country = new String(String.valueOf(userJSON.get("country")).getBytes("ISO8859-1"), "UTF-8");
                     String gender = String.valueOf(userJSON.get("gender"));
-                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"),"UTF-8");
+                    String province = new String(String.valueOf(userJSON.get("province")).getBytes("ISO8859-1"), "UTF-8");
                     String language = String.valueOf(userJSON.get("language"));
                     umsMember.setCity(country + "-" + province + "-" + city);
                     if (StringUtils.isEmpty(avatarUrl)) {
@@ -1105,10 +1124,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     }
                     // umsMember.setGender(Integer.parseInt(me.get("gender")));
                     umsMember.setNickname(nickname);
-                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)){
+                    if (ValidatorUtils.notEmpty(gender) && !"null".equals(gender)) {
                         umsMember.setGender(Integer.valueOf(gender));
                     }
-                }else {
+                } else {
                     Map<String, Object> me = JsonUtils.readJsonToMap(userInfos);
                     umsMember.setCity(me.get("country").toString() + "-" + me.get("province").toString() + "-" + me.get("city").toString());
                     if (StringUtils.isEmpty(me.get("avatarUrl").toString())) {
@@ -1152,24 +1171,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     @Override
     public SysAppletSet getSysAppletSet(Integer soruce) {
         SysAppletSet appletSet = new SysAppletSet();
-        if (ValidatorUtils.notEmpty(soruce)){
-            if (soruce==1){ // kaka
+        if (ValidatorUtils.notEmpty(soruce)) {
+            if (soruce == 1) { // kaka
                 appletSet.setAppid("wx0c1055c6158f7851");
                 appletSet.setAppsecret("baa79ed796ec18e932c547fe009d9af0");
-            }else if (soruce==2){ //mallplus商户端
+            } else if (soruce == 2) { //mallplus商户端
                 appletSet.setAppid("wx1d852ffdcbedd005");
                 appletSet.setAppsecret("fb5c6eeee8b5d11c9dea0f0273f16c7c");
-            }else if (soruce==3){
+            } else if (soruce == 3) {
                 appletSet.setAppid("");
                 appletSet.setAppsecret("");
-            }else if (soruce==4){
+            } else if (soruce == 4) {
                 appletSet.setAppid("");
                 appletSet.setAppsecret("");
-            }else if (soruce==5){
+            } else if (soruce == 5) {
                 appletSet.setAppid("");
                 appletSet.setAppsecret("");
             }
-        }else {
+        } else {
             appletSet = appletSetMapper.selectOne(new QueryWrapper<>());
             if (null == appletSet) {
                 throw new ApiMallPlusException("没有设置支付配置");
@@ -1201,10 +1220,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 throw new ApiMallPlusException("验证码错误");
             }
             UmsMember member = this.getByUsername(phone);
-if (member==null || member.getId()==null){
-    throw new ApiMallPlusException("用户不存在");
+            if (member == null || member.getId() == null) {
+                throw new ApiMallPlusException("用户不存在");
 
-}
+            }
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -1279,7 +1298,7 @@ if (member==null || member.getId()==null){
 
         blanceLog.setMemberId(userDO.getId());
         blanceLog.setCreateTime(new Date());
-        blanceLog.setNote("用户提现,余额="+userDO.getBlance());
+        blanceLog.setNote("用户提现,余额=" + userDO.getBlance());
 
         memberBlanceLogService.save(blanceLog);
         return new CommonResult().success();

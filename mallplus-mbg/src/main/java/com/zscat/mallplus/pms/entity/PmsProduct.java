@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.utils.BaseEntity;
 import com.zscat.mallplus.vo.timeline.TimeSecound;
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -60,7 +62,7 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private String productSn;
 
     /**
-     * 删除状态：0->未删除；1->已删除
+     * 删除状态：1->未删除；0->已删除
      */
     @TableField("delete_status")
     private Integer deleteStatus;
@@ -272,27 +274,35 @@ public class PmsProduct extends BaseEntity implements Serializable {
 
     @TableField("store_name")
     private String storeName;
+
+
     /**
      * 1 學校 2 區域
      */
     @TableField(exist = false)
     private int qsType;
+
+    /**
+     * 标签
+     */
+    private String tags;
+
     /**
      * 会员价
      */
     @TableField(exist = false)
-    private BigDecimal vipPrice=BigDecimal.ZERO;
+    private BigDecimal vipPrice;
 
     /**
      * 会员折扣
      */
     @TableField(exist = false)
-    private Integer memberRate=10;
+    private Integer memberRate = 10;
     /**
      * 分销价格
      */
     @TableField(exist = false)
-    private BigDecimal fenxiaoPrice =BigDecimal.ZERO;
+    private BigDecimal fenxiaoPrice;
     @TableField(exist = false)
     private TimeSecound timeSecound;
     /**
@@ -300,4 +310,8 @@ public class PmsProduct extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private Integer status;
+    @TableField(exist = false)
+    List<PmsSkuStock> skuStockList;
+    @TableField(exist = false)
+    List<UmsMemberTag> tagList ;
 }

@@ -15,12 +15,15 @@ import com.zscat.mallplus.oms.service.IOmsOrderService;
 import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
 import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
 import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
+
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,13 +96,13 @@ public class OmsOrderController {
                 return new CommonResult().paramFailed("订单表id");
             }
             OmsOrder coupon = IOmsOrderService.getById(id);
-            if(coupon!=null && coupon.getId()>0){
+            if (coupon != null && coupon.getId() > 0) {
                 coupon.setOrderItemList(orderItemService.list(new QueryWrapper<OmsOrderItem>().eq("order_id", coupon.getId())));
                 coupon.setHistoryList(omsOrderOperateHistoryMapper.selectList(new QueryWrapper<OmsOrderOperateHistory>().eq("order_id", coupon.getId())));
                 return new CommonResult().success(coupon);
             }
 
-             return new CommonResult().failed("订单已删除");
+            return new CommonResult().failed("订单已删除");
         } catch (Exception e) {
             log.error("查询订单表明细：%s", e.getMessage(), e);
             return new CommonResult().failed();
@@ -214,4 +217,17 @@ public class OmsOrderController {
         }
         return new CommonResult().success(page);
     }
+
+
+    @GetMapping(value = "/data/count")
+    public Object getCount(@RequestParam("status") Integer status) {
+        return new CommonResult().success(IOmsOrderService.getOrderTimeData(status));
+    }
+
+    @GetMapping(value = "/data/chart")
+    public Object getChart() {
+        return new CommonResult().success(IOmsOrderService.chartCount());
+    }
+
+
 }

@@ -36,7 +36,7 @@ public class UmsMemberReceiveAddressController {
     @SysLog(MODULE = "ums", REMARK = "根据条件查询所有会员收货地址表列表")
     @ApiOperation("根据条件查询所有会员收货地址表列表")
     @GetMapping(value = "/list")
-    @PreAuthorize("hasAuthority('ums:UmsMemberReceiveAddress:read')")
+   // @PreAuthorize("hasAuthority('ums:UmsMemberReceiveAddress:read')")
     public Object getUmsMemberReceiveAddressByPage(UmsMemberReceiveAddress entity,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize

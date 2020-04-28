@@ -1,4 +1,56 @@
+--0426
+1.商品表 delete_status 1->未删除；0->已删除
+2.订单列表和商品列表分别添加tab（快速刷选不同状态的数据）
+3.如果演示有的菜单 你没有，需要对比最新的 sys_permission 表
+4.小程序编译和登录优化
 
+--0425
+ 数据库密码加密（druid）
+ 商城设置下添加 标签管理
+ 添加商品中增加标签选择 区域选择优化
+
+ uniapp 店铺 评价和收藏 标签页面和标签下的商品
+ uniapp商品详情优化 小程序登录优化，小程序添加地址组件替换
+alter table ums_member_tag add pic varchar(127) ;
+alter table ums_member_tag  add status BIGINT not null default 0;
+alter table pms_product add tags varchar(127) ;
+alter table pms_product add store_class_id bigint ;
+
+-- 0423 拼团优化 文档https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1699565&doc_id=326093
+alter table sms_group_member  add group_id BIGINT not null default 0;
+alter table sms_group_record  add handle_status int not null default 1;
+
+
+CREATE TABLE `sys_store_class` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `pic` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片',
+  `sort` int DEFAULT NULL COMMENT '排序',
+  `memo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `store_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `sys_store_comment` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `pic` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '图片',
+  `sort` int DEFAULT NULL COMMENT '排序',
+  `memo` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
+  `store_id` int DEFAULT NULL,
+  `member_id` int DEFAULT NULL,
+  `star` int DEFAULT NULL COMMENT '等级',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+-- 0425 退款定时任务
+alter table oms_order_return_apply  add refund_status int not null default 0;
+
+-- 0421 首页推荐优化
 alter table sms_home_recommend_subject add pic varchar(127) ;
 alter table sms_home_recommend_subject add read_count int ;
 alter table sms_home_recommend_subject add description varchar(127) ;
@@ -31,3 +83,22 @@ uniapp用户端
 3.接入商户端数据统计（会员 订单和商品）
 4.区域商品展示
 5.分类页面优化
+
+admin6918 898158
+shop7586  985819
+
+-- 预存款
+update oms_order set create_time=now();
+update pms_product set create_time=now();
+
+update sys_store set pay_amount=0,amount=0;
+delete FROM sys_store_deposit_log ;
+delete FROM sys_store_cash ;
+delete FROM admin_day_statics ;
+
+
+商户等级 商户列表 商户充值 提现和提现审核
+
+数据库密码 加密
+https://blog.csdn.net/huijiangu4621/article/details/90403130
+多租户版本 ums_member  用户名和store_id需要添加唯一索引

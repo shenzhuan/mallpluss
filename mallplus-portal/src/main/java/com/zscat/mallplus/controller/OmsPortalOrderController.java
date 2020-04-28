@@ -126,13 +126,7 @@ public class OmsPortalOrderController extends ApiBaseAction {
         return orderService.cancelTimeOutOrder();
     }
 
-    @ApiOperation("取消单个超时订单")
-    @RequestMapping(value = "/cancelOrder", method = RequestMethod.POST)
-    @ResponseBody
-    public Object cancelOrder(Long orderId) {
-        orderService.sendDelayMessageCancelOrder(orderId);
-        return new CommonResult().success(null);
-    }
+
 
     /**
      * 查看物流

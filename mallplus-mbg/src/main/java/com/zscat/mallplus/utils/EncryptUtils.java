@@ -81,10 +81,5 @@ public class EncryptUtils {
         return new String(retByte);
     }
 
-    /**
-     * 密码加密
-     */
-    public static String encryptPassword(String password) {
-        return DigestUtils.md5DigestAsHex(password.getBytes());
-    }
+
 }

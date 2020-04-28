@@ -40,7 +40,7 @@ public class PmsProductAttributeController {
                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
-            return new CommonResult().success(IPmsProductAttributeService.page(new Page<PmsProductAttribute>(pageNum, pageSize), new QueryWrapper<>(entity).orderByAsc("product_attribute_category_id")));
+            return new CommonResult().success(IPmsProductAttributeService.page(new Page<PmsProductAttribute>(pageNum, pageSize), new QueryWrapper<>(entity).orderByDesc("id")));
         } catch (Exception e) {
             log.error("根据条件查询所有商品属性参数表列表：%s", e.getMessage(), e);
         }
@@ -73,7 +73,7 @@ public class PmsProductAttributeController {
     @PreAuthorize("hasAuthority('pms:PmsProductAttribute:create')")
     public Object savePmsProductAttribute(@RequestBody PmsProductAttribute entity) {
         try {
-            if (entity.getType()==null) {
+            if (entity.getType() == null) {
                 return new CommonResult().failed("请选择类型");
             }
             if (IPmsProductAttributeService.saveAndUpdate(entity)) {

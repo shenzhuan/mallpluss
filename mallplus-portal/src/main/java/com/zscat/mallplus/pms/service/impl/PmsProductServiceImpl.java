@@ -36,6 +36,7 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,8 @@ import java.util.stream.Collectors;
 @Service
 public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProduct> implements IPmsProductService {
 
+    @Resource
+    FenxiaoConfigMapper fenxiaoConfigMapper;
     @Resource
     private IPmsBrandService brandService;
     @Resource
@@ -115,12 +118,12 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
     private RedisUtil redisUtil;
     @Autowired
     private IPmsFavoriteService favoriteService;
-
     @Resource
     private SmsPaimaiLogMapper paimaiLogMapper;
     @Autowired
     private IUmsMemberService memberService;
-
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
 
     @Override
     public PmsProduct getUpdateInfo(Long id) {
@@ -160,13 +163,6 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         return 1;
     }
 
-    @Resource
-    FenxiaoConfigMapper fenxiaoConfigMapper;
-    @Resource
-    private IUmsMemberLevelService memberLevelService;
-
-
-
     @Override
     public GoodsDetailResult getGoodsRedisById(Long id) {
         PmsProduct goods = productMapper.selectById(id);
@@ -182,13 +178,13 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         List<PmsProductAttributeValue> valueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()));
         List<PmsProductAttributeValue> productAttributeValueList = new ArrayList<>();
         List<PmsProductAttributeValue> attributeValueList = new ArrayList<>();
-       for (PmsProductAttributeValue attributeValue :valueList){
-           if (attributeValue.getType()==1){
-               productAttributeValueList.add(attributeValue);
-           }else {
-               attributeValueList.add(attributeValue);
-           }
-       }
+        for (PmsProductAttributeValue attributeValue : valueList) {
+            if (attributeValue.getType() == 1) {
+                productAttributeValueList.add(attributeValue);
+            } else {
+                attributeValueList.add(attributeValue);
+            }
+        }
         param.setProductAttributeValueList(productAttributeValueList);
         param.setProductCanShuValueList(attributeValueList);
 
@@ -209,10 +205,10 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         List<PmsProductAttributeValue> valueList = productAttributeValueMapper.selectList(new QueryWrapper<PmsProductAttributeValue>().eq("product_id", goods.getId()));
         List<PmsProductAttributeValue> productAttributeValueList = new ArrayList<>();
         List<PmsProductAttributeValue> attributeValueList = new ArrayList<>();
-        for (PmsProductAttributeValue attributeValue :valueList){
-            if (attributeValue.getType()==1){
+        for (PmsProductAttributeValue attributeValue : valueList) {
+            if (attributeValue.getType() == 1) {
                 productAttributeValueList.add(attributeValue);
-            }else {
+            } else {
                 attributeValueList.add(attributeValue);
             }
         }
@@ -361,6 +357,11 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
     }
+    @Override
+    public List<PmsProduct> selectByTags( String tags){
+        return productMapper.selectByTags(tags);
+    }
+
 
     private class VO {
         private String name;

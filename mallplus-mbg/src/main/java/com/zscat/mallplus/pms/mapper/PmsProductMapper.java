@@ -28,4 +28,6 @@ public interface PmsProductMapper extends BaseMapper<PmsProduct> {
     Integer countGoodsByToday(@Param("id") Long id);
 
     List<PmsProduct> listByDate(@Param("date") String date, @Param("type") Integer type);
+
+    List<PmsProduct> selectByTags(@Param("tags") String tags);
 }

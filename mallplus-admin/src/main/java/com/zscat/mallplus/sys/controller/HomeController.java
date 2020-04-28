@@ -135,7 +135,7 @@ public class HomeController extends BaseController {
 
         for (OmsOrder order : orderList) {
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))) {
-                if (order.getStatus() < 9){
+                if (order.getStatus() < 9) {
                     nowOrderCount++;
                     nowOrderPay = nowOrderPay.add(order.getPayAmount());
                 }
@@ -143,8 +143,8 @@ public class HomeController extends BaseController {
                 nowToatlOrderPay = nowToatlOrderPay.add(order.getPayAmount());
             }
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))
-                    ) {
-                if (order.getStatus() < 9){
+            ) {
+                if (order.getStatus() < 9) {
                     yesOrderCount++;
                     yesOrderPay = yesOrderPay.add(order.getPayAmount());
                 }
@@ -298,9 +298,9 @@ public class HomeController extends BaseController {
     }
 
     /**
-     * 导出：http://localhost:8080/home/export/users
-     * 导入：http://localhost:8080/demo/import/users (用postman或者curl测试吧)
-     * http://localhost:8080/home/import/goods
+     * 导出：http://localhost:8085/home/export/users
+     * 导入：http://localhost:8085/demo/import/users (用postman或者curl测试吧)
+     * http://localhost:8085/home/import/goods
      *
      * @param response
      */
@@ -411,6 +411,7 @@ public class HomeController extends BaseController {
         g.setLowStock(0);
         g.setGiftPoint(0);
         g.setGiftGrowth(0);
+        g.setDeleteStatus(1);
         g.setPublishStatus(1);
         g.setPromotionType(0);
         g.setVerifyStatus(1);

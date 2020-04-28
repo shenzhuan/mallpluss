@@ -71,6 +71,10 @@ public class Tree<T> {
         this.parentId = parentID;
     }
 
+    public Tree() {
+        super();
+    }
+
     public String getName() {
         return name;
     }
@@ -93,10 +97,6 @@ public class Tree<T> {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public Tree() {
-        super();
     }
 
     public String getId() {

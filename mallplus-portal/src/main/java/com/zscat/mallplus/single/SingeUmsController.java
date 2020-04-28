@@ -10,9 +10,7 @@ import com.zscat.mallplus.cms.service.ISysSchoolService;
 import com.zscat.mallplus.enums.ConstansValue;
 import com.zscat.mallplus.fenxiao.entity.FenxiaoRecords;
 import com.zscat.mallplus.fenxiao.mapper.FenxiaoRecordsMapper;
-import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.PayParam;
 import com.zscat.mallplus.pms.entity.PmsFavorite;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductAttributeCategory;
@@ -28,12 +26,10 @@ import com.zscat.mallplus.sys.mapper.SysUserMapper;
 import com.zscat.mallplus.ums.entity.UmsEmployInfo;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.entity.UmsMemberLevel;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.ums.mapper.UmsEmployInfoMapper;
 import com.zscat.mallplus.ums.mapper.UmsRewardLogMapper;
-import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
-import com.zscat.mallplus.ums.service.IUmsMemberMemberTagRelationService;
-import com.zscat.mallplus.ums.service.IUmsMemberService;
-import com.zscat.mallplus.ums.service.RedisService;
+import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.ums.service.impl.RedisUtil;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
@@ -62,10 +58,9 @@ import java.util.Map;
 public class SingeUmsController extends ApiBaseAction {
 
     @Resource
-    private IUmsMemberLevelService memberLevelService;
-
-    @Resource
     FenxiaoRecordsMapper fenxiaoRecordsMapper;
+    @Resource
+    private IUmsMemberLevelService memberLevelService;
     @Resource
     private SysUserMapper userMapper;
     @Resource
@@ -98,6 +93,10 @@ public class SingeUmsController extends ApiBaseAction {
     private PmsProductAttributeCategoryMapper productAttributeCategoryMapper;
     @Resource
     private IOmsOrderService orderService;
+
+    @Resource
+    private IUmsMemberTagService IUmsMemberTagService;
+
     @ApiOperation("获取会员详情")
     @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @ResponseBody
@@ -163,6 +162,16 @@ public class SingeUmsController extends ApiBaseAction {
     }
 
     @IgnoreAuth
+    @ApiOperation(value = "查询标签列表")
+    @GetMapping(value = "/memberTag/list")
+    @SysLog(MODULE = "ums", REMARK = "查询标签列表")
+    public Object storeList(UmsMemberTag entity,
+                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+        return new CommonResult().success(IUmsMemberTagService.page(new Page<UmsMemberTag>(pageNum, pageSize), new QueryWrapper<>(entity)));
+    }
+
+    @IgnoreAuth
     @ApiOperation(value = "查询商铺列表")
     @GetMapping(value = "/store/list")
     @SysLog(MODULE = "ums", REMARK = "查询学校列表")
@@ -171,13 +180,14 @@ public class SingeUmsController extends ApiBaseAction {
                             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(storeMapper.selectList(new QueryWrapper<SysStore>(entity)));
     }
+
     @IgnoreAuth
     @ApiOperation(value = "查询会员等级列表")
     @GetMapping(value = "/memberLevel/list")
     @SysLog(MODULE = "ums", REMARK = "查询会员等级列表")
     public Object memberLevelList(UmsMemberLevel entity,
-                            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+                                  @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                  @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         return new CommonResult().success(memberLevelService.list(new QueryWrapper<UmsMemberLevel>(entity)));
     }
 
@@ -195,6 +205,7 @@ public class SingeUmsController extends ApiBaseAction {
             return new CommonResult().failed(e.getMessage());
         }
     }
+
     @ApiOperation("获取商铺详情")
     @RequestMapping(value = "/storeDetail", method = RequestMethod.GET)
     @ResponseBody
@@ -205,6 +216,7 @@ public class SingeUmsController extends ApiBaseAction {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
+            productQueryParam.setDeleteStatus(1);
             productQueryParam.setVerifyStatus(1);
             IPage<PmsProduct> goodsList = pmsProductService.page(new Page<PmsProduct>(0, 8), new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList));
             if (goodsList != null && goodsList.getRecords() != null && goodsList.getRecords().size() > 0) {

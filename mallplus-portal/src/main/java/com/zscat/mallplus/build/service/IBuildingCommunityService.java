@@ -3,6 +3,10 @@ package com.zscat.mallplus.build.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.build.BuildHomeResult;
 import com.zscat.mallplus.build.entity.BuildingCommunity;
+import com.zscat.mallplus.sys.entity.SysShop;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -44,4 +48,9 @@ public interface IBuildingCommunityService extends IService<BuildingCommunity> {
      * @return
      */
     BuildHomeResult singleContent(Long id);
+
+    List<BuildingCommunity> selectNearCommunity( Integer distance,
+                                      double latitude,
+                                       double longitude,
+                                     Integer pageSize);
 }
