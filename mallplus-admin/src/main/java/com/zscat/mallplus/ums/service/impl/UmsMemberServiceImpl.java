@@ -9,10 +9,12 @@ import com.zscat.mallplus.ums.entity.UmsMemberLevel;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.ums.service.IUmsMemberLevelService;
 import com.zscat.mallplus.ums.service.IUmsMemberService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -50,5 +52,10 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
             member.setBuyCount(o.getTotalCount());
             memberMapper.updateById(member);
         }
+    }
+
+    @Override
+    public  Map memberMonthStatic(@Param("date") String date){
+        return memberMapper.memberMonthStatic(date);
     }
 }

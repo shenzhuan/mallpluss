@@ -16,4 +16,5 @@ public class OrderStstic {
     private BigDecimal totalPayAmount;
     private int memberCount;
     private Long objId;
+    private String  time;
 }

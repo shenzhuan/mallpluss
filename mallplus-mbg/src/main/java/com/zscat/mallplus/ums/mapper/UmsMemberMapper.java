@@ -5,6 +5,7 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -17,4 +18,6 @@ import java.util.List;
 public interface UmsMemberMapper extends BaseMapper<UmsMember> {
 
     List<UmsMember> listByDate(@Param("date") String date, @Param("type") Integer type);
+
+    Map memberMonthStatic(@Param("date") String date);
 }

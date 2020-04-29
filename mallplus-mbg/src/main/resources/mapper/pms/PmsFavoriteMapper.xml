@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.zscat.mallplus.pms.entity.PmsFavorite">
         <id column="id" property="id"/>
-        <result column="addTime" property="addTime"/>
+        <result column="add_time" property="addTime"/>
         <result column="type" property="type"/>
         <result column="obj_id" property="objId"/>
         <result column="store_id" property="storeId"/>
@@ -21,4 +21,11 @@
         id, addTime, type, obj_id, store_id, user_id, name, meno1, meno2, meno3
     </sql>
 
+    <select id="selectCollectStatics" resultMap="BaseResultMap">
+        SELECT obj_id,name,count(obj_id) meno1 FROM pms_favorite where type=1
+        <if test="date != null and date != ''">
+          and  date_format(add_time,'%y%m%d') = date_format(#{date},'%y%m%d')
+        </if>
+        GROUP BY obj_id ORDER BY  count(obj_id) desc limit #{pageSize}
+    </select>
 </mapper>

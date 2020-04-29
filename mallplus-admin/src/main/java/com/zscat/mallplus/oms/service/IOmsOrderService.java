@@ -2,10 +2,7 @@ package com.zscat.mallplus.oms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
-import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
-import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
-import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
-import com.zscat.mallplus.oms.vo.OrderCountDto;
+import com.zscat.mallplus.oms.vo.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -62,13 +59,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Map orderDayStatic(String date);
 
-    /**
-     * 订单月统计
-     *
-     * @param date
-     * @return
-     */
-    Map orderMonthStatic(String date);
+
 
     Object dayStatic(String date, Integer type);
 
@@ -80,4 +71,8 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Object getOrderTimeData(Integer status);
 
     Object chartCount();
+
+    List<OrderStstic> listOrderGroupByStatus(Integer status);
+
+    Map orderMonthStatic(String date,  Integer status);
 }

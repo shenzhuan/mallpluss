@@ -2,7 +2,6 @@ package com.zscat.mallplus.sys.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.ExportGoods;
 import com.zscat.mallplus.ExportSubject;
 import com.zscat.mallplus.ExportUser;
@@ -14,9 +13,7 @@ import com.zscat.mallplus.cms.mapper.CmsSubjectMapper;
 import com.zscat.mallplus.enums.OrderStatus;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.pms.entity.PmsProduct;
-import com.zscat.mallplus.pms.mapper.PmsFavoriteMapper;
 import com.zscat.mallplus.pms.service.IPmsProductService;
 import com.zscat.mallplus.sys.entity.SysArea;
 import com.zscat.mallplus.sys.entity.SysSchool;
@@ -49,9 +46,9 @@ import java.util.*;
  */
 @Slf4j
 @RestController
-@Api(tags = "HomeController", description = "首页管理")
-@RequestMapping("/home")
-public class HomeController extends BaseController {
+@Api(tags = "DataController", description = "首页管理")
+@RequestMapping("/data")
+public class DataController extends BaseController {
 
     @Resource
     CmsSubjectCategoryMapper categoryMapper;
@@ -69,49 +66,6 @@ public class HomeController extends BaseController {
     private IUmsMemberService memberService;
     @Resource
     private JwtTokenUtil jwtTokenUtil;
-    @Resource
-    private PmsFavoriteMapper favoriteMapper;
-
-    @ApiOperation("商品统计")
-    @SysLog(MODULE = "home", REMARK = "商品销量或浏览统计")
-    @RequestMapping(value = "/goodsSort", method = RequestMethod.GET)
-    public Object goodsSort(@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                            @RequestParam String sortCol,
-                            @RequestParam String cols) throws Exception {
-        return new CommonResult().success(productService.page(new Page<PmsProduct>(0, pageSize), new QueryWrapper<PmsProduct>(new PmsProduct())
-                .orderByDesc(sortCol).select(cols)));
-    }
-
-    @ApiOperation("商品收藏统计")
-    @SysLog(MODULE = "home", REMARK = "商品收藏统计")
-    @RequestMapping(value = "/goodsCollect", method = RequestMethod.GET)
-    public Object goodsCollect(@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-                               @RequestParam(value = "date", required = false) String date) throws Exception {
-        return new CommonResult().success(favoriteMapper.selectCollectStatics(date, pageSize));
-    }
-
-    @ApiOperation("订单状态统计统计")
-    @SysLog(MODULE = "home", REMARK = "订单状态统计统计")
-    @RequestMapping(value = "/orderStatusStatics", method = RequestMethod.GET)
-    public Object orderStatusStatics() throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put("待付款", orderService.orderMonthStatic(DateUtils.currentDay(), OrderStatus.INIT.getValue()));
-        map.put("待发货", orderService.orderMonthStatic(DateUtils.currentDay(), OrderStatus.TO_DELIVER.getValue()));
-        map.put("待收货", orderService.orderMonthStatic(DateUtils.currentDay(), OrderStatus.DELIVERED.getValue()));
-        map.put(" 已完成", orderService.orderMonthStatic(DateUtils.currentDay(), OrderStatus.TRADE_SUCCESS.getValue()));
-        map.put("已退款", orderService.orderMonthStatic(DateUtils.currentDay(), OrderStatus.REFUND.getValue()));
-        return new CommonResult().success(map);
-    }
-
-    @ApiOperation("会员注册统计")
-    @SysLog(MODULE = "home", REMARK = "会员注册统计")
-    @RequestMapping(value = "/memberMonthStatic", method = RequestMethod.GET)
-    public Object memberMonthStaticmemberMonthStatic() throws Exception {
-        Map<String, Object> map = new HashMap<>();
-        map.put("INIT", memberService.memberMonthStatic(DateUtils.currentDay()));
-
-        return new CommonResult().success(map);
-    }
 
     @ApiOperation("按时间统计订单 会员和商品")
     @SysLog(MODULE = "home", REMARK = "首页订单日统计")
@@ -137,7 +91,7 @@ public class HomeController extends BaseController {
         if (date.startsWith("--")) {
             date = DateUtils.currentDay();
         }
-        return new CommonResult().success(orderService.orderMonthStatic(date, null));
+        return new CommonResult().success(orderService.orderMonthStatic(date,null));
     }
 
     /**
@@ -170,28 +124,9 @@ public class HomeController extends BaseController {
         int monthOrderCount = 0; // 本月订单
         BigDecimal monthOrderPay = new BigDecimal(0); //本月销售总额
 
-        int weekOrderCount = 0; // 本周订单
-        BigDecimal weekOrderPay = new BigDecimal(0); //本周销售总额
+        int weekOrderCount = 0; // 本月订单
+        BigDecimal weekOrderPay = new BigDecimal(0); //本月销售总额
 
-        int lastWeekOrderCount = 0; // 上周订单
-        BigDecimal lastWeekOrderPay = new BigDecimal(0); //上周销售总额
-
-        int lastMonthOrderCount = 0; // 上月订单
-        BigDecimal lastMonthOrderPay = new BigDecimal(0); //上月销售总额
-
-        int yesOrderCount1 = 0;
-        BigDecimal yesOrderPay1 = new BigDecimal(0);
-
-        int yesOrderCount2 = 0;
-        BigDecimal yesOrderPay2 = new BigDecimal(0);
-
-        int yesOrderCount3 = 0;
-        BigDecimal yesOrderPay3 = new BigDecimal(0);
-
-        int yesOrderCount4 = 0;
-        BigDecimal yesOrderPay4 = new BigDecimal(0);
-        int yesOrderCount5 = 0;
-        BigDecimal yesOrderPay5 = new BigDecimal(0);
         int status0 = 0;
         int status1 = 0;
         int status2 = 0;
@@ -200,7 +135,7 @@ public class HomeController extends BaseController {
         int status5 = 0;
         int status6 = 0;
         OrderStatusCount count = new OrderStatusCount();
-        List<OrderStstic> orderStsticList = new ArrayList<>(); // 7日销售
+
         for (OmsOrder order : orderList) {
             if (DateUtils.format(order.getCreateTime()).equals(DateUtils.format(new Date()))) {
                 if (order.getStatus() < 9) {
@@ -210,7 +145,8 @@ public class HomeController extends BaseController {
                 nowTotalOrderCount++;
                 nowToatlOrderPay = nowToatlOrderPay.add(order.getPayAmount());
             }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))) {
+            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -1))
+            ) {
                 if (order.getStatus() < 9) {
                     yesOrderCount++;
                     yesOrderPay = yesOrderPay.add(order.getPayAmount());
@@ -218,53 +154,10 @@ public class HomeController extends BaseController {
                 yesToatlOrderCount++;
                 yesTotalOrderPay = yesTotalOrderPay.add(order.getPayAmount());
             }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -2))) {
-                if (order.getStatus() < 9) {
-                    yesOrderCount1++;
-                    yesOrderPay1 = yesOrderPay1.add(order.getPayAmount());
-                }
-            }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -3))) {
-                if (order.getStatus() < 9) {
-                    yesOrderCount2++;
-                    yesOrderPay2 = yesOrderPay2.add(order.getPayAmount());
-                }
-            }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -4))) {
-                if (order.getStatus() < 9) {
-                    yesOrderCount3++;
-                    yesOrderPay3 = yesOrderPay3.add(order.getPayAmount());
-                }
-            }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -5))) {
-                if (order.getStatus() < 9) {
-                    yesOrderCount4++;
-                    yesOrderPay4 = yesOrderPay4.add(order.getPayAmount());
-                }
-            }
-            if (DateUtils.format(order.getCreateTime()).equals(DateUtils.addDay(new Date(), -6))) {
-                if (order.getStatus() < 9) {
-                    yesOrderCount5++;
-                    yesOrderPay5 = yesOrderPay5.add(order.getPayAmount());
-                }
-            }
             if (DateUtils.calculateDaysNew(order.getCreateTime(), new Date()) >= 7
                     && (order.getStatus() < 9)) {
                 qiOrderCount++;
                 qiOrderPay = qiOrderPay.add(order.getPayAmount());
-
-            }
-            if (order.getCreateTime().getTime() >= DateUtils.getLastMonthFirstDay().getTime()
-                    && order.getCreateTime().getTime() <= DateUtils.getLastMonthLastDay().getTime()
-                    && (order.getStatus() < 9)) {
-                lastMonthOrderCount++;
-                lastMonthOrderPay = lastMonthOrderPay.add(order.getPayAmount());
-            }
-            if (order.getCreateTime().getTime() >= DateUtils.getPreviousMonday().getTime()
-                    && order.getCreateTime().getTime() <= DateUtils.getSunday().getTime()
-                    && (order.getStatus() < 9)) {
-                lastWeekOrderCount++;
-                lastMonthOrderPay = lastMonthOrderPay.add(order.getPayAmount());
             }
             if (order.getCreateTime().getTime() >= DateUtils.geFirstDayDateByMonth().getTime()
                     && (order.getStatus() < 9)) {
@@ -299,48 +192,6 @@ public class HomeController extends BaseController {
             }
 
         }
-        OrderStstic ststic =new OrderStstic();
-        ststic.setTime(DateUtils.currentDay());
-        ststic.setTotalCount(nowOrderCount);
-        ststic.setTotalPayAmount(nowOrderPay);
-        orderStsticList.add(ststic);
-
-        OrderStstic ststic0 =new OrderStstic();
-        ststic0.setTime(DateUtils.addDay(new Date(), -1));
-        ststic0.setTotalCount(yesOrderCount);
-        ststic0.setTotalPayAmount(yesOrderPay);
-        orderStsticList.add(ststic0);
-
-        OrderStstic ststic1 =new OrderStstic();
-        ststic1.setTime(DateUtils.addDay(new Date(), -2));
-        ststic1.setTotalCount(yesOrderCount1);
-        ststic1.setTotalPayAmount(yesOrderPay1);
-        orderStsticList.add(ststic1);
-
-        OrderStstic ststic2 =new OrderStstic();
-        ststic2.setTime(DateUtils.addDay(new Date(), -3));
-        ststic2.setTotalCount(yesOrderCount2);
-        ststic2.setTotalPayAmount(yesOrderPay2);
-        orderStsticList.add(ststic2);
-
-        OrderStstic ststic3 =new OrderStstic();
-        ststic3.setTime(DateUtils.addDay(new Date(), -4));
-        ststic3.setTotalCount(yesOrderCount3);
-        ststic3.setTotalPayAmount(yesOrderPay3);
-        orderStsticList.add(ststic3);
-
-        OrderStstic ststic4 =new OrderStstic();
-        ststic4.setTime(DateUtils.addDay(new Date(), -5));
-        ststic4.setTotalCount(yesOrderCount4);
-        ststic4.setTotalPayAmount(yesOrderPay4);
-        orderStsticList.add(ststic4);
-
-        OrderStstic ststic5 =new OrderStstic();
-        ststic5.setTime(DateUtils.addDay(new Date(), -6));
-        ststic5.setTotalCount(yesOrderCount5);
-        ststic5.setTotalPayAmount(yesOrderPay5);
-        orderStsticList.add(ststic5);
-
         count.setStatusAll(orderList.size());
         count.setStatus0(status0);
         count.setStatus1(status1);
@@ -365,11 +216,6 @@ public class HomeController extends BaseController {
         data.setMonthOrderPay(monthOrderPay);
         data.setWeekOrderCount(weekOrderCount);
         data.setWeekOrderPay(weekOrderPay);
-        data.setLastMonthOrderCount(lastMonthOrderCount);
-        data.setLastMonthOrderPay(lastMonthOrderPay);
-        data.setLastWeekOrderCount(lastWeekOrderCount);
-        data.setLastWeekOrderPay(lastWeekOrderPay);
-        data.setOrderStsticList(orderStsticList);
         return new CommonResult().success(data);
     }
 

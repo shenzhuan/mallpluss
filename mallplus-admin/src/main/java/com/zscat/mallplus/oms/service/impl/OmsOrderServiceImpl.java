@@ -10,15 +10,13 @@ import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
 import com.zscat.mallplus.oms.mapper.OmsOrderOperateHistoryMapper;
 import com.zscat.mallplus.oms.service.IOmsOrderOperateHistoryService;
 import com.zscat.mallplus.oms.service.IOmsOrderService;
-import com.zscat.mallplus.oms.vo.OmsMoneyInfoParam;
-import com.zscat.mallplus.oms.vo.OmsOrderDeliveryParam;
-import com.zscat.mallplus.oms.vo.OmsReceiverInfoParam;
-import com.zscat.mallplus.oms.vo.OrderCountDto;
+import com.zscat.mallplus.oms.vo.*;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.mapper.PmsProductMapper;
 import com.zscat.mallplus.ums.entity.UmsMember;
 import com.zscat.mallplus.ums.mapper.UmsMemberMapper;
 import com.zscat.mallplus.utils.ValidatorUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -104,11 +102,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         return list;
     }
 
-    @Override
-    public Map orderMonthStatic(String date) {
-        Map list = orderMapper.orderMonthStatic(date);
-        return list;
-    }
+
 
     @Override
     public Object dayStatic(String date, Integer type) {
@@ -272,5 +266,15 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder> i
         history.setNote("修改备注信息：" + note);
         orderOperateHistoryMapper.insert(history);
         return count;
+    }
+
+    @Override
+    public List<OrderStstic> listOrderGroupByStatus(Integer status){
+        return orderMapper.listOrderGroupByStatus(status);
+    }
+
+    @Override
+    public Map orderMonthStatic(String date,  Integer status){
+        return orderMapper.orderMonthStatic(date,status);
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -321,8 +323,101 @@ public class DateUtils {
         }
         return null;
     }
+    public static String getLastMonth() {
+        LocalDate today = LocalDate.now();
+        today = today.minusMonths(1);
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM");
+        return formatters.format(today);
+    }
+
+    /**
+     * 上个月最后一天
+     */
+    public static Date getLastMonthLastDay(){
+
+        SimpleDateFormat sf=new SimpleDateFormat(DATE_TIME_PATTERN);
+
+        Calendar calendar=Calendar.getInstance();
+
+        int month=calendar.get(Calendar.MONTH);
+
+        calendar.set(Calendar.MONTH, month-1);
+
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        System.out.println("上个月最后一天："+sf.format(calendar.getTime()));
+        return calendar.getTime();
+
+    }
+
+    /**
+     * 上个月第一天
+     */
+    public static Date getLastMonthFirstDay(){
+
+        SimpleDateFormat format=new SimpleDateFormat(DATE_TIME_PATTERN);
+
+        Calendar calendar=Calendar.getInstance();
+
+        calendar.add(Calendar.MONTH, -1);
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        System.out.println("上个月第一天："+format.format(calendar.getTime()));
+        return calendar.getTime();
+    }
+    /**
+     * 获取上周周一（第一天是周一）
+     *
+     * @return
+     */
+    public static Date getPreviousMonday() {
+        Calendar cal = Calendar.getInstance();
+        // 将每周第一天设为星期一，默认是星期天
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.add(Calendar.DATE, -1 * 7);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+    /**
+     * 获取上周周日（第一天是周一）
+     * @return
+     */
+    public static Date getSunday() {
+        Calendar cal = Calendar.getInstance();
+        //将每周第一天设为星期一，默认是星期天
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.add(Calendar.DATE, -1*7);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 59);
+        return cal.getTime();
+    }
+
 
     public static void main(String[] args) throws Exception {
+        getLastMonthFirstDay();
+        getLastMonthLastDay();
+        SimpleDateFormat format=new SimpleDateFormat(DATE_TIME_PATTERN);
+
+        Calendar calendar=Calendar.getInstance();
+
+        calendar.add(Calendar.MONTH, -1);
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        System.out.println("上个月第一天："+format.format(calendar.getTime()));
+
+
+        System.out.println(getLastMonth());
         String month = "201705";
         System.out.println(getMinDateMonth(month));
         System.out.println(getMaxDateMonth(month));
