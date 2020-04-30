@@ -1,6 +1,7 @@
 package com.zscat.mallplus.component;
 
 
+import com.zscat.mallplus.exception.JwtTokenExpiredException;
 import com.zscat.mallplus.sys.entity.SysAdminLog;
 import com.zscat.mallplus.sys.service.ISysAdminLogService;
 import com.zscat.mallplus.util.IpAddressUtil;

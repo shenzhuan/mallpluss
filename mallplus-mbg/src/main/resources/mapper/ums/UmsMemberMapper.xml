@@ -46,4 +46,19 @@
             date_format(create_time,'%y%m') = date_format(#{date},'%y%m')
         </if>
     </select>
+    <select id="memberMonthStatic" resultType="Map">
+        SELECT sum(CASE DATE_FORMAT(create_time, '%m') WHEN '01' THEN 1 ELSE 0 END) AS a1, sum(CASE
+        DATE_FORMAT(create_time, '%m') WHEN '02' THEN 1 ELSE 0 END) AS a2, sum(CASE DATE_FORMAT(create_time,
+        '%m') WHEN '03' THEN 1 ELSE 0 END) AS a3, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '04' THEN
+        1 ELSE 0 END) AS a4, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '05' THEN 1 ELSE 0 END) AS
+        a5, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '06' THEN 1 ELSE 0 END) AS a6,
+        sum(CASE DATE_FORMAT(create_time, '%m') WHEN '07' THEN 1 ELSE 0 END) AS a7,
+        sum(CASE DATE_FORMAT(create_time, '%m') WHEN '08' THEN 1 ELSE 0 END) AS a8, sum(CASE
+        DATE_FORMAT(create_time, '%m') WHEN '09' THEN 1 ELSE 0 END) AS a9, sum(CASE DATE_FORMAT(create_time,
+        '%m') WHEN '10' THEN 1 ELSE 0 END) AS a10, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '11' THEN
+        1 ELSE 0 END) AS a11, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '12' THEN 1 ELSE 0 END) AS
+        a12
+        FROM ums_member
+        WHERE YEAR(create_time) = YEAR(#{date})
+    </select>
 </mapper>

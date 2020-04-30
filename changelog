@@ -1,4 +1,38 @@
+--0430
+ uniapp 首页添加 区域商品 类别商品 精选标签 卖家中心 分销商品 会员商品
 
+
+--0429
+首页 商品销量统计 商品收藏统计
+     会员注册月统计 订单状态月统计
+     近7日订单统计 今天订单统计
+
+--0427
+1.商品表 delete_status 1->未删除；0->已删除
+2.订单列表和商品列表分别添加tab（快速刷选不同状态的数据）
+3.如果演示有的菜单 你没有，需要对比最新的 sys_permission 表
+4.小程序编译和登录优化
+
+--0425
+ 数据库密码加密（druid） https://blog.csdn.net/feifuzeng/article/details/80798934
+ 商城设置下添加 标签管理
+
+ 添加商品中增加标签选择
+
+ uniapp  标签页面和标签下的商品
+alter table ums_member_tag add pic varchar(127) ;
+alter table ums_member_tag  add status BIGINT not null default 0;
+alter table pms_product add tags varchar(127) ;
+alter table pms_product add store_class_id bigint ;
+
+-- 0423 拼团优化 文档https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1699565&doc_id=326093
+alter table sms_group_member  add group_id BIGINT not null default 0;
+alter table sms_group_record  add handle_status int not null default 1;
+
+-- 0425 退款定时任务
+alter table oms_order_return_apply  add refund_status int not null default 0;
+
+-- 0421 首页推荐优化
 alter table sms_home_recommend_subject add pic varchar(127) ;
 alter table sms_home_recommend_subject add read_count int ;
 alter table sms_home_recommend_subject add description varchar(127) ;

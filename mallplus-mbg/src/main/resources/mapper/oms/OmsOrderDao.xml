@@ -103,6 +103,9 @@
         pay_amount ELSE 0 END) AS a11, sum(CASE DATE_FORMAT(create_time, '%m') WHEN '12' THEN pay_amount ELSE 0 END) AS
         a12
         FROM oms_order WHERE YEAR(create_time) = YEAR(#{date})
+        <if test="status != null and status != ''">
+            and  status = #{status}
+        </if>
     </select>
     <select id="orderDayStatic" resultType="Map">
         SELECT
@@ -229,5 +232,8 @@
         </if>
 
     </select>
-
+    <select id="listOrderGroupByStatus" resultType="com.zscat.mallplus.oms.vo.OrderStstic">
+        SELECT DATE_FORMAT(create_time,'%Y-%m') as time,sum(pay_amount)  totalPayAmount FROM oms_order
+        WHERE YEAR(create_time) = YEAR(now()) and status=#{status}  GROUP BY  time  ORDER BY time asc
+    </select>
 </mapper>

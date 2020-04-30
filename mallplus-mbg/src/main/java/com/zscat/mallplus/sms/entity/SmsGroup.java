@@ -58,7 +58,6 @@ public class SmsGroup extends BaseEntity implements Serializable {
      * 开始时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("start_time")
     private Date startTime;
 
@@ -66,7 +65,6 @@ public class SmsGroup extends BaseEntity implements Serializable {
      * 结束时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("end_time")
     private Date endTime;
 

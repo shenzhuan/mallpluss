@@ -129,7 +129,13 @@ public class SingePmsController extends ApiBaseAction {
 
         return new CommonResult().success(pmsProductService.queryPaiMaigoodsDetail(id));
     }
-
+    @SysLog(MODULE = "pms", REMARK = "查询标签商品")
+    @IgnoreAuth
+    @GetMapping(value = "/tag/goods")
+    @ApiOperation(value = "查询标签商品")
+    public Object tagGoodsList(@RequestParam(value = "tags", required = true) String tags) {
+        return new CommonResult().success(pmsProductService.selectByTags(tags));
+    }
 
     @ApiOperation("创建商品")
     @SysLog(MODULE = "pms", REMARK = "创建商品")
@@ -343,6 +349,7 @@ public class SingePmsController extends ApiBaseAction {
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
         PmsProduct product = new PmsProduct();
         product.setPublishStatus(1);
+        product.setDeleteStatus(1);
         product.setVerifyStatus(1);
         product.setMemberId(null);
         product.setSort(sort);
@@ -625,6 +632,7 @@ public class SingePmsController extends ApiBaseAction {
                     .map(SmsGroup::getGoodsId)
                     .collect(Collectors.toList());
             product.setPublishStatus(1);
+            product.setDeleteStatus(1);
             product.setVerifyStatus(1);
             product.setMemberId(null);
             IPage<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<>(product).in("id", ids));
@@ -773,9 +781,9 @@ public class SingePmsController extends ApiBaseAction {
         return new CommonResult().success(categories);
     }
 
-    @SysLog(MODULE = "pms", REMARK = "查询商品分类列表")
+    @SysLog(MODULE = "pms", REMARK = "查询商品属性分类列表和商品")
     @IgnoreAuth
-    @ApiOperation(value = "查询商品分类列表")
+    @ApiOperation(value = "查询商品属性分类列表和商品")
     @GetMapping(value = "/categoryAndGoodsList/list")
     public Object categoryAndGoodsList(PmsProductAttributeCategory productCategory) {
         List<PmsProductAttributeCategory> productAttributeCategoryList = productAttributeCategoryService.list(new QueryWrapper<>());
@@ -783,6 +791,7 @@ public class SingePmsController extends ApiBaseAction {
             PmsProduct productQueryParam = new PmsProduct();
             productQueryParam.setProductAttributeCategoryId(gt.getId());
             productQueryParam.setPublishStatus(1);
+            productQueryParam.setDeleteStatus(1);
             productQueryParam.setVerifyStatus(1);
             gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam).select(ConstansValue.sampleGoodsList)));
         }
@@ -873,13 +882,9 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/typeGoodsList")
     public Object typeGoodsList(PmsProductCategory productCategory) throws Exception {
         List<ProductTypeVo> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.specialcategoryAndGoodsList);
-        if (ValidatorUtils.notEmpty(json)) {
-            relList = JsonUtils.json2list(json, ProductTypeVo.class);
-            return new CommonResult().success(relList);
-        }
-        PmsProduct productQueryParam = new PmsProduct();
 
+        PmsProduct productQueryParam = new PmsProduct();
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("product_category_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
@@ -915,8 +920,7 @@ public class SingePmsController extends ApiBaseAction {
                 relList.add(vo);
             }
         }
-        redisService.set(Rediskey.specialcategoryAndGoodsList, JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.specialcategoryAndGoodsList, 20);
+
         return new CommonResult().success(relList);
     }
 
@@ -929,7 +933,7 @@ public class SingePmsController extends ApiBaseAction {
         List<ProductTypeVo> relList = new ArrayList<>();
 
         PmsProduct productQueryParam = new PmsProduct();
-
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         List<PmsProduct> list = pmsProductService.page(new Page<PmsProduct>(1, 10000), new QueryWrapper<>(productQueryParam).gt("area_id", 0).select(ConstansValue.sampleGoodsList1)).getRecords();
@@ -976,11 +980,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/getGoodsTypes")
     public Object getGoodsTypes() throws Exception {
         List<PmsProductCategory> relList = new ArrayList<>();
-        String json = redisService.get(Rediskey.goodsCategorys);
-        if (ValidatorUtils.notEmpty(json)) {
-            relList = JsonUtils.json2list(json, PmsProductCategory.class);
-            return new CommonResult().success(relList);
-        }
+
         PmsProductCategory pmsProductCategory = new PmsProductCategory();
         pmsProductCategory.setShowStatus(1);
         pmsProductCategory.setNavStatus(1);
@@ -1001,8 +1001,7 @@ public class SingePmsController extends ApiBaseAction {
             }
             relList.get(i).setChildList(list);
         }
-        redisService.set(Rediskey.goodsCategorys, JsonUtils.objectToJson(relList));
-        redisService.expire(Rediskey.goodsCategorys, 2);
+
         return new CommonResult().success(relList);
     }
 
@@ -1080,7 +1079,9 @@ public class SingePmsController extends ApiBaseAction {
             for (String keys : result){
                 PmsProduct product = new PmsProduct();
                 product.setId(Long.valueOf(keys.split(",;;")[0]));
-                product.setPic(keys.split(",;;")[1]);
+                if (keys.split(",;;").length>1){
+                    product.setPic(keys.split(",;;")[1]);
+                }
                 list.add(product);
             }
             map.put("result", list);
@@ -1101,7 +1102,7 @@ public class SingePmsController extends ApiBaseAction {
     @GetMapping(value = "/goodsCount")
     public Object goodsCount() {
         PmsProduct productQueryParam = new PmsProduct();
-
+        productQueryParam.setDeleteStatus(1);
         productQueryParam.setPublishStatus(1);
         productQueryParam.setVerifyStatus(1);
         return new CommonResult().success(pmsProductService.count(new QueryWrapper<>(productQueryParam)));

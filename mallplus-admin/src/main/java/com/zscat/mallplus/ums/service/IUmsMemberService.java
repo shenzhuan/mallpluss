@@ -2,6 +2,9 @@ package com.zscat.mallplus.ums.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.ums.entity.UmsMember;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -14,4 +17,6 @@ import com.zscat.mallplus.ums.entity.UmsMember;
 public interface IUmsMemberService extends IService<UmsMember> {
 
     void updataMemberOrderInfo();
+
+    Map memberMonthStatic( String date);
 }

@@ -53,6 +53,11 @@
         <result column="area_name" property="areaName"/>
         <result column="school_id" property="schoolId"/>
         <result column="transfee" property="transfee"/>
+        <result column="type" property="type"/>
+        <result column="store_name" property="storeName"/>
+        <result column="tags" property="tags"/>
+        <result column="store_class_id" property="storeClassId"/>
+
     </resultMap>
 
     <resultMap id="cartProductMap" type="com.zscat.mallplus.oms.vo.CartProduct" autoMapping="true">
@@ -217,5 +222,8 @@
         and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
 
     </select>
-
+    <select id="selectByTags" resultMap="BaseResultMap">
+        select id, brand_id, product_category_id,  product_attribute_category_id, name,area_id, pic , sale, price,  original_price  ,
+        weight  from pms_product where find_in_set(#{tags}, tags) and publish_status=1 and verify_status=1
+    </select>
 </mapper>

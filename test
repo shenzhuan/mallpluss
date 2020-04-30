@@ -99,12 +99,12 @@ SELECT * from sms_flash_promotion_session;
 
 
 
-http://ext.dcloud.net.cn/plugin?id=214
-http://ext.dcloud.net.cn/plugin?id=465
-http://ext.dcloud.net.cn/plugin?id=232
-http://ext.dcloud.net.cn/plugin?id=271
-http://ext.dcloud.net.cn/plugin?id=467
-http://ext.dcloud.net.cn/plugin?id=235
+http://ext.dcloud.net.cn/plugin?id=214 6foo-percent 进度
+http://ext.dcloud.net.cn/plugin?id=465 仔仔-登录注册
+http://ext.dcloud.net.cn/plugin?id=232 登录注册忘记密码模板
+http://ext.dcloud.net.cn/plugin?id=271 uCharts高性能跨全端图表
+http://ext.dcloud.net.cn/plugin?id=467 仔仔-家居格子组件
+http://ext.dcloud.net.cn/plugin?id=235 签到
 http://ext.dcloud.net.cn/plugin?id=434 水印
 http://ext.dcloud.net.cn/plugin?id=417 物流
 http://ext.dcloud.net.cn/plugin?id=305 优惠券
@@ -204,11 +204,50 @@ server {
 
             #后端端口(后端最终访问的端口)
 
-            proxy_pass   http://39.106.212.32:8081 ;
+            proxy_pass   http://47.244.191.12:8081 ;
 
         }
         location @router {
         rewrite ^.*$ /index.html last;
         }
     }
+https://ext.dcloud.net.cn/plugin?id=972
 
+DELETE from pms_sku_stock ;
+DELETE from pms_product_attribute_value  ;
+DELETE from pms_product_attribute ;
+DELETE from pms_product_category_attribute_relation ;
+
+DELETE from pms_product_attribute_category ;
+
+
+DELETE from pms_product_full_reduction ;
+DELETE from pms_product_ladder ;
+DELETE from pms_product_operate_log ;
+DELETE from pms_product_vertify_record ;
+
+
+一、会员等级：
+1.云游积分>500，1级云朵
+2.云游积分>800，2级云朵
+3.云游积分>1200，3级云朵
+
+二、积分获取：
+1.购物：10元=积分
+2.分享平台内容：1积分/条
+3.成功推荐新用户：10积分/人
+4.成功邀请好友下单：5积分/人
+
+三、会员权益：
+1.积分抵扣现金：10积分=1元
+2.生日专享礼包：现金券、包房、酒水、蛋糕券
+3.分销佣金奖励：一级8%，二级5%，三级3%
+4.带新佣金奖励：10元/人
+5.节日礼券
+6.积分兑换礼品
+7.积分抽奖
+
+四、充值返现：
+1级云朵：充值返15%
+2级云朵：充值返20%
+3级云朵：充值返30%

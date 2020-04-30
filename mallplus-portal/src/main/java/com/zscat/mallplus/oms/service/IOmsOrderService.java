@@ -3,6 +3,8 @@ package com.zscat.mallplus.oms.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zscat.mallplus.oms.entity.OmsOrder;
 import com.zscat.mallplus.oms.entity.OmsOrderItem;
+import com.zscat.mallplus.oms.entity.OmsOrderReturnApply;
+
 import com.zscat.mallplus.oms.vo.OrderParam;
 import com.zscat.mallplus.oms.vo.PayParam;
 import com.zscat.mallplus.oms.vo.TbThanks;
@@ -13,6 +15,7 @@ import com.zscat.mallplus.vo.CartParam;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -48,10 +51,6 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     @Transactional
     void cancelOrder(Long orderId);
 
-    /**
-     * 发送延迟消息取消订单
-     */
-    void sendDelayMessageCancelOrder(Long orderId);
 
     /**
      * 获取用户可用优惠券列表
@@ -184,6 +183,11 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      */
     Object orderComment(Long orderId, String items);
 
+    /**
+     * 多商户下单
+     * @param orderParam
+     * @return
+     */
     CommonResult generateStoreOrder(OrderParam orderParam);
 
     /**
@@ -202,7 +206,7 @@ public interface IOmsOrderService extends IService<OmsOrder> {
     Object quitGroup(Long id);
 
     /**
-     * autoDeliveryOrder
+     * 订单到期自动发货
      *
      * @return
      */
@@ -236,4 +240,10 @@ public interface IOmsOrderService extends IService<OmsOrder> {
      * @param currentMember
      */
     void recordFenxiaoMoney(List<OmsOrderItem> list, UmsMember currentMember);
+
+    /**
+     *
+     * @param orderReturnApply
+     */
+    void refund(OmsOrderReturnApply orderReturnApply);
 }

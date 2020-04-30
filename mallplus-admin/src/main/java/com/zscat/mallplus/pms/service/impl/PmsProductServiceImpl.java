@@ -10,6 +10,7 @@ import com.zscat.mallplus.pms.service.*;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
 import com.zscat.mallplus.sys.entity.SysUser;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
 import com.zscat.mallplus.ums.service.RedisService;
 import com.zscat.mallplus.util.DateUtils;
 import com.zscat.mallplus.util.JsonUtil;

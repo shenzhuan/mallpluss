@@ -4,12 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zscat.mallplus.annotation.SysLog;
+import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.enums.ConstansValue;
+import com.zscat.mallplus.oms.entity.OmsOrder;
+import com.zscat.mallplus.oms.entity.OmsOrderItem;
 import com.zscat.mallplus.pms.entity.PmsProduct;
 import com.zscat.mallplus.pms.entity.PmsProductVertifyRecord;
+import com.zscat.mallplus.pms.entity.PmsSkuStock;
 import com.zscat.mallplus.pms.service.IPmsProductService;
+import com.zscat.mallplus.pms.service.IPmsSkuStockService;
 import com.zscat.mallplus.pms.vo.PmsProductParam;
 import com.zscat.mallplus.pms.vo.PmsProductResult;
+import com.zscat.mallplus.ums.entity.UmsMemberTag;
+import com.zscat.mallplus.ums.service.IUmsMemberTagService;
 import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.IdStatus;
@@ -39,7 +46,10 @@ import java.util.List;
 public class PmsProductController {
     @Resource
     private IPmsProductService IPmsProductService;
-
+    @Resource
+    private com.zscat.mallplus.ums.service.IUmsMemberTagService IUmsMemberTagService;
+    @Resource
+    private IPmsSkuStockService skuStockService;
     @SysLog(MODULE = "pms", REMARK = "根据条件查询所有商品信息列表")
     @ApiOperation("根据条件查询所有商品信息列表")
     @GetMapping(value = "/list")
@@ -55,15 +65,18 @@ public class PmsProductController {
             }
             if (ValidatorUtils.notEmpty(entity.getKeyword())) {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
                     entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
@@ -76,15 +89,18 @@ public class PmsProductController {
                 }
             } else {
                 if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
                     entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
@@ -104,6 +120,82 @@ public class PmsProductController {
         return new CommonResult().failed();
     }
 
+    @SysLog(MODULE = "pms", REMARK = "根据条件查询所有商品信息列表")
+    @ApiOperation("根据条件查询所有商品信息列表")
+    @GetMapping(value = "/listBySku")
+    @PreAuthorize("hasAuthority('pms:PmsProduct:read')")
+    public Object listBySku(PmsProduct entity,
+                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+    ) {
+        try {
+            IPage<PmsProduct> page = null;
+            if (ValidatorUtils.empty(entity.getStatus())) {
+                entity.setStatus(0);
+            }
+            if (ValidatorUtils.notEmpty(entity.getKeyword())) {
+                if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
+                    entity.setPublishStatus(1);
+                    entity.setVerifyStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 3) {
+                    entity.setPublishStatus(0);
+                    entity.setDeleteStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 4) {
+                    entity.setDeleteStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            like("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else {
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            like("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                }
+            } else {
+                if (entity.getStatus() == 1) {
+                    entity.setDeleteStatus(1);
+                    entity.setPublishStatus(1);
+                    entity.setVerifyStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
+                    entity.setPublishStatus(0);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else if (entity.getStatus() == 4) {
+                    entity.setDeleteStatus(1);
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                } else {
+                    page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
+                            orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
+                }
+
+            }
+            if (page.getRecords()!=null && page.getRecords().size()>0){
+                for (PmsProduct product : page.getRecords()) {
+                    List<PmsSkuStock> skuStockList = skuStockService.list(new QueryWrapper<PmsSkuStock>().eq("product_id", product.getId()));
+                    product.setSkuStockList(skuStockList);
+                }
+            }
+
+            return new CommonResult().success(page);
+        } catch (Exception e) {
+            log.error("根据条件查询所有商品信息列表：%s", e.getMessage(), e);
+        }
+        return new CommonResult().failed();
+    }
     @ApiOperation("根据商品名称或货号模糊查询")
     @RequestMapping(value = "/simpleList", method = RequestMethod.GET)
     @ResponseBody
@@ -118,6 +210,7 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:create')")
     public Object savePmsProduct(@RequestBody PmsProductParam productParam) {
         try {
+            productParam.setDeleteStatus(1);
             int count = IPmsProductService.create(productParam);
             if (count > 0) {
                 return new CommonResult().success(count);
@@ -179,6 +272,11 @@ public class PmsProductController {
                 return new CommonResult().paramFailed("商品信息id");
             }
             PmsProduct coupon = IPmsProductService.getById(id);
+            if (ValidatorUtils.notEmpty(coupon.getTags())){
+                String[] ids = coupon.getTags().split(",");
+                 List<UmsMemberTag> tagList =  IUmsMemberTagService.list(new QueryWrapper<UmsMemberTag>().eq("type",2).eq("status",1).in("id",ids));
+                 coupon.setTagList(tagList);
+            }
             return new CommonResult().success(coupon);
         } catch (Exception e) {
             log.error("查询商品信息明细：%s", e.getMessage(), e);
@@ -208,6 +306,11 @@ public class PmsProductController {
     @PreAuthorize("hasAuthority('pms:PmsProduct:read')")
     public Object getUpdateInfo(@PathVariable Long id) {
         PmsProductResult productResult = IPmsProductService.getUpdateInfo(id);
+        if (ValidatorUtils.notEmpty(productResult.getTags())){
+            String[] ids = productResult.getTags().split(",");
+            List<UmsMemberTag> tagList =  IUmsMemberTagService.list(new QueryWrapper<UmsMemberTag>().eq("type",2).in("id",ids));
+            productResult.setTagList(tagList);
+        }
         return new CommonResult().success(productResult);
     }
 
@@ -355,17 +458,20 @@ public class PmsProductController {
                 if (entity.getStatus() == 1) {
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(0);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 4) {
-                    entity.setDeleteStatus(0);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             like("name", entity.getKeyword()).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else {
@@ -376,12 +482,15 @@ public class PmsProductController {
                 if (entity.getStatus() == 1) {
                     entity.setPublishStatus(1);
                     entity.setVerifyStatus(1);
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 2) {
+                    entity.setDeleteStatus(1);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             eq("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));
                 } else if (entity.getStatus() == 3) {
+                    entity.setDeleteStatus(1);
                     entity.setPublishStatus(0);
                     page = IPmsProductService.page(new Page<PmsProduct>(pageNum, pageSize), new QueryWrapper<PmsProduct>(entity).
                             gt("stock", 0).orderByDesc("create_time").select(ConstansValue.sampleGoodsList));

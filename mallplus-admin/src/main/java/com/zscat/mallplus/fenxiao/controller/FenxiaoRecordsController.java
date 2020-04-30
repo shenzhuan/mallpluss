@@ -89,7 +89,7 @@ public class FenxiaoRecordsController {
     @ApiOperation("删除分销记录")
     @GetMapping(value = "/delete/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoRecords:delete')")
-    public Object deleteFenxiaoRecords(@ApiParam("分销记录id") @PathVariable Long id) {
+    public Object deleteFenxiaoRecords(@ApiParam("分销记录id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("分销记录id");
@@ -108,7 +108,7 @@ public class FenxiaoRecordsController {
     @ApiOperation("查询分销记录明细")
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoRecords:read')")
-    public Object getFenxiaoRecordsById(@ApiParam("分销记录id") @PathVariable Long id) {
+    public Object getFenxiaoRecordsById(@ApiParam("分销记录id") @PathVariable Integer id) {
         try {
             if (ValidatorUtils.empty(id)) {
                 return new CommonResult().paramFailed("分销记录id");
@@ -127,7 +127,7 @@ public class FenxiaoRecordsController {
     @SysLog(MODULE = "fenxiao", REMARK = "批量删除分销记录")
     @PreAuthorize("hasAuthority('fenxiao:fenxiaoRecords:delete')")
     public Object deleteBatch(@RequestParam("ids") List
-            <Long> ids) {
+            <Integer> ids) {
         boolean count = IFenxiaoRecordsService.removeByIds(ids);
         if (count) {
             return new CommonResult().success(count);

@@ -62,7 +62,7 @@ public class SysQiniuConfigServiceImpl extends ServiceImpl<SysQiniuConfigMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SysQiniuContent upload(MultipartFile file, SysQiniuConfig qiniuConfig) {
-        FileUtil.checkSize(maxSize, file.getSize());
+        FileUtil.checkSize(1000, file.getSize());
         if (qiniuConfig.getId() == null) {
             throw new BusinessMallException("请先添加相应配置，再操作");
         }

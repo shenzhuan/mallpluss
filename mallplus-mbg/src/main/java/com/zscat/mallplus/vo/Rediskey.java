@@ -31,7 +31,7 @@ public class Rediskey {
     public static String permissionTreesList = "permissionTreesList:%s";
     public static String allMenuList = "menuList:%s";
     public static String menuList = "menuList:%s";
-
+    public static String user = "user:%s";
 
     public static String HomeContentResult = "HomeContentResult";
     public static String PmsProductResult = "PmsProductResult";

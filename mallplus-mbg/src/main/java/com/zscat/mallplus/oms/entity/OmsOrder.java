@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import com.zscat.mallplus.utils.BaseEntity;
 import lombok.Data;
 
@@ -30,6 +31,9 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private String payCode;
     @TableField(exist = false)
     private BigDecimal blance;
+    @TableField(exist = false)
+    private Long afterbillId;
+
     @TableField(exist = false)
     private List<OmsOrderItem> orderItemList;
     @TableField(exist = false)
@@ -161,7 +165,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     private Integer integration;
 
     /**
-     * 可以活动的成长值
+     * 门店编号
      */
     private Integer growth;
 
@@ -329,7 +333,7 @@ public class OmsOrder extends BaseEntity implements Serializable {
     @TableField("store_name")
     private String storeName;    //	税号
     @TableField(exist = false)
-    private String statusName;    //	
+    private String statusName;    //
 
     public String getStatusName() {
         if (this.status == 12) {

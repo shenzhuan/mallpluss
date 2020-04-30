@@ -33,6 +33,7 @@ import com.zscat.mallplus.utils.CommonResult;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.Rediskey;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -349,6 +350,11 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         paimaiLogMapper.insert(log);
         return new CommonResult().success();
     }
+    @Override
+    public List<PmsProduct> selectByTags(@Param("tags") String tags){
+        return productMapper.selectByTags(tags);
+    }
+
 
     private class VO {
         private String name;

@@ -1,10 +1,12 @@
 package com.zscat.mallplus.bo;
 
+import com.zscat.mallplus.oms.vo.OrderStstic;
 import com.zscat.mallplus.vo.OrderStatusCount;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Auther: shenzhuan
@@ -28,4 +30,11 @@ public class HomeOrderData implements Serializable {
     int nowTotalOrderCount = 0; // 今日订单
     BigDecimal nowToatlOrderPay = new BigDecimal(0); //今日销售总额
     private OrderStatusCount orderStatusCount;
+    int lastWeekOrderCount = 0; // 上周订单
+    BigDecimal lastWeekOrderPay = new BigDecimal(0); //上周销售总额
+
+    int lastMonthOrderCount = 0; // 上月订单
+    BigDecimal lastMonthOrderPay = new BigDecimal(0); //上月销售总额
+
+    List<OrderStstic> orderStsticList;
 }

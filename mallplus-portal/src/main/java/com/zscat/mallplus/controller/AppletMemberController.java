@@ -351,6 +351,7 @@ public class AppletMemberController extends ApiBaseAction {
                 PmsProduct productQueryParam = new PmsProduct();
                 productQueryParam.setProductAttributeCategoryId(gt.getId());
                 productQueryParam.setPublishStatus(1);
+                productQueryParam.setDeleteStatus(1);
                 productQueryParam.setVerifyStatus(1);
                 gt.setGoodsList(pmsProductService.list(new QueryWrapper<>(productQueryParam)));
             }

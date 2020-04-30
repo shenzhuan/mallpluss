@@ -232,8 +232,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public boolean updates(Long id, SysUser admin) {
         admin.setUsername(null);
         admin.setId(id);
-        String md5Password = passwordEncoder.encode(admin.getPassword());
-        admin.setPassword(md5Password);
+        if(admin.getPassword()!=null){
+            String md5Password = passwordEncoder.encode(admin.getPassword());
+            admin.setPassword(md5Password);
+        }
+
         updateRole(id, admin.getRoleIds());
         adminMapper.updateById(admin);
         return true;

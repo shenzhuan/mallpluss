@@ -117,7 +117,7 @@ public class UmsMemberController {
             entity.setId(id);
             entity.setBlance(blance);
             UmsMember member = IUmsMemberService.getById(entity.getId());
-            entity.setBlance(entity.getBlance().add(member.getBlance()));
+
             UmsMemberBlanceLog blog = new UmsMemberBlanceLog();
             blog.setMemberId(entity.getId());
             blog.setCreateTime(new Date());
@@ -125,7 +125,7 @@ public class UmsMemberController {
             blog.setPrice(entity.getBlance());
             blog.setType(AllEnum.BlanceType.ADD.code());
             memberBlanceLogService.save(blog);
-
+            entity.setBlance(entity.getBlance().add(member.getBlance()));
             if (IUmsMemberService.updateById(entity)) {
                 return new CommonResult().success();
             }

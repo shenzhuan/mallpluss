@@ -3,15 +3,17 @@ netstat -ntlp //查看当前所有tcp端口·
 netstat -ntulp |grep 80 //查看所有80端口使用情况·
 
 
-39.106.212.32
+47.244.191.12
 
- nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web1.log 2>&1 &
 
-nohup java -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
-nohup java -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-portal-0.0.1-SNAPSHOT.jar >web.log 2>&1 &
 
-nohup java -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
+nohup java -Xms128m -Xmx256m -jar /root/jm/mallplus-admin-0.0.1-SNAPSHOT.jar >admin.log 2>&1 &
+
+nohup java -Xms128m -Xmx256m -jar /root/jm/RuoYi.jar >rrr.log 2>&1 &
 
 
 nohup java -jar /root/jm/bootdo-1.5.0.jar >blog.log 2>&1 &
@@ -21,9 +23,9 @@ ps -ef|grep java
 
 
 nohup java -Dfile.encoding=UTF-8 -jar /root/jm/litemall-all-0.1.0-exec.jar >lite.log 2>&1 &
-    ssh root@39.106.212.32
+    ssh root@47.244.191.12
 
-sftp root@39.106.212.32
+sftp root@47.244.191.12
 
 
 
@@ -32,7 +34,7 @@ sudo sh /root/jm/apache-tomcat-8.0.52/bin/startup.sh
 put -r /Users/shenzhuan/Documents/tools/apache-tomcat-8.0.52 /root/jm
 
 
-put -r /Users/java/test/git/RuoYi-fast/target/RuoYi.jar  /root/jm
+put -r /Users/java/test/git/mallplus_background/target/RuoYi.jar  /root/jm
 
 nohup java -jar /root/jm/meizhuang-admin-0.0.1-SNAPSHOT.jar >meizhuang.log 2>&1 &
 
@@ -49,6 +51,8 @@ put -r /Users/java/test/git/web/vue_mogu_web/cms  /root/jm
 put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
 
 put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5 /root/jm
+
+put -r /Users/java/test/git/uniapp/unpackage/dist/build/h5bak1 /root/jm
 
 put -r /Users/java/test/git/mobile-mall/unpackage/dist/build/jsshop /root/jm
 
@@ -67,9 +71,9 @@ put -r /Users/java/test/git/uniapp/unpackage/dist/build/cms /root/jm
 
 
 put -r /Users/java/test/git/crmbmall/mall  /root/jm
-put -r /Users/java/test/git/crmbmall/jsshop  /root/jm
+put -r /Users/java/test/git/crmbmall/h5bak1  /root/jm
 
-scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@39.106.212.32:/root/jm
+scp /Users/shenzhuan/zhuan/mall/mall-admin/target/mall-admin-0.0.1-SNAPSHOT.jar  root@47.244.191.12:/root/jm
 
 scp /path/filename username@servername:/path
 
@@ -78,43 +82,7 @@ scp /path/filename username@servername:/path
     app-secret: d1caf84b65c25ee4188cabbcbbf172c6
 
 
-      location / {
 
-  root /root/jm/dist;
-
-  index index.html;
-
-}
-
-
-
- server {
-
-        listen       1218;
-
-        server_name  39.106.212.32;
-
-    location / {
-
-         root /root/jm/pc;
-
-        index index.html;
-
-         }
-
-
-
-        error_page   500 502 503 504  /50x.html;
-
-        location = /50x.html {
-
-            root   html;
-
-        }
-
-
-
-}
 
 
 
@@ -148,6 +116,9 @@ https://s.click.taobao.com/nyYgc1w
 
 #                                                                     #
 
+https://www.kdocs.cn/l/sbdaFdZLl?f=111
+https://www.codeqq.com/log/5venx9mz.html
+
 https://openhome.alipay.com/mini/dev/list
 
 https://microapp.bytedance.com/homepage
@@ -179,7 +150,7 @@ https://www.kancloud.cn/thundersword/fire-shop-lite/936356
 
 版本：    apache-tomcat-8.5.32
 
-监听端口：8080
+监听端口：8085
 
 配置文件： /www/server/apache-tomcat-default/conf/server.xml
 
@@ -210,8 +181,6 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
 数据文件： /usr/local/mysql/data
 
-默认密码： uAiqwVwjJ8-i
-
 命令：     systemctl (start|stop|restart|disable) mysql
 
 示例：    启动mysql  systemctl start mysql
@@ -220,7 +189,14 @@ https://www.daigou-jp.com/site_shp/mercari/badc79129509d2fec7978fd45469f8ed11409
 
           禁止mysql  systemctl disable mysql
 
+https://www.cnblogs.com/lywJ/p/10697460.html
 
+/usr/local/redis/redis-4.0.9/src
+
+rm -rf /var/run/redis_6379.pid
+
+/etc/init.d/redis_6379 start
+/etc/init.d/redis_6379 stop
 
 ################################ Nginx ##################################
 
@@ -246,20 +222,7 @@ http://www.laiketui.com/action/
           nginx -s reload
 
 
-项目地址 https://gitee.com/zscat/mallplus
-前端vue 项目路径下有一个zip包
-文档详情blog http://yjlive.cn:8084/
-后台演示  http://yjlive.cn:8090/
-h5演示  http://yjlive.cn:8082/
-部署地址 https://www.kancloud.cn/mall-plus/tech/1212454
 
-
-项目地址 https://gitee.com/catshen/zscat_sw
-前端vue 项目路径下有一个zip包
-文档详情blog http://yjlive.cn:8084/
-后台演示  http://yjlive.cn:8090/
-h5演示  http://yjlive.cn:8082/
-部署地址 https://gitee.com/catshen/zscat_sw/wikis/pages?sort_id=1551918&doc_id=364094
 
 商户入驻流程  https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1634420&doc_id=326093
 单机版项目地址 https://gitee.com/zscat/mallplus
@@ -282,6 +245,8 @@ https://pub.alimama.com/?spm=a2321.7393627.1998051820.1.98f118e2koGcdA
 功能列表 https://www.processon.com/view/link/5da6a3d9e4b0ea86c2b2a817
 <iframe id="embed_dom" name="embed_dom" frameborder="0" style="display:block;width:525px; height:245px;" src="https://www.processon.com/embed/mind/5d9f0933e4b06b7d6ec5b3ef"></iframe>
 
+YIJUNlive0322
+
 DELETE FROM admin_day_statics;
 DELETE FROM admin_sys_job_log;
 DELETE FROM sys_admin_log;
@@ -294,43 +259,130 @@ delete from sys_web_log  ;
 delete from admin_sys_job_log  ;
 delete from sys_admin_log  ;
 
+mallplus商户端)
 1938186471@qq.com
 wx1d852ffdcbedd005
 
-server {
-        listen 80;
-        server_name www.yjlive.cn;
 
-        error_page 500 502 503 504 /50x.html;
-            location = /50x.html {
-            root html;
-        }
-
-		location / {
-            alias /root/jm/h5/;
-            index index.html;
-        }
-
-        location /h5 {
-            alias  /root/jm/mall/;
-			try_files $uri $uri/ @router;
-			index index.html;
-        }
-        location /api {
-            rewrite  ^/api/(.*)$ /$1 break;
-            include  uwsgi_params;
-            proxy_pass   http://39.106.212.32:8081 ;
-        }
-        location @router {
-        rewrite ^.*$ /index.html last;
-        }
-    }
-
-
+为保障帐号(mallplus之之小店)安全，请用
 3392805238@qq.com
 wxeca56e2ff8f277d9
 4c8df450d885fff986b8d42048a90052
 
+kaka
 2681196506@qq.com
 wx0c1055c6158f7851
 baa79ed796ec18e932c547fe009d9af0
+
+
+put -r /Users/java/gen/jdk-8u191-linux-x64.tar.gz  /root/soft
+
+mv jdk-8u191-linux-x64.tar.gz /usr/local/jdk/
+
+#set java environment
+JAVA_HOME=/usr/local/jdk/jdk1.8.0_191
+CLASSPATH=.:$JAVA_HOME/lib.tools.jar
+PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME CLASSPATH PATH
+
+./configure --prefix=/usr/local/nginx --sbin-path=/usr/local/nginx/sbin/nginx --conf-path=/usr/local/nginx/conf/nginx.conf --with-http_stub_status_module --with-http_ssl_module  && make && make install
+
+
+
+ cd /usr/local/nginx
+          nginx -s reload
+
+vim /usr/local/nginx/conf/nginx.conf
+
+# systemctl start nginx               启动服务
+
+# systemctl stop nginx               停止服务
+
+# systemctl restart nginx             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status nginx                查看服务当前状态
+
+# systemctl enable nginx               设置开机自启动
+
+#systemctl disable nginx               停止开机自启动
+
+
+
+# systemctl start redis               启动服务
+
+# systemctl stop redis               停止服务
+
+# systemctl restart redis             重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status redis                查看服务当前状态
+
+# systemctl enable redis               设置开机自启动
+
+#systemctl disable redis               停止开机自启动
+
+
+
+
+# systemctl start mysqld              启动服务
+
+# systemctl stop mysqld                停止服务
+
+# systemctl restart mysqld              重新启动服务
+
+# systemctl list-units --type=service     查看所有已启动的服务
+
+# systemctl status mysqld              查看服务当前状态
+
+# systemctl enable mysqld             设置开机自启动
+
+#systemctl disable mysqld             停止开机自启动
+
+https://www.jianshu.com/p/19f6b809d255
+
+https://sit-admin.ec.widiazine.cn/#/
+yjlive1688
+beijingyijun1688
+
+systemctl start  mysqld.service
+
+cd /usr/local/nginx/sbin/
+./nginx
+./nginx -s stop
+./nginx -s quit
+./nginx -s reload
+
+/etc/init.d/redis_6379 start
+
+
+子用户登录地址：https://signin.aliyun.com/1455185185689318.onaliyun.com/login.htm
+用户名：shenzhuan@1455185185689318.onaliyun.com
+
+
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY '1@123';
+
+
+在本机先使用root用户登录mysql：
+mysql -u root -p"youpassword"
+进行授权操作：
+mysql>GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '1@123' WITH GRANT OPTION;
+重载授权表：
+FLUSH PRIVILEGES;
+退出mysql数据库：
+exit
+
+https://www.cnblogs.com/shuo1208/p/11237713.html
+https://www.cnblogs.com/boonya/p/7907999.html
+https://www.linuxidc.com/Linux/2018-02/150956.htm
+https://www.cnblogs.com/telwanggs/p/11546751.html
+https://www.jianshu.com/p/e010bb69deba
+
+39.99.170.78
+39.100.69.249
+
+put -r /Users/java/test/git/web/mall-web-admin/dist  /root/jm
+put -r /Users/java/test/git/mallplus/mallplus-admin/target/mallplus-admin-0.0.1-SNAPSHOT.jar  /root/jm

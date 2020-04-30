@@ -26,9 +26,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     @SuppressWarnings("all")
-    public Object getTables(String name, int[] startEnd) {
+    public Object getTables(String name) {
 
-        List<Map<String, Object>> list = generatorMapper.list(name, startEnd[0], startEnd[1]);
+        List<Map<String, Object>> list = generatorMapper.list(name);
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Map<String, Object> obj : list) {
 

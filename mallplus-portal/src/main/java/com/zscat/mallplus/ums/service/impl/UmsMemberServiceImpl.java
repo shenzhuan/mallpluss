@@ -3,7 +3,7 @@ package com.zscat.mallplus.ums.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
-import com.zscat.mallplus.component.UserUtils;
+import com.zscat.mallplus.config.MallplusProperties;
 import com.zscat.mallplus.enums.AllEnum;
 import com.zscat.mallplus.exception.ApiMallPlusException;
 import com.zscat.mallplus.oms.mapper.OmsOrderMapper;
@@ -17,6 +17,7 @@ import com.zscat.mallplus.ums.mapper.UmsMemberMemberTagRelationMapper;
 import com.zscat.mallplus.ums.service.*;
 import com.zscat.mallplus.util.*;
 import com.zscat.mallplus.utils.CommonResult;
+
 import com.zscat.mallplus.utils.MatrixToImageWriter;
 import com.zscat.mallplus.utils.ValidatorUtils;
 import com.zscat.mallplus.vo.*;
@@ -77,6 +78,9 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
     //微信小程序获取用户信息
     public final static String GetPageUserInfoUrl_XCX = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);
+    @Resource
+    private MallplusProperties mallplusProperties;
+
     @Autowired
     OssAliyunUtil aliyunOSSUtil;
     Integer regJifen = 100;
@@ -259,14 +263,14 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     return member;
                 }
             } else {
-                UmsMember member = UserUtils.getCurrentMember();
+               /* UmsMember member = UserUtils.getCurrentMember();
                 if (member != null && member.getId() != null) {
                     return member;
                 } else {
                     return new UmsMember();
-                }
+                }*/
             }
-            return new CommonResult().fail(100);
+            return new UmsMember();
         } catch (Exception e) {
             e.printStackTrace();
             return new UmsMember();
@@ -348,11 +352,12 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         history.setOperateNote(note);
         history.setSourceType(sourceType);
         history.setOperateMan(operateMan);
-        umsIntegrationChangeHistoryService.save(history);
+
         UmsMember member = memberMapper.selectById(id);
         if (member == null) {
-            member.setIntegration(0);
+
         } else {
+            umsIntegrationChangeHistoryService.save(history);
             if (member != null && ValidatorUtils.empty(member.getIntegration())) {
                 member.setIntegration(0);
             }
@@ -525,23 +530,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
         if (ValidatorUtils.notEmpty(user.getInvitecode())) {
             umsMember.setInvitecode(user.getInvitecode());
         }
+        String defaultIcon = mallplusProperties.getDefaultIcon();
+        umsMember.setIcon(defaultIcon);
+        memberMapper.insert(umsMember);
         try {
-            String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
-            umsMember.setIcon(defaultIcon);
             //这是要生成二维码的url
-            String url = "http://www.yjlive.cn:8082/?invitecode=" + user.getUsername();
+            String url = mallplusProperties.getDomain()+"/?invitecode=" + user.getId();
             //要添加到二维码下面的文字
             String words = user.getUsername() + "的二维码";
             //调用刚才的工具类
             ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
             InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-            umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+            UmsMember member = new UmsMember();
+            member.setId(umsMember.getId());
+            member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+            memberMapper.updateById(member);
         } catch (Exception e) {
-
+            log.error(e.getMessage());
         }
-
-        memberMapper.insert(umsMember);
 
         redisService.set(String.format(Rediskey.MEMBER, umsMember.getUsername()), JsonUtils.objectToJson(umsMember));
 
@@ -746,19 +752,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(me.get("nickName").toString());
-                String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = mallplusProperties.getDefaultIcon();
                 umsMember.setIcon(defaultIcon);
-                //这是要生成二维码的url
-                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
-                //要添加到二维码下面的文字
-                String words = umsMember.getUsername() + "的二维码";
-                //调用刚才的工具类
-                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-
-                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
+                try {
+                    //这是要生成二维码的url
+                    String url = mallplusProperties.getDomain()+"/?invitecode=" + umsMember.getId();
+                    //要添加到二维码下面的文字
+                    String words = umsMember.getUsername() + "的二维码";
+                    //调用刚才的工具类
+                    ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                    InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+                    UmsMember member = new UmsMember();
+                    member.setId(umsMember.getId());
+                    member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+                    memberMapper.updateById(member);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
@@ -885,19 +896,24 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                 }
                 // umsMember.setGender(Integer.parseInt(me.get("gender")));
                 umsMember.setNickname(userInfos.getNickName());
-                String defaultIcon = "http://shopsoss.oss-cn-beijing.aliyuncs.com/mall/images/20190830/uniapp.jpeg";
+                String defaultIcon = mallplusProperties.getDefaultIcon();
                 umsMember.setIcon(defaultIcon);
-                //这是要生成二维码的url
-                String url = "http://www.yjlive.cn:8082/?invitecode=" + umsMember.getUsername();
-                //要添加到二维码下面的文字
-                String words = umsMember.getUsername() + "的二维码";
-                //调用刚才的工具类
-                ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
-                InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
-
-
-                umsMember.setAvatar(aliyunOSSUtil.upload("png", inputStream));
                 memberMapper.insert(umsMember);
+                try {
+                    //这是要生成二维码的url
+                    String url = mallplusProperties.getDomain()+"/?invitecode=" + umsMember.getId();
+                    //要添加到二维码下面的文字
+                    String words = umsMember.getUsername() + "的二维码";
+                    //调用刚才的工具类
+                    ByteArrayResource qrCode = MatrixToImageWriter.createQrCode(url, words);
+                    InputStream inputStream = new ByteArrayInputStream(qrCode.getByteArray());
+                    UmsMember member = new UmsMember();
+                    member.setId(umsMember.getId());
+                    member.setAvatar(aliyunOSSUtil.upload("png", inputStream));
+                    memberMapper.updateById(member);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
                 token = jwtTokenUtil.generateToken(umsMember.getUsername());
                 resultObj.put("userId", umsMember.getId());
                 resultObj.put("userInfo", umsMember);
@@ -951,7 +967,6 @@ public class UmsMemberServiceImpl extends ServiceImpl<UmsMemberMapper, UmsMember
                     code);
 
             JSONObject sessionData = CommonUtil.httpsRequest(requestUrl, "GET", null);
-
             if (null == sessionData || StringUtils.isEmpty(sessionData.getString("openid"))) {
                 throw new ApiMallPlusException("登录失败openid is empty");
             }
