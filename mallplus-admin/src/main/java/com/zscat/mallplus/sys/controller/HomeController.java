@@ -264,7 +264,7 @@ public class HomeController extends BaseController {
                     && order.getCreateTime().getTime() <= DateUtils.getSunday().getTime()
                     && (order.getStatus() < 9)) {
                 lastWeekOrderCount++;
-                lastMonthOrderPay = lastMonthOrderPay.add(order.getPayAmount());
+                lastWeekOrderPay = lastWeekOrderPay.add(order.getPayAmount());
             }
             if (order.getCreateTime().getTime() >= DateUtils.geFirstDayDateByMonth().getTime()
                     && (order.getStatus() < 9)) {
