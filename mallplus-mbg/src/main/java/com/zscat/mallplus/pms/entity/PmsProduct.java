@@ -35,7 +35,8 @@ public class PmsProduct extends BaseEntity implements Serializable {
     private Long memberId;
     @TableField("brand_id")
     private Long brandId;
-
+        @TableField("store_class_id")
+    private Long storeClassId;
     @TableField("product_category_id")
     private Long productCategoryId;
 
