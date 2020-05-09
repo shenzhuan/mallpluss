@@ -8,7 +8,7 @@
 
 > 或者您可以 "follow" 一下，该项目将持续更新，不断完善功能。
 
-> 项目交流人QQ群：) 133070260 725021772]
+> 项目交流人QQ群：) 133070260 725021772 202220970]
 
 > 如有问题或者好的建议可以在 Issues 中提。
 
@@ -40,7 +40,9 @@
 pc演示  [http://51wangshi.com:8088/#/](http://51wangshi.com:8088/#/)  
 
 
-小程序下载 地址 https://gitee.com/catshen/mall-applet
+- uniapp下载 地址 https://gitee.com/mallcloud/uni4mall
+- 小程序下载 地址 https://gitee.com/catshen/mall-applet
+
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/102351_cfd0b0c7_134431.png "屏幕截图.png")
 ### 关注公众号获取最全部署教程和后台管理的vue前端，以及uniapp生成的h5 小程序和app和演示地址
 [TOC]
