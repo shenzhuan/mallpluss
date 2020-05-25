@@ -25,8 +25,12 @@
 
 ### 项目演示
 
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/102351_cfd0b0c7_134431.png "屏幕截图.png")
+### 关注公众号获取最新数据库脚本和后台管理的vue前端，以及uniapp生成的h5 小程序和app和演示地址
 
- _下载项目根路径下的mallplus.sql 和mall-web-admin(后台管理vue项目，需要启动mllplus-admin项目)
+
+
+ _下载项目根路径下的 mall-web-admin(后台管理vue项目，需要启动mllplus-admin项目)
 修改mallplus-admin中application-dev.properties 的数据库和redis配置_ 
 
 [部署文档](https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=1786312&doc_id=326093)
@@ -43,8 +47,7 @@ pc演示  [http://51wangshi.com:8088/#/](http://51wangshi.com:8088/#/)
 - uniapp下载 地址 https://gitee.com/mallcloud/uni4mall
 - 小程序下载 地址 https://gitee.com/catshen/mall-applet
 
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/102351_cfd0b0c7_134431.png "屏幕截图.png")
-### 关注公众号获取最全部署教程和后台管理的vue前端，以及uniapp生成的h5 小程序和app和演示地址
+
 [TOC]
 
 
@@ -63,92 +66,12 @@ mall
 
 **开源版本功能列表 ** 
 
- _下载项目根路径下的mallplus.sql 和mall-web-admin(vue项目)
+ _下载项目根路径下的mall-web-admin(vue项目)
 修改mallplus-admin中application-dev.properties 的数据库和redis配置_ 
 
 
-- 2019-01-03
-- 首页统计
-- 
-- 2019-01-06 到 2019-02-03
-- 商品列表
-- 商品分类
-- 商品类型
-- 品牌管理
-- 相册表列
-- 赠礼分类
-- 赠礼列表
-- 商品评论
-- 商品规格
-- 
-- 2019-02-03 到 2019-03-03
-- 菜单管理
-- 用户管理
-- 代码生成
-- 区域列表
-- 系统配置
-- 定时任务
-- 定时任务日志
-- 2019-03-03 到 2019-04-03
-- 发货列表
-- 售后服务
-- 订单列表
-- 发货地址
-- 订单评论
-- 运费模版
-- 2019-05-03 到 2019-06-03
-- 拼团列表
-- 红包列表
-- 限时秒杀
-- 优惠卷表
-- 基本营销
-- 赠礼营销
-- 团购管理
-- 抽奖管理
-- 竞拍管理
-- 2019-07-03 到 2019-08-03
-- 会员列表
-- 大学列表
-- 会员等级
-- 2019-09-03 到 2019-10-03
-- 帮助列表
-- 专题列表
-- 帮助分类
-- 用户举报
-- 优选专区
-- 专题评论
-- 专题分类
-- 话题列表
-- 话题分类
-- 话题评论
-- 2019-10-03 到 2019-12-03
-- 社区广告
-- 社区团购
-- 社区公告
-- 社区报修
-- 费用类型
-- 物业公司
-- 缴费记录
-- 小区列表
-- 房间列表
-- 楼栋列表
-- 业主列表
-- 单元列表
-- 2020-01-03 到 2020-02-03
-- 积分券列表
-- 积分赠送规则
-- 积分签到规则
-- 分销审核
-- 分销记录
-- 分销关系
-- 2020-02-03 到 2020-04-03
-- 前台日志
-- 后台日志
-- 前台接口统计
-- 后台接口统计
-- 支付宝测试
-- 邮件测试
-关注公众号
+### 关注公众号 获取最新的数据库脚本
+
 <img src="https://images.gitee.com/uploads/images/2019/0519/174631_65c2a4e8_134431.png" width="80px" height="80px" />
 
 
@@ -314,7 +237,7 @@ nginx | 1.10 | http://nginx.org/en/download.html
 > 本地环境搭建
 
 - 本地安装开发环境中的所有工具并启动，具体参考
-- 安装最新的数据库mallplus.sql，解压 前端vue mallplsu-admin-web.zip
+- 关注公众号获取最新脚本安装最新的数据库mallplus.sql，解压 前端vue mallplsu-admin-web.zip
 - 克隆源代码到本地，使用IDEA或Eclipse打开，并完成编译;
 - 在mysql中新建mall数据库，导入document/sql下的mall.sql文件；
 - 启动mallplus-admin项目：直接运行com.zscat.mallplus.MallAdminApplication的main方法即可，
