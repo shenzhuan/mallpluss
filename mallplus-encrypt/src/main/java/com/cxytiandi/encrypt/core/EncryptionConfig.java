@@ -21,6 +21,8 @@ public class EncryptionConfig {
      */
     private String key = "d7b85f6e214abcda";
 
+
+
     /**
      * 需要对响应内容进行加密的接口URI<br>
      * 比如：/user/list<br>

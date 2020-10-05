@@ -32,6 +32,8 @@ public class BakBrand implements Serializable {
      */
     private String name;
 
+
+
     /**
      * 品牌商简介
      */

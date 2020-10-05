@@ -1,7 +1,7 @@
 package com.zscat.mallplus.bo;
 
 /**
- * 列的属性
+ * 列的属性 代码生成
  */
 public class ColumnDO {
     // 列名

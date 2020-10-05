@@ -29,6 +29,7 @@ public class JdPayApi {
      * 统一下单接口
      */
     public static String UNI_ORDER_URL = "https://paygate.jd.com/service/uniorder";
+
     /**
      * 商户二维码支付接口
      */

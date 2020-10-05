@@ -1,7 +1,5 @@
-### 有想学习mallplus单商户的初级程序员可以看看 https://gitee.com/zscat/mallplus/wikis/pages/preview?sort_id=2355853&doc_id=326093
 
-
-# mall
+# mallplus
 
 ## 说明
 
@@ -15,7 +13,6 @@
 
 > 如有问题或者好的建议可以在 Issues 中提。
 
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0910/120348_85133851_134431.jpeg "10.jpg")
 
 ## 前言
 

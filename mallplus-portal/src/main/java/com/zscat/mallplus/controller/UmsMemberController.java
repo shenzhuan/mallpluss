@@ -32,6 +32,8 @@ public class UmsMemberController  {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
+
+
     @IgnoreAuth
     @ApiOperation(value = "登录以后返回token")
     @GetMapping(value = "/login")
