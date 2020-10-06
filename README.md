@@ -286,4 +286,7 @@ Copyright (c) 2018-2019 zscatzheng
 
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/0109/175349_ce8614db_134431.jpeg "流逝.jpeg")
 
+案例
+![输入图片说明](https://images.gitee.com/uploads/images/2020/1006/160229_a2a7fd36_134431.jpeg "魔金.jpg")
+
  
