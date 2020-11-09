@@ -62,6 +62,15 @@ public class OmsPayments implements Serializable {
      * 启用状态 1=启用 2=停用
      */
     private Integer status;
-
+    @TableField("app_id")
+    private String appId;
+    @TableField("app_secret")
+    private String appSecret;
+    @TableField("mch_id")
+    private String mchId;
+    @TableField("partner_key")
+    private String partnerKey;
+    @TableField("cert_path")
+    private String certPath;
 
 }
