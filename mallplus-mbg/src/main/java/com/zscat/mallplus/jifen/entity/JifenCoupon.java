@@ -27,6 +27,8 @@ public class JifenCoupon implements Serializable {
     private Integer validDay;
 
 
+
+
     @TableField("min_integration")
     private Integer minIntegration;
 
