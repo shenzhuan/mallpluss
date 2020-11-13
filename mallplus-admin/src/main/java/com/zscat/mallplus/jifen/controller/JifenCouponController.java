@@ -45,6 +45,7 @@ public class JifenCouponController {
         try {
             return new CommonResult().success(IJifenCouponService.page(new Page<JifenCoupon>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
+
             log.error("根据条件查询所有积分券列表：%s", e.getMessage(), e);
         }
         return new CommonResult().failed();
