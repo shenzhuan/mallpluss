@@ -43,6 +43,7 @@ public class JifenCouponController {
                                        @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
     ) {
         try {
+
             return new CommonResult().success(IJifenCouponService.page(new Page<JifenCoupon>(pageNum, pageSize), new QueryWrapper<>(entity)));
         } catch (Exception e) {
 

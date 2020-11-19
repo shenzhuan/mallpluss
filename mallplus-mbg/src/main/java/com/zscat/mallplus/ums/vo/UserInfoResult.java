@@ -18,6 +18,7 @@ public class UserInfoResult {
     @JSONField(name = "openid")
     private String openid;
 
+
     /**
      * 昵称
      */
