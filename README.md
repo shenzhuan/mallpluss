@@ -14,6 +14,7 @@
 > 如有问题或者好的建议可以在 Issues 中提。
 
 AppStore搜【天天云购商城】，基于单商户版做的
+>  apk下载 链接: https://share.weiyun.com/k69aGFKX
 
 小程序 多商户
 ![输入图片说明](https://images.gitee.com/uploads/images/2020/1110/155558_9874d8e4_134431.jpeg "微信图片_20201110155334.jpg")
