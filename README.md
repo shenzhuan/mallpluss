@@ -49,7 +49,7 @@ app
 - 商户端演示 http://51wangshi.com:8090/
 - uniapp h5演示 http://51wangshi.com:8082/
 - app下载 https://share.weiyun.com/5KsC2YL
-pc演示  [http://51wangshi.com:8088/#/](http://51wangshi.com:8088/#/)  
+pc演示  [pc门户测试](http://51wangshi.com:8091/web/index)
 
 
 - uniapp下载 地址 https://gitee.com/mallcloud/uni4mall
