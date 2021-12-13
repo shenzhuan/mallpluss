@@ -94,6 +94,7 @@ uni-app 是一个使用 Vue.js 开发跨平台应用的前端框架，开发者�
 
 <img src="https://images.gitee.com/uploads/images/2019/0528/141610_0b812292_134431.jpeg"/>
 
+新增企业微信 公众号 工作流 考试 
 
 
 ## 目前h5项目已实现功能
