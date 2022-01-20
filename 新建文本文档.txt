@@ -1,12 +1,12 @@
 SELECT * from pms_sku_stock where product_id=62;
-SELECT * from pms_product_attribute_value  where product_id=62; -- (´æ´¢²úÆ·²ÎÊıĞÅÏ¢µÄ±í)
-SELECT * from pms_product_attribute  where product_attribute_category_id=3; --  (ÉÌÆ·ÊôĞÔ²ÎÊı±í)
+SELECT * from pms_product_attribute_value  where product_id=62; -- (å­˜å‚¨äº§å“å‚æ•°ä¿¡æ¯çš„è¡¨)
+SELECT * from pms_product_attribute  where product_attribute_category_id=3; --  (å•†å“å±æ€§å‚æ•°è¡¨)
 
-SELECT * from pms_product_attribute_category where id =3; -- (²úÆ·ÊôĞÔ·ÖÀà±í)
-SELECT * from pms_product_category where id=62; -- ²úÆ··ÖÀà)
+SELECT * from pms_product_attribute_category where id =3; -- (äº§å“å±æ€§åˆ†ç±»è¡¨)
+SELECT * from pms_product_category where id=62; -- äº§å“åˆ†ç±»)
 
-SELECT * from pms_product_full_reduction where product_id=62; -- (²úÆ·Âú¼õ±í(Ö»Õë¶ÔÍ¬ÉÌÆ·))
-SELECT * from pms_product_ladder where product_id=62; -- (²úÆ·½×Ìİ¼Û¸ñ±í(Ö»Õë¶ÔÍ¬ÉÌÆ·))
+SELECT * from pms_product_full_reduction where product_id=62; -- (äº§å“æ»¡å‡è¡¨(åªé’ˆå¯¹åŒå•†å“))
+SELECT * from pms_product_ladder where product_id=62; -- (äº§å“é˜¶æ¢¯ä»·æ ¼è¡¨(åªé’ˆå¯¹åŒå•†å“))
 SELECT * from pms_product_operate_log where product_id=62;
 SELECT * from pms_product_vertify_record where product_id=62;
 
@@ -42,4 +42,4 @@ SELECT * from sys_role_permission;
          from sys_admin_log  where 1=1
       
           group by method   order by avgMin desc
-        limit 100
+        limit 100;
