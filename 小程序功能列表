@@ -6,13 +6,15 @@
  Source Server Version : 50721
  Source Host           : localhost
  Source Database       : mallplus
-
+测试
  Target Server Type    : MySQL
  Target Server Version : 50721
  File Encoding         : utf-8
 
  Date: 04/19/2019 18:31:35 PM
 */
+
+
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
