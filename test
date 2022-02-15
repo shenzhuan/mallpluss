@@ -26,6 +26,7 @@ server {
 
 http://shop.legendshop.cn/s/system/paySite
 
+123
 
 USE information_schema;
 select table_name,table_rows from tables where TABLE_SCHEMA = 'mallplus1' order by table_rows desc;
